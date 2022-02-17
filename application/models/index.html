@@ -1,0 +1,87 @@
+function rack(){
+if(!empty($_POST['id']) && isset($_POST['id'])){
+$result = $this->crud->get_data_row_by_id('rack','cat_id',$_POST['id']);
+$data = array(
+'id' => $result->cat_id,
+'location_id' => $result->location_id,
+'model_name' => $result->cat_name,
+);
+}else{
+$data = array();	
+}
+set_page('master/rack', $data);
+}
+
+function save_rack(){
+$return = '';
+$post_data = $this->input->post();
+if(isset($post_data['id']) && !empty($post_data['id'])){
+$v_id = $this->crud->get_same_by_val('rack','cat_id','cat_name',trim($post_data['cat_name']),'location_id',$post_data['location_id']);
+if(!empty($v_id)) {
+$return['error'] = "Exist";
+print json_encode($return);
+exit;
+}
+$data['location_id'] = $post_data['location_id'];
+$data['cat_name'] = $post_data['cat_name'];
+$data['updated_at'] = date('Y-m-d H:i:s');
+$where_array['cat_id'] = $post_data['id'];
+$result = $this->crud->update('rack', $data, $where_array);
+if ($result) {
+$return['success'] = "Updated";
+}
+}else{
+$v_id = $this->crud->get_same_by_val('rack','cat_id','cat_name',trim($post_data['cat_name']),'location_id',$post_data['location_id']);
+if(!empty($v_id)) {
+$return['error'] = "Exist";
+print json_encode($return);
+exit;
+}
+$data['location_id'] = $post_data['location_id'];
+$data['cat_name'] = $post_data['cat_name'];
+$data['created_at'] = date('Y-m-d H:i:s');
+$data['updated_at'] = date('Y-m-d H:i:s');
+$result = $this->crud->insert('rack',$data);
+if($result){
+$return['success'] = "Added";
+}
+}
+print json_encode($return);
+exit;
+}
+
+function rack_datatable(){
+$config['table'] = 'rack vm';
+$config['select'] = 'vm.*, v.location_id, v.location_name';
+$config['column_order'] = array(null, 'vm.cat_name');
+$config['column_search'] = array('v.location_name','vm.cat_name');
+$config['joins'][] = array('join_table' => 'location v', 'join_by' => 'v.location_id = vm.location_id');
+$config['order'] = array('vm.cat_name' => 'desc');
+$this->load->library('datatables', $config, 'datatable');
+$list = $this->datatable->get_datatables();
+$data = array();
+//$isEdit = $this->app_model->have_access_role(MASTER_ITEM_MASTER_MENU_ID, "edit");
+//$isDelete = $this->app_model->have_access_role(MASTER_ITEM_MASTER_MENU_ID, "delete");
+foreach ($list as $categorys) {
+$row = array();
+$action = '';
+$action .= '<form id="edit_' . $categorys->cat_id . '" method="post" action="' . base_url() . 'master/rack" class="pull-left">
+	<input type="hidden" name="id" id="id" value="' . $categorys->cat_id . '">
+	<a class="edit_button btn-primary btn-xs" href="javascript:{}" onclick="document.getElementById(\'edit_' . $categorys->cat_id . '\').submit();" title="Edit Vehicle model"><i class="fa fa-edit"></i></a>
+</form>';
+//$action .= ' | <a href="' . base_url('master/rack/' . $categorys->location_id) . '" class="edit_button btn-primary btn-xs" data-href="#"><i class="fa fa-edit"></i></a>';
+$action .= ' | <a href="javascript:void(0);" class="delete_button btn-danger btn-xs" data-href="' . base_url('master/delete/' . $categorys->cat_id) . '"><i class="fa fa-trash"></i></a>';
+$row[] = $action;
+$row[] = $categorys->location_name;
+$row[] = $categorys->cat_name;
+$data[] = $row;
+}
+$output = array(
+"draw" => $_POST['draw'],
+"recordsTotal" => $this->datatable->count_all(),
+"recordsFiltered" => $this->datatable->count_filtered(),
+"data" => $data,
+);
+//output to json format
+echo json_encode($output);
+}

@@ -1,0 +1,6 @@
+Item_Name,Item_Type,Item_Group,Item_Category,Item_Sub_Category,Unit,Alternate_Unit,HSN/SAC,List_Price,MRP,Opening_Qty,Opening_Amount,IGST(%),CGST(%),SGST(%),Cess,Description,Purchase_Rate,Sales_Rate,Purchase_Rate_Value,Sales_Rate_Value,Minimum,Maximum,Reorder_Stock
+ Cement  PPC1 ,Goods,Development,main,sub,Kilogram,MiliGram,72.02.99.11,200,400,10,10000,10,5,5,1, Sample  description ,Including_Tax,Including_Tax,,,10,20,189
+ Chain  22  Ct.  Gold ,Goods,Fashion,,,Gram,,72.02.99,100,60000,2,64000,3,1.5,1.5,0,,Excluding_Tax,Excluding_Tax,,,,,300
+Acemain1,Goods, Item  Group  2222 ,a1,,Number,,,400,1000,20,21000,0,0.25,0.25,2,,Excluding_Tax,Including_Tax,,,,,400
+Gold,Goods,,,,,MiliGram,,300,3000,4,1000,0,0,0,3,,Including_Tax,Including_Tax,,,,,
+Iron,Goods,,,,,,,500,7800,5,20000,0,0,0,4,,Including_Tax,Including_Tax,,,,,

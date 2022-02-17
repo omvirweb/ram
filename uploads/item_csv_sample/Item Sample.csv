@@ -1,0 +1,6 @@
+Item Type,Item Group,Item Name,Unit,Alternate Unit,HSN/SAC,List Price,MRP,Opening Qty,Opening Amount,IGST (%),CGST (%),SGST (%),Cess,Description,Purchase Rate,Sales Rate,Minimum,Maximum,Reorder Stock,Item Short Name
+Goods and Services,Development,Cement PPC,Kilogram,MiliGram,72.02.99.11,200,400,10,10000,10,5,5,1,Sample description,Including Tax,Including Tax,10,20,189,PPC
+Jwellary,Fashion,Chain 22 Ct. Gold,Gram,,72.02.99,100,60000,2,64000,3,1.5,1.5,0,,Excluding Tax,Excluding Tax,,,300,CG
+Goods and Services,,Acemain,Number,,,400,1000,20,21000,0,0.25,0.25,2,,Including Tax,Including Tax,,,400,AC
+Jwellary,,Gold,,MiliGram,,300,3000,4,1000,0,0,0,3,,Including Tax,Including Tax,,,,G
+Goods and Services,,Iron,,,,500,7800,5,20000,0,0,0,4,,Including Tax,Including Tax,,,,I

@@ -1,0 +1,27 @@
+Photo Competition Change
+1) views/users/detail.php
+2) custom.css
+3) models/Appmodel.php
+4) models/Restapi_model.php
+5) controllers/Auth.php
+6)
+
+fetch_profile services add full_name,website,bio
+admin side add full name and BIO
+update_profile services add website, bio, full_name and remove address
+fetch_profile services changes.
+**************** login services change-> after login return data add bio,fullname,website *********** remaining change ask
+
+let me check it out
+ let me know
+
+1) Design full party menu all link. e.g., Country, State, Reference
+2) Design company detail
+3) Design User
+4) Design Agent
+5) Design General Master menu
+
+06/09/2016
+1) Make Full Master->Party menu working with ajax except delete and edit
+2) Make Master->User menu working with ajax except delete and edit
+3) Make Master->Agent menu working with ajax except delete and edit
