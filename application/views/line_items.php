@@ -67,18 +67,6 @@
     	}
     } ?>
 
-	<div class="col-md-1 pr0">
-		<div class="form-group">
-			<label for="item_code" class="control-label">Item Code </label>
-			<input type="text" name="line_items_data[item_code]" id="item_code" class="item_code form-control">
-		</div>
-	</div>
-	<div class="col-md-1 pr0">
-		<div class="form-group">
-			<label for="internal_code" class="control-label">Internal Code </label>
-			<input type="text" name="line_items_data[internal_code]" id="internal_code" class="internal_code form-control">
-		</div>
-	</div>
 	<div class="col-md-3 pr0">
 		<div class="form-group">
 			<label for="item_id" class="control-label">Item.</label>
@@ -104,29 +92,11 @@
 			<input type="text" name="line_items_data[item_qty]" id="item_qty" class="item_qty form-control item_detail num_only" data-index="30">
 		</div>
 	</div>
-	<div class="col-md-1 pr0">
-		<div class="form-group">
-			<label for="free_qty" class="control-label">Free Qty </label>
-			<input type="text" name="line_items_data[free_qty]" id="free_qty" class="free_qty form-control">
-		</div>
-	</div>
 	<div class="col-md-1 pr0 <?php echo isset($line_item_fields['unit']) ? $line_item_fields['unit'] : ''; ?>">
 		<div class="form-group">
 			<label for="unit" class="control-label">Unit</label>
                         <a class="btn btn-primary btn-xs pull-right add_account_link" href="javascript:;" data-url= "<?=base_url('master/pack_unit')?>"><i class="fa fa-plus"></i></a>
 			<select name="line_items_data[unit_id]" id="unit_id" class="unit_id" data-index="31"></select>
-		</div>
-	</div>
-	<div class="col-md-1 pr0">
-		<div class="form-group">
-			<label for="no1" class="control-label">No. 1 </label>
-			<input type="text" name="line_items_data[no1]" id="no1" class="no1 form-control">
-		</div>
-	</div>
-	<div class="col-md-1 pr0">
-		<div class="form-group">
-			<label for="no2" class="control-label">No. 2 </label>
-			<input type="text" name="line_items_data[no2]" id="no2" class="no2 form-control">
 		</div>
 	</div>
 	<div class="col-md-2 pr0 <?php echo isset($line_item_fields['Rate']) ? $line_item_fields['Rate'] : ''; ?>">
@@ -136,85 +106,10 @@
 			<input type="hidden" name="line_items_data[price_for_itax]" id="price_for_itax" class="price_for_itax form-control item_detail" >
 		</div>
 	</div>
-	<div class="col-md-2 pr0 ">
-		<div class="form-group">
-			<label for="pure_amount" class="control-label">Pure Amount </label>
-			<input type="text" name="line_items_data[pure_amount]" id="pure_amount" class="pure_amount form-control item_detail num_only" data-index="33">
-		</div>
-	</div>
-	<div class="col-md-4 <?php echo isset($line_item_fields['discount']) ? $line_item_fields['discount'] : ''; ?>">
-		<div class="discount_fields" style="">
-			<div class="col-md-4">
-				<label for="discount_type" class="control-label">Discount Type</label>
-				<select name="line_items_data[discount_type]" id="discount_type" class="discount_type form-control pull-left" data-index="34">
-						<option value="1">Pct</option>
-						<option value="2">Amt</option>
-				</select>
-			</div>
-			<div class="col-md-4" style="padding: 0px; padding-bottom: 10px;">
-				<label for="discount" class="control-label">Discount 1</label>
-				<input type="text" name="line_items_data[discount]" id="discount" class="discount form-control item_detail num_only" style="width: 65%;" value="0" data-index="35">
-			</div>
-			<div class="col-md-4" style="padding: 0px;">
-				<label for="discount_2" class="control-label">Discount 2</label>
-				<input type="text" name="line_items_data[discount_2]" id="discount_2" class="discount form-control item_detail num_only" style="width: 65%;" value="0" data-index="35">
-			</div>
-		</div>
-	</div>
 	<div class="col-md-1 pr0">
 		<div class="form-group">
-			<label for="net_rate" class="control-label">Net Rate </label>
-			<input type="text" name="line_items_data[net_rate]" id="net_rate" class="net_rate form-control">
-		</div>
-	</div>
-	<div class="clearfix"></div>
-	<div class="col-md-2 pr0 <?php echo isset($line_item_fields['basic_amount']) ? $line_item_fields['basic_amount'] : ''; ?>">
-		<div class="form-group">
-			<label for="discounted_price" class="control-label">Basic Amount</label>
-			<input type="text" name="line_items_data[discounted_price]" id="discounted_price" class="discounted_price form-control item_detail" readonly data-index="36">
-		</div>
-	</div>
-	<div class="cgst_class col-md-1 pr0 <?php echo isset($line_item_fields['cgst_per']) ? $line_item_fields['cgst_per'] : ''; ?>">
-		<div class="form-group">
-			<label for="cgst" class="control-label">CGST %</label>
-			<input type="text" name="line_items_data[cgst]" id="cgst" class="cgst form-control item_detail num_only" data-index="37">
-		</div>
-	</div>
-	<div class="cgst_class_amt col-md-1 pr0 <?php echo isset($line_item_fields['cgst_amt']) ? $line_item_fields['cgst_amt'] : ''; ?>">
-		<div class="form-group">
-			<label for="cgst_amt" class="control-label">Amt (Rs.)</label>
-			<input type="text" name="line_items_data[cgst_amt]" id="cgst_amt" class="cgst_amt form-control item_detail" readonly data-index="38">
-		</div>
-	</div>
-	<div class="sgst_class col-md-1 pr0 <?php echo isset($line_item_fields['sgst_per']) ? $line_item_fields['sgst_per'] : ''; ?>">
-		<div class="form-group">
-			<label for="sgst" class="control-label">SGST %</label>
-			<input type="text" name="line_items_data[sgst]" id="sgst" class="sgst form-control item_detail num_only" data-index="39">
-		</div>
-	</div>
-	<div class="sgst_class_amt col-md-1 pr0 <?php echo isset($line_item_fields['sgst_amt']) ? $line_item_fields['sgst_amt'] : ''; ?>">
-		<div class="form-group">
-			<label for="sgst_amt" class="control-label">Amt (Rs.)</label>
-			<input type="text" name="line_items_data[sgst_amt]" id="sgst_amt" class="sgst_amt form-control item_detail" readonly data-index="40">
-		</div>
-	</div>
-	<div class="igst_class col-md-1 pr0 <?php echo isset($line_item_fields['igst_per']) ? $line_item_fields['igst_per'] : ''; ?>">
-		<div class="form-group">
-			<label for="igst" class="control-label">IGST %</label>
-			<input type="text" name="line_items_data[igst]" id="igst" class="igst form-control item_detail num_only" data-index="41">
-			<input type="hidden" name="line_items_data[igst_for_itax]" id="igst_for_itax" class="igst_for_itax form-control item_detail" >
-		</div>
-	</div>
-	<div class="igst_class_amt col-md-1 pr0 <?php echo isset($line_item_fields['igst_amt']) ? $line_item_fields['igst_amt'] : ''; ?>">
-		<div class="form-group">
-			<label for="igst_amt" class="control-label">Amt (Rs.)</label>
-			<input type="text" name="line_items_data[igst_amt]" id="igst_amt" class="igst_amt form-control item_detail" readonly data-index="42">
-		</div>
-	</div>
-	<div class="col-md-2 pr0 <?php echo isset($line_item_fields['other_charges']) ? $line_item_fields['other_charges'] : ''; ?>">
-		<div class="form-group">
-			<label for="other_charges" class="control-label">Other Charges</label>
-			<input type="text" name="line_items_data[other_charges]" id="other_charges" class="other_charges form-control item_detail num_only" data-index="43">
+			<label for="gst_rate" class="control-label">GST %</label>
+			<input type="text" name="line_items_data[gst_rate]" id="gst_rate" class="gst_rate form-control item_detail num_only" data-index="37">
 		</div>
 	</div>
 	<div class="col-md-2 <?php echo isset($line_item_fields['amount']) ? $line_item_fields['amount'] : ''; ?>">
@@ -516,6 +411,15 @@
             $(this).next().focus();
         });
 
+		$('#item_qty,#price,#gst_rate').on('keyup', function() {
+            var amount = 0;
+            var qty = ($('#item_qty').val()) ? $('#item_qty').val() : 0;
+            var rate = ($('#price').val()) ? $('#price').val() : 0;
+            var gst = ($('#gst_rate').val()) ? $('#gst_rate').val() : 0;
+            var amount = (qty * rate) + (qty * rate * gst / 100);
+            $('#amount').val(parseFloat(amount).toFixed(2));
+        });
+
         $('#item_group_id').on('change', function() {
             var item_group_id = $(this).val();
             $('#cat_id').val(null).trigger('change');
@@ -718,51 +622,6 @@
 			$('.amount_total_after_round_off').html(parseF(amount_total_after_round_off));
 		});
 		
-		$(document).on('input','#cgst',function () {
-			var discounted_price = $("#discounted_price").val();
-			var cgst = $("#cgst").val();
-			var cgst_amt = (discounted_price * cgst)/100;
-			$("#cgst_amt").val(parseF(cgst_amt));
-			
-			var sgst_amt = 0;
-			if($("#sgst_amt").val()){ sgst_amt = $("#sgst_amt").val(); }
-			var igst_amt = 0;
-			if($("#igst_amt").val()){ igst_amt = $("#igst_amt").val(); }
-			
-			var amount = parseInt(discounted_price) + parseInt(parseF(cgst_amt)) + parseInt(parseF(sgst_amt)) + parseInt(parseF(igst_amt));
-			$("#amount").val(parseF(amount));
-		});
-        
-		$(document).on('input','#sgst',function () {
-			var discounted_price = $("#discounted_price").val();
-			var sgst = $("#sgst").val();
-			var sgst_amt = (discounted_price * sgst)/100;
-			$("#sgst_amt").val(parseF(sgst_amt));
-			
-			var cgst_amt = 0;
-			if($("#cgst_amt").val()){ cgst_amt = $("#cgst_amt").val(); }
-			var igst_amt = 0;
-			if($("#igst_amt").val()){ igst_amt = $("#igst_amt").val(); }
-			
-			var amount = parseInt(discounted_price) + parseInt(parseF(cgst_amt)) + parseInt(parseF(sgst_amt)) + parseInt(parseF(igst_amt));
-			$("#amount").val(parseF(amount));
-		});
-        
-		$(document).on('input','#igst',function () {
-			var discounted_price = $("#discounted_price").val();
-			var igst = $("#igst").val();
-			var igst_amt = (discounted_price * igst)/100;
-			$("#igst_amt").val(parseF(igst_amt));
-			
-			var cgst_amt = 0;
-			if($("#cgst_amt").val()){ cgst_amt = $("#cgst_amt").val(); }
-			var sgst_amt = 0;
-			if($("#sgst_amt").val()){ sgst_amt = $("#sgst_amt").val(); }
-			
-			var amount = parseInt(discounted_price) + parseInt(parseF(cgst_amt)) + parseInt(parseF(sgst_amt)) + parseInt(parseF(igst_amt));
-			$("#amount").val(parseF(amount));
-		});
-		
 		$(document).on('input','#item_qty',function () {
 			input_qty_or_price();
 		});
@@ -863,7 +722,7 @@
 				var amount = parseInt(discounted_price) + parseInt(parseF(cgst_amt)) + parseInt(parseF(sgst_amt));
 				var other_charges = $("#other_charges").val();
 				var amount = parseInt(amount) + parseFloat(other_charges);
-				$("#amount").val(parseF(amount));
+				// $("#amount").val(parseF(amount));
 
 				$('#cgst').removeAttr('readonly', 'readonly');
 				$('#sgst').removeAttr('readonly', 'readonly');
@@ -1142,7 +1001,7 @@
 		var other_charges = $("#other_charges").val() || 0;
 		var amount = parseFloat(amount) + parseFloat(other_charges);
 //                alert(other_charges);
-		$("#amount").val(parseF(amount));
+		// $("#amount").val(parseF(amount));
 	}
 	
 	function display_lineitem_html(lineitem_objectdata,is_use_db_round_off_amount){
