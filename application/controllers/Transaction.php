@@ -378,7 +378,7 @@ class Transaction extends CI_Controller {
             $post_data['created_by'] = $this->logged_in_id;
             $post_data['user_created_by'] = $this->session->userdata()['login_user_id'];
             $result = $this->crud->insert('transaction_entry', $post_data);
-            $last_tr_id = $this->db->insert_id();
+            $last_tr_id = $this->db->insert_id();exit;
 
 
             if($post_data['transaction_type'] == 1) { //payment
@@ -766,14 +766,13 @@ class Transaction extends CI_Controller {
             $page_title = 'Sales - CTRL + F1';
             $voucher_label = 'Sales Invoice';
             $module_id = MODULE_SALES_INVOICE_ID;
+            $invoice_type = 2;
             $invoice_list_url = base_url('sales/invoice_list');
             $invoice_save_url = base_url('transaction/save_invoice');
             $transaction_date = $this->crud->get_column_value_by_id('company_settings','setting_value',array('company_id' => $this->logged_in_id,'setting_key' => 'sales_invoice_date'));
             if(!empty($transaction_date) && strtotime($transaction_date) > 0) {
                 $data['transaction_date'] = date('d-m-Y',strtotime($transaction_date));
             }
-
-            
 
         } elseif($voucher_type == "purchase") {
             if (isset($_POST['purchase_invoice_id'])) {
@@ -819,6 +818,29 @@ class Transaction extends CI_Controller {
             $invoice_list_url = base_url('purchase/order_invoice_list');
             $invoice_save_url = base_url('purchase/save_purchase_invoice');
 
+        } elseif($voucher_type == "sales_order") {
+            if (isset($_POST['purchase_invoice_id'])) {
+                if(!($this->applib->have_access_role(MODULE_ORDER_ID,"edit"))) {
+                    $this->session->set_flashdata('success', false);
+                    $this->session->set_flashdata('message', 'You have not permission to access this page.');
+                    redirect('/');
+                }
+                $invoice_id = $_POST['purchase_invoice_id'];
+            } else {
+                if(!($this->applib->have_access_role(MODULE_ORDER_ID,"add"))) {
+                    $this->session->set_flashdata('success', false);
+                    $this->session->set_flashdata('message', 'You have not permission to access this page.');
+                    redirect('/');
+                }
+            }
+            $voucher_type = "purchase";
+            $invoice_type = 4;
+            $page_title = 'Sales Order';
+            $voucher_label = 'Sales Order';
+            $module_id = 8;
+            $invoice_list_url = base_url('sales/order_invoice_list');
+            $invoice_save_url = base_url('sales/save_purchase_invoice');
+            
         } elseif($voucher_type == "debit_note") {
             if (isset($_POST['debit_note_id'])) {
                 if(!($this->applib->have_access_role(MODULE_DEBIT_NOTE_ID,"edit"))) {
@@ -862,6 +884,30 @@ class Transaction extends CI_Controller {
             $invoice_save_url = base_url('credit_note/save_credit_note');
 
             $transaction_date = $this->crud->get_column_value_by_id('company_settings','setting_value',array('company_id' => $this->logged_in_id,'setting_key' => 'credit_note_date'));
+            if(!empty($transaction_date) && strtotime($transaction_date) > 0) {
+                $data['transaction_date'] = date('d-m-Y',strtotime($transaction_date));
+            }
+        } elseif($voucher_type == "dispatch") {
+            if (isset($_POST['dispatch_invoice_id'])) {
+                if(!($this->applib->have_access_role(MODULE_SALES_INVOICE_ID,"edit"))) {
+                    $this->session->set_flashdata('success', false);
+                    $this->session->set_flashdata('message', 'You have not permission to access this page.');
+                    redirect('/');
+                }
+                $invoice_id = $_POST['dispatch_invoice_id'];
+            } else {
+                if(!($this->applib->have_access_role(MODULE_SALES_INVOICE_ID,"add"))) {
+                    $this->session->set_flashdata('success', false);
+                    $this->session->set_flashdata('message', 'You have not permission to access this page.');
+                    redirect('/');
+                }
+            }
+            $page_title = 'Dispatch';
+            $voucher_label = 'Dispatch Invoice';
+            $module_id = MODULE_SALES_INVOICE_ID;
+            $invoice_list_url = base_url('dispatch/invoice_list');
+            $invoice_save_url = base_url('transaction/save_invoice');
+            $transaction_date = $this->crud->get_column_value_by_id('company_settings','setting_value',array('company_id' => $this->logged_in_id,'setting_key' => 'sales_invoice_date'));
             if(!empty($transaction_date) && strtotime($transaction_date) > 0) {
                 $data['transaction_date'] = date('d-m-Y',strtotime($transaction_date));
             }
@@ -929,6 +975,18 @@ class Transaction extends CI_Controller {
                 $data['against_account_id'] = $debit_note_data[0]->against_account_id;
                 $data['note'] = $debit_note_data[0]->debit_note_desc;
             }
+
+            if (isset($_POST['dispatch_invoice_id'])) {
+                $where = array('dispatch_invoice_id' => $_POST['dispatch_invoice_id']);
+                $dispatch_invoice_data = $this->crud->get_row_by_id('dispatch_invoice', $where);
+                $data['invoice_id'] = $dispatch_invoice_data[0]->sales_invoice_id;
+                $data['transaction_date'] = $dispatch_invoice_data[0]->sales_invoice_date;
+                $data['amount'] = $dispatch_invoice_data[0]->amount_total;
+                $data['account_id'] = $dispatch_invoice_data[0]->account_id;
+                $data['against_account_id'] = $dispatch_invoice_data[0]->against_account_id;
+                $data['note'] = $dispatch_invoice_data[0]->sales_invoice_desc;
+            }
+
             set_page('single_line_item_transaction',$data);
         } else {
             $main_fields = $this->crud->getFromSQL('SELECT setting_key FROM company_settings WHERE setting_key != "display_dollar_sign" AND company_id = "'.$this->logged_in_id.'" AND module_name = 1 AND setting_value = 1');
@@ -1061,6 +1119,56 @@ class Transaction extends CI_Controller {
                     }
                     $data['debit_note_lineitems'] = $lineitems;
                 }
+
+            } elseif($voucher_type == "dispatch") {
+                if(isset($_POST['dispatch_invoice_id'])) {
+                    $where = array('dispatch_invoice_id' => $_POST['dispatch_invoice_id']);
+                    $dispatch_invoice_data = $this->crud->get_row_by_id('sales_invoice', $where);
+                    $dispatch_invoice_data[0]->invoice_no = $dispatch_invoice_data[0]->dispatch_invoice_no;
+                    $dispatch_invoice_data[0]->invoice_date = $dispatch_invoice_data[0]->dispatch_invoice_date;
+                    $dispatch_invoice_data[0]->invoice_desc = $dispatch_invoice_data[0]->dispatch_invoice_desc;
+                    
+                    $data['invoice_data'] = $dispatch_invoice_data[0];
+
+                    
+                    $lineitems = '';
+                    $where = array('module' => '7', 'parent_id' => $_POST['dispatch_invoice_id']);
+                    $dispatch_invoice_lineitems = $this->crud->get_row_by_id('lineitems', $where);
+                    foreach($dispatch_invoice_lineitems as $dispatch_invoice_lineitem){
+                        $dispatch_invoice_lineitem->pure_amount = $dispatch_invoice_lineitem->pure_amount;
+                        $dispatch_invoice_lineitem->cgst_amt = $dispatch_invoice_lineitem->cgst_amount;
+                        $dispatch_invoice_lineitem->sgst_amt = $dispatch_invoice_lineitem->sgst_amount;
+                        $dispatch_invoice_lineitem->igst_amt = $dispatch_invoice_lineitem->igst_amount;
+                        $lineitems .= "'".json_encode($dispatch_invoice_lineitem)."',";
+                    }
+                    $data['dispatch_invoice_lineitems'] = $lineitems;
+                } else {
+                    $data['prefix'] = $this->crud->get_id_by_val('user', 'prefix', 'user_id', $this->logged_in_id);
+                    $dispatch_invoice_no = $this->crud->get_max_number_where('dispatch_invoice', 'dispatch_invoice_no', array('created_by' => $this->logged_in_id, 'prefix' => $this->prefix));
+                    if(empty($dispatch_invoice_no->dispatch_invoice_no)){
+                        $data['invoice_no'] = $this->crud->get_id_by_val('user', 'invoice_no_start_from', 'prefix', $this->prefix);
+                    } else {
+                        $data['invoice_no'] = $dispatch_invoice_no->dispatch_invoice_no + 1;    
+                    }
+                    $data['invoice_type'] = $this->crud->get_column_value_by_id('user','invoice_type',array('user_id'=>$this->logged_in_id));
+                    if(!empty($order_id)){
+                        $where = array('purchase_invoice_id' => $order_id);
+                        $order_data = $this->crud->get_row_by_id('purchase_invoice', $where);
+                        $data['order_account_id'] = $order_data[0]->account_id;
+                        $lineitems = '';
+                        $where = array('module' => '1', 'parent_id' => $order_id);
+                        $order_lineitems = $this->crud->get_row_by_id('lineitems', $where);
+                        foreach($order_lineitems as $order_lineitem){
+                            unset($order_lineitem->id);
+                            $order_lineitem->pure_amount = $order_lineitem->pure_amount;
+                            $order_lineitem->cgst_amt = $order_lineitem->cgst_amount;
+                            $order_lineitem->sgst_amt = $order_lineitem->sgst_amount;
+                            $order_lineitem->igst_amt = $order_lineitem->igst_amount;
+                            $lineitems .= "'".json_encode($order_lineitem)."',";
+                        }
+                        $data['order_lineitems'] = $lineitems;
+                    }
+                }
             }
             set_page('mutiple_line_item_transaction',$data);
         }
@@ -1107,9 +1215,18 @@ class Transaction extends CI_Controller {
             $invoice_data['debit_note_date'] = date('Y-m-d', strtotime($post_data['invoice_date']));
             $invoice_data['debit_note_desc'] = $post_data['invoice_desc'];
             $invoice_data['invoice_date'] = date('Y-m-d', strtotime($post_data['note_date']));
+
+        } elseif($voucher_type == 'dispatch') {
+            $module = 7;
+            $invoice_data['prefix'] = $post_data['prefix'];
+            $invoice_data['dispatch_invoice_no'] = $post_data['invoice_no'];
+            $invoice_data['dispatch_invoice_date'] = date('Y-m-d', strtotime($post_data['invoice_date']));
+            $invoice_data['dispatch_invoice_desc'] = $post_data['invoice_desc'];
+            $invoice_data['cash_customer'] = (isset($post_data['cash_customer'])?$post_data['cash_customer']:'');
+            $invoice_data['tax_type'] = (isset($post_data['tax_type'])?$post_data['tax_type']:'');
         }
 
-        if($voucher_type == 'sales' || $voucher_type == 'purchase') {
+        if($voucher_type == 'sales' || $voucher_type == 'purchase' || $voucher_type == 'dispatch') {
 
             $invoice_data['transport_name'] = $post_data['transport_name'];
             $invoice_data['lr_no'] = $post_data['lr_no'];
@@ -1191,6 +1308,18 @@ class Transaction extends CI_Controller {
                 }
             }
 
+            if($voucher_type == 'dispatch') {
+                $invoice_no = $post_data['invoice_no'];
+                $invoice_prefix = isset($post_data['prefix']) ? $post_data['prefix'] : null;
+
+                $where = array('prefix' => $invoice_prefix, 'dispatch_invoice_no' => $invoice_no, 'created_by' => $this->logged_in_id, 'dispatch_invoice_id !=' => $post_data['invoice_id']);
+                $invoice_result = $this->crud->get_row_by_id('dispatch_invoice', $where);
+                if(!empty($invoice_result)){
+                    echo json_encode(array("error" => 'Exist'));
+                    exit;
+                }
+            }
+
             $invoice_data['updated_at'] = $this->now_time;
             $invoice_data['updated_by'] = $this->logged_in_id;
             $invoice_data['user_updated_by'] = $this->session->userdata()['login_user_id'];
@@ -1215,6 +1344,12 @@ class Transaction extends CI_Controller {
                 $where_array['debit_note_id'] = $post_data['invoice_id'];
                 $this->crud->update('debit_note', $invoice_data, $where_array);    
                 $this->session->set_flashdata('message','Debit Note Updated Successfully');
+
+            } elseif($voucher_type == 'dispatch') {
+                $where_array['dispatch_invoice_id'] = $post_data['invoice_id'];
+                $this->crud->update('dispatch_invoice', $invoice_data, $where_array);
+                $this->session->set_flashdata('message','Dispatch Invoice Updated Successfully');
+
             }
             
             $return['success'] = "Updated";
@@ -1240,8 +1375,15 @@ class Transaction extends CI_Controller {
                 $add_lineitem['sub_cat_id'] = isset($lineitem->sub_cat_id) ? $lineitem->sub_cat_id : NULL;
                 $add_lineitem['item_id'] = $lineitem->item_id;
                 $add_lineitem['item_qty'] = $lineitem->item_qty;
-                $add_lineitem['unit_id'] = $lineitem->unit_id;
+                // $add_lineitem['unit_id'] = $lineitem->unit_id;
                 $add_lineitem['price'] = $lineitem->price;
+                $add_lineitem['item_code'] = isset($lineitem->item_code)?$lineitem->item_code:NULL;
+                $add_lineitem['internal_code'] = isset($lineitem->internal_code)?$lineitem->internal_code:NULL;
+                $add_lineitem['hsn'] = isset($lineitem->hsn)?$lineitem->hsn:NULL;
+                $add_lineitem['free_qty'] = isset($lineitem->free_qty)?$lineitem->free_qty:NULL;
+                $add_lineitem['no1'] = isset($lineitem->no1)?$lineitem->no1:NULL;
+                $add_lineitem['no2'] = isset($lineitem->no2)?$lineitem->no2:NULL;
+                $add_lineitem['net_rate'] = isset($lineitem->net_rate)?$lineitem->net_rate:NULL;
                 $add_lineitem['pure_amount'] = $lineitem->pure_amount;
                 $add_lineitem['discount_type'] = $lineitem->discount_type;
                 $add_lineitem['discount'] = $lineitem->discount;
@@ -1300,6 +1442,16 @@ class Transaction extends CI_Controller {
                     exit;
                 }
             }
+            if($voucher_type == 'dispatch') {
+                $invoice_no = $post_data['invoice_no'];
+                $invoice_prefix = $post_data['prefix'];
+                $where = array('prefix' => $invoice_prefix, 'dispatch_invoice_no' => $invoice_no, 'created_by' => $this->logged_in_id);
+                $invoice_result = $this->crud->get_row_by_id('dispatch_invoice',$where);
+                if(!empty($invoice_result)){
+                    echo json_encode(array("error" => 'Exist'));
+                    exit;
+                }
+            }
             
             $invoice_data['created_at'] = $this->now_time;
             $invoice_data['created_by'] = $this->logged_in_id;
@@ -1324,7 +1476,11 @@ class Transaction extends CI_Controller {
                 $invoice_data['debit_note_no'] = $debit_note_no->debit_note_no + 1;
                 $this->crud->insert('debit_note', $invoice_data);    
                 $this->session->set_flashdata('message','Debit Note Added Successfully');
-            }
+
+            } elseif($voucher_type == 'dispatch') {
+                $this->crud->insert('dispatch_invoice', $invoice_data);
+                $this->session->set_flashdata('message','Dispatch Invoice Added Successfully');
+            } 
 
             $return['success'] = "Added";
             $this->session->set_flashdata('success',true);
@@ -1361,8 +1517,15 @@ class Transaction extends CI_Controller {
                 $add_lineitem['sub_cat_id'] = isset($lineitem->sub_cat_id) ? $lineitem->sub_cat_id : NULL;
                 $add_lineitem['item_id'] = $lineitem->item_id;
                 $add_lineitem['item_qty'] = $lineitem->item_qty;
-                $add_lineitem['unit_id'] = $lineitem->unit_id;
+                // $add_lineitem['unit_id'] = $lineitem->unit_id;
                 $add_lineitem['price'] = $lineitem->price;
+                $add_lineitem['item_code'] = isset($lineitem->item_code)?$lineitem->item_code:NULL;
+                $add_lineitem['internal_code'] = isset($lineitem->internal_code)?$lineitem->internal_code:NULL;
+                $add_lineitem['hsn'] = isset($lineitem->hsn)?$lineitem->hsn:NULL;
+                $add_lineitem['free_qty'] = isset($lineitem->free_qty)?$lineitem->free_qty:NULL;
+                $add_lineitem['no1'] = isset($lineitem->no1)?$lineitem->no1:NULL;
+                $add_lineitem['no2'] = isset($lineitem->no2)?$lineitem->no2:NULL;
+                $add_lineitem['net_rate'] = isset($lineitem->net_rate)?$lineitem->net_rate:NULL;
                 $add_lineitem['pure_amount'] = $lineitem->pure_amount;
                 $add_lineitem['discount_type'] = $lineitem->discount_type;
                 $add_lineitem['discount'] = $lineitem->discount;

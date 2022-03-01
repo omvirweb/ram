@@ -237,14 +237,38 @@
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
+                                        <label for="company_id" class="control-label">Company</label>
+                                        <select name="company_id" id="company_id" class="company_id" data-index="27" ></select>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="group_id" class="control-label">Group</label>
+                                        <select name="group_id" id="group_id" class="group_id" data-index="28" ></select>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="item_code" class="control-label">Item Code</label>
+                                        <input type="text" name="item_code" class="form-control" id="item_code" value="<?= isset($item_code) ? $item_code : '' ?>" data-index="29" placeholder="">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="internal_code" class="control-label">Internal Code</label>
+                                        <input type="text" name="internal_code" class="form-control" id="internal_code" value="<?= isset($internal_code) ? $internal_code : '' ?>" data-index="30" placeholder="">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
                                         <label for="desc" class="control-label">Description</label>
-                                        <textarea name="desc" class="form-control" id="desc" data-index="27" placeholder=""><?= isset($item_desc) ? $item_desc : '' ?></textarea>
+                                        <textarea name="desc" class="form-control" id="desc" data-index="31" placeholder=""><?= isset($item_desc) ? $item_desc : '' ?></textarea>
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="exempted_from_gst" class="control-label">Exempted from GST?</label>
-                                        <input type="checkbox" name="exempted_from_gst" class="" id="exempted_from_gst" value="" <?= (isset($exempted_from_gst)) ? $exempted_from_gst == '1' ? 'checked' : '' : '' ?> data-index="28" placeholder="">
+                                        <input type="checkbox" name="exempted_from_gst" class="" id="exempted_from_gst" value="" <?= (isset($exempted_from_gst)) ? $exempted_from_gst == '1' ? 'checked' : '' : '' ?> data-index="32" placeholder="">
                                     </div>
                                 </div>
                             </div>
@@ -283,6 +307,9 @@
         initAjaxSelect2($("#pack_unit_id"), "<?= base_url('app/pack_unit_select2_source') ?>");
         initAjaxSelect2($("#alternate_unit_id"), "<?= base_url('app/pack_unit_select2_source') ?>");
         initAjaxSelect2($("#cat_id"),"<?=base_url('app/category_select2_source')?>");
+        initAjaxSelect2($("#company_id"), "<?= base_url('app/company_select2_source') ?>");
+        initAjaxSelect2($("#group_id"), "<?= base_url('app/group_select2_source') ?>");
+
         <?php if(isset($category_id) && !empty($category_id)){ ?>
             setSelect2Value($("#cat_id"),"<?=base_url('app/set_category_select2_val_by_id/'.$category_id)?>");
             get_sub_category();
@@ -305,6 +332,12 @@
         <?php } ?>
         <?php if (isset($alternate_unit_id) && !empty($alternate_unit_id)) { ?>
             setSelect2Value($("#alternate_unit_id"), "<?= base_url('app/set_pack_unit_select2_val_by_id/' . $alternate_unit_id) ?>");
+        <?php } ?>
+        <?php if (isset($company_id) && !empty($company_id)) { ?>
+            setSelect2Value($("#company_id"), "<?= base_url('app/set_company_select2_val_by_id/' . $company_id) ?>");
+        <?php } ?>
+        <?php if (isset($group_id) && !empty($group_id)) { ?>
+            setSelect2Value($("#group_id"), "<?= base_url('app/set_group_select2_val_by_id/' . $group_id) ?>");
         <?php } ?>
 
         $(document).on('input', '#igst_per', function () {

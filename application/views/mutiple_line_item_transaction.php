@@ -11,7 +11,7 @@
                 <a href="<?=$invoice_list_url;?>" class="btn btn-primary pull-right"><?=$voucher_label?> List</a> &nbsp;
                 <?php } ?>
                 
-                <?php if($voucher_type == "sales") { ?>
+                <?php if($voucher_type == "sales" || $voucher_type == "dispatch") { ?>
                     <button type="submit" class="btn btn-primary form_btn pull-right save" id="save_btn"><?=$invoice_id > 0 ? 'Update' : 'Save' ?></button> &nbsp;
 
                     <?php if($invoice_id == 0) { ?>
@@ -76,7 +76,7 @@
                                 ?>
                             </h3>&nbsp;&nbsp;&nbsp;&nbsp;
 
-                            <?php if($voucher_type == "sales" || $voucher_type == "purchase") { ?>
+                            <?php if($voucher_type == "sales" || $voucher_type == "purchase"|| $voucher_type == "dispatch") { ?>
                                 <?php 
                                 if(isset($invoice_data->is_shipping_same_as_billing_address) && $invoice_data->is_shipping_same_as_billing_address == 1){
                                     $checked = '';
@@ -175,9 +175,26 @@
                                                 <input type="text" name="note_date" id="datepicker3" class="form-control" required data-index="4" value="<?=isset($invoice_data->note_date) ? date('d-m-Y', strtotime($invoice_data->note_date)) : ''; ?>">
                                             </div>
                                         </div>
+                                    <?php } elseif($voucher_type == "dispatch") {  ?>
+                                        <?php if(isset($company_invoice_prefix) && !empty($company_invoice_prefix)){ ?>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label for="prefix" class="control-label">Invoice Prefix</label>
+                                                <select name="prefix" id="prefix" class="select2"></select>
+                                            </div>
+                                        </div>
+                                        <?php } else { ?>
+                                        <input type="hidden" id="prefix" name="prefix">
+                                        <?php } ?>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label for="invoice_no" class="control-label">Invoice No</label>
+                                                <input type="text" name="invoice_no" id="invoice_no" class="form-control num_only" data-index="4" value="<?=isset($invoice_data->invoice_no) ? $invoice_data->invoice_no : $invoice_no; ?>">
+                                            </div>
+                                        </div>
                                     <?php } ?>
 
-                                    <?php if($voucher_type == "sales" || $voucher_type == "purchase") { ?> 
+                                    <?php if($voucher_type == "sales" || $voucher_type == "purchase" || $voucher_type == "dispatch") { ?> 
                                         <?php 
                                             $transport_name_display = 'hidden';
                                             if($this->applib->have_access_role($module_id,"Transport Name")) {
@@ -213,12 +230,13 @@
                                             <select name="invoice_type" id="invoice_type" class="form-control" data-index="8" required="">
                                                 <option value='1' <?=$invoice_type == 1?'selected':''?>>Order</option>
                                                 <option value='2' <?=$invoice_type == 2?'selected':''?>>Purchase</option>
+                                                <option value='3' <?=$invoice_type == 3?'selected':''?>>Sales Order</option>
                                             </select>
                                         </div>
                                     </div>
                                     <?php } ?>
 
-                                    <?php if($voucher_type == "sales" || $voucher_type == "purchase") { ?>
+                                    <?php if($voucher_type == "sales" || $voucher_type == "purchase" || $voucher_type == "dispatch") { ?>
                                     <div class="col-md-3 <?php echo $none; ?>" id="shipping">
                                         <div class="form-group">
                                             <label for="shipping_address" class="control-label">Shipping Address</label>

@@ -214,14 +214,14 @@ class App extends CI_Controller{
 		$page = isset($_GET['page']) ? $_GET['page'] : 1;
 		$where = '';
 		$results = array(
-			"results" => $this->get_select2_data('company', 'company_id', 'company_name', $search, $page, $where),
-			"total_count" => $this->count_select2_data('company', 'company_id', 'company_name', $search, $where),
+			"results" => $this->get_select2_data('company', 'id', 'company_name', $search, $page, $where),
+			"total_count" => $this->count_select2_data('company', 'id', 'company_name', $search, $where),
 		);
 		echo json_encode($results);
 		exit();
 	}
 	function set_company_select2_val_by_id($id){
-		$this->get_select2_text_by_id('company', 'company_id', 'company_name', $id);
+		$this->get_select2_text_by_id('company', 'id', 'company_name', $id);
 	}
 
 	function sagement_select2_source(){
@@ -1564,5 +1564,146 @@ class App extends CI_Controller{
 			'item_minimum_stock' => (int) $item_minimum_stock,
 		));
 		exit();
+	}
+
+	function group_select2_source(){
+		$search = isset($_GET['q']) ? $_GET['q'] : '';
+		$page = isset($_GET['page']) ? $_GET['page'] : 1;
+		$where = '';
+		$results = array(
+			"results" => $this->get_select2_data('groups', 'id', 'group_name', $search, $page, $where),
+			"total_count" => $this->count_select2_data('groups', 'id', 'group_name', $search, $where),
+		);
+		echo json_encode($results);
+		exit();
+	}
+	function set_group_select2_val_by_id($id){
+		$this->get_select2_text_by_id('groups', 'id', 'group_name', $id);
+	}
+
+	function new_item_select2_source(){
+		$search = isset($_GET['q']) ? $_GET['q'] : '';
+        $page = isset($_GET['page']) ? $_GET['page'] : 1;
+        $select2_data = array();
+        $resultCount = 10;
+        $offset = ($page - 1) * $resultCount;
+        $this->db->select("i.item_id, i.item_name, g.group_name, c.company_name, pu.pack_unit_name");
+        $this->db->from("item i");
+        $this->db->join('company c','c.id=i.company_id','left');
+		$this->db->join('groups g','g.id=i.group_id','left');
+		$this->db->join('pack_unit pu','pu.pack_unit_id=i.alternate_unit_id','left');
+        $this->db->where('i.created_by', $this->logged_in_id);
+		if(isset($_GET['item_code'])){
+			$this->db->where('i.item_code', $_GET['item_code']);
+		}
+        
+        if(!empty($search)) {
+        	$this->db->group_start();
+        	$this->db->like('i.item_name',$search);
+	        $this->db->group_end();
+        }
+        $this->db->limit($resultCount, $offset);
+        $this->db->order_by("item_name");
+        $query = $this->db->get();
+        
+        if ($query->num_rows() > 0) {
+            foreach ($query->result() as $row) {
+            	$text = '';
+				if(!empty($row->company_name)) {
+					$text .= $row->company_name;
+				}
+				if(!empty($row->group_name)) {
+					$text .= ' - '.$row->group_name;
+				}
+				if(!empty($row->item_name)) {
+					$text .= ' - '.$row->item_name;
+				}
+				if(!empty($row->pack_unit_name)) {
+					$text .= ' - '.$row->pack_unit_name;
+				}
+                $select2_data[] = array(
+                    'id' => $row->item_id,
+                    'text' => $text,
+                );
+            }
+        }
+
+        $this->db->select("i.item_id");
+        $this->db->from("item i");
+        $this->db->join('company c','c.id=i.company_id','left');
+		$this->db->join('groups g','g.id=i.group_id','left');
+		$this->db->join('pack_unit pu','pu.pack_unit_id=i.alternate_unit_id','left');
+        $this->db->where('i.created_by', $this->logged_in_id);
+		if(isset($_GET['item_code'])){
+			$this->db->where('i.item_code', $_GET['item_code']);
+		}
+        if(!empty($search)) {
+        	$this->db->group_start();
+        	$this->db->like('i.item_name',$search);
+	        $this->db->group_end();
+        }
+        $query = $this->db->get();
+        $total_count = $query->num_rows();
+
+        $results = array(
+            "results" => $select2_data,
+            "total_count" => $total_count,
+        );
+        
+		echo json_encode($results);
+		exit();
+	}
+
+	function set_li_item_select2_val_by_rafrence(){
+		$this->db->select("i.item_id, i.item_name, g.group_name, c.company_name, pu.pack_unit_name");
+		$this->db->from("item i");
+		$this->db->join('company c','c.id=i.company_id','left');
+		$this->db->join('groups g','g.id=i.group_id','left');
+		$this->db->join('pack_unit pu','pu.pack_unit_id=i.alternate_unit_id','left');
+		if(isset($_GET['item_code'])){
+			$this->db->where('i.item_code',$_GET['item_code']);
+		}
+		if(isset($_GET['internal_code'])){
+			$this->db->where('i.internal_code',$_GET['internal_code']);
+		}
+		if(isset($_GET['id'])){
+			$this->db->where('i.item_id',$_GET['id']);
+		}
+		$this->db->limit(1);
+		$query = $this->db->get();
+		if ($query->num_rows() > 0) {
+			$text = '';
+			if(!empty($query->row()->company_name)) {
+				$text .= $query->row()->company_name;
+			}
+			if(!empty($query->row()->group_name)) {
+				$text .= ' - '.$query->row()->group_name;
+			}
+			if(!empty($query->row()->item_name)) {
+				$text .= ' - '.$query->row()->item_name;
+			}
+			if(!empty($query->row()->pack_unit_name)) {
+				$text .= ' - '.$query->row()->pack_unit_name;
+			}
+			echo json_encode(array('success' => true, 'id' => $query->row()->item_id, 'text' => $text, 'item_name' => $text));
+			exit();
+		}
+		echo json_encode(array('success' => true, 'id' => '', 'text' => '--select--', 'item_name' => ''));
+		exit();
+	}
+
+	function sites_select2_source(){
+		$search = isset($_GET['q']) ? $_GET['q'] : '';
+		$page = isset($_GET['page']) ? $_GET['page'] : 1;
+		$where = '';
+		$results = array(
+			"results" => $this->get_select2_data('sites', 'site_id', 'site_name', $search, $page, $where),
+			"total_count" => $this->count_select2_data('sites', 'site_id', 'site_name', $search, $where),
+		);
+		echo json_encode($results);
+		exit();
+	}
+	function sites_group_select2_val_by_id($id){
+		$this->get_select2_text_by_id('sites', 'site_id', 'site_name', $id);
 	}
 }

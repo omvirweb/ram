@@ -97,7 +97,7 @@
                                         <div class="clearfix"></div><br/>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-3">
                                     <div class="form-group">
                                         <label for="amount" class="control-label">Amount <span class="required-sign">*</span></label>
                                         <?php 
@@ -109,7 +109,14 @@
                                         <input type="text" name="amount" class="form-control num_only" <?= $readonly ?> id="amount" value="<?= (isset($transaction_data->amount)) ? $transaction_data->amount : ''; ?>">
                                         <div class="clearfix"></div>
                                     </div>
-                                </div>                                
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="sites" class="control-label">Sites <span class="required-sign">*</span></label>
+                                        <select name="sites_id" id="sites_id" class="form-control select2"></select>
+                                        <div class="clearfix"></div>
+                                    </div>
+                                </div>
                                 <div class="clearfix"></div>
                                 <div class="col-md-6">
                                     <div class="form-group">
@@ -193,6 +200,7 @@
         var unchecked_invoice_ids = [];
         initAjaxSelect2($("#cas_bank_account_id"), "<?= base_url('app/cash_bank_account_select2_source') ?>");
         initAjaxSelect2($("#account_id"), "<?= base_url('app/account_select2_source') ?>");
+        initAjaxSelect2($("#sites_id"), "<?= base_url('app/sites_select2_source') ?>");
         <?php if (isset($transaction_data->from_account_id) && !empty($transaction_data->from_account_id)) { ?>
             <?php if($segment2 == 'payment') { ?>
                 setSelect2Value($("#cas_bank_account_id"), "<?= base_url('app/set_account_select2_val_by_id/' . $transaction_data->from_account_id) ?>");

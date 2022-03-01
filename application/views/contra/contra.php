@@ -43,10 +43,16 @@
                                         <input type="text" name="transaction_date" class="form-control input-datepicker" id="datepicker1" value="<?= (isset($transaction_data->transaction_date)) ? date('d-m-Y', strtotime($transaction_data->transaction_date)) : date('d-m-Y'); ?>" autofocus="">
                                     </div>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-3">
                                     <div class="form-group">
                                         <label for="amount" class="control-label">Amount <span class="required-sign">*</span></label>
                                         <input type="text" name="amount" class="form-control num_only" id="amount" value="<?= (isset($transaction_data->amount)) ? $transaction_data->amount : ''; ?>">
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="sites" class="control-label">Sites <span class="required-sign">*</span></label>
+                                        <select name="sites_id" id="sites_id" class="form-control select2"></select>
                                     </div>
                                 </div>
                                 <div class="clearfix"></div>
@@ -97,6 +103,7 @@
     $(document).ready(function () {       
         initAjaxSelect2($("#from_account_id"), "<?= base_url('app/cash_bank_account_select2_source') ?>");
         initAjaxSelect2($("#to_account_id"), "<?= base_url('app/cash_bank_account_select2_source') ?>");
+        initAjaxSelect2($("#sites_id"), "<?= base_url('app/sites_select2_source') ?>");
         <?php if (isset($transaction_data->from_account_id) && !empty($transaction_data->from_account_id)) { ?>
                 setSelect2Value($("#from_account_id"), "<?= base_url('app/set_account_select2_val_by_id/' . $transaction_data->from_account_id) ?>");
         <?php } ?>     

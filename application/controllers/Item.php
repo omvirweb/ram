@@ -55,6 +55,10 @@ class Item extends CI_Controller
 					'sub_category_id' => $result->sub_category_id,
 	                                'purchase_rate_val' => $result->purchase_rate_val,
 					'sales_rate_val' => $result->sales_rate_val,
+					'company_id' => $result->company_id,
+					'group_id' => $result->group_id,
+					'item_code' => $result->item_code,
+					'internal_code' => $result->internal_code,
 				);
 				$data['hsn'] = $this->crud->get_select_data('hsn');
 				set_page('item/item', $data);	
@@ -240,6 +244,10 @@ class Item extends CI_Controller
         $data['category_id'] = isset($post_data['category_id']) ? $post_data['category_id'] : null;
         $data['sub_category_id'] = isset($post_data['sub_category_id']) ? $post_data['sub_category_id'] : null;
         $data['item_group_id'] = isset($post_data['item_group_id']) ? $post_data['item_group_id'] : null;
+		$data['company_id'] = isset($post_data['company_id']) ? $post_data['company_id'] : null;
+		$data['group_id'] = isset($post_data['group_id']) ? $post_data['group_id'] : null;
+		$data['item_code'] = isset($post_data['item_code']) ? $post_data['item_code'] : null;
+		$data['internal_code'] = isset($post_data['internal_code']) ? $post_data['internal_code'] : null;
         $data['updated_at'] = $this->now_time;
         $data['updated_by'] = $this->logged_in_id;
         $data['user_updated_by'] = $this->session->userdata()['login_user_id'];

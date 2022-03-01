@@ -314,16 +314,16 @@ $is_single_line_item = 1;
                                     <ul class="dropdown-menu">
                                         <?php if($this->applib->have_access_role(MODULE_ORDER_TYPE_2_ID,"view")) { ?>
                                             <li class="dropdown-submenu">
-                                                <a tabindex="-1" href="<?php echo base_url() ?>purchase/order_type2_invoice_list/"><i class="fa fa-circle-o"></i> Quotation</a>
+                                                <a tabindex="-1" href="<?php echo base_url() ?>quotation/purchase_quotation_list/"><i class="fa fa-circle-o"></i> Quotation</a>
                                                 <ul class="dropdown-menu">
                                                     <?php if($this->applib->have_access_role(MODULE_ORDER_TYPE_2_ID,"add")) { ?>
                                                         <?php if($is_single_line_item == 1){?>
-                                                            <li><a tabindex="-1" href="<?php echo base_url() ?>transaction/order_type2/"><i class="fa fa-circle-o"></i> Add Quotation</a></li>
+                                                            <li><a tabindex="-1" href="<?php echo base_url() ?>quotation/purchase_quotation_add/"><i class="fa fa-circle-o"></i> Add Quotation</a></li>
                                                         <?php } else { ?>
-                                                            <li><a tabindex="-1" href="<?php echo base_url() ?>purchase/order_type2/"><i class="fa fa-circle-o"></i> Add Quotation</a></li>
+                                                            <li><a tabindex="-1" href="<?php echo base_url() ?>quotation/purchase_quotation_add/"><i class="fa fa-circle-o"></i> Add Quotation</a></li>
                                                         <?php } ?>
                                                     <?php } ?>
-                                                    <li><a tabindex="-1" href="<?php echo base_url() ?>purchase/order_type2_invoice_list/"><i class="fa fa-circle-o"></i> Quotation List</a></li>
+                                                    <li><a tabindex="-1" href="<?php echo base_url() ?>quotation/purchase_quotation_list/"><i class="fa fa-circle-o"></i> Quotation List</a></li>
                                                 </ul>
                                             </li>
                                         <?php } ?>
@@ -396,31 +396,31 @@ $is_single_line_item = 1;
                                     <ul class="dropdown-menu">
                                     <?php if($this->applib->have_access_role(MODULE_ORDER_TYPE_2_ID,"view")) { ?>
                                             <li class="dropdown-submenu">
-                                                <a tabindex="-1" href="<?php echo base_url() ?>purchase/order_type2_invoice_list/"><i class="fa fa-circle-o"></i> Quotation</a>
+                                                <a tabindex="-1" href="<?php echo base_url() ?>quotation/sales_quotation_list/"><i class="fa fa-circle-o"></i> Quotation</a>
                                                 <ul class="dropdown-menu">
                                                     <?php if($this->applib->have_access_role(MODULE_ORDER_TYPE_2_ID,"add")) { ?>
                                                         <?php if($is_single_line_item == 1){?>
-                                                            <li><a tabindex="-1" href="<?php echo base_url() ?>transaction/order_type2/"><i class="fa fa-circle-o"></i> Add Quotation</a></li>
+                                                            <li><a tabindex="-1" href="<?php echo base_url() ?>quotation/sales_quotation_add/"><i class="fa fa-circle-o"></i> Add Quotation</a></li>
                                                         <?php } else { ?>
-                                                            <li><a tabindex="-1" href="<?php echo base_url() ?>purchase/order_type2/"><i class="fa fa-circle-o"></i> Add Quotation</a></li>
+                                                            <li><a tabindex="-1" href="<?php echo base_url() ?>quotation/sales_quotation_add/"><i class="fa fa-circle-o"></i> Add Quotation</a></li>
                                                         <?php } ?>
                                                     <?php } ?>
-                                                    <li><a tabindex="-1" href="<?php echo base_url() ?>purchase/order_type2_invoice_list/"><i class="fa fa-circle-o"></i> Quotation List</a></li>
+                                                    <li><a tabindex="-1" href="<?php echo base_url() ?>quotation/sales_quotation_list/"><i class="fa fa-circle-o"></i> Quotation List</a></li>
                                                 </ul>
                                             </li>
                                         <?php } ?>
                                         <?php if($this->applib->have_access_role(MODULE_ORDER_ID,"view")) { ?>
                                             <li class="dropdown-submenu">
-                                                <a tabindex="-1" href="<?php echo base_url() ?>purchase/order_invoice_list/"><i class="fa fa-circle-o"></i> Order</a>
+                                                <a tabindex="-1" href="<?php echo base_url() ?>sales/order_invoice_list/"><i class="fa fa-circle-o"></i> Order</a>
                                                 <ul class="dropdown-menu">
                                                     <?php if($this->applib->have_access_role(MODULE_ORDER_ID,"add")) { ?>
                                                         <?php if($is_single_line_item == 1){?>
-                                                            <li><a tabindex="-1" href="<?php echo base_url() ?>transaction/sales_purchase_transaction/order"><i class="fa fa-circle-o"></i> Add Order</a></li>
+                                                            <li><a tabindex="-1" href="<?php echo base_url() ?>transaction/sales_purchase_transaction/sales_order"><i class="fa fa-circle-o"></i> Add Order</a></li>
                                                         <?php } else { ?>
-                                                            <li><a tabindex="-1" href="<?php echo base_url() ?>purchase/order/"><i class="fa fa-circle-o"></i> Add Order</a></li>
+                                                            <li><a tabindex="-1" href="<?php echo base_url() ?>purchase/sales_order/"><i class="fa fa-circle-o"></i> Add Order</a></li>
                                                         <?php } ?>
                                                     <?php } ?>
-                                                    <li><a tabindex="-1" href="<?php echo base_url() ?>purchase/order_invoice_list/"><i class="fa fa-circle-o"></i> Order List</a></li>
+                                                    <li><a tabindex="-1" href="<?php echo base_url() ?>sales/order_invoice_list/"><i class="fa fa-circle-o"></i> Order List</a></li>
                                                 </ul>
                                             </li>
                                         <?php } ?>
@@ -430,7 +430,7 @@ $is_single_line_item = 1;
                                                 <ul class="dropdown-menu">
                                                     <?php if($this->applib->have_access_role(MODULE_SALES_INVOICE_ID,"add")) { ?>
                                                         <?php if($is_single_line_item == 1){?>
-                                                            <li><a tabindex="-1" href="<?php echo base_url() ?>transaction/sales_purchase_transaction/sales"><i class="fa fa-circle-o"></i> Add Invoice</a></li>
+                                                            <li><a tabindex="-1" href="<?php echo base_url() ?>transaction/sales_purchase_transaction/dispatch"><i class="fa fa-circle-o"></i> Add Invoice</a></li>
                                                         <?php } else { ?>
                                                             <li><a tabindex="-1" href="<?php echo base_url() ?>sales/invoice/"><i class="fa fa-circle-o"></i> Add Dispatch</a></li>
                                                         <?php } ?>

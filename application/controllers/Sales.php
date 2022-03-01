@@ -1931,6 +1931,19 @@ class Sales extends CI_Controller
         }
 //        echo '<pre>'; print_r($post_data); exit;
     }
+
+    function order_invoice_list() {
+        if($this->applib->have_access_role(MODULE_ORDER_ID,"view")) {
+            $data = array();
+            $data['page_title'] = 'Sales Order';
+            $data['invoice_type'] = 1;
+            set_page('sales/invoice/order_list', $data);
+        } else {
+            $this->session->set_flashdata('success', false);
+            $this->session->set_flashdata('message', 'You have not permission to access this page.');
+            redirect('/');
+        }
+    }
     
 }
 

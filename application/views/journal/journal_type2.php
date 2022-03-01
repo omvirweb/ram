@@ -35,7 +35,7 @@
                                     <div class="line_item_form item_fields_div">
                                         <input type="hidden" name="line_items_index" id="line_items_index" />
                                         <input type="hidden" name="line_items_data[transaction_id]" id="transaction_id" value="0" />                                        
-                                        <div class="col-md-3">
+                                        <div class="col-md-2">
                                             <label for="is_credit_debit">Select Type<span class="required-sign">&nbsp;*</span></label>
                                             <select name="line_items_data[is_credit_debit]" class="form-control is_credit_debit" id="is_credit_debit">
                                                 <option value=""> - Select - </option>
@@ -49,9 +49,15 @@
                                             </select>
                                             <b>Current Balance : <span class="account_curr_balance"></span></b>
                                         </div>
-                                        <div class="col-md-2">
+                                        <div class="col-md-1">
                                             <label for="amount">Amount<span class="required-sign">&nbsp;*</span></label>
                                             <input type="text" name="line_items_data[amount]" class="form-control num_only amount" id="amount"  placeholder="" value=""><br />
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="form-group">
+                                                <label for="sites" class="control-label">Sites <span class="required-sign">*</span></label>
+                                                <select name="sites_id" id="sites_id" class="form-control select2"></select>
+                                            </div>
                                         </div>
                                         <div class="col-md-2"  >
                                             <label for="note">Note</label>
@@ -131,6 +137,7 @@
         })
 
         initAjaxSelect2($("#account_id"), "<?= base_url('app/account_select2_source') ?>");
+        initAjaxSelect2($("#sites_id"), "<?= base_url('app/sites_select2_source') ?>");
         <?php if (isset($journal_detail->account_id)) { ?>
             setSelect2Value($("#account_id"), "<?= base_url('app/set_account_select2_val_by_id/' . $journal_detail->account_id) ?>");
         <?php } ?>
