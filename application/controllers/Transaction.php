@@ -1144,7 +1144,8 @@ class Transaction extends CI_Controller {
                     $data['dispatch_invoice_lineitems'] = $lineitems;
                 } else {
                     $data['prefix'] = $this->crud->get_id_by_val('user', 'prefix', 'user_id', $this->logged_in_id);
-                    $dispatch_invoice_no = $this->crud->get_max_number_where('dispatch_invoice', 'dispatch_invoice_no', array('created_by' => $this->logged_in_id, 'prefix' => $this->prefix));
+                    $dispatch_invoice_no = 0;
+                    // $dispatch_invoice_no = $this->crud->get_max_number_where('dispatch_invoice', 'dispatch_invoice_no', array('created_by' => $this->logged_in_id, 'prefix' => $this->prefix));
                     if(empty($dispatch_invoice_no->dispatch_invoice_no)){
                         $data['invoice_no'] = $this->crud->get_id_by_val('user', 'invoice_no_start_from', 'prefix', $this->prefix);
                     } else {

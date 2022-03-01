@@ -99,7 +99,7 @@
 			<select name="line_items_data[unit_id]" id="unit_id" class="unit_id" data-index="31"></select>
 		</div>
 	</div>
-	<div class="col-md-2 pr0 <?php echo isset($line_item_fields['Rate']) ? $line_item_fields['Rate'] : ''; ?>">
+	<div class="col-md-1 pr0 <?php echo isset($line_item_fields['Rate']) ? $line_item_fields['Rate'] : ''; ?>">
 		<div class="form-group">
 			<label for="price" class="control-label">Rate</label>
 			<input type="text" name="line_items_data[price]" id="price" class="price form-control item_detail num_only" data-index="32">
@@ -112,6 +112,12 @@
 			<input type="text" name="line_items_data[gst_rate]" id="gst_rate" class="gst_rate form-control item_detail num_only" data-index="37">
 		</div>
 	</div>
+    <div class="col-md-2">
+        <div class="form-group">
+            <label for="site_id" class="control-label">Site</label>
+            <select name="line_items_data[site_id]" id="site_id" class="form-control select2"></select>
+        </div>
+    </div>
 	<div class="col-md-2 <?php echo isset($line_item_fields['amount']) ? $line_item_fields['amount'] : ''; ?>">
 		<div class="form-group">
 			<label for="amount" class="control-label">Amount</label>
@@ -394,6 +400,7 @@
 	<?php } ?>
 	
 	$(document).ready(function(){
+        initAjaxSelect2($("#site_id"), "<?= base_url('app/sites_select2_source') ?>");
 		//initAjaxSelect2($("#item_id"),"<?=base_url('app/li_item_select2_source/')?>");
 		initAjaxSelect2($("#item_id"),"<?=base_url('app/item_select2_source/')?>");
 		initAjaxSelect2($("#unit_id"),"<?=base_url('app/unit_select2_source_by_item_id/')?>");

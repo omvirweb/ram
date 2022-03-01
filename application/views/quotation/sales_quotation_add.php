@@ -147,7 +147,7 @@
                                             </div>
                                         </div>
                                         <div class="clearfix"></div>
-                                        <div class="col-md-2 pr0 <?php echo isset($line_item_fields['basic_amount']) ? $line_item_fields['basic_amount'] : ''; ?>">
+                                        <div class="col-md-1 pr0 <?php echo isset($line_item_fields['basic_amount']) ? $line_item_fields['basic_amount'] : ''; ?>">
                                             <div class="form-group">
                                                 <label for="discounted_price" class="control-label">Basic Amount</label>
                                                 <input type="text" name="line_items_data[discounted_price]" id="discounted_price" class="discounted_price form-control item_detail" readonly data-index="36">
@@ -190,10 +190,16 @@
                                                 <input type="text" name="line_items_data[igst_amt]" id="igst_amt" class="igst_amt form-control item_detail" readonly data-index="42">
                                             </div>
                                         </div>
-                                        <div class="col-md-2 pr0 <?php echo isset($line_item_fields['other_charges']) ? $line_item_fields['other_charges'] : ''; ?>">
+                                        <div class="col-md-1 pr0 <?php echo isset($line_item_fields['other_charges']) ? $line_item_fields['other_charges'] : ''; ?>">
                                             <div class="form-group">
                                                 <label for="other_charges" class="control-label">Other Charges</label>
                                                 <input type="text" name="line_items_data[other_charges]" id="other_charges" class="other_charges form-control item_detail num_only" data-index="43">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="form-group">
+                                                <label for="site_id" class="control-label">Site</label>
+                                                <select name="line_items_data[site_id]" id="site_id" class="form-control select2"></select>
                                             </div>
                                         </div>
                                         <div class="col-md-2 <?php echo isset($line_item_fields['amount']) ? $line_item_fields['amount'] : ''; ?>">
@@ -308,6 +314,7 @@
     <?php } ?>
 
     $(document).ready(function(){
+        initAjaxSelect2($("#site_id"), "<?= base_url('app/sites_select2_source') ?>");
         initAjaxSelect2($("#account_id"),"<?=base_url('app/account_select2_source/')?>");
         <?php if(isset($quotation_data->account_id)){ ?>
             setSelect2Value($("#account_id"),"<?=base_url('app/set_account_select2_val_by_id/')?>" + <?=$quotation_data->account_id; ?>);

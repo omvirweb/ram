@@ -55,7 +55,7 @@
                                         </div>
                                         <div class="col-md-2">
                                             <div class="form-group">
-                                                <label for="site_id" class="control-label">Sites <span class="required-sign">*</span></label>
+                                                <label for="site_id" class="control-label">Site <span class="required-sign">*</span></label>
                                                 <select name="line_items_data[site_id]" id="site_id" class="form-control select2"></select>
                                             </div>
                                         </div>
