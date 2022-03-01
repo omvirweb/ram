@@ -84,4 +84,6 @@ ALTER TABLE `purchase_invoice` CHANGE `invoice_type` `invoice_type` TINYINT(1) N
 
 -- Parag : 2022_03_01 04:27 PM
 
-CREATE TABLE `ram`.`sites` ( `site_id` INT NOT NULL AUTO_INCREMENT , `site_name` VARCHAR(255) NOT NULL , `created_at` DATETIME NOT NULL , `created_by` INT NOT NULL , `updated_at` DATETIME NOT NULL , `updated_by` INT NOT NULL , PRIMARY KEY (`site_id`)) ENGINE = InnoDB;
+CREATE TABLE `sites` ( `site_id` INT NOT NULL AUTO_INCREMENT , `site_name` VARCHAR(255) NOT NULL , `created_at` DATETIME NOT NULL , `created_by` INT NOT NULL , `updated_at` DATETIME NOT NULL , `updated_by` INT NOT NULL , PRIMARY KEY (`site_id`)) ENGINE = InnoDB;
+
+ALTER TABLE `transaction_entry` ADD `site_id` INT NOT NULL AFTER `amount`, ADD INDEX `site_id` (`site_id`);

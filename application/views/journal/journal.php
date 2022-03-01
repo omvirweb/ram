@@ -41,8 +41,8 @@
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
-                                        <label for="sites" class="control-label">Sites <span class="required-sign">*</span></label>
-                                        <select name="sites_id" id="sites_id" class="form-control select2"></select>
+                                        <label for="site_id" class="control-label">Sites <span class="required-sign">*</span></label>
+                                        <select name="site_id" id="site_id" class="form-control select2"></select>
                                     </div>
                                 </div>
                                 <div class="clearfix"></div>
@@ -95,7 +95,7 @@
     $(document).ready(function () {       
         initAjaxSelect2($("#from_account_id"), "<?= base_url('app/account_select2_source') ?>");
         initAjaxSelect2($("#to_account_id"), "<?= base_url('app/account_select2_source') ?>");
-        initAjaxSelect2($("#sites_id"), "<?= base_url('app/sites_select2_source') ?>");
+        initAjaxSelect2($("#site_id"), "<?= base_url('app/sites_select2_source') ?>");
         <?php if (isset($transaction_data->from_account_id) && !empty($transaction_data->from_account_id)) { ?>
                 setSelect2Value($("#from_account_id"), "<?= base_url('app/set_account_select2_val_by_id/' . $transaction_data->from_account_id) ?>");
                 $.ajax({

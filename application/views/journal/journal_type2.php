@@ -55,8 +55,8 @@
                                         </div>
                                         <div class="col-md-2">
                                             <div class="form-group">
-                                                <label for="sites" class="control-label">Sites <span class="required-sign">*</span></label>
-                                                <select name="sites_id" id="sites_id" class="form-control select2"></select>
+                                                <label for="site_id" class="control-label">Sites <span class="required-sign">*</span></label>
+                                                <select name="line_items_data[site_id]" id="site_id" class="form-control select2"></select>
                                             </div>
                                         </div>
                                         <div class="col-md-2"  >
@@ -137,7 +137,7 @@
         })
 
         initAjaxSelect2($("#account_id"), "<?= base_url('app/account_select2_source') ?>");
-        initAjaxSelect2($("#sites_id"), "<?= base_url('app/sites_select2_source') ?>");
+        initAjaxSelect2($("#site_id"), "<?= base_url('app/sites_select2_source') ?>");
         <?php if (isset($journal_detail->account_id)) { ?>
             setSelect2Value($("#account_id"), "<?= base_url('app/set_account_select2_val_by_id/' . $journal_detail->account_id) ?>");
         <?php } ?>

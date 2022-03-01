@@ -378,8 +378,8 @@ class Transaction extends CI_Controller {
             $post_data['created_by'] = $this->logged_in_id;
             $post_data['user_created_by'] = $this->session->userdata()['login_user_id'];
             $result = $this->crud->insert('transaction_entry', $post_data);
-            $last_tr_id = $this->db->insert_id();exit;
-
+            $last_tr_id = $this->db->insert_id();
+            // echo $this->db->last_query(); exit;
 
             if($post_data['transaction_type'] == 1) { //payment
                 $company_settings_id = $this->crud->get_column_value_by_id('company_settings','company_settings_id',array('company_id' => $this->logged_in_id,'setting_key' => 'payment_date'));

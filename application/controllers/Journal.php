@@ -132,6 +132,7 @@ class Journal extends CI_Controller {
                     }
                     $tran_data['transaction_type'] = '4';
                     $tran_data['amount'] = $lineitem->amount;
+                    $tran_data['site_id'] = $lineitem->site_id;
                     $tran_data['note'] = $lineitem->note;
                     $tran_data['journal_id'] = $journal_id;
                     $tran_data['is_credit_debit'] = $lineitem->is_credit_debit;
@@ -200,6 +201,7 @@ class Journal extends CI_Controller {
                     }
                     $tran_data['transaction_type'] = '4';
                     $tran_data['amount'] = $lineitem->amount;
+                    $tran_data['site_id'] = $lineitem->site_id;
                     $tran_data['contra_no'] = $contra_no;
                     $tran_data['note'] = $lineitem->note;
                     $tran_data['journal_id'] = $journal_id;

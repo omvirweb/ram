@@ -112,8 +112,8 @@
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
-                                        <label for="sites" class="control-label">Sites <span class="required-sign">*</span></label>
-                                        <select name="sites_id" id="sites_id" class="form-control select2"></select>
+                                        <label for="site_id" class="control-label">Sites <span class="required-sign">*</span></label>
+                                        <select name="site_id" id="site_id" class="form-control select2"></select>
                                         <div class="clearfix"></div>
                                     </div>
                                 </div>
@@ -200,7 +200,7 @@
         var unchecked_invoice_ids = [];
         initAjaxSelect2($("#cas_bank_account_id"), "<?= base_url('app/cash_bank_account_select2_source') ?>");
         initAjaxSelect2($("#account_id"), "<?= base_url('app/account_select2_source') ?>");
-        initAjaxSelect2($("#sites_id"), "<?= base_url('app/sites_select2_source') ?>");
+        initAjaxSelect2($("#site_id"), "<?= base_url('app/sites_select2_source') ?>");
         <?php if (isset($transaction_data->from_account_id) && !empty($transaction_data->from_account_id)) { ?>
             <?php if($segment2 == 'payment') { ?>
                 setSelect2Value($("#cas_bank_account_id"), "<?= base_url('app/set_account_select2_val_by_id/' . $transaction_data->from_account_id) ?>");
