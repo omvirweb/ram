@@ -60,18 +60,6 @@
                                                 </div>
                                             <?php } ?>
                                         <?php } ?>
-                                        <div class="col-md-1 pr0">
-                                            <div class="form-group">
-                                                <label for="item_code" class="control-label">Item Code </label>
-                                                <input type="text" name="line_items_data[item_code]" id="item_code" class="item_code form-control">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-1 pr0">
-                                            <div class="form-group">
-                                                <label for="internal_code" class="control-label">Internal Code </label>
-                                                <input type="text" name="line_items_data[internal_code]" id="internal_code" class="internal_code form-control">
-                                            </div>
-                                        </div>
                                         <div class="col-md-3 ">
                                             <div class="form-group">
                                                 <label for="item_id" class="control-label">Item.</label>         
@@ -90,110 +78,24 @@
                                                 <input type="text" name="line_items_data[item_qty]" id="item_qty" class="item_qty form-control item_detail num_only" data-index="30">
                                             </div>
                                         </div>
-                                        <div class="col-md-1 pr0">
+                                        <div class="col-md-1 pr0 <?php echo isset($line_item_fields['unit']) ? $line_item_fields['unit'] : ''; ?>">
                                             <div class="form-group">
-                                                <label for="free_qty" class="control-label">Free Qty </label>
-                                                <input type="text" name="line_items_data[free_qty]" id="free_qty" class="free_qty form-control">
+                                                <label for="unit" class="control-label">Unit</label>
+                                                            <a class="btn btn-primary btn-xs pull-right add_account_link" href="javascript:;" data-url= "<?=base_url('master/pack_unit')?>"><i class="fa fa-plus"></i></a>
+                                                <select name="line_items_data[unit_id]" id="unit_id" class="unit_id" data-index="31"></select>
                                             </div>
                                         </div>
-                                        <div class="col-md-1 pr0">
-                                            <div class="form-group">
-                                                <label for="no1" class="control-label">No. 1 </label>
-                                                <input type="text" name="line_items_data[no1]" id="no1" class="no1 form-control">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-1 pr0">
-                                            <div class="form-group">
-                                                <label for="no2" class="control-label">No. 2 </label>
-                                                <input type="text" name="line_items_data[no2]" id="no2" class="no2 form-control">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-2 pr0 <?php echo isset($line_item_fields['Rate']) ? $line_item_fields['Rate'] : ''; ?>">
+                                        <div class="col-md-1 pr0 <?php echo isset($line_item_fields['Rate']) ? $line_item_fields['Rate'] : ''; ?>">
                                             <div class="form-group">
                                                 <label for="price" class="control-label">Rate</label>
                                                 <input type="text" name="line_items_data[price]" id="price" class="price form-control item_detail num_only" data-index="32">
                                                 <input type="hidden" name="line_items_data[price_for_itax]" id="price_for_itax" class="price_for_itax form-control item_detail" >
                                             </div>
                                         </div>
-                                        <div class="col-md-2 pr0 ">
-                                            <div class="form-group">
-                                                <label for="pure_amount" class="control-label">Pure Amount </label>
-                                                <input type="text" name="line_items_data[pure_amount]" id="pure_amount" class="pure_amount form-control item_detail num_only" data-index="33">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4 <?php echo isset($line_item_fields['discount']) ? $line_item_fields['discount'] : ''; ?>">
-                                            <div class="discount_fields" style="">
-                                                <div class="col-md-4">
-                                                    <label for="discount_type" class="control-label">Discount Type</label>
-                                                    <select name="line_items_data[discount_type]" id="discount_type" class="discount_type form-control pull-left" data-index="34">
-                                                            <option value="1">Pct</option>
-                                                            <option value="2">Amt</option>
-                                                    </select>
-                                                </div>
-                                                <div class="col-md-4" style="padding: 0px; padding-bottom: 10px;">
-                                                    <label for="discount" class="control-label">Discount 1</label>
-                                                    <input type="text" name="line_items_data[discount]" id="discount" class="discount form-control item_detail num_only" style="width: 65%;" value="0" data-index="35">
-                                                </div>
-                                                <div class="col-md-4" style="padding: 0px;">
-                                                    <label for="discount_2" class="control-label">Discount 2</label>
-                                                    <input type="text" name="line_items_data[discount_2]" id="discount_2" class="discount form-control item_detail num_only" style="width: 65%;" value="0" data-index="35">
-                                                </div>
-                                            </div>
-                                        </div>
                                         <div class="col-md-1 pr0">
                                             <div class="form-group">
-                                                <label for="net_rate" class="control-label">Net Rate </label>
-                                                <input type="text" name="line_items_data[net_rate]" id="net_rate" class="net_rate form-control">
-                                            </div>
-                                        </div>
-                                        <div class="clearfix"></div>
-                                        <div class="col-md-1 pr0 <?php echo isset($line_item_fields['basic_amount']) ? $line_item_fields['basic_amount'] : ''; ?>">
-                                            <div class="form-group">
-                                                <label for="discounted_price" class="control-label">Basic Amount</label>
-                                                <input type="text" name="line_items_data[discounted_price]" id="discounted_price" class="discounted_price form-control item_detail" readonly data-index="36">
-                                            </div>
-                                        </div>
-                                        <div class="cgst_class col-md-1 pr0 <?php echo isset($line_item_fields['cgst_per']) ? $line_item_fields['cgst_per'] : ''; ?>">
-                                            <div class="form-group">
-                                                <label for="cgst" class="control-label">CGST %</label>
-                                                <input type="text" name="line_items_data[cgst]" id="cgst" class="cgst form-control item_detail num_only" data-index="37">
-                                            </div>
-                                        </div>
-                                        <div class="cgst_class_amt col-md-1 pr0 <?php echo isset($line_item_fields['cgst_amt']) ? $line_item_fields['cgst_amt'] : ''; ?>">
-                                            <div class="form-group">
-                                                <label for="cgst_amt" class="control-label">Amt (Rs.)</label>
-                                                <input type="text" name="line_items_data[cgst_amt]" id="cgst_amt" class="cgst_amt form-control item_detail" readonly data-index="38">
-                                            </div>
-                                        </div>
-                                        <div class="sgst_class col-md-1 pr0 <?php echo isset($line_item_fields['sgst_per']) ? $line_item_fields['sgst_per'] : ''; ?>">
-                                            <div class="form-group">
-                                                <label for="sgst" class="control-label">SGST %</label>
-                                                <input type="text" name="line_items_data[sgst]" id="sgst" class="sgst form-control item_detail num_only" data-index="39">
-                                            </div>
-                                        </div>
-                                        <div class="sgst_class_amt col-md-1 pr0 <?php echo isset($line_item_fields['sgst_amt']) ? $line_item_fields['sgst_amt'] : ''; ?>">
-                                            <div class="form-group">
-                                                <label for="sgst_amt" class="control-label">Amt (Rs.)</label>
-                                                <input type="text" name="line_items_data[sgst_amt]" id="sgst_amt" class="sgst_amt form-control item_detail" readonly data-index="40">
-                                            </div>
-                                        </div>
-                                        <div class="igst_class col-md-1 pr0 <?php echo isset($line_item_fields['igst_per']) ? $line_item_fields['igst_per'] : ''; ?>">
-                                            <div class="form-group">
-                                                <label for="igst" class="control-label">IGST %</label>
-                                                <input type="text" name="line_items_data[igst]" id="igst" class="igst form-control item_detail num_only" data-index="41">
-                                                <input type="hidden" name="line_items_data[igst_for_itax]" id="igst_for_itax" class="igst_for_itax form-control item_detail" >
-                                            </div>
-                                        </div>
-                                        <div class="igst_class_amt col-md-1 pr0 <?php echo isset($line_item_fields['igst_amt']) ? $line_item_fields['igst_amt'] : ''; ?>">
-                                            <div class="form-group">
-                                                <label for="igst_amt" class="control-label">Amt (Rs.)</label>
-                                                <input type="text" name="line_items_data[igst_amt]" id="igst_amt" class="igst_amt form-control item_detail" readonly data-index="42">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-1 pr0 <?php echo isset($line_item_fields['other_charges']) ? $line_item_fields['other_charges'] : ''; ?>">
-                                            <div class="form-group">
-                                                <label for="other_charges" class="control-label">Other Charges</label>
-                                                <input type="text" name="line_items_data[other_charges]" id="other_charges" class="other_charges form-control item_detail num_only" data-index="43">
+                                                <label for="gst_rate" class="control-label">GST %</label>
+                                                <input type="text" name="line_items_data[gst_rate]" id="gst_rate" class="gst_rate form-control item_detail num_only" data-index="37">
                                             </div>
                                         </div>
                                         <div class="col-md-2">
@@ -316,27 +218,22 @@
     $(document).ready(function(){
         initAjaxSelect2($("#site_id"), "<?= base_url('app/sites_select2_source') ?>");
         initAjaxSelect2($("#account_id"),"<?=base_url('app/account_select2_source/')?>");
+        initAjaxSelect2($("#unit_id"),"<?=base_url('app/unit_select2_source_by_item_id/')?>");
         <?php if(isset($quotation_data->account_id)){ ?>
             setSelect2Value($("#account_id"),"<?=base_url('app/set_account_select2_val_by_id/')?>" + <?=$quotation_data->account_id; ?>);
         <?php } ?>
 
-        initAjaxSelect2($("#item_id"),"<?=base_url('app/new_item_select2_source/')?>");
+        initAjaxSelect2($("#item_id"),"<?=base_url('app/item_select2_source/')?>");
         initAjaxSelect2($("#item_group_id"),"<?=base_url('app/item_group_select2_source')?>");
 
-        $('#item_code').keydown(function (e) {
-			if (e.keyCode === 13) {
-				setSelect2Value($("#item_id"),"<?=base_url('app/set_li_item_select2_val_by_rafrence/?item_code=')?>"+$(this).val());
-				setTimeout(function() { $('#item_qty').focus() }, 20);
-			}
-		});
-
-		$('#internal_code').keydown(function (e) {
-			if (e.keyCode === 13) {
-				setSelect2Value($("#item_id"),"<?=base_url('app/set_li_item_select2_val_by_rafrence/?internal_code=')?>"+$(this).val());
-				setTimeout(function() { $('.select2-container').removeClass('select2-container--open') }, 20);
-				setTimeout(function() { $('#item_qty').focus() }, 20);
-			}
-		});
+        $('#item_qty,#price,#gst_rate').on('keyup', function() {
+            var amount = 0;
+            var qty = ($('#item_qty').val()) ? $('#item_qty').val() : 0;
+            var rate = ($('#price').val()) ? $('#price').val() : 0;
+            var gst = ($('#gst_rate').val()) ? $('#gst_rate').val() : 0;
+            var amount = (qty * rate) + (qty * rate * gst / 100);
+            $('#amount').val(parseFloat(amount).toFixed(2));
+        });
 
         $('#item_group_id').on('change', function() {
             var item_group_id = $(this).val();
@@ -345,7 +242,7 @@
                 initAjaxSelect2($("#item_id"),"<?=base_url('app/item_select2_source_from_item_group/')?>" + item_group_id);
             }
             if(item_group_id == '' || item_group_id == null){
-                initAjaxSelect2($("#item_id"),"<?=base_url('app/new_item_select2_source/')?>");
+                initAjaxSelect2($("#item_id"),"<?=base_url('app/item_select2_source/')?>");
             }
         });
 
@@ -379,6 +276,21 @@
                     },
                 });
             }
+        });
+
+        $('#item_id').on('change', function() {
+            var item_id = $('#item_id').val();
+            if (item_id) {
+                $.ajax({
+                    url: "<?=base_url('transaction/get_item_hsn_data') ?>",
+                    type: "POST",
+                    dataType: 'json',
+                    data: {item_id: item_id},
+                    success: function (response) {
+                        $('#hsn').val(response.hsn);
+                    },
+                });
+            } 
         });
 
         $(document).on('input','#round_off_amount',function () {

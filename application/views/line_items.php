@@ -621,6 +621,21 @@
             });
         }
     });
+
+        $('#item_id').on('change', function() {
+            var item_id = $('#item_id').val();
+            if (item_id) {
+                $.ajax({
+                    url: "<?=base_url('transaction/get_item_hsn_data') ?>",
+                    type: "POST",
+                    dataType: 'json',
+                    data: {item_id: item_id},
+                    success: function (response) {
+                        $('#hsn').val(response.hsn);
+                    },
+                });
+            } 
+        });
 		
 		$(document).on('input','#round_off_amount',function () {
 			var round_off_amount = parseFloat($("#round_off_amount").val()) || 0;

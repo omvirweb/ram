@@ -2344,4 +2344,17 @@ class Transaction extends CI_Controller {
         print json_encode($return);
         exit;        
     }
+
+    function get_item_hsn_data(){
+        $hsn = '';
+        if(isset($_POST['item_id'])){
+            $hsnid = $this->crud->get_column_value_by_id('item','hsn_code',array('item_id'=>$_POST['item_id']));
+            if($hsnid){
+                $hsn =  $this->crud->get_column_value_by_id('hsn','hsn',array('hsn_id'=>$hsnid));
+            }
+        }
+        $return['hsn'] = $hsn;
+        print json_encode($return);
+        exit;
+    }
 }
