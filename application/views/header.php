@@ -526,6 +526,9 @@ $is_single_line_item = 1;
                                                 </ul>
                                             </li>
                                         <?php } ?>
+                                        <li class="dropdown">
+                                            <a tabindex="-1" href="<?php echo base_url() ?>transaction/day_book/"><i class="fa fa-circle-o"></i> Day Book</a>
+                                        </li>
                                     </ul>
                                 </li>
 

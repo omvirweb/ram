@@ -45,6 +45,13 @@ if ($segment2 == 'receipt_list') {
                         <br/>
                     </div>
                     <div class="col-md-12">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="site_id" class="control-label">Site</label>
+                                <select name="site_id" id="site_id" class="form-control select2"></select>
+                                <div class="clearfix"></div>
+                            </div>
+                        </div>
                         <form id="form_print_multiple_transaction" class="" action="<?= base_url('transaction/print_multiple_transaction') ?>" method="post" enctype="multipart/form-data"  target="_blank" >
                             <input type="hidden" name="transaction_type" value="<?=$transaction_type?>">
                         
@@ -74,6 +81,7 @@ if ($segment2 == 'receipt_list') {
 <script type="text/javascript">
     var table;
     $(document).ready(function () {
+        initAjaxSelect2($("#site_id"), "<?= base_url('app/sites_select2_source') ?>");
         <?php if ($segment2 == 'payment_list') { ?>
                 var title = "Payment List";
             <?php } else { ?>   
@@ -123,7 +131,10 @@ if ($segment2 == 'receipt_list') {
                         } else {
                             echo base_url('transaction/receipt_datatable');
                         } ?>",
-                "type": "POST"
+                "type": "POST",
+                "data": function (d) {
+                    d.site_id = $('#site_id').val();
+                },
             },
             "columnDefs": [{
                 "className": "dt-right",
@@ -135,6 +146,10 @@ if ($segment2 == 'receipt_list') {
             "scroller": {
                 "loadingIndicator": true
             },
+        });
+
+        $(document).on("change","#site_id", function () {
+            table.draw();
         });
 
         $(document).on("change","#check_all", function () {

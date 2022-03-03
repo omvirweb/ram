@@ -284,6 +284,9 @@ class Journal extends CI_Controller {
         $config['joins'][] = array('join_table' => 'account aa', 'join_by' => 'aa.account_id = t.to_account_id', 'join_type' => 'left');
         $config['wheres'][] = array('column_name' => 't.created_by', 'column_value' => $this->logged_in_id);
         $config['wheres'][] = array('column_name' => 't.transaction_type', 'column_value' => '4');
+        if(isset($_POST['site_id']) && $_POST['site_id'] != ''){
+            $config['wheres'][] = array('column_name' => 't.site_id', 'column_value' => $_POST['site_id']);
+        }
         $config['column_order'] = array(null, 't.transaction_date', 't.from_account_id','t.to_account_id', 't.amount');
         $config['column_search'] = array('DATE_FORMAT(t.transaction_date,"%d-%m-%Y")','t.from_account_id','t.to_account_id', 't.amount');
         $config['order'] = array('t.transaction_id' => 'desc');

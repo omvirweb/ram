@@ -19,6 +19,13 @@
                 <div class="box box-primary">
                     <!-- /.box-header -->
                     <div class="box-body">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="site_id" class="control-label">Site</label>
+                                <select name="site_id" id="site_id" class="form-control select2"></select>
+                                <div class="clearfix"></div>
+                            </div>
+                        </div>
                         <!---content start --->
                         <table class="table table-striped table-bordered contra-table" id="contra-table">
                             <thead>
@@ -52,6 +59,7 @@
 <script type="text/javascript">
     var table;
     $(document).ready(function () {
+        initAjaxSelect2($("#site_id"), "<?= base_url('app/sites_select2_source') ?>");
         var title = 'Contra List'
         
         var buttonCommon = {
@@ -90,7 +98,10 @@
             "order": [],
             "ajax": {
                 "url": "<?= base_url('contra/contra_datatable')?>",
-                "type": "POST"
+                "type": "POST",
+                "data": function (d) {
+                    d.site_id = $('#site_id').val();
+                },
             },
             "scrollY": '<?php echo MASTER_LIST_TABLE_HEIGHT; ?>',
             "scroller": {
@@ -100,6 +111,10 @@
                 "className": "text-right",
                 "targets": [5],
             }]
+        });
+
+        $(document).on("change","#site_id", function () {
+            table.draw();
         });
 
         $(document).on("click", ".delete_transaction", function () {

@@ -580,6 +580,9 @@ class Transaction extends CI_Controller {
         $config['column_search'] = array('DATE_FORMAT(t.transaction_date,"%d-%m-%Y")', 't.amount');
         $config['wheres'][] = array('column_name' => 't.created_by', 'column_value' => $this->logged_in_id);
         $config['wheres'][] = array('column_name' => 't.transaction_type', 'column_value' => '1');
+        if(isset($_POST['site_id']) && $_POST['site_id'] != ''){
+            $config['wheres'][] = array('column_name' => 't.site_id', 'column_value' => $_POST['site_id']);
+        }
         $config['order'] = array('t.transaction_date' => 'desc');
         $this->load->library('datatables', $config, 'datatable');
         $list = $this->datatable->get_datatables();
@@ -629,6 +632,9 @@ class Transaction extends CI_Controller {
         $config['column_search'] = array('DATE_FORMAT(t.transaction_date,"%d-%m-%Y")','t.amount');
         $config['wheres'][] = array('column_name' => 't.created_by', 'column_value' => $this->logged_in_id);
         $config['wheres'][] = array('column_name' => 't.transaction_type', 'column_value' => '2');
+        if(isset($_POST['site_id']) && $_POST['site_id'] != ''){
+            $config['wheres'][] = array('column_name' => 't.site_id', 'column_value' => $_POST['site_id']);
+        }
         $config['order'] = array('t.transaction_date' => 'desc');
         $this->load->library('datatables', $config, 'datatable');
         $list = $this->datatable->get_datatables();
@@ -2356,5 +2362,90 @@ class Transaction extends CI_Controller {
         $return['hsn'] = $hsn;
         print json_encode($return);
         exit;
+    }
+
+    function day_book(){
+        $data = array();
+        set_page('transaction/day_book', $data);
+    }
+
+    function day_book_datatable(){
+        $from_date = '';
+        $to_date = '';
+        if (isset($_POST['daterange_1']) && !empty($_POST['daterange_1']) && isset($_POST['daterange_2']) && !empty($_POST['daterange_2'])) {
+            $from_date = trim($_POST['daterange_1']);
+            $from_date = substr($from_date, 6, 4) . '-' . substr($from_date, 3, 2) . '-' . substr($from_date, 0, 2);
+            $to_date = trim($_POST['daterange_2']);
+            $to_date = substr($to_date, 6, 4) . '-' . substr($to_date, 3, 2) . '-' . substr($to_date, 0, 2);
+        }
+        $config['table'] = 'transaction_entry t';
+        $config['select'] = 't.*,a.account_name,aa.account_name as cash_bank_acc';
+        $config['joins'][] = array('join_table' => 'account a', 'join_by' => 'a.account_id = t.to_account_id', 'join_type' => 'left');
+        $config['joins'][] = array('join_table' => 'account aa', 'join_by' => 'aa.account_id = t.from_account_id', 'join_type' => 'left');
+        $config['column_order'] = array(null, 't.transaction_date', 't.amount');
+        $config['column_search'] = array('DATE_FORMAT(t.transaction_date,"%d-%m-%Y")', 't.amount');
+        $config['wheres'][] = array('column_name' => 't.created_by', 'column_value' => $this->logged_in_id);
+        // $config['wheres'][] = array('column_name' => 't.transaction_type', 'column_value' => '1');
+        if(isset($_POST['site_id']) && $_POST['site_id'] != ''){
+            $config['wheres'][] = array('column_name' => 't.site_id', 'column_value' => $_POST['site_id']);
+        }
+        if (!empty($from_date) && !empty($to_date)) {
+            $config['wheres'][] = array('column_name' => 't.transaction_date >=', 'column_value' => $from_date);
+            $config['wheres'][] = array('column_name' => 't.transaction_date <=', 'column_value' => $to_date);
+        }
+        $config['order'] = array('t.transaction_date' => 'desc');
+        $this->load->library('datatables', $config, 'datatable');
+        $list = $this->datatable->get_datatables();
+        
+        $data = array();
+        foreach ($list as $transaction) {
+            $row = array();
+            $ttype = array(
+                1=>['name' => 'Payment',
+                    'edit' => 'transaction/payment/',
+                    'delete' => 'transaction/delete_transaction/',
+                ],2=>['name' => 'Recepit',
+                    'edit' => 'transaction/receipt/',
+                    'delete' => 'transaction/delete_receipt_transaction/',
+                ],3=>['name' => 'Contra',
+                    'edit' => 'contra/contra/',
+                    'delete' => 'transaction/delete_transaction/',
+                ],4=>['name' => 'Journal',
+                    'edit' => (!empty($transaction->journal_id)) ? 'journal/journal_type2/' : 'journal/journal/',
+                    'delete' => 'transaction/delete_transaction/',
+                ],
+            );
+            $type = '';
+            $type = $ttype[$transaction->transaction_type]['name'];
+            $action = '';
+            $action .= '<a href="' . base_url($ttype[$transaction->transaction_type]['edit'] . $transaction->transaction_id) . '"><span class="edit_button glyphicon glyphicon-edit data-href="#"" style="color : #419bf4" >&nbsp;</span></a>';    
+            $action .= ' <a href="javascript:void(0);" class="delete_transaction" data-href="' . base_url($ttype[$transaction->transaction_type]['delete'] . $transaction->transaction_id) . '"><span class="glyphicon glyphicon-trash" style="color : red">&nbsp;</span></a>';
+            $row[] = $action;
+            $row[] = (!empty(strtotime($transaction->transaction_date))) ? date('d-m-Y', strtotime($transaction->transaction_date)) : '';
+            $row[] = $type;
+            $row[] = $transaction->cash_bank_acc;
+            $row[] = $transaction->account_name;
+            $debit = ($transaction->transaction_type == 1 || $transaction->is_credit_debit == 1) ? $transaction->amount : '';
+            $row[] = $debit;
+            $credit = '';
+            if($transaction->transaction_type != 1){
+                if($transaction->transaction_type == 4 && $transaction->is_credit_debit){
+                    if($transaction->is_credit_debit == 2){
+                        $credit = $transaction->amount;
+                    }
+                }else{
+                    $credit = $transaction->amount;
+                }
+            }
+            $row[] = $credit;
+            $data[] = $row;
+        }
+        $output = array(
+            "draw" => isset($_POST['draw'])?$_POST['draw']:0,
+            "recordsTotal" => $this->datatable->count_all(),
+            "recordsFiltered" => $this->datatable->count_filtered(),
+            "data" => $data,
+        );
+        echo json_encode($output);
     }
 }

@@ -3,12 +3,7 @@
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <section class="content-header">
-        <h1>
-            Journal List
-            <?php if($this->applib->have_access_role(MODULE_JOURNAL_ID,"add")) { ?>
-            <a href="<?= base_url('journal/journal'); ?>" class="btn btn-primary pull-right">Add New</a>
-            <?php } ?>            
-        </h1>
+        <h1>Day Book</h1>
 
     </section>
     <!-- Main content -->
@@ -16,12 +11,27 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="box box-primary">
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label for="datepicker1" class="control-label">From Date</label>
+                            <input type="text" name="daterange_1" id="datepicker1" value="<?php echo date('d-m-Y') ?>" class="form-control" placeholder="dd-mm-yyyy">
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label for="datepicker2" class="control-label">To Date</label>
+                            <input type="text" name="daterange_2" id="datepicker2" value="<?php echo date('d-m-Y') ?>" class="form-control" placeholder="dd-mm-yyyy">
+                        </div>
+                    </div>
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="site_id" class="control-label">Site</label>
                             <select name="site_id" id="site_id" class="form-control select2"></select>
-                            <div class="clearfix"></div>
                         </div>
+                    </div>
+                    <div class="col-md-3">
+                        <br>  
+                        <button type="button" id="btn_datepicker" class="btn btn-default">Submit</button> 
                     </div>
                     <!-- /.box-header -->
                     <div class="box-body">
@@ -30,16 +40,23 @@
                             <thead>
                                 <tr>
                                     <th>Action</th>
-                                    <th>Contra No</th>
                                     <th>Date</th>
-                                    <th>From Account</th>
-                                    <th>To Account</th>
-                                    <th>Amount</th>
-                                    <th>Note</th>
+                                    <th>Type</th>
+                                    <th>Bank / Cash</th>
+                                    <th>Account</th>
+                                    <th>Debit</th>
+                                    <th>Credit</th>
                                 </tr>
                             </thead>
                             <tbody>
                             </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th colspan="5" style="text-align:right">Total</th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                            </tfoot>
                         </table>
                         <!---content end--->
                     </div>
@@ -57,14 +74,16 @@
 <!-- /.content-wrapper -->
 <script type="text/javascript">
     var table;
+    var datepicker1 = $('#datepicker1').val();
+    var datepicker2 = $('#datepicker2').val();
     $(document).ready(function () {
         initAjaxSelect2($("#site_id"), "<?= base_url('app/sites_select2_source') ?>");
-        var title = 'Journal List'
+        var title = 'Day Book'
         
         var buttonCommon = {
 			exportOptions: {
 				format: { body: function ( data, row, column, node ) { return data.replace(/(&nbsp;|<([^>]+)>)/ig, ""); } },
-                columns: [1, 2, 3, 4],
+                columns: [1, 2, 3, 4, 5, 6],
 			}
 		};
         
@@ -96,9 +115,11 @@
             "searching": true,
             "order": [],
             "ajax": {
-                "url": "<?= base_url('journal/journal_datatable')?>",
+                "url": "<?= base_url('transaction/day_book_datatable')?>",
                 "type": "POST",
                 "data": function (d) {
+                    d.daterange_1 = datepicker1;
+                    d.daterange_2 = datepicker2;
                     d.site_id = $('#site_id').val();
                 },
             },
@@ -109,11 +130,40 @@
             "columnDefs": [{
                 "className": "text-right",
                 "targets": [5],
-            }]
+            }],
+            "footerCallback": function ( row, data, start, end, display ) {
+                var api = this.api(), data;
+                var intVal = function ( i ) {
+                    return typeof i === 'string' ?
+                        i.replace(/[\$,]/g, '')*1 :
+                        typeof i === 'number' ?
+                            i : 0;
+                };
+                var debit = api
+                    .column( 5 )
+                    .data()
+                    .reduce( function (a, b) {
+                        return intVal(a) + intVal(b);
+                }, 0 );
+                var credit = api
+                    .column( 6 )
+                    .data()
+                    .reduce( function (a, b) {
+                        return intVal(a) + intVal(b);
+                }, 0 );
+                $( api.column( 5 ).footer() ).html(debit);
+                $( api.column( 6 ).footer() ).html(credit);
+            },
         });
 
-        $(document).on("change","#site_id", function () {
-            table.draw();
+        $(document).on('click', '#btn_datepicker', function (e) {
+            e.preventDefault();
+            datepicker1 = $('#datepicker1').val();
+            datepicker2 = $('#datepicker2').val();
+            if (datepicker2 != '' && datepicker1 != '') {
+                table.draw();
+                return false;
+            }
         });
 
         $(document).on("click", ".delete_transaction", function () {
@@ -126,7 +176,7 @@
                     data: 'id_name=transaction_id&table_name=transaction_entry',
                     success: function (data) {
                         table.draw();
-                        show_notify('Journal Deleted Successfully!', true);
+                        show_notify('Transaction Deleted Successfully!', true);
                     }
                 });
             }
