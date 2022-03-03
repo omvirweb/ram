@@ -3852,5 +3852,90 @@ class Master extends CI_Controller
         }
     }
 
+	function site(){
+		if(!empty($_POST['id']) && isset($_POST['id'])){
+			$result = $this->crud->get_data_row_by_id('sites','site_id',$_POST['id']);
+			$data = array(
+				'id' => $result->site_id,
+				'name' => $result->site_name,
+			);
+			set_page('master/site', $data);
+		} else {
+			$data = array();
+			set_page('master/site', $data);
+		}		
+	}
+
+	function site_datatable(){
+		$config['select'] = 'site_id, site_name';
+		$config['table'] = 'sites';
+		$config['column_order'] = array(null, 'site_name');
+		$config['column_search'] = array('site_name');
+		$config['order'] = array('site_name' => 'desc');
+		$this->load->library('datatables', $config, 'datatable');
+		$list = $this->datatable->get_datatables();
+		$data = array();
+		foreach ($list as $sites) {
+			$row = array();
+			$action = '';
+			$action .= '<form id="edit_' . $sites->site_id . '" method="post" action="' . base_url() . 'master/site" class="pull-left">
+						<input type="hidden" name="id" id="id" value="' . $sites->site_id . '">
+						<a class="edit_button btn-primary btn-xs" href="javascript:{}" onclick="document.getElementById(\'edit_' . $sites->site_id . '\').submit();" title="Edit Site"><i class="fa fa-edit"></i></a>
+					</form>';
+			$action .= ' &nbsp; <a href="javascript:void(0);" class="delete_button btn-danger btn-xs" data-href="' . base_url('master/delete/' . $sites->site_id) . '"><i class="fa fa-trash"></i></a>';	
+			$row[] = $action;
+			$row[] = $sites->site_name;
+			$data[] = $row;
+		}
+
+		$output = array(
+			"draw" => $_POST['draw'],
+			"recordsTotal" => $this->datatable->count_all(),
+			"recordsFiltered" => $this->datatable->count_filtered(),
+			"data" => $data,
+		);
+		//output to json format
+		echo json_encode($output);
+	}
+
+	function save_site(){
+		$return = array();
+		$post_data = $this->input->post();
+		if(isset($post_data['id']) && !empty($post_data['id'])){
+			$v_id = $this->crud->get_id_by_val_not('sites','site_id','site_name',trim($post_data['site_name']),$post_data['id']);
+			if(!empty($v_id)) {
+				$return['error'] = "Exist";
+				print json_encode($return);
+				exit;
+			}
+			$data['site_name'] = $post_data['site_name'];
+			$data['updated_at'] = $this->now_time;
+			$data['updated_by'] = $this->logged_in_id;
+			$where_array['site_id'] = $post_data['id'];
+			$result = $this->crud->update('sites', $data, $where_array);
+			if ($result) {
+				$return['success'] = "Updated";
+			}
+		}else{
+			$v_id = $this->crud->get_id_by_val('sites','site_id','site_name',trim($post_data['site_name']));
+			if(!empty($v_id)) {
+				$return['error'] = "Exist";
+				print json_encode($return);
+				exit;
+			}
+			$data['site_name'] = ucfirst($post_data['site_name']);
+			$data['created_at'] = $this->now_time;
+			$data['updated_at'] = $this->now_time;
+			$data['updated_by'] = $this->logged_in_id;
+			$data['created_by'] = $this->logged_in_id;
+			$result = $this->crud->insert('sites',$data);
+			if($result){
+				$return['success'] = "Added";
+			}
+		}
+		print json_encode($return);
+		exit;
+	}
+
 }
 

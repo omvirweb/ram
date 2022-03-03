@@ -304,6 +304,9 @@ $is_single_line_item = 1;
 					                        <a href="<?php echo base_url() ?>master/user_rights/"><i class="fa fa-circle-o"></i> User Rights</a>
 					                    </li>
 					                    <?php } ?>
+                                        <li class="<?= ($segment1 == 'master' && $segment2 == 'site') ? 'active' : '' ?>">
+					                        <a href="<?php echo base_url() ?>master/site/"><i class="fa fa-circle-o"></i> Site</a>
+					                    </li>
                                     </ul>
                                 </li>	
                                 <?php } ?>
