@@ -541,4 +541,16 @@ class Purchase extends CI_Controller {
       }
       set_page('purchase/invoice/invoice_detail', $data);
       } */
+
+    function material_in_list(){
+        if($this->applib->have_access_role(MODULE_PURCHASE_INVOICE_ID,"view")) {
+            $data = array();
+            $data['invoice_type'] = 4;
+            set_page('purchase/invoice/invoice_list', $data);
+        } else {
+            $this->session->set_flashdata('success', false);
+            $this->session->set_flashdata('message', 'You have not permission to access this page.');
+            redirect('/');
+        }
+    }
 }

@@ -917,6 +917,16 @@ class Transaction extends CI_Controller {
             if(!empty($transaction_date) && strtotime($transaction_date) > 0) {
                 $data['transaction_date'] = date('d-m-Y',strtotime($transaction_date));
             }
+        } elseif($voucher_type == "material_in") {
+            if (isset($_POST['purchase_invoice_id'])) {
+                $invoice_id = $_POST['purchase_invoice_id'];
+            }
+            $page_title = 'Material In';
+            $voucher_label = 'Material In';
+            $invoice_type = 4;
+            $module_id = 8;
+            $invoice_list_url = base_url('purchase/material_in_list');
+            $invoice_save_url = base_url('purchase/save_purchase_invoice');
         } else {
             redirect('/');
         }
@@ -1176,6 +1186,27 @@ class Transaction extends CI_Controller {
                         $data['order_lineitems'] = $lineitems;
                     }
                 }
+            } elseif($voucher_type == "material_in") {
+                if (isset($_POST['purchase_invoice_id'])) {
+                    $where = array('purchase_invoice_id' => $_POST['purchase_invoice_id']);
+                    $purchase_invoice_data = $this->crud->get_row_by_id('purchase_invoice', $where);
+                    $purchase_invoice_data[0]->invoice_date = $purchase_invoice_data[0]->purchase_invoice_date;
+                    $purchase_invoice_data[0]->invoice_desc = $purchase_invoice_data[0]->purchase_invoice_desc;
+                    $data['invoice_data'] = $purchase_invoice_data[0];
+
+                    $lineitems = '';
+                    $where = array('module' => '8', 'parent_id' => $_POST['purchase_invoice_id']);
+                    $purchase_invoice_lineitems = $this->crud->get_row_by_id('lineitems', $where);
+                    foreach ($purchase_invoice_lineitems as $purchase_invoice_lineitem) {
+                        $purchase_invoice_lineitem->pure_amount = $purchase_invoice_lineitem->pure_amount;
+                        $purchase_invoice_lineitem->cgst_amt = $purchase_invoice_lineitem->cgst_amount;
+                        $purchase_invoice_lineitem->sgst_amt = $purchase_invoice_lineitem->sgst_amount;
+                        $purchase_invoice_lineitem->igst_amt = $purchase_invoice_lineitem->igst_amount;
+                        $lineitems .= "'" . json_encode($purchase_invoice_lineitem) . "',";
+                    }
+                    $data['purchase_invoice_lineitems'] = $lineitems;
+                }
+
             }
             set_page('mutiple_line_item_transaction',$data);
         }
@@ -1185,7 +1216,7 @@ class Transaction extends CI_Controller {
         $return = array();
         $post_data = $this->input->post();
         $line_items_data = json_decode('['.$post_data['line_items_data'].']');
-//        echo "<pre>"; print_r($post_data); exit;
+    //    echo "<pre>"; print_r($post_data); exit;
         
         $invoice_data = array();     
         $voucher_type = $post_data['voucher_type'];
@@ -1231,6 +1262,14 @@ class Transaction extends CI_Controller {
             $invoice_data['dispatch_invoice_desc'] = $post_data['invoice_desc'];
             $invoice_data['cash_customer'] = (isset($post_data['cash_customer'])?$post_data['cash_customer']:'');
             $invoice_data['tax_type'] = (isset($post_data['tax_type'])?$post_data['tax_type']:'');
+
+        } elseif($voucher_type == 'material_in') {
+            $module = 8;
+            $invoice_data['bill_no'] = $post_data['bill_no'];
+            $invoice_data['vehicle_no'] = $post_data['vehicle_no'];
+            $invoice_data['purchase_invoice_date'] = date('Y-m-d', strtotime($post_data['invoice_date']));
+            $invoice_data['purchase_invoice_desc'] = $post_data['invoice_desc'];
+            $invoice_data['invoice_type'] = !empty($post_data['invoice_type']) ? $post_data['invoice_type'] : null;
         }
 
         if($voucher_type == 'sales' || $voucher_type == 'purchase' || $voucher_type == 'dispatch') {
@@ -1257,12 +1296,12 @@ class Transaction extends CI_Controller {
 
         $invoice_data['account_id'] = $post_data['account_id'];
         $invoice_data['qty_total'] = $post_data['qty_total'];
-        $invoice_data['pure_amount_total'] = $post_data['pure_amount_total'];
-        $invoice_data['discount_total'] = $post_data['discount_total'];
-        $invoice_data['cgst_amount_total'] = $post_data['cgst_amount_total'];
-        $invoice_data['sgst_amount_total'] = $post_data['sgst_amount_total'];
-        $invoice_data['igst_amount_total'] = $post_data['igst_amount_total'];
-        $invoice_data['other_charges_total'] = (isset($post_data['other_charges_total'])?$post_data['other_charges_total']:0);
+        // $invoice_data['pure_amount_total'] = $post_data['pure_amount_total'];
+        // $invoice_data['discount_total'] = $post_data['discount_total'];
+        // $invoice_data['cgst_amount_total'] = $post_data['cgst_amount_total'];
+        // $invoice_data['sgst_amount_total'] = $post_data['sgst_amount_total'];
+        // $invoice_data['igst_amount_total'] = $post_data['igst_amount_total'];
+        // $invoice_data['other_charges_total'] = (isset($post_data['other_charges_total'])?$post_data['other_charges_total']:0);
         $invoice_data['round_off_amount'] = (isset($post_data['round_off_amount'])?$post_data['round_off_amount']:0);
         $invoice_data['amount_total'] = ($post_data['amount_total'] + $invoice_data['round_off_amount']);
 
@@ -1327,6 +1366,16 @@ class Transaction extends CI_Controller {
                 }
             }
 
+            if($voucher_type == 'material_in' && !empty($post_data['bill_no'])) {
+                $bill_no = $post_data['bill_no'];
+                $where = array('invoice_type' => 4,'bill_no' => $bill_no, 'created_by' => $this->logged_in_id, 'purchase_invoice_id !=' => $post_data['invoice_id']);
+                $invoice_result = $this->crud->get_row_by_id('purchase_invoice', $where);
+                if(!empty($invoice_result)){
+                    echo json_encode(array("error" => 'BillNoExist'));
+                    exit;
+                }
+            }
+
             $invoice_data['updated_at'] = $this->now_time;
             $invoice_data['updated_by'] = $this->logged_in_id;
             $invoice_data['user_updated_by'] = $this->session->userdata()['login_user_id'];
@@ -1357,6 +1406,11 @@ class Transaction extends CI_Controller {
                 $this->crud->update('dispatch_invoice', $invoice_data, $where_array);
                 $this->session->set_flashdata('message','Dispatch Invoice Updated Successfully');
 
+            } elseif($voucher_type == 'material_in') {
+
+                $where_array['purchase_invoice_id'] = $post_data['invoice_id'];
+                $this->crud->update('purchase_invoice', $invoice_data, $where_array);
+                $this->session->set_flashdata('message','Material In Updated Successfully');
             }
             
             $return['success'] = "Updated";
@@ -1383,31 +1437,31 @@ class Transaction extends CI_Controller {
                 $add_lineitem['item_id'] = $lineitem->item_id;
                 $add_lineitem['item_qty'] = $lineitem->item_qty;
                 // $add_lineitem['unit_id'] = $lineitem->unit_id;
-                $add_lineitem['price'] = $lineitem->price;
-                $add_lineitem['item_code'] = isset($lineitem->item_code)?$lineitem->item_code:NULL;
+                $add_lineitem['price'] = isset($lineitem->price) ? $lineitem->price : NULL;
+                // $add_lineitem['item_code'] = isset($lineitem->item_code)?$lineitem->item_code:NULL;
                 $add_lineitem['internal_code'] = isset($lineitem->internal_code)?$lineitem->internal_code:NULL;
                 $add_lineitem['hsn'] = isset($lineitem->hsn)?$lineitem->hsn:NULL;
                 $add_lineitem['free_qty'] = isset($lineitem->free_qty)?$lineitem->free_qty:NULL;
                 $add_lineitem['no1'] = isset($lineitem->no1)?$lineitem->no1:NULL;
                 $add_lineitem['no2'] = isset($lineitem->no2)?$lineitem->no2:NULL;
                 $add_lineitem['net_rate'] = isset($lineitem->net_rate)?$lineitem->net_rate:NULL;
-                $add_lineitem['pure_amount'] = $lineitem->pure_amount;
-                $add_lineitem['discount_type'] = $lineitem->discount_type;
-                $add_lineitem['discount'] = $lineitem->discount;
-                $add_lineitem['discounted_price'] = $lineitem->discounted_price;
-                $add_lineitem['cgst'] = $lineitem->cgst;
-                $add_lineitem['cgst_amount'] = $lineitem->cgst_amt;
-                $add_lineitem['sgst'] = $lineitem->sgst;
-                $add_lineitem['sgst_amount'] = $lineitem->sgst_amt;
-                $add_lineitem['igst'] = $lineitem->igst;
-                $add_lineitem['igst_amount'] = $lineitem->igst_amt;
-                $add_lineitem['other_charges'] = $lineitem->other_charges;
-                $add_lineitem['amount'] = $lineitem->amount;
+                $add_lineitem['pure_amount'] = isset($lineitem->pure_amount)?$lineitem->pure_amount:NULL;
+                $add_lineitem['discount_type'] = isset($lineitem->discount_type)?$lineitem->discount_type:NULL;
+                $add_lineitem['discount'] = isset($lineitem->discount)?$lineitem->discount:NULL;
+                $add_lineitem['discounted_price'] = isset($lineitem->discounted_price)?$lineitem->discounted_price:NULL;
+                $add_lineitem['cgst'] =isset($lineitem->cgst)?$lineitem->cgst:NULL;
+                $add_lineitem['cgst_amount'] = isset($lineitem->cgst_amt)?$lineitem->cgst_amt:NULL;
+                $add_lineitem['sgst'] = isset($lineitem->sgst)?$lineitem->sgst:NULL;
+                $add_lineitem['sgst_amount'] = isset($lineitem->sgst_amt)?$lineitem->sgst_amt:NULL;
+                $add_lineitem['igst'] = isset($lineitem->igst)?$lineitem->igst:NULL;
+                $add_lineitem['igst_amount'] = isset($lineitem->igst_amt)?$lineitem->igst_amt:NULL;
+                $add_lineitem['other_charges'] = isset($lineitem->other_charges)?$lineitem->other_charges:NULL;
+                $add_lineitem['amount'] = isset($lineitem->amount)?$lineitem->amount:NULL;
+                $add_lineitem['rate_for_itax'] = isset($lineitem->rate_for_itax)?$lineitem->rate_for_itax:NULL;
+                $add_lineitem['price_for_itax'] = isset($lineitem->price_for_itax)?$lineitem->price_for_itax:NULL;
+                $add_lineitem['igst_for_itax'] = isset($lineitem->igst_for_itax)?$lineitem->igst_for_itax:NULL;
                 $add_lineitem['module'] = $module;
                 $add_lineitem['parent_id'] = $parent_id;
-                $add_lineitem['rate_for_itax'] = $lineitem->rate_for_itax;
-                $add_lineitem['price_for_itax'] = $lineitem->price_for_itax;
-                $add_lineitem['igst_for_itax'] = $lineitem->igst_for_itax;
                 $add_lineitem['note'] = isset($lineitem->note)?$lineitem->note:'';
                 if(isset($lineitem->id) && !empty($lineitem->id)){
                     $this->crud->update_item_current_stock_qty($lineitem->item_id,$parent_id,$voucher_type,$lineitem->item_qty,'update');
@@ -1459,6 +1513,16 @@ class Transaction extends CI_Controller {
                     exit;
                 }
             }
+
+            if($voucher_type == 'material_in' && !empty($post_data['bill_no'])) {
+                $bill_no = $post_data['bill_no'];
+                $where = array('invoice_type' => 4, 'bill_no' => $bill_no, 'created_by' => $this->logged_in_id);
+                $invoice_result = $this->crud->get_row_by_id('purchase_invoice', $where);
+                if(!empty($invoice_result)){
+                    echo json_encode(array("error" => 'BillNoExist'));
+                    exit;
+                }
+            }
             
             $invoice_data['created_at'] = $this->now_time;
             $invoice_data['created_by'] = $this->logged_in_id;
@@ -1487,7 +1551,11 @@ class Transaction extends CI_Controller {
             } elseif($voucher_type == 'dispatch') {
                 $this->crud->insert('dispatch_invoice', $invoice_data);
                 $this->session->set_flashdata('message','Dispatch Invoice Added Successfully');
-            } 
+
+            } elseif($voucher_type == 'material_in') {
+                $this->crud->insert('purchase_invoice', $invoice_data);
+                $this->session->set_flashdata('message','Material In Added Successfully');
+            }
 
             $return['success'] = "Added";
             $this->session->set_flashdata('success',true);
@@ -1519,37 +1587,31 @@ class Transaction extends CI_Controller {
             
             foreach($line_items_data[0] as $lineitem){
                 $add_lineitem = array();
+                if($voucher_type != 'material_in') {
+                    $add_lineitem['discount_type'] = isset($lineitem->discount_type)?$lineitem->discount_type:NULL;
+                    $add_lineitem['discount'] = isset($lineitem->discount)?$lineitem->discount:NULL;
+                    $add_lineitem['discounted_price'] = isset($lineitem->discounted_price)?$lineitem->discounted_price:NULL;
+                    $add_lineitem['cgst'] =isset($lineitem->cgst)?$lineitem->cgst:0;
+                    $add_lineitem['cgst_amount'] = isset($lineitem->cgst_amt)?$lineitem->cgst_amt:0;
+                    $add_lineitem['sgst'] = isset($lineitem->sgst)?$lineitem->sgst:0;
+                    $add_lineitem['sgst_amount'] = isset($lineitem->sgst_amt)?$lineitem->sgst_amt:NULL;
+                    $add_lineitem['igst'] = isset($lineitem->igst)?$lineitem->igst:NULL;
+                    $add_lineitem['igst_amount'] = isset($lineitem->igst_amt)?$lineitem->igst_amt:NULL;
+                    $add_lineitem['other_charges'] = isset($lineitem->other_charges)?$lineitem->other_charges:NULL;
+                    $add_lineitem['rate_for_itax'] = isset($lineitem->rate_for_itax)?$lineitem->rate_for_itax:NULL;
+                    $add_lineitem['price_for_itax'] = isset($lineitem->price_for_itax)?$lineitem->price_for_itax:NULL;
+                    $add_lineitem['igst_for_itax'] = isset($lineitem->igst_for_itax)?$lineitem->igst_for_itax:NULL;
+                }
                 $add_lineitem['item_group_id'] = isset($lineitem->item_group_id) ? $lineitem->item_group_id : null;
                 $add_lineitem['cat_id'] = isset($lineitem->cat_id) ? $lineitem->cat_id : NULL;
                 $add_lineitem['sub_cat_id'] = isset($lineitem->sub_cat_id) ? $lineitem->sub_cat_id : NULL;
                 $add_lineitem['item_id'] = $lineitem->item_id;
                 $add_lineitem['item_qty'] = $lineitem->item_qty;
-                // $add_lineitem['unit_id'] = $lineitem->unit_id;
-                $add_lineitem['price'] = $lineitem->price;
-                $add_lineitem['item_code'] = isset($lineitem->item_code)?$lineitem->item_code:NULL;
-                $add_lineitem['internal_code'] = isset($lineitem->internal_code)?$lineitem->internal_code:NULL;
-                $add_lineitem['hsn'] = isset($lineitem->hsn)?$lineitem->hsn:NULL;
-                $add_lineitem['free_qty'] = isset($lineitem->free_qty)?$lineitem->free_qty:NULL;
-                $add_lineitem['no1'] = isset($lineitem->no1)?$lineitem->no1:NULL;
-                $add_lineitem['no2'] = isset($lineitem->no2)?$lineitem->no2:NULL;
-                $add_lineitem['net_rate'] = isset($lineitem->net_rate)?$lineitem->net_rate:NULL;
-                $add_lineitem['pure_amount'] = $lineitem->pure_amount;
-                $add_lineitem['discount_type'] = $lineitem->discount_type;
-                $add_lineitem['discount'] = $lineitem->discount;
-                $add_lineitem['discounted_price'] = $lineitem->discounted_price;
-                $add_lineitem['cgst'] = $lineitem->cgst;
-                $add_lineitem['cgst_amount'] = $lineitem->cgst_amt;
-                $add_lineitem['sgst'] = $lineitem->sgst;
-                $add_lineitem['sgst_amount'] = $lineitem->sgst_amt;
-                $add_lineitem['igst'] = $lineitem->igst;
-                $add_lineitem['igst_amount'] = $lineitem->igst_amt;
-                $add_lineitem['other_charges'] = $lineitem->other_charges;
-                $add_lineitem['amount'] = $lineitem->amount;
+                $add_lineitem['price'] = isset($lineitem->price) ? $lineitem->price : NULL;
+                $add_lineitem['pure_amount'] = isset($lineitem->pure_amount)?$lineitem->pure_amount:NULL;
+                $add_lineitem['amount'] = isset($lineitem->amount)?$lineitem->amount:NULL;
                 $add_lineitem['module'] = $module;
                 $add_lineitem['parent_id'] = $parent_id;
-                $add_lineitem['rate_for_itax'] = $lineitem->rate_for_itax;
-                $add_lineitem['price_for_itax'] = $lineitem->price_for_itax;
-                $add_lineitem['igst_for_itax'] = $lineitem->igst_for_itax;
                 $add_lineitem['note'] = isset($lineitem->note)?$lineitem->note:'';
                 $add_lineitem['created_at'] = $this->now_time;
                 $add_lineitem['updated_at'] = $this->now_time;
@@ -1558,6 +1620,7 @@ class Transaction extends CI_Controller {
                 $add_lineitem['created_by'] = $this->logged_in_id;
                 $add_lineitem['user_created_by'] = $this->session->userdata()['login_user_id'];
                 $this->crud->insert('lineitems',$add_lineitem);
+                print_r($this->db->last_query());exit;
 
                 if($voucher_type != 'sales') {
                     if($voucher_type == 'purchase') {

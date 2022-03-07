@@ -389,6 +389,14 @@ $is_single_line_item = 1;
                                                 </ul>
                                             </li>
                                         <?php } ?>
+
+                                        <li class="dropdown-submenu">
+                                            <a tabindex="-1" href="<?php echo base_url() ?>purchase/material_in_list/"><i class="fa fa-circle-o"></i> Material In</a>
+                                            <ul class="dropdown-menu">
+                                                <li><a tabindex="-1" href="<?php echo base_url() ?>transaction/sales_purchase_transaction/material_in"><i class="fa fa-circle-o"></i> Add Material In</a></li>
+                                                <li><a tabindex="-1" href="<?php echo base_url() ?>purchase/material_in_list/"><i class="fa fa-circle-o"></i> Material In List</a></li>
+                                            </ul>
+                                        </li>
                                     </ul>
                                 </li>	
                                 <?php } ?>

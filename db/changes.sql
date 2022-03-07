@@ -87,3 +87,11 @@ ALTER TABLE `purchase_invoice` CHANGE `invoice_type` `invoice_type` TINYINT(1) N
 CREATE TABLE `sites` ( `site_id` INT NOT NULL AUTO_INCREMENT , `site_name` VARCHAR(255) NOT NULL , `created_at` DATETIME NOT NULL , `created_by` INT NOT NULL , `updated_at` DATETIME NOT NULL , `updated_by` INT NOT NULL , PRIMARY KEY (`site_id`)) ENGINE = InnoDB;
 
 ALTER TABLE `transaction_entry` ADD `site_id` INT NOT NULL AFTER `amount`, ADD INDEX `site_id` (`site_id`);
+
+-- Parag : 2022_03_07 06:21 PM
+
+ALTER TABLE `purchase_invoice` ADD `vehicle_no` VARCHAR(255) NULL AFTER `bill_no`;
+
+ALTER TABLE `purchase_invoice` CHANGE `invoice_type` `invoice_type` TINYINT(1) NOT NULL DEFAULT '1' COMMENT '1=Order;2=Purchase,3=Order Type 2, 4=Material In ';
+
+ALTER TABLE `lineitems` CHANGE `module` `module` INT(11) NULL DEFAULT NULL COMMENT 'purchase_invoice = 1, sales_invoice = 2, credit_note = 3, debit_note = 4, sales_quotation = 5, purchse_quotation = 6, 7=Dispatch, 8=Material In';

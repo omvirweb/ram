@@ -113,21 +113,27 @@
                                         </div>
                                     </div>
                                     <?php } ?>
+                                    <?php if($voucher_type != "material_in") { ?> 
                                     <div class="<?=$voucher_type == "sales"?"col-md-2":"col-md-3"?>">
+                                    <?php } else { ?>
+                                    <div class="col-md-6">
+                                    <?php } ?>
                                         <div class="form-group">
                                             <label for="invoice_date" class="control-label"><?=$voucher_label?> Date<span class="required-sign">*</span></label>
                                             <input type="text" name="invoice_date" id="datepicker2" class="form-control" data-index="2" required value="<?=isset($invoice_data->invoice_date) ? date('d-m-Y', strtotime($invoice_data->invoice_date)) : date('d-m-Y', strtotime($transaction_date)); ?>">
                                         </div>
                                     </div>
-                                    <div class="<?=$voucher_type == "sales"?"col-md-2":"col-md-3"?>">
-                                        <div class="form-group">
-                                            <label for="tax_type" class="control-label">Tax Type<span class="required-sign">*</span></label>
-                                            <select  name="tax_type" id="tax_type" class="form-control" data-index="3" required="">
-                                                <option value="1" <?php echo isset($invoice_data->tax_type) && $invoice_data->tax_type == 1 ? 'selected' : ''?>>GST</option>
-                                                <option value="2" <?php echo isset($invoice_data->tax_type) && $invoice_data->tax_type == 2 ? 'selected' : ''?>>IGST</option>
-                                            </select>
+                                    <?php if($voucher_type != "material_in") { ?> 
+                                        <div class="<?=$voucher_type == "sales"?"col-md-2":"col-md-3"?>">
+                                            <div class="form-group">
+                                                <label for="tax_type" class="control-label">Tax Type<span class="required-sign">*</span></label>
+                                                <select  name="tax_type" id="tax_type" class="form-control" data-index="3" required="">
+                                                    <option value="1" <?php echo isset($invoice_data->tax_type) && $invoice_data->tax_type == 1 ? 'selected' : ''?>>GST</option>
+                                                    <option value="2" <?php echo isset($invoice_data->tax_type) && $invoice_data->tax_type == 2 ? 'selected' : ''?>>IGST</option>
+                                                </select>
+                                            </div>
                                         </div>
-                                    </div>
+                                    <?php } ?>
                                     <?php if($voucher_type == "sales") { ?>
                                     <div class="col-md-2">
                                         <div class="form-group">
@@ -161,7 +167,6 @@
                                                 <input type="text" name="bill_no" id="bill_no" class="form-control" data-index="4" value="<?=isset($invoice_data->bill_no) ? $invoice_data->bill_no : ''; ?>">
                                             </div>
                                         </div>
-
                                     <?php } elseif($voucher_type == "credit_note" || $voucher_type == "debit_note") { ?> 
                                         <div class="col-md-3">
                                             <div class="form-group">
@@ -190,6 +195,19 @@
                                             <div class="form-group">
                                                 <label for="invoice_no" class="control-label">Invoice No</label>
                                                 <input type="text" name="invoice_no" id="invoice_no" class="form-control num_only" data-index="4" value="<?=isset($invoice_data->invoice_no) ? $invoice_data->invoice_no : $invoice_no; ?>">
+                                            </div>
+                                        </div>
+                                    <?php } elseif($voucher_type == "material_in") { ?> 
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label for="bill_no" class="control-label">Bill No.</label>
+                                                <input type="text" name="bill_no" id="bill_no" class="form-control" data-index="4" value="<?=isset($invoice_data->bill_no) ? $invoice_data->bill_no : ''; ?>">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label for="vehicle_no" class="control-label">Vehicle No.</label>
+                                                <input type="text" name="vehicle_no" id="vehicle_no" class="form-control" data-index="4" value="<?=isset($invoice_data->vehicle_no) ? $invoice_data->vehicle_no : ''; ?>">
                                             </div>
                                         </div>
                                     <?php } ?>
@@ -223,7 +241,7 @@
 
                                     <?php if($voucher_type == "sales") { ?>
                                     
-                                    <?php } elseif($voucher_type == "purchase") { ?>
+                                    <?php } elseif($voucher_type == "purchase" || $voucher_type == "material_in") { ?>
                                     <div class="col-md-3 hidden">
                                         <div class="form-group">
                                             <label for="invoice_type" class="control-label">Invoice Type<span class="required-sign">*</span></label>
@@ -231,6 +249,7 @@
                                                 <option value='1' <?=$invoice_type == 1?'selected':''?>>Order</option>
                                                 <option value='2' <?=$invoice_type == 2?'selected':''?>>Purchase</option>
                                                 <option value='3' <?=$invoice_type == 3?'selected':''?>>Sales Order</option>
+                                                <option value='4' <?=$invoice_type == 4?'selected':''?>>Material In</option>
                                             </select>
                                         </div>
                                     </div>

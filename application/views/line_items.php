@@ -80,12 +80,14 @@
 			<select name="line_items_data[item_id]" id="item_id" class="item_id" data-index="29"></select>
 		</div>
 	</div>
+    <?php if($voucher_type != "material_in") { ?>
 	<div class="col-md-1 pr0">
 		<div class="form-group">
 			<label for="hsn" class="control-label">HSN </label>
 			<input type="text" name="line_items_data[hsn]" id="hsn" class="hsn form-control">
 		</div>
 	</div>
+    <?php } ?>
 	<div class="col-md-1 pr0">
 		<div class="form-group">
 			<label for="item_qty" class="control-label">Quantity </label>
@@ -106,12 +108,14 @@
 			<input type="hidden" name="line_items_data[price_for_itax]" id="price_for_itax" class="price_for_itax form-control item_detail" >
 		</div>
 	</div>
+    <?php if($voucher_type != "material_in") { ?> 
 	<div class="col-md-1 pr0">
 		<div class="form-group">
 			<label for="gst_rate" class="control-label">GST %</label>
 			<input type="text" name="line_items_data[gst_rate]" id="gst_rate" class="gst_rate form-control item_detail num_only" data-index="37">
 		</div>
 	</div>
+    <?php } ?>
     <div class="col-md-2">
         <div class="form-group">
             <label for="site_id" class="control-label">Site</label>
@@ -154,73 +158,61 @@
             <div class="">
                     <table class="table table-bordered table-striped table-hover" style="margin-bottom: 0px;">
                             <thead>
-                                    <tr>
-                                            <th class="fix_fcolumn" width="100px">Action</th>
-                                            <th width="70px">Sr. No.</th>
-                                            <?php if(isset($invoice_line_item_fields) && in_array('item_group', $invoice_line_item_fields)){ ?>
-                                                <th>Item Group</th>
-                                            <?php } ?>
-                                            <?php if(isset($invoice_line_item_fields) && in_array('category', $invoice_line_item_fields)){ ?>
-                                                <th>Category</th>
-                                            <?php } ?>
-                                            <?php if(isset($invoice_line_item_fields) && in_array('sub_category', $invoice_line_item_fields)){ ?>
-                                                <th>Sub Category</th>
-                                            <?php } ?>
-                                            <th>Item</th>
-                                            <th class="text-right">Qty</th>
-                                            <th class="text-right <?php echo isset($line_item_fields['unit']) ? $line_item_fields['unit'] : ''; ?>">Unit</th>
-                                            <th class="text-right <?php echo isset($line_item_fields['Rate']) ? $line_item_fields['Rate'] : ''; ?>">Rate</th>
-                                            <th class="text-right">Pure Amount</th>
-                                            <th class="text-right <?php echo isset($line_item_fields['discount']) ? $line_item_fields['discount'] : ''; ?>">Discount</th>
-                                            <th class="text-right <?php echo isset($line_item_fields['basic_amount']) ? $line_item_fields['basic_amount'] : ''; ?>">Basic Amount</th>
-                                            <th class="text-right <?php echo isset($line_item_fields['cgst_per']) ? $line_item_fields['cgst_per'] : ''; ?>">CGST</th>
-                                            <th class="text-right <?php echo isset($line_item_fields['sgst_per']) ? $line_item_fields['sgst_per'] : ''; ?>">SGST</th>
-                                            <th class="text-right <?php echo isset($line_item_fields['igst_per']) ? $line_item_fields['igst_per'] : ''; ?>">IGST</th>
-                                            <th class="text-right <?php echo isset($line_item_fields['other_charges']) ? $line_item_fields['other_charges'] : ''; ?>">Other Charges</th>
-                                            <th class="fix_lcolumn text-right <?php echo isset($line_item_fields['amount']) ? $line_item_fields['amount'] : ''; ?>" style="width: 150px;">Amount</th>
-                                    </tr>
+                                <tr>
+                                    <th class="fix_fcolumn" width="100px">Action</th>
+                                    <th width="70px">Sr. No.</th>
+                                    <?php if(isset($invoice_line_item_fields) && in_array('item_group', $invoice_line_item_fields)){ ?>
+                                        <th>Item Group</th>
+                                    <?php } ?>
+                                    <?php if(isset($invoice_line_item_fields) && in_array('category', $invoice_line_item_fields)){ ?>
+                                        <th>Category</th>
+                                    <?php } ?>
+                                    <?php if(isset($invoice_line_item_fields) && in_array('sub_category', $invoice_line_item_fields)){ ?>
+                                        <th>Sub Category</th>
+                                    <?php } ?>
+                                    <th>Item</th>
+                                    <th class="text-right">Qty</th>
+                                    <th class="text-right <?php echo isset($line_item_fields['unit']) ? $line_item_fields['unit'] : ''; ?>">Unit</th>
+                                    <th class="text-right <?php echo isset($line_item_fields['Rate']) ? $line_item_fields['Rate'] : ''; ?>">Rate</th>
+                                    <th class="fix_lcolumn text-right <?php echo isset($line_item_fields['amount']) ? $line_item_fields['amount'] : ''; ?>" style="width: 150px;">Amount</th>
+                                </tr>
                             </thead>
 
                             <tbody id="lineitem_list"></tbody>
                             <tfoot>
-                                    <tr>
-                                            <th class="fix_fcolumn">Total</th>
-                                            <th></th>
-                                            <?php if(isset($invoice_line_item_fields) && in_array('item_group', $invoice_line_item_fields)){ ?>
-                                                <th></th>
-                                            <?php } ?>
-                                            <?php if(isset($invoice_line_item_fields) && in_array('category', $invoice_line_item_fields)){ ?>
-                                                <th></th>
-                                            <?php } ?>
-                                            <?php if(isset($invoice_line_item_fields) && in_array('sub_category', $invoice_line_item_fields)){ ?>
-                                                <th></th>
-                                            <?php } ?>
-                                            <th></th>
-                                            <th class="text-right"><span class="qty_total"></span><input type="hidden" name="qty_total" id="qty_total" /></th>
-                                            <th class="<?php echo isset($line_item_fields['unit']) ? $line_item_fields['unit'] : ''; ?>"></th>
-                                            <th class="<?php echo isset($line_item_fields['Rate']) ? $line_item_fields['Rate'] : ''; ?>"></th>
-                                            <th class="text-right"><span class="pure_amount_total"></span><input type="hidden" name="pure_amount_total" id="pure_amount_total" /></th>
-                                            <th class="text-right <?php echo isset($line_item_fields['discount']) ? $line_item_fields['discount'] : ''; ?>"><span class="discount_total"></span><input type="hidden" name="discount_total" id="discount_total" /></th>
-                                            <th class="text-right <?php echo isset($line_item_fields['basic_amount']) ? $line_item_fields['basic_amount'] : ''; ?>"><span class="discounted_price_total"></span><input type="hidden" name="discounted_price_total" id="discounted_price_total" /></th>
-                                            <th class="text-right <?php echo isset($line_item_fields['cgst_per']) ? $line_item_fields['cgst_per'] : ''; ?>"><span class="cgst_amount_total"></span><input type="hidden" name="cgst_amount_total" id="cgst_amount_total" /></th>
-                                            <th class="text-right <?php echo isset($line_item_fields['sgst_per']) ? $line_item_fields['sgst_per'] : ''; ?>"><span class="sgst_amount_total"></span><input type="hidden" name="sgst_amount_total" id="sgst_amount_total" /></th>
-                                            <th class="text-right <?php echo isset($line_item_fields['igst_per']) ? $line_item_fields['igst_per'] : ''; ?>"><span class="igst_amount_total"></span><input type="hidden" name="igst_amount_total" id="igst_amount_total" /></th>
-                                            <th class="text-right <?php echo isset($line_item_fields['other_charges']) ? $line_item_fields['other_charges'] : ''; ?>"><span class="other_charges_total"></span><input type="hidden" name="other_charges_total" id="other_charges_total" /></th>
-                                            <th class="fix_lcolumn text-right <?php echo isset($line_item_fields['amount']) ? $line_item_fields['amount'] : ''; ?>"><span class="amount_total"></span><input type="hidden" name="amount_total" id="amount_total" /></th>
-                                    </tr>
+                                <tr>
+                                    <th class="fix_fcolumn">Total</th>
+                                    <th></th>
+                                    <?php if(isset($invoice_line_item_fields) && in_array('item_group', $invoice_line_item_fields)){ ?>
+                                        <th></th>
+                                    <?php } ?>
+                                    <?php if(isset($invoice_line_item_fields) && in_array('category', $invoice_line_item_fields)){ ?>
+                                        <th></th>
+                                    <?php } ?>
+                                    <?php if(isset($invoice_line_item_fields) && in_array('sub_category', $invoice_line_item_fields)){ ?>
+                                        <th></th>
+                                    <?php } ?>
+                                    <th></th>
+                                    <th class="text-right"><span class="qty_total"></span><input type="hidden" name="qty_total" id="qty_total" /></th>
+                                    <th class="<?php echo isset($line_item_fields['unit']) ? $line_item_fields['unit'] : ''; ?>"></th>
+                                    <th class="<?php echo isset($line_item_fields['Rate']) ? $line_item_fields['Rate'] : ''; ?>"></th>
+                                    <th class="fix_lcolumn text-right <?php echo isset($line_item_fields['amount']) ? $line_item_fields['amount'] : ''; ?>"><span class="amount_total"></span><input type="hidden" name="amount_total" id="amount_total" /></th>
+                                </tr>
                             </tfoot>
                     </table>
                     <table class="table table-bordered table-striped table-hover">
                     	<thead>
+                            <?php if($voucher_type != "material_in") { ?>
                     		<tr>
                     			<th class="text-right">Round Off</th>
                                 <th class="text-right" style="padding: 0;width: 150px;">
                                 	<input type="text" name="round_off_amount" id="round_off_amount" class="form-control text-right" style="padding-right: 7px;">
                                 </th>
                     		</tr>
+                            <?php } ?>
                     		<tr>
                     			<th class="text-right">Total Amount</th>
-                    			<th class="fix_lcolumn text-right"><span class="amount_total_after_round_off"></span></th>
+                    			<th class="fix_lcolumn text-right" style="width: 150px;"><span class="amount_total_after_round_off"></span></th>
                     		</tr>
                     	</thead>
                     </table>
@@ -1140,13 +1132,6 @@
             '<td class="text-right">' + value.item_qty + '</td>' +
 			'<td class="<?php echo isset($line_item_fields['unit']) ? $line_item_fields['unit'] : ''; ?>">' + value_unit_name + '</td>' +
 			'<td class="text-right <?php echo isset($line_item_fields['Rate']) ? $line_item_fields['Rate'] : ''; ?>">' + value.price + '</td>' +
-			'<td class="text-right ">' + 0 + '</td>' +
-			'<td class="text-right <?php echo isset($line_item_fields['discount']) ? $line_item_fields['discount'] : ''; ?>">' + 0 + '</td>' +
-			'<td class="text-right <?php echo isset($line_item_fields['basic_amount']) ? $line_item_fields['basic_amount'] : ''; ?>">' + 0 + '</td>' +
-			'<td class="text-right <?php echo isset($line_item_fields['cgst_per']) ? $line_item_fields['cgst_per'] : ''; ?>">' + 0 + '% - ' + 0 + ' Rs. </td>' +
-			'<td class="text-right <?php echo isset($line_item_fields['sgst_per']) ? $line_item_fields['sgst_per'] : ''; ?>">' + 0 + '% - ' + 0 + ' Rs. </td>' +
-			'<td class="text-right <?php echo isset($line_item_fields['igst_per']) ? $line_item_fields['igst_per'] : ''; ?>">' + 0 + '% - ' + 0 + ' Rs. </td>' +
-			'<td class="text-right <?php echo isset($line_item_fields['other_charges']) ? $line_item_fields['other_charges'] : ''; ?>">' + 0 + '</td>' +
 			'<td class="fix_lcolumn text-right <?php echo isset($line_item_fields['amount']) ? $line_item_fields['amount'] : ''; ?>">' + parseF(value.amount) + '</td></tr>';
 			new_lineitem_html += row_html;
 			qty_total += parseInt(value.item_qty);

@@ -20,6 +20,11 @@
                     if($this->applib->have_access_role(MODULE_ORDER_ID,"add")) {
                         echo '<a href="'.base_url('transaction/order_type2').'" class="btn btn-primary pull-right">Add New</a>';
                     }
+                } elseif($invoice_type == 4) {
+                    echo 'Material In';
+                    if($this->applib->have_access_role(MODULE_ORDER_ID,"add")) {
+                        echo '<a href="'.base_url('transaction/sales_purchase_transaction/material_in').'" class="btn btn-primary pull-right">Add New</a>';
+                    }
                 } else {
                     echo 'Purchase Invoice List';
                     if($this->applib->have_access_role(MODULE_ORDER_ID,"add")) {
