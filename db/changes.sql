@@ -95,3 +95,7 @@ ALTER TABLE `purchase_invoice` ADD `vehicle_no` VARCHAR(255) NULL AFTER `bill_no
 ALTER TABLE `purchase_invoice` CHANGE `invoice_type` `invoice_type` TINYINT(1) NOT NULL DEFAULT '1' COMMENT '1=Order;2=Purchase,3=Order Type 2, 4=Material In ';
 
 ALTER TABLE `lineitems` CHANGE `module` `module` INT(11) NULL DEFAULT NULL COMMENT 'purchase_invoice = 1, sales_invoice = 2, credit_note = 3, debit_note = 4, sales_quotation = 5, purchse_quotation = 6, 7=Dispatch, 8=Material In';
+
+-- Parag : 2022_03_08 10:24 AM
+
+ALTER TABLE `lineitems` ADD `gst` DOUBLE NOT NULL DEFAULT '0' AFTER `note`, ADD `site_id` INT NULL AFTER `gst`, ADD INDEX `site_id` (`site_id`);

@@ -1436,30 +1436,12 @@ class Transaction extends CI_Controller {
                 $add_lineitem['sub_cat_id'] = isset($lineitem->sub_cat_id) ? $lineitem->sub_cat_id : NULL;
                 $add_lineitem['item_id'] = $lineitem->item_id;
                 $add_lineitem['item_qty'] = $lineitem->item_qty;
-                // $add_lineitem['unit_id'] = $lineitem->unit_id;
                 $add_lineitem['price'] = isset($lineitem->price) ? $lineitem->price : NULL;
-                // $add_lineitem['item_code'] = isset($lineitem->item_code)?$lineitem->item_code:NULL;
-                $add_lineitem['internal_code'] = isset($lineitem->internal_code)?$lineitem->internal_code:NULL;
-                $add_lineitem['hsn'] = isset($lineitem->hsn)?$lineitem->hsn:NULL;
-                $add_lineitem['free_qty'] = isset($lineitem->free_qty)?$lineitem->free_qty:NULL;
-                $add_lineitem['no1'] = isset($lineitem->no1)?$lineitem->no1:NULL;
-                $add_lineitem['no2'] = isset($lineitem->no2)?$lineitem->no2:NULL;
-                $add_lineitem['net_rate'] = isset($lineitem->net_rate)?$lineitem->net_rate:NULL;
                 $add_lineitem['pure_amount'] = isset($lineitem->pure_amount)?$lineitem->pure_amount:NULL;
-                $add_lineitem['discount_type'] = isset($lineitem->discount_type)?$lineitem->discount_type:NULL;
-                $add_lineitem['discount'] = isset($lineitem->discount)?$lineitem->discount:NULL;
-                $add_lineitem['discounted_price'] = isset($lineitem->discounted_price)?$lineitem->discounted_price:NULL;
-                $add_lineitem['cgst'] =isset($lineitem->cgst)?$lineitem->cgst:NULL;
-                $add_lineitem['cgst_amount'] = isset($lineitem->cgst_amt)?$lineitem->cgst_amt:NULL;
-                $add_lineitem['sgst'] = isset($lineitem->sgst)?$lineitem->sgst:NULL;
-                $add_lineitem['sgst_amount'] = isset($lineitem->sgst_amt)?$lineitem->sgst_amt:NULL;
-                $add_lineitem['igst'] = isset($lineitem->igst)?$lineitem->igst:NULL;
-                $add_lineitem['igst_amount'] = isset($lineitem->igst_amt)?$lineitem->igst_amt:NULL;
-                $add_lineitem['other_charges'] = isset($lineitem->other_charges)?$lineitem->other_charges:NULL;
                 $add_lineitem['amount'] = isset($lineitem->amount)?$lineitem->amount:NULL;
-                $add_lineitem['rate_for_itax'] = isset($lineitem->rate_for_itax)?$lineitem->rate_for_itax:NULL;
-                $add_lineitem['price_for_itax'] = isset($lineitem->price_for_itax)?$lineitem->price_for_itax:NULL;
-                $add_lineitem['igst_for_itax'] = isset($lineitem->igst_for_itax)?$lineitem->igst_for_itax:NULL;
+                $add_lineitem['unit_id'] = isset($lineitem->unit_id)?$lineitem->unit_id:NULL;
+                $add_lineitem['gst'] = isset($lineitem->gst_rate)?$lineitem->gst_rate:0;
+                $add_lineitem['site_id'] = isset($lineitem->site_id)?$lineitem->site_id:NULL;     
                 $add_lineitem['module'] = $module;
                 $add_lineitem['parent_id'] = $parent_id;
                 $add_lineitem['note'] = isset($lineitem->note)?$lineitem->note:'';
@@ -1587,21 +1569,6 @@ class Transaction extends CI_Controller {
             
             foreach($line_items_data[0] as $lineitem){
                 $add_lineitem = array();
-                if($voucher_type != 'material_in') {
-                    $add_lineitem['discount_type'] = isset($lineitem->discount_type)?$lineitem->discount_type:NULL;
-                    $add_lineitem['discount'] = isset($lineitem->discount)?$lineitem->discount:NULL;
-                    $add_lineitem['discounted_price'] = isset($lineitem->discounted_price)?$lineitem->discounted_price:NULL;
-                    $add_lineitem['cgst'] =isset($lineitem->cgst)?$lineitem->cgst:0;
-                    $add_lineitem['cgst_amount'] = isset($lineitem->cgst_amt)?$lineitem->cgst_amt:0;
-                    $add_lineitem['sgst'] = isset($lineitem->sgst)?$lineitem->sgst:0;
-                    $add_lineitem['sgst_amount'] = isset($lineitem->sgst_amt)?$lineitem->sgst_amt:NULL;
-                    $add_lineitem['igst'] = isset($lineitem->igst)?$lineitem->igst:NULL;
-                    $add_lineitem['igst_amount'] = isset($lineitem->igst_amt)?$lineitem->igst_amt:NULL;
-                    $add_lineitem['other_charges'] = isset($lineitem->other_charges)?$lineitem->other_charges:NULL;
-                    $add_lineitem['rate_for_itax'] = isset($lineitem->rate_for_itax)?$lineitem->rate_for_itax:NULL;
-                    $add_lineitem['price_for_itax'] = isset($lineitem->price_for_itax)?$lineitem->price_for_itax:NULL;
-                    $add_lineitem['igst_for_itax'] = isset($lineitem->igst_for_itax)?$lineitem->igst_for_itax:NULL;
-                }
                 $add_lineitem['item_group_id'] = isset($lineitem->item_group_id) ? $lineitem->item_group_id : null;
                 $add_lineitem['cat_id'] = isset($lineitem->cat_id) ? $lineitem->cat_id : NULL;
                 $add_lineitem['sub_cat_id'] = isset($lineitem->sub_cat_id) ? $lineitem->sub_cat_id : NULL;
@@ -1610,6 +1577,9 @@ class Transaction extends CI_Controller {
                 $add_lineitem['price'] = isset($lineitem->price) ? $lineitem->price : NULL;
                 $add_lineitem['pure_amount'] = isset($lineitem->pure_amount)?$lineitem->pure_amount:NULL;
                 $add_lineitem['amount'] = isset($lineitem->amount)?$lineitem->amount:NULL;
+                $add_lineitem['unit_id'] = isset($lineitem->unit_id)?$lineitem->unit_id:NULL;
+                $add_lineitem['gst'] = isset($lineitem->gst_rate)?$lineitem->gst_rate:0;
+                $add_lineitem['site_id'] = isset($lineitem->site_id)?$lineitem->site_id:NULL;
                 $add_lineitem['module'] = $module;
                 $add_lineitem['parent_id'] = $parent_id;
                 $add_lineitem['note'] = isset($lineitem->note)?$lineitem->note:'';
@@ -1620,7 +1590,7 @@ class Transaction extends CI_Controller {
                 $add_lineitem['created_by'] = $this->logged_in_id;
                 $add_lineitem['user_created_by'] = $this->session->userdata()['login_user_id'];
                 $this->crud->insert('lineitems',$add_lineitem);
-                print_r($this->db->last_query());exit;
+                // print_r($this->db->last_query());exit;
 
                 if($voucher_type != 'sales') {
                     if($voucher_type == 'purchase') {

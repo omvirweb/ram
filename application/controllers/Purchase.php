@@ -403,6 +403,11 @@ class Purchase extends CI_Controller {
                                         <input type="hidden" name="purchase_invoice_id" id="purchase_invoice_id" value="' . $order->purchase_invoice_id . '">
                                         <a class="edit_button btn-primary btn-xs" href="javascript:{}" onclick="document.getElementById(\'edit_' . $order->purchase_invoice_id . '\').submit();" title="Edit Invoice"><i class="fa fa-edit"></i></a>
                                     </form> ';
+                    } else if($_POST['invoice_type'] == 4) {
+                        $action .= '<form id="edit_' . $order->purchase_invoice_id . '" method="post" action="' . base_url('transaction/sales_purchase_transaction/material_in') . '" style="width: 25px; display: initial;" >
+                                        <input type="hidden" name="purchase_invoice_id" id="purchase_invoice_id" value="' . $order->purchase_invoice_id . '">
+                                        <a class="edit_button btn-primary btn-xs" href="javascript:{}" onclick="document.getElementById(\'edit_' . $order->purchase_invoice_id . '\').submit();" title="Edit Invoice"><i class="fa fa-edit"></i></a>
+                                    </form> ';
                     } else {
                         $action .= '<form id="edit_' . $order->purchase_invoice_id . '" method="post" action="' . base_url(isset($_POST['invoice_type']) && $_POST['invoice_type'] == '2' ? 'transaction/sales_purchase_transaction/purchase' : 'transaction/sales_purchase_transaction/order') . '" style="width: 25px; display: initial;" >
                                             <input type="hidden" name="purchase_invoice_id" id="purchase_invoice_id" value="' . $order->purchase_invoice_id . '">

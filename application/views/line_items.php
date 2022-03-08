@@ -1197,6 +1197,10 @@
         if(typeof(value.unit_id) !== "undefined" && value.unit_id !== null && value.unit_id !== 0) {
         	setSelect2Value($("#unit_id"),"<?=base_url('app/set_pack_unit_select2_val_by_id/')?>" + value.unit_id);
         }
+
+        if(typeof(value.site_id) !== "undefined" && value.site_id !== null && value.site_id !== 0) {
+        	setSelect2Value($("#site_id"),"<?=base_url('app/sites_group_select2_val_by_id/')?>" + value.site_id);
+        }
         
 
 		if(typeof(value.id) != "undefined" && value.id !== null) {
