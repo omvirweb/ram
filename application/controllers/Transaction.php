@@ -1509,6 +1509,7 @@ class Transaction extends CI_Controller {
             $invoice_data['created_at'] = $this->now_time;
             $invoice_data['created_by'] = $this->logged_in_id;
             $invoice_data['user_created_by'] = $this->session->userdata()['login_user_id'];
+            $invoice_data['user_updated_by'] = $this->session->userdata()['login_user_id'];
 
             if($voucher_type == 'sales') {
                 $this->crud->insert('sales_invoice', $invoice_data);
