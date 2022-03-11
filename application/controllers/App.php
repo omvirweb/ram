@@ -1700,7 +1700,7 @@ class App extends CI_Controller{
 			"results" => $this->get_select2_data('sites', 'site_id', 'site_name', $search, $page, $where),
 			"total_count" => $this->count_select2_data('sites', 'site_id', 'site_name', $search, $where),
 		);
-		echo json_encode($results);
+		echo json_encode($results);		
 		exit();
 	}
 	function sites_group_select2_val_by_id($id){

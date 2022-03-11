@@ -1208,11 +1208,16 @@ class Crud extends CI_Model
 		return true;
 	}
 
-    function get_account_balance($account_id,$to_date = '') {
+    function get_account_balance($account_id,$to_date = '', $site_id = '') {
     	if($to_date == '') {
     		$to_date = date("Y-m-d");	
     	}
         $to_date = date("Y-m-d",strtotime($to_date));
+        $site_id_check = "";
+        if ( $site_id != "") {
+        	$site_id_check = " AND site_id = ".$site_id;	
+        }
+        
         
         $credit_total = 0;
         $debit_total = 0;
@@ -1231,53 +1236,58 @@ class Crud extends CI_Model
         }
 
         /*-------- Payment ------*/
-        $from_payment_amt = $this->crud->getFromSQL("SELECT SUM(amount) as total_amount FROM transaction_entry WHERE transaction_type = 1 AND from_account_id=".$account_id." AND transaction_date <= '".$to_date."'");
+        $from_payment_amt = $this->crud->getFromSQL("SELECT SUM(amount) as total_amount FROM transaction_entry WHERE transaction_type = 1 AND from_account_id=".$account_id." AND transaction_date <= '".$to_date."'".$site_id_check);
         $from_payment_amt = $from_payment_amt[0]->total_amount;
         if (!empty($from_payment_amt)) {
             $credit_total += $from_payment_amt;
         }
 
 
-        $to_payment_amt = $this->crud->getFromSQL("SELECT SUM(amount) as total_amount FROM transaction_entry WHERE transaction_type = 1 AND to_account_id=".$account_id." AND transaction_date <= '".$to_date."'");
+        $to_payment_amt = $this->crud->getFromSQL("SELECT SUM(amount) as total_amount FROM transaction_entry WHERE transaction_type = 1 AND to_account_id=".$account_id." AND transaction_date <= '".$to_date."'".$site_id_check);
         $to_payment_amt = $to_payment_amt[0]->total_amount;
         if (!empty($to_payment_amt)) {
             $debit_total += $to_payment_amt;
         }
 
         /*------- Receipt -------*/
-        $from_receipt_amt = $this->crud->getFromSQL("SELECT SUM(amount) as total_amount FROM transaction_entry WHERE transaction_type = 2 AND from_account_id=".$account_id." AND transaction_date <= '".$to_date."'");
+        $from_receipt_amt = $this->crud->getFromSQL("SELECT SUM(amount) as total_amount FROM transaction_entry WHERE transaction_type = 2 AND from_account_id=".$account_id." AND transaction_date <= '".$to_date."'".$site_id_check);
         $from_receipt_amt = $from_receipt_amt[0]->total_amount;
         if (!empty($from_receipt_amt)) {
             $credit_total += $from_receipt_amt;
         }
 
-        $to_receipt_amt = $this->crud->getFromSQL("SELECT SUM(amount) as total_amount FROM transaction_entry WHERE transaction_type = 2 AND to_account_id=".$account_id." AND transaction_date <= '".$to_date."'");
+        $to_receipt_amt = $this->crud->getFromSQL("SELECT SUM(amount) as total_amount FROM transaction_entry WHERE transaction_type = 2 AND to_account_id=".$account_id." AND transaction_date <= '".$to_date."'".$site_id_check);
         $to_receipt_amt = $to_receipt_amt[0]->total_amount;
         if (!empty($to_receipt_amt)) {
             $debit_total += $to_receipt_amt;
         }
 
         /*-------- Contra ------*/
-        $from_contra_amt = $this->crud->getFromSQL("SELECT SUM(amount) as total_amount FROM transaction_entry WHERE transaction_type = 3 AND from_account_id=".$account_id." AND transaction_date <= '".$to_date."'");
+        $from_contra_amt = $this->crud->getFromSQL("SELECT SUM(amount) as total_amount FROM transaction_entry WHERE transaction_type = 3 AND from_account_id=".$account_id." AND transaction_date <= '".$to_date."'".$site_id_check);
         $from_contra_amt = $from_contra_amt[0]->total_amount;
         if (!empty($from_contra_amt)) {
             $credit_total += $from_contra_amt;
         }
 
-        $to_contra_amt = $this->crud->getFromSQL("SELECT SUM(amount) as total_amount FROM transaction_entry WHERE transaction_type = 3 AND to_account_id=".$account_id." AND transaction_date <= '".$to_date."'");
+        $to_contra_amt = $this->crud->getFromSQL("SELECT SUM(amount) as total_amount FROM transaction_entry WHERE transaction_type = 3 AND to_account_id=".$account_id." AND transaction_date <= '".$to_date."'".$site_id_check);
         $to_contra_amt = $to_contra_amt[0]->total_amount;
         if (!empty($to_contra_amt)) {
             $debit_total += $to_contra_amt;
         }
 
         /*------- Journal ------*/
-        $from_journal_amt = $this->crud->getFromSQL("SELECT SUM(amount) as total_amount FROM transaction_entry WHERE transaction_type = 4 AND from_account_id=".$account_id." AND transaction_date <= '".$to_date."'");
+        $from_journal_amt = $this->crud->getFromSQL("SELECT SUM(amount) as total_amount FROM transaction_entry WHERE transaction_type = 4 AND from_account_id=".$account_id." AND transaction_date <= '".$to_date."'".$site_id_check);
         $from_journal_amt = $from_journal_amt[0]->total_amount;
         if (!empty($from_journal_amt)) {
             $credit_total += $from_journal_amt;
         }
 
-        $to_journal_amt = $this->crud->getFromSQL("SELECT SUM(tr.amount) as total_amount FROM transaction_entry as tr LEFT JOIN account as a ON a.account_id = tr.from_account_id WHERE tr.transaction_type = 4 AND tr.to_account_id=".$account_id." AND tr.transaction_date <= '".$to_date."' AND a.is_kasar_account = 0 ");
+        if ( $site_id_check == "" ) {
+        	$to_journal_amt = $this->crud->getFromSQL("SELECT SUM(tr.amount) as total_amount FROM transaction_entry as tr LEFT JOIN account as a ON a.account_id = tr.from_account_id WHERE tr.transaction_type = 4 AND tr.to_account_id=".$account_id." AND tr.transaction_date <= '".$to_date."' AND a.is_kasar_account = 0 ");
+        } else {
+        	$to_journal_amt = $this->crud->getFromSQL("SELECT SUM(tr.amount) as total_amount FROM transaction_entry as tr LEFT JOIN account as a ON a.account_id = tr.from_account_id WHERE tr.transaction_type = 4 AND tr.to_account_id=".$account_id." AND tr.transaction_date <= '".$to_date."' AND a.is_kasar_account = 0 AND tr.site_id = ".$site_id);
+        }
+        
         $to_journal_amt = $to_journal_amt[0]->total_amount;
         if (!empty($to_journal_amt)) {
             $debit_total += $to_journal_amt;
