@@ -23,6 +23,13 @@
                                     </div>
                                 </div>
                                 <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="site_id" class="control-label">Site</label>
+                                        <select name="line_items_data[site_id]" id="site_id" class="form-control select2">
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
                                     <input type="hidden" name="" id="table_draw" value="0">
                                     <br><button type="button" id="btn_search" class="btn btn-default pull-left">Submit</button>
                                 </div>
@@ -65,6 +72,33 @@
 <input type="hidden" name="total_net_amount" id="total_net_amount">
 <script type="text/javascript">
 	$(document).ready(function(){
+    $("#site_id").select2({
+        placeholder: " --ALL-- ",
+        allowClear: true,
+        width:"100%",
+        ajax: {
+            url: "<?= base_url('app/sites_select2_source') ?>",
+            dataType: 'json',
+            delay: 250,
+            data: function (params) {
+                return {
+                    q: params.term, // search term
+                    page: params.page
+                };
+            },
+            processResults: function (data,params) {
+                params.page = params.page || 1;
+                return {
+                    results: data.results,
+                    pagination: {
+                        more: (params.page * 5) < data.total_count
+                    }
+                };
+            },
+            cache: true
+        }
+    });
+
 
     var title = 'Trial Balance (From Date : ' + $('#datepicker1').val() + ' To Date : ' + $('#datepicker2').val() +')';
 
@@ -174,6 +208,7 @@
                 "data": function(d){
                 	d.from_date = $("#datepicker1").val();
                 	d.to_date = $("#datepicker2").val();
+                    d.site_id = $("#site_id").val();
                 },
                 "dataSrc": function ( jsondata ) {
                     if(jsondata.total_net_amount){

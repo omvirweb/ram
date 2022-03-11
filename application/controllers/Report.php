@@ -3289,7 +3289,7 @@ class Report extends CI_Controller {
 
         $from_date = isset($_POST['from_date']) && strtotime($_POST['from_date']) > 0?date("Y-m-d",strtotime($_POST['from_date'])):date("Y-04-01");
         $to_date = isset($_POST['to_date']) && strtotime($_POST['to_date']) > 0?date("Y-m-d",strtotime($_POST['to_date'])):date("Y-m-d");
-
+        $site_id = isset( $_POST['site_id'] ) ? $_POST['site_id'] : "";
         $this->session->set_userdata('trial_balance_from_date',$from_date);
         $this->session->set_userdata('trial_balance_to_date',$to_date);
 
@@ -3306,9 +3306,9 @@ class Report extends CI_Controller {
         if(!empty($account_res)){
             foreach ($account_res as $account_row){
 
-                $capital = $capital + $this->crud->get_account_balance($account_row->account_id,$from_date);
+                $capital = $capital + $this->crud->get_account_balance($account_row->account_id,$from_date,$site_id);
 
-                $acc_balance = $this->crud->get_account_balance($account_row->account_id,$to_date);
+                $acc_balance = $this->crud->get_account_balance($account_row->account_id,$to_date,$site_id);                
                 if($acc_balance == 0) {
                     continue;
                 }
