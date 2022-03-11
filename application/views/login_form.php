@@ -19,7 +19,44 @@
   <link rel="stylesheet" href="<?= base_url('assets/plugins/iCheck/square/blue.css');?>">
   <!-- Theme style -->
   <link rel="stylesheet" href="<?= base_url('assets/dist/css/AdminLTE.min.css');?>">
-    
+  
+  <style>
+	  html,body,.login-page{
+		background-color: #2B3984;
+		transition-duration: 0.5s;
+	  }
+
+	  .login-box-body{
+		  border-radius: 20px;
+	  }
+	  .login-box-body:hover{
+		  box-shadow: 0px 0px 7px white;
+	  }
+
+	  .form-control{
+		  border-radius : 20px;
+	  }
+
+	  .btn-primary{
+		  border-radius: 20px;
+		  background-color: white;
+		  border-color: #2B3984;
+		  color: #2B3984;
+		  font-weight: bold;
+		  width: 100px !important;
+	  }
+
+	  .btn-primary:hover{
+		  background-color:#2B3984;
+		  color:white;
+		  box-shadow: 0px 0px 7px highlight;
+	  }
+
+	  .bottom-logo{
+		  width:50%;
+	  }
+  </style>
+
     
 	
 	<!--[if lt IE 9]>
@@ -34,7 +71,7 @@
 	</div>
 	<!-- /.login-logo -->
 	<div class="login-box-body">
-    <img src="<?php echo base_url('assets/dist/img/'.$login_logo);?>" class="saas-logo" alt="saas-logo">
+    <img src="<?php echo base_url('assets/dist/img/ram-logo.png');?>" class="saas-logo" alt="saas-logo">
 	
 		
 		<label id="username-error" class="text-danger login-box-msg" style="padding-left:80px;" for="invalid"><?php echo isset($errors['invalid'])?$errors['invalid']:''; ?><?php echo isset($errors['approve'])?$errors['approve']:''; ?></label>
@@ -42,17 +79,17 @@
 		<form action="<?php echo base_url('auth/login');?>" method="post">
 			<div class="form-group has-feedback">
 				<input type="text" autofocus class="form-control" placeholder="Email"  name="email" id="email" value="<?=set_value('email')?>">
-				<span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+				<span class="glyphicon glyphicon-envelope form-control-feedback" style="color:#2B3984;"></span>
 				<label id="username-error" class="text-danger" for="email"><?php echo isset($errors['email'])?$errors['email']:''; ?></label>
 				
 			</div>
 			<div class="form-group has-feedback">
 				<input type="password" class="form-control" placeholder="Password" name="pass" value="">
-				<span class="glyphicon glyphicon-lock form-control-feedback"></span>
+				<span class="glyphicon glyphicon-lock form-control-feedback" style="color:#2B3984;"></span>
 				<label id="password-error" class="text-danger" for="pass"><?php echo isset($errors['pass'])?$errors['pass']:''; ?></label>
 			</div>
 			<div class="row">
-				<div class="col-xs-8">
+				<div class="col-xs-0">
 					<div class="checkbox icheck">
 						<!--<label>
 							<input type="checkbox"> Remember Me
@@ -60,9 +97,10 @@
 					</div>
 				</div>
 				<!-- /.col -->
-				<div class="col-xs-4">
-					<button type="submit" class="btn btn-primary btn-block btn-flat">Sign In</button>
-				</div>
+				<center>
+				<div class="col-xs-12">
+					<button type="submit" class="btn btn-primary">Sign In</button>
+				</div></center>
 				<!-- /.col -->
 			</div>
 		</form>
@@ -71,9 +109,13 @@
 			<!--<a href="#">I forgot my password</a>-->
 		</div>
 		<!-- /.social-auth-links -->
-		Welcome To The New World!
+		<br>
+		<center>Welcome To The New World!</center>
+		
 	</div>
 	<!-- /.login-box-body -->
+	<br>
+	<center><img src="<?php echo base_url('assets/dist/img/khatri_logo-tra.png');?>" class="bottom-logo" alt="saas-logo"></center>
 </div>
 <!-- /.login-box -->
 

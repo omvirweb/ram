@@ -131,6 +131,9 @@ $is_single_line_item = 1;
     -moz-border-radius: 6px 0 6px 6px;
     border-radius: 6px 0 6px 6px;
 }
+.navbar-header2{
+    background-color:white;
+}
         </style>
 	<body class="hold-transition skin-blue-light layout-top-nav">
         <div id="ajax-loader" style="display: none;">
@@ -143,10 +146,11 @@ $is_single_line_item = 1;
 		<div class="wrapper">
 			<header class="main-header">
 				<nav class="navbar navbar-static-top">
-                    <div class="container" style="width: 100%;">
+                    <div class="container" style="width: 100%;background-color:#2B3984;">
                     	<div class="navbar-header">
                             <a href="<?= base_url()?>" class="navbar-brand" style="padding:0px;">
-			                    <span class="logo-lg" style="background-color:#f8fafc"><b style=""><span style="color: #009ad9;"><img src="<?=isset($login_logo) && !empty($login_logo) ? base_url('assets/dist/img/'.$login_logo) : base_url() . 'assets/dist/img/om.jpg';?>" width="80" height="50"></span></b></span>
+			                    <span class="logo-lg"><b style=""><span style="color: #009ad9;">
+                            </span></b></span>
 							</a>
                             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse">
                                 <i class="fa fa-bars"></i>
