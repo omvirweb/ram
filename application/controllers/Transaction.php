@@ -1267,6 +1267,7 @@ class Transaction extends CI_Controller {
             $module = 8;
             $invoice_data['bill_no'] = $post_data['bill_no'];
             $invoice_data['vehicle_no'] = $post_data['vehicle_no'];
+            $invoice_data['driver_name'] = $post_data['driver_name'];
             $invoice_data['purchase_invoice_date'] = date('Y-m-d', strtotime($post_data['invoice_date']));
             $invoice_data['purchase_invoice_desc'] = $post_data['invoice_desc'];
             $invoice_data['invoice_type'] = !empty($post_data['invoice_type']) ? $post_data['invoice_type'] : null;

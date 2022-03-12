@@ -210,6 +210,12 @@
                                                 <input type="text" name="vehicle_no" id="vehicle_no" class="form-control" data-index="4" value="<?=isset($invoice_data->vehicle_no) ? $invoice_data->vehicle_no : ''; ?>">
                                             </div>
                                         </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label for="driver_name" class="control-label">Driver Name</label>
+                                                <input type="text" name="driver_name" id="driver_name" class="form-control" data-index="4" value="<?=isset($invoice_data->driver_name) ? $invoice_data->driver_name : ''; ?>">
+                                            </div>
+                                        </div>
                                     <?php } ?>
 
                                     <?php if($voucher_type == "sales" || $voucher_type == "purchase" || $voucher_type == "dispatch") { ?> 

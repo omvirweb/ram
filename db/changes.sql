@@ -99,3 +99,7 @@ ALTER TABLE `lineitems` CHANGE `module` `module` INT(11) NULL DEFAULT NULL COMME
 -- Parag : 2022_03_08 10:24 AM
 
 ALTER TABLE `lineitems` ADD `gst` DOUBLE NOT NULL DEFAULT '0' AFTER `note`, ADD `site_id` INT NULL AFTER `gst`, ADD INDEX `site_id` (`site_id`);
+
+--Parag : 2022_03_12 11:27 AM
+
+ALTER TABLE `purchase_invoice` ADD `driver_name` VARCHAR(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL AFTER `vehicle_no`;
