@@ -896,6 +896,10 @@ class Master extends CI_Controller
 					$data = array(
 						'id' => $result->pack_unit_id,
 						'name' => $result->pack_unit_name,
+						'created_by' => $result->created_by,
+						'updated_by' => $result->updated_by,
+						'created_at' => date('Y-m-d H:m a', strtotime( $result->created_at )),
+						'updated_at' => date('Y-m-d H:m a', strtotime( $result->updated_at )),
 					);
 					set_page('master/pack_unit', $data);
 		        } else {
