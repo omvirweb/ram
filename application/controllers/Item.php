@@ -257,7 +257,6 @@ class Item extends CI_Controller
 			$where_array['item_id'] = $post_data['item_id'];
 			$result = $this->crud->update('item', $data, $where_array);
 
-
 			if($result){
 				$return['success'] = "Updated";
 				$this->session->set_flashdata('success',true);

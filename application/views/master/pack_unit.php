@@ -27,6 +27,19 @@
 								<label for="pack_unit_name">Pack Unit<span class="required-sign">*</span></label>
                                                                 <input type="text" name="pack_unit_name" class="form-control" id="pack_unit_name" placeholder="Enter Pack Unit" value="<?=isset($name) ? $name : '' ?>" pattern="[^'\x22]+" title="Invalid input" required autofocus="">
 							</div>
+							<?php 
+								if( isset($name) ){?>
+									<div style="border: 2px solid green;max-width: 280px;padding: 10px;"> 
+										<?php 
+											$created_user = $this->crud->get_data_row_by_id('user', 'user_id', $created_by);
+											$updated_user = $this->crud->get_data_row_by_id('user', 'user_id', $updated_by);
+										?>
+										<p class="text-success"><b>Created by : <?php echo $created_user->user_name; ?> @<?php echo $created_at; ?></b></p>
+										<p class="text-success"><b>Updated by : <?php echo $updated_user->user_name; ?> @<?php echo $updated_at; ?></b></p>
+										</div>
+								<?php }
+							?>
+							
 						</div>
 						<!-- /.box-body -->
 						<div class="box-footer">

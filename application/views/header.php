@@ -311,6 +311,9 @@ $is_single_line_item = 1;
                                         <li class="<?= ($segment1 == 'master' && $segment2 == 'site') ? 'active' : '' ?>">
 					                        <a href="<?php echo base_url() ?>master/site/"><i class="fa fa-circle-o"></i> Site</a>
 					                    </li>
+					                    <li class="<?= ($segment1 == 'master' && $segment2 == 'pack_unit') ? 'active' : '' ?>">
+					                        <a href="<?php echo base_url() ?>master/pack_unit/"><i class="fa fa-circle-o"></i> Pack Unit</a>
+					                    </li>
                                     </ul>
                                 </li>	
                                 <?php } ?>

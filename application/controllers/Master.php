@@ -888,14 +888,18 @@ class Master extends CI_Controller
 	}
 	
 	function pack_unit(){
-        $li_unit = isset($this->session->userdata()['li_unit']) ? $this->session->userdata()['li_unit'] : '0';
-    	if ($li_unit == 1) {
+     //    $li_unit = isset($this->session->userdata()['li_unit']) ? $this->session->userdata()['li_unit'] : '0';
+    	// if ($li_unit == 1) {
 			if(!empty($_POST['id']) && isset($_POST['id'])){
 				if($this->applib->have_access_role(MASTER_UNIT_ID,"edit")) {
 	            	$result = $this->crud->get_data_row_by_id('pack_unit','pack_unit_id',$_POST['id']);
 					$data = array(
 						'id' => $result->pack_unit_id,
 						'name' => $result->pack_unit_name,
+						'created_by' => $result->created_by,
+						'updated_by' => $result->updated_by,
+						'created_at' => date('Y-m-d H:m a', strtotime( $result->created_at )),
+						'updated_at' => date('Y-m-d H:m a', strtotime( $result->updated_at )),
 					);
 					set_page('master/pack_unit', $data);
 		        } else {
@@ -913,9 +917,9 @@ class Master extends CI_Controller
 	                redirect('/');
 		        }
 			}			
-        } else {
-            redirect('/');
-        }
+        // } else {
+        //     redirect('/');
+        // }
 	}
 
 	function pack_unit_datatable(){
