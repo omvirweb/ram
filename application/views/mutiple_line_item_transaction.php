@@ -120,7 +120,7 @@
                                     <?php } ?>
                                         <div class="form-group">
                                             <label for="invoice_date" class="control-label"><?=$voucher_label?> Date<span class="required-sign">*</span></label>
-                                            <input type="text" name="invoice_date" id="datepicker2" class="form-control" data-index="2" required value="<?=isset($invoice_data->invoice_date) ? date('d-m-Y', strtotime($invoice_data->invoice_date)) : date('d-m-Y', strtotime($transaction_date)); ?>">
+                                            <input type="text" name="invoice_date" id="datepicker2" class="form-control date-size" data-index="2" required value="<?=isset($invoice_data->invoice_date) ? date('d-m-Y', strtotime($invoice_data->invoice_date)) : date('d-m-Y', strtotime($transaction_date)); ?>">
                                         </div>
                                     </div>
                                     <?php if($voucher_type != "material_in") { ?> 

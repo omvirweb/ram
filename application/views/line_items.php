@@ -69,8 +69,8 @@
 
 	<div class="col-md-3 pr0">
 		<div class="form-group">
-			<label for="item_id" class="control-label">Item.</label>
-			<a class="btn btn-primary btn-xs pull-right add_item_link" href="javascript:;" data-url= "<?=base_url('item/item/')?>"><i class="fa fa-plus"></i></a>
+			<label for="item_id" class="control-label">Item</label>
+			<a class="btn btn-primary btn-xs pull-right add_item_link plus-icon" href="javascript:;" data-url= "<?=base_url('item/item/')?>"><i class="fa fa-plus"></i></a>
 			<?php if($segment3 == 'sales'):  ?>
 			<a class="btn btn-primary btn-xs pull-right sub_qty_setting" href="javascript:void(0);" style="margin-right: 5px;"><i class="fa fa-list"></i></a>
 			<?php endif;?>	
@@ -97,7 +97,7 @@
 	<div class="col-md-1 pr0 <?php echo isset($line_item_fields['unit']) ? $line_item_fields['unit'] : ''; ?>">
 		<div class="form-group">
 			<label for="unit" class="control-label">Unit</label>
-                        <a class="btn btn-primary btn-xs pull-right add_account_link" href="javascript:;" data-url= "<?=base_url('master/pack_unit')?>"><i class="fa fa-plus"></i></a>
+                        <a class="btn btn-primary btn-xs pull-right add_account_link plus-icon" href="javascript:;" data-url= "<?=base_url('master/pack_unit')?>"><i class="fa fa-plus"></i></a>
 			<select name="line_items_data[unit_id]" id="unit_id" class="unit_id" data-index="31"></select>
 		</div>
 	</div>
@@ -156,11 +156,11 @@
 <div class="col-md-12 container ">
     <div class="table-wrapper">
             <div class="">
-                    <table class="table table-bordered table-striped table-hover" style="margin-bottom: 0px;">
+                    <table class="table table-bordered table-striped table-hover" style="margin-bottom: 0px; border-color:#2b3984;">
                             <thead>
                                 <tr>
-                                    <th class="fix_fcolumn" width="100px">Action</th>
-                                    <th width="70px">Sr. No.</th>
+                                    <th class="fix_fcolumn" width="100px" style="border-color:#2b3984;">Action</th>
+                                    <th width="70px" style="border-color:#2b3984;">Sr. No.</th>
                                     <?php if(isset($invoice_line_item_fields) && in_array('item_group', $invoice_line_item_fields)){ ?>
                                         <th>Item Group</th>
                                     <?php } ?>
@@ -170,33 +170,33 @@
                                     <?php if(isset($invoice_line_item_fields) && in_array('sub_category', $invoice_line_item_fields)){ ?>
                                         <th>Sub Category</th>
                                     <?php } ?>
-                                    <th>Item</th>
-                                    <th class="text-right">Qty</th>
-                                    <th class="text-right <?php echo isset($line_item_fields['unit']) ? $line_item_fields['unit'] : ''; ?>">Unit</th>
-                                    <th class="text-right <?php echo isset($line_item_fields['Rate']) ? $line_item_fields['Rate'] : ''; ?>">Rate</th>
-                                    <th class="fix_lcolumn text-right <?php echo isset($line_item_fields['amount']) ? $line_item_fields['amount'] : ''; ?>" style="width: 150px;">Amount</th>
+                                    <th style="border-color:#2b3984;">Item</th>
+                                    <th class="text-right" style="border-color:#2b3984;">Qty</th>
+                                    <th class="text-right <?php echo isset($line_item_fields['unit']) ? $line_item_fields['unit'] : ''; ?>" style="border-color:#2b3984;">Unit</th>
+                                    <th class="text-right <?php echo isset($line_item_fields['Rate']) ? $line_item_fields['Rate'] : ''; ?>" style="border-color:#2b3984;">Rate</th>
+                                    <th class="fix_lcolumn text-right <?php echo isset($line_item_fields['amount']) ? $line_item_fields['amount'] : ''; ?>" style="width: 150px;border-color:#2b3984;">Amount</th>
                                 </tr>
                             </thead>
 
                             <tbody id="lineitem_list"></tbody>
                             <tfoot>
                                 <tr>
-                                    <th class="fix_fcolumn">Total</th>
-                                    <th></th>
+                                    <th class="fix_fcolumn" style="border-color:#2b3984;">Total</th>
+                                    <th style="border-color:#2b3984;"></th>
                                     <?php if(isset($invoice_line_item_fields) && in_array('item_group', $invoice_line_item_fields)){ ?>
-                                        <th></th>
+                                        <th style="border-color:#2b3984;"></th>
                                     <?php } ?>
                                     <?php if(isset($invoice_line_item_fields) && in_array('category', $invoice_line_item_fields)){ ?>
-                                        <th></th>
+                                        <th style="border-color:#2b3984;"></th>
                                     <?php } ?>
                                     <?php if(isset($invoice_line_item_fields) && in_array('sub_category', $invoice_line_item_fields)){ ?>
-                                        <th></th>
+                                        <th style="border-color:#2b3984;"></th>
                                     <?php } ?>
-                                    <th></th>
-                                    <th class="text-right"><span class="qty_total"></span><input type="hidden" name="qty_total" id="qty_total" /></th>
-                                    <th class="<?php echo isset($line_item_fields['unit']) ? $line_item_fields['unit'] : ''; ?>"></th>
-                                    <th class="<?php echo isset($line_item_fields['Rate']) ? $line_item_fields['Rate'] : ''; ?>"></th>
-                                    <th class="fix_lcolumn text-right <?php echo isset($line_item_fields['amount']) ? $line_item_fields['amount'] : ''; ?>"><span class="amount_total"></span><input type="hidden" name="amount_total" id="amount_total" /></th>
+                                    <th style="border-color:#2b3984;"></th>
+                                    <th class="text-right" style="border-color:#2b3984;"><span class="qty_total"></span><input type="hidden" name="qty_total" id="qty_total" /></th>
+                                    <th class="<?php echo isset($line_item_fields['unit']) ? $line_item_fields['unit'] : ''; ?>" style="border-color:#2b3984;"></th>
+                                    <th class="<?php echo isset($line_item_fields['Rate']) ? $line_item_fields['Rate'] : ''; ?>" style="border-color:#2b3984;"></th>
+                                    <th class="fix_lcolumn text-right <?php echo isset($line_item_fields['amount']) ? $line_item_fields['amount'] : ''; ?>" style="border-color:#2b3984;"><span class="amount_total"></span><input type="hidden" name="amount_total" id="amount_total" /></th>
                                 </tr>
                             </tfoot>
                     </table>
@@ -204,15 +204,15 @@
                     	<thead>
                             <?php if($voucher_type != "material_in") { ?>
                     		<tr>
-                    			<th class="text-right">Round Off</th>
-                                <th class="text-right" style="padding: 0;width: 150px;">
+                    			<th class="text-right" style="border-color:#2b3984;">Round Off</th>
+                                <th class="text-right" style="padding: 0;width: 150px; border-color:#2b3984;">
                                 	<input type="text" name="round_off_amount" id="round_off_amount" class="form-control text-right" style="padding-right: 7px;">
                                 </th>
                     		</tr>
                             <?php } ?>
                     		<tr>
-                    			<th class="text-right">Total Amount</th>
-                    			<th class="fix_lcolumn text-right" style="width: 150px;"><span class="amount_total_after_round_off"></span></th>
+                    			<th class="text-right" style="border-color:#2b3984;">Total Amount</th>
+                    			<th class="fix_lcolumn text-right" style="width: 150px; border-color:#2b3984;"><span class="amount_total_after_round_off"></span></th>
                     		</tr>
                     	</thead>
                     </table>
@@ -1114,25 +1114,25 @@
             }
 			var lineitem_edit_btn = '';
 			lineitem_edit_btn = '<a class="btn btn-xs btn-primary btn-edit-item edit_lineitem_' + index + '" href="javascript:void(0);" onclick="edit_lineitem(' + index + ')"><i class="fa fa-edit"></i></a> ';
-			var row_html = '<tr class="lineitem_index_' + index + '"><td class="fix_fcolumn">' +
+			var row_html = '<tr class="lineitem_index_' + index + '"><td class="fix_fcolumn" style="border-color:#2b3984;">' +
 			lineitem_edit_btn +
 			' <a class="btn btn-xs btn-danger btn-delete-item" href="javascript:void(0);" onclick="remove_lineitem(' + index + ')"><i class="fa fa-remove"></i></a> ' +
 			'</td>' +
-			'<td>' + (index+1) + '</td>' +
+			'<td style="border-color:#2b3984;">' + (index+1) + '</td>' +
             <?php if(isset($invoice_line_item_fields) && in_array('item_group', $invoice_line_item_fields)){ ?>
-            '<td>' + value_item_group_name + '</td>' + 
+            '<td style="border-color:#2b3984;">' + value_item_group_name + '</td>' + 
             <?php } ?>
             <?php if(isset($invoice_line_item_fields) && in_array('category', $invoice_line_item_fields)){ ?>
-            '<td>' + value_cat_name + '</td>' +
+            '<td style="border-color:#2b3984;">' + value_cat_name + '</td>' +
             <?php } ?>
             <?php if(isset($invoice_line_item_fields) && in_array('sub_category', $invoice_line_item_fields)){ ?>
-            '<td>' + value_sub_cat_name + '</td>' +
+            '<td style="border-color:#2b3984;">' + value_sub_cat_name + '</td>' +
             <?php } ?>
-            '<td>' + item_name + '</td>' +
-            '<td class="text-right">' + value.item_qty + '</td>' +
-			'<td class="<?php echo isset($line_item_fields['unit']) ? $line_item_fields['unit'] : ''; ?>">' + value_unit_name + '</td>' +
-			'<td class="text-right <?php echo isset($line_item_fields['Rate']) ? $line_item_fields['Rate'] : ''; ?>">' + value.price + '</td>' +
-			'<td class="fix_lcolumn text-right <?php echo isset($line_item_fields['amount']) ? $line_item_fields['amount'] : ''; ?>">' + parseF(value.amount) + '</td></tr>';
+            '<td style="border-color:#2b3984;">' + item_name + '</td>' +
+            '<td class="text-right" style="border-color:#2b3984;">' + value.item_qty + '</td>' +
+			'<td class="<?php echo isset($line_item_fields['unit']) ? $line_item_fields['unit'] : ''; ?>" style="border-color:#2b3984;">' + value_unit_name + '</td>' +
+			'<td class="text-right <?php echo isset($line_item_fields['Rate']) ? $line_item_fields['Rate'] : ''; ?>" style="border-color:#2b3984;">' + value.price + '</td>' +
+			'<td class="fix_lcolumn text-right <?php echo isset($line_item_fields['amount']) ? $line_item_fields['amount'] : ''; ?>" style="border-color:#2b3984;">' + parseF(value.amount) + '</td></tr>';
 			new_lineitem_html += row_html;
 			qty_total += parseInt(value.item_qty);
 			pure_amount_total += parseInt(value.pure_amount);
