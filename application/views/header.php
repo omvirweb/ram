@@ -679,6 +679,7 @@ $is_single_line_item = 1;
 							                <a href="<?= base_url() ?>gstr_3b_excel/"><i class="fa fa-circle-o"></i>  GSTR-3B Excel Export</a>
 							            </li>
 							            <?php } ?>
+                                        <li><a href="<?= VUE_BASE_URL ?>"><i class="fa fa-circle-o"></i>  Vue Test</a></li>
                                     </ul>
                                 </li>
                                 <?php } ?>
