@@ -167,16 +167,16 @@ $is_single_line_item = 1;
 					            $li_discount = isset($this->session->userdata()['li_discount']) ? $this->session->userdata()['li_discount'] : '0';
 					            if(($this->applib->have_access_role(MASTER_COMPANY_ID,"view") || $this->applib->have_access_role(MASTER_COMPANY_ID,"add") || $this->applib->have_access_role(MASTER_COMPANY_ID,"edit")) || ($this->applib->have_access_role(MODULE_COMPANY_DOCUMENT_ID,"view") || $this->applib->have_access_role(MODULE_COMPANY_DOCUMENT_ID,"add")) ) { ?>
                             	<li tabindex="0" class="dropdown <?= ($segment1 == 'user') ? 'active' : '' ?>">
-                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Branch <span class="caret"></span></a>
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Company <span class="caret"></span></a>
                                     <ul class="dropdown-menu">
                                     	<?php if($this->applib->have_access_role(MASTER_COMPANY_ID,"add") || $this->applib->have_access_role(MASTER_COMPANY_ID,"edit")) { ?>
                                     	<li class="<?= ($segment1 == 'user' && $segment2 == 'user') ? 'active' : '' ?>">
-                                    		<a href="<?php echo base_url() ?>user/user/" ><i class="fa fa-circle-o"></i> Add Branch</a>
+                                    		<a href="<?php echo base_url() ?>user/user/" ><i class="fa fa-circle-o"></i> Add Company</a>
                                     	</li>
                                     	<?php } ?>
                     					<?php if($this->applib->have_access_role(MASTER_COMPANY_ID,"view")) { ?>
                                     	<li class="<?= ($segment1 == 'user' && $segment2 == 'user_list') ? 'active' : '' ?>">
-                                    		<a href="<?php echo base_url() ?>user/user_list/"><i class="fa fa-circle-o"></i> Branch List</a>
+                                    		<a href="<?php echo base_url() ?>user/user_list/"><i class="fa fa-circle-o"></i> Company List</a>
                                     	</li>
                                     	<?php } ?>
                     					<?php if($this->applib->have_access_role(MODULE_COMPANY_DOCUMENT_ID,"view") || $this->applib->have_access_role(MODULE_COMPANY_DOCUMENT_ID,"add")) { ?>
