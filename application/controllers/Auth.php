@@ -122,6 +122,22 @@ class Auth extends CI_Controller
                             }
 
                             $last_visited_page = $this->crud->get_column_value_by_id('user', 'last_visited_page', array('user_id' => $user_id));
+
+                            $ch = curl_init();
+                            curl_setopt($ch, CURLOPT_URL,"http://localhost/ram/test_curl");
+                            curl_setopt($ch, CURLOPT_POST, 1);
+                            curl_setopt($ch, CURLOPT_POSTFIELDS,
+                                        "userID=".$user_id);
+                            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                            curl_close ($ch);
+
+                            $server_output = curl_exec($ch);
+                            
+                            if ($server_output != "") {
+                                echo "There is some error. . ..";die();    
+                            }
+                            
+
                             if(empty($last_visited_page)) {
                                 redirect('');
                             } else {
@@ -146,6 +162,11 @@ class Auth extends CI_Controller
         }
     }
     
+    function test_curl(){
+        echo "post data = <pre>";
+        print_r($_POST);
+        die();
+    }
     /**
      * Register user on the site
      *
