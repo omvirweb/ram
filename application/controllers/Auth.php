@@ -123,19 +123,14 @@ class Auth extends CI_Controller
 
                             $last_visited_page = $this->crud->get_column_value_by_id('user', 'last_visited_page', array('user_id' => $user_id));
 
-                            $ch = curl_init();
-                            curl_setopt($ch, CURLOPT_URL,"http://localhost/ram/test_curl");
-                            curl_setopt($ch, CURLOPT_POST, 1);
-                            curl_setopt($ch, CURLOPT_POSTFIELDS,
-                                        "userID=".$user_id);
-                            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                            curl_close ($ch);
-
-                            $server_output = curl_exec($ch);
-                            
-                            if ($server_output != "") {
-                                echo "There is some error. . ..";die();    
-                            }
+                            // $ch = curl_init();
+                            // curl_setopt($ch, CURLOPT_URL, LARAVEL_BASE_URL."api/auth/login");
+                            // curl_setopt($ch, CURLOPT_POST, 1);
+                            // curl_setopt($ch, CURLOPT_POSTFIELDS,"email=".$_POST['email']."&password=".$_POST['pass']);
+                            // curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                            // $server_output = curl_exec($ch);
+                            // curl_close ($ch);
+                            // print_r($server_output);exit;
                             
 
                             if(empty($last_visited_page)) {
@@ -162,11 +157,6 @@ class Auth extends CI_Controller
         }
     }
     
-    function test_curl(){
-        echo "post data = <pre>";
-        print_r($_POST);
-        die();
-    }
     /**
      * Register user on the site
      *

@@ -251,4 +251,7 @@ define('UTGST_OTHER_CHARGES_TYPE_ID', 20);
 
 
 // VUE App URL
-define('VUE_BASE_URL', 'http://192.168.0.119:8082/');
+define('VUE_BASE_URL', 'http://192.168.0.119:8081/');
+
+// Laravel App URL
+define('LARAVEL_BASE_URL', 'http://localhost/ram-laravel/public/');
