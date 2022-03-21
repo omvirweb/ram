@@ -103,3 +103,7 @@ ALTER TABLE `lineitems` ADD `gst` DOUBLE NOT NULL DEFAULT '0' AFTER `note`, ADD 
 --Parag : 2022_03_12 11:27 AM
 
 ALTER TABLE `purchase_invoice` ADD `driver_name` VARCHAR(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL AFTER `vehicle_no`;
+
+--Parag : 2022_03_21 11:29 AM
+
+ALTER TABLE `hsn` ADD `gst_per` VARCHAR(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL AFTER `hsn`;

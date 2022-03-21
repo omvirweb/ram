@@ -65,7 +65,6 @@ ob_start();
 
     </head>
     <body>
-
         <table border="1" style="width: 100%; font-size: 13px">
             <?php if(!empty($letterpad_print)){ ?>
             <tr align="center" class="border1">
@@ -79,7 +78,10 @@ ob_start();
             </tr>
             <?php } else { ?>
                 <tr align="center" class="border1">
-                <td align="center" colspan="15" >&nbsp;</td>
+                <td align="center" colspan="3" class="no-border-right">
+                    <img src="<?php echo base_url('assets/dist/img/ram-logo.png');?>" class="saas-logo" alt="saas-logo">
+                </td>
+                <td align="center" colspan="12" class="no-border-left">&nbsp;</td>
                 <br/>
                 <br/>
                 <br/>
@@ -96,15 +98,15 @@ ob_start();
                     ?>
                 </td>
                 <?php
-                    if($printtype == 0) {
-                        $print = 'Original';
-                    } elseif ($printtype == 1) {
-                        $print = 'Duplicate';
-                    } elseif ($printtype == 2) {
-                        $print = 'Triplicate';
-                    }
+                    // if($printtype == 0) {
+                    //     $print = 'Original';
+                    // } elseif ($printtype == 1) {
+                    //     $print = 'Duplicate';
+                    // } elseif ($printtype == 2) {
+                    //     $print = 'Triplicate';
+                    // }
                 ?>
-                <td colspan="5" class="text_bold text_center no-border-left" style="text-align: right;"><?php echo $print; ?></td>
+                <td colspan="5" class="text_bold text_center no-border-left" style="text-align: right;"><?php //echo $print; ?></td>
             </tr>
             <tr class="">
                 <td colspan="1" class="text_bold text_left no-border-bottom no-border-right">M/s &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </td>
@@ -147,6 +149,7 @@ ob_start();
                 $other_charges = 0;
                 $dis_total_amt = 0;
                 $pure_total_amt = 0;
+                $gst_amt = 0;
                 $row_count = count($lineitems);
                 foreach($lineitems as $lineitem){ 
             ?>
@@ -156,8 +159,8 @@ ob_start();
                 <td valign="top" colspan="2" align="center"><?php echo $lineitem->hsn_code; ?></td>
                 <td valign="top" colspan="1" class="divRight"><?php echo $lineitem->item_qty; ?></td>
                 <td valign="top" colspan="2" class="divRight"><?php echo $lineitem->price; ?></td>
-                <?php $gst = $lineitem->cgst +  $lineitem->sgst + $lineitem->igst?>
-                <td valign="top" colspan="1" class="divRight"><?php echo $gst . '%'; ?></td>
+                <?php //$gst = $lineitem->cgst +  $lineitem->sgst + $lineitem->igst?>
+                <td valign="top" colspan="1" class="divRight"><?php echo $lineitem->gst . '%'; ?></td>
                 <?php
                     $pure_amt =  $lineitem->price * $lineitem->item_qty;
                     ?>
@@ -170,12 +173,14 @@ ob_start();
                 if ($lineitem->discount_type == 2) {
                     $discount_amt = $lineitem->discount;
                 }
+
                 ?>
             <?php 
                 $discounted_price_total += $lineitem->discounted_price;
                 $other_charges += $lineitem->other_charges;
                 $dis_total_amt += $discount_amt;
                 $pure_total_amt += $pure_amt;
+                
                 $inc++; 
                 }
                 $row_inc = 15 - $row_count;
@@ -223,13 +228,19 @@ ob_start();
             </tr>
             <tr class="">
                 <td colspan="3" rowspan="2" class="border1 no-border-right no-border-bottom text_bold">Total GST</td>
-                <td colspan="7" rowspan="2" class=" border1 no-border-left no-border-right"> : <?php echo $gst_total_word; ?></td>
+                <td colspan="7" rowspan="2" class=" border1 no-border-left no-border-bottom no-border-right"> : <?php echo $gst_total_word; ?></td>
                 <td colspan="3" class="no-border-top no-border-bottom no-border-right">IGST</td>
                 <td colspan="2" align="right" class="no-border-left no-border-top no-border-bottom"><?php echo number_format((float)$igst_amount_total, 2, '.', ''); ?></td>
             </tr>
             <tr class="">
                 <td colspan="3" class="no-border-top no-border-bottom no-border-right">Other Charges</td>
                 <td colspan="2" align="right" class="no-border-left no-border-top no-border-bottom"><?php echo number_format((float)$other_charges, 2, '.', ''); ?></td>
+            </tr>
+            <tr class="border1 no-border-top no-border-bottom text_bold">
+                <td colspan="3" class="no-border-right text_bold"></td>
+                <td colspan="7" class="no-border-top no-border-left no-border-right no-border-bottom"></td>
+                <td colspan="3" class="no-border-right">GST  </td>
+                <td colspan="2" align="right" class="border1 no-border-left"><?php echo number_format((float)$total_gst, 2, '.', ''); ?></td>
             </tr>
             <tr class="border1" style="background-color: #EAEAEA;">
                 <td colspan="3" class="no-border-right text_bold">Bill Amount</td>

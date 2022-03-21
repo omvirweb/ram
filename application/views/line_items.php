@@ -623,6 +623,7 @@
                     dataType: 'json',
                     data: {item_id: item_id},
                     success: function (response) {
+                        $('#gst_rate').val(response.gst_per);
                         $('#hsn').val(response.hsn);
                     },
                 });
@@ -686,6 +687,13 @@
 				lineitem[key] = value;
 			});
 			var rate_for_itax = $('#rate_for_itax').val();
+            var gst_per = $('#gst_rate').val();
+            if ( gst_per == undefined || gst_per == '' ) {
+                gst_per = 0;
+            }
+            lineitem['gst_rate'] = gst_per;
+            // console.log('rate for tax - '+rate_for_itax);
+            // return false;
 			if(rate_for_itax == 1){
 				var item_price = $('#price').val();
 				var item_qty = $('#item_qty').val();

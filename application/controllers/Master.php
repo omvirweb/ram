@@ -2760,7 +2760,12 @@ class Master extends CI_Controller
 				$data = array(
 					'id' => $result->hsn_id,
 					'hsn' => $result->hsn,
+					'gst_per' => $result->gst_per,
 					'hsn_discription' => $result->hsn_discription,
+					'created_by' => $result->created_by,
+					'updated_by' => $result->updated_by,
+					'created_at' => date('Y-m-d H:m a', strtotime( $result->created_at )),
+					'updated_at' => date('Y-m-d H:m a', strtotime( $result->updated_at )),
 				);
 				set_page('master/hsn', $data);
 	        } else {
@@ -2786,6 +2791,7 @@ class Master extends CI_Controller
 		$post_data = $this->input->post();
 		if(isset($post_data['id']) && !empty($post_data['id'])){
 			$data['hsn'] = $post_data['hsn'];
+			$data['gst_per'] = $post_data['gst_per'];
 			$data['hsn_discription'] = $post_data['hsn_discription'];
 			$data['updated_at'] = $this->now_time;
 			$data['updated_by'] = $this->logged_in_id;
@@ -2797,6 +2803,7 @@ class Master extends CI_Controller
 			}
 		}else{
 			$data['hsn'] = $post_data['hsn'];
+			$data['gst_per'] = $post_data['gst_per'];
 			$data['hsn_discription'] = $post_data['hsn_discription'];
 			$data['created_at'] = $this->now_time;
 			$data['updated_at'] = $this->now_time;
@@ -2839,6 +2846,7 @@ class Master extends CI_Controller
 
 			$row[] = $action;
 			$row[] = $hsn->hsn;
+			$row[] = $hsn->gst_per;
 			$row[] = $hsn->hsn_discription;
 			$data[] = $row;
 		}

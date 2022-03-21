@@ -816,13 +816,14 @@ class Transaction extends CI_Controller {
                     redirect('/');
                 }
             }
+
             $voucher_type = "purchase";
             $invoice_type = 1;
             $page_title = 'Order';
             $voucher_label = 'Order';
             $module_id = MODULE_ORDER_ID;
             $invoice_list_url = base_url('purchase/order_invoice_list');
-            $invoice_save_url = base_url('purchase/save_purchase_invoice');
+            $invoice_save_url = base_url('purchase/save_purchase_invoice');            
 
         } elseif($voucher_type == "sales_order") {
             if (isset($_POST['purchase_invoice_id'])) {
@@ -1216,7 +1217,6 @@ class Transaction extends CI_Controller {
         $return = array();
         $post_data = $this->input->post();
         $line_items_data = json_decode('['.$post_data['line_items_data'].']');
-    //    echo "<pre>"; print_r($post_data); exit;
         
         $invoice_data = array();     
         $voucher_type = $post_data['voucher_type'];
@@ -1332,7 +1332,7 @@ class Transaction extends CI_Controller {
         }
 
         if(isset($post_data['invoice_id']) && !empty($post_data['invoice_id'])) {
-
+            
             if($voucher_type == 'sales') {
                 $invoice_no = $post_data['invoice_no'];
                 $invoice_prefix = isset($post_data['prefix']) ? $post_data['prefix'] : null;
@@ -1429,8 +1429,16 @@ class Transaction extends CI_Controller {
                 }
                 $this->crud->delete_where_in('lineitems', 'id', $deleted_lineitem_ids);
             }
-
+            
+            $gst_per = 0;
             foreach($line_items_data[0] as $lineitem){
+                if ( isset($lineitem->gst_rate) ) {
+                    $gst_per = $lineitem->gst_rate;
+                } else if ( isset($lineitem->gst) ) {
+                    $gst_per = $lineitem->gst;
+                } else {
+                    $gst_per = 0;
+                }
                 $add_lineitem = array();
                 $add_lineitem['item_group_id'] = isset($lineitem->item_group_id) ? $lineitem->item_group_id : null;
                 $add_lineitem['cat_id'] = isset($lineitem->cat_id) ? $lineitem->cat_id : NULL;
@@ -1441,7 +1449,7 @@ class Transaction extends CI_Controller {
                 $add_lineitem['pure_amount'] = isset($lineitem->pure_amount)?$lineitem->pure_amount:NULL;
                 $add_lineitem['amount'] = isset($lineitem->amount)?$lineitem->amount:NULL;
                 $add_lineitem['unit_id'] = isset($lineitem->unit_id)?$lineitem->unit_id:NULL;
-                $add_lineitem['gst'] = isset($lineitem->gst_rate)?$lineitem->gst_rate:0;
+                $add_lineitem['gst'] = $gst_per;
                 $add_lineitem['site_id'] = isset($lineitem->site_id)?$lineitem->site_id:NULL;     
                 $add_lineitem['module'] = $module;
                 $add_lineitem['parent_id'] = $parent_id;
@@ -1466,6 +1474,7 @@ class Transaction extends CI_Controller {
                 }
             }
         } else {
+            echo "added";die();
 
             if($voucher_type == 'sales') {
                 $invoice_no = $post_data['invoice_no'];
@@ -2392,9 +2401,11 @@ class Transaction extends CI_Controller {
             $hsnid = $this->crud->get_column_value_by_id('item','hsn_code',array('item_id'=>$_POST['item_id']));
             if($hsnid){
                 $hsn =  $this->crud->get_column_value_by_id('hsn','hsn',array('hsn_id'=>$hsnid));
+                $gst_per =  $this->crud->get_column_value_by_id('hsn','gst_per',array('hsn_id'=>$hsnid));
             }
         }
         $return['hsn'] = $hsn;
+        $return['gst_per'] = $gst_per;
         print json_encode($return);
         exit;
     }

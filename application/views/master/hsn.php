@@ -31,9 +31,26 @@
                                                                 <input type="text" name="hsn" class="form-control" id="hsn" placeholder="Enter HSN" value="<?=isset($hsn) ? $hsn : '' ?>" required autofocus="">
 							</div>
 							<div class="form-group">
+								<label for="gst_per">GST %</label>
+								<input type="text" name="gst_per" class="form-control" id="gst_per" placeholder="Enter GST" value="<?=isset($gst_per) ? $gst_per : '' ?>">
+							</div>
+							<div class="form-group">
 								<label for="hsn_discription">HSN Discription</label>
 								<input type="text" name="hsn_discription" class="form-control" id="hsn_discription" placeholder="Enter Discription" value="<?=isset($hsn_discription) ? $hsn_discription : '' ?>">
 							</div>
+
+							<?php 
+								if( isset($hsn) ){?>
+									<div style="border: 2px solid green;max-width: 280px;padding: 10px;"> 
+										<?php 
+											$created_user = $this->crud->get_data_row_by_id('user', 'user_id', $created_by);
+											$updated_user = $this->crud->get_data_row_by_id('user', 'user_id', $updated_by);
+										?>
+										<p class="text-success"><b>Created by : <?php echo $created_user->user_name; ?> @<?php echo $created_at; ?></b></p>
+										<p class="text-success"><b>Updated by : <?php echo $updated_user->user_name; ?> @<?php echo $updated_at; ?></b></p>
+										</div>
+								<?php }
+							?>
 						</div>
 						<!-- /.box-body -->
 						<div class="box-footer">
@@ -65,6 +82,7 @@
 								<tr>
 									<th>Action</th>
 									<th>HSN</th>
+									<th>GST %</th>
 									<th>HSN Discription</th>
 								</tr>
 							</thead>

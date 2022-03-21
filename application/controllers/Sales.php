@@ -221,7 +221,6 @@ class Sales extends CI_Controller
 					$add_lineitem['igst_for_itax'] = $lineitem->igst_for_itax;
 					$add_lineitem['note'] = $lineitem->note;
 					if(isset($lineitem->id) && !empty($lineitem->id)){
-						
 						$this->crud->update_item_current_stock_qty($lineitem->item_id,$parent_id,'sales',$lineitem->item_qty,'update');
 
 						$add_lineitem['updated_at'] = $this->now_time;
@@ -230,7 +229,6 @@ class Sales extends CI_Controller
 						$where_id['id'] = $lineitem->id;
 						$this->crud->update('lineitems', $add_lineitem, $where_id);
 					} else {
-
 						$this->crud->update_item_current_stock_qty($lineitem->item_id,$parent_id,'sales',$lineitem->item_qty,'add');
 
 						$add_lineitem['created_at'] = $this->now_time;
@@ -374,6 +372,7 @@ class Sales extends CI_Controller
 		$config['joins'][] = array('join_table' => 'account a', 'join_by' => 'a.account_id = si.account_id', 'join_type' => 'left');
 		$config['joins'][] = array('join_table' => 'invoice_paid_details pd', 'join_by' => 'pd.invoice_id = si.sales_invoice_id', 'join_type' => 'left');
 		$config['order'] = array('si.created_at' => 'desc');
+		
 		$this->load->library('datatables', $config, 'datatable');
 		$list = $this->datatable->get_datatables();
 
@@ -1114,7 +1113,7 @@ class Sales extends CI_Controller
 
     function format_3_invoice_print($sales_invoice_id, $is_multiple = '') {
         if (!empty($sales_invoice_id) && isset($sales_invoice_id)) {
-            $result = $this->crud->get_data_row_by_id('sales_invoice', 'sales_invoice_id', $sales_invoice_id);
+            $result = $this->crud->get_data_row_by_id('sales_invoice', 'sales_invoice_id', $sales_invoice_id);            
             $user_detail = $this->crud->get_data_row_by_id('user', 'user_id', $result->created_by);
             $account_detail = $this->crud->get_data_row_by_id('account', 'account_id', $result->account_id);
             $this->load->library('numbertowords');
@@ -1124,6 +1123,7 @@ class Sales extends CI_Controller
                 $amount_total_word = $this->numbertowords->convert_number($result->amount_total);
             }
             $total_gst = $result->cgst_amount_total + $result->sgst_amount_total + $result->igst_amount_total;
+			//$total_gst = $result->gst;
             if ($total_gst < 0) {
                 $gst_total_word = 'Minus ' . $this->numbertowords->convert_number(abs($total_gst));
             } else {
@@ -1189,6 +1189,7 @@ class Sales extends CI_Controller
             $lineitem_arr = array();
             $where = array('module' => '2', 'parent_id' => $sales_invoice_id);
             $sales_invoice_lineitems = $this->crud->get_row_by_id('lineitems', $where);
+            $total_gst = 0;
 
             foreach ($sales_invoice_lineitems as $sales_invoice_lineitem) {
                 $sales_invoice_lineitem->item_name = $this->crud->get_id_by_val('item', 'item_name', 'item_id', $sales_invoice_lineitem->item_id);
@@ -1204,6 +1205,9 @@ class Sales extends CI_Controller
                 $sales_invoice_lineitem->sgst_amt = $sales_invoice_lineitem->sgst_amount;
                 $sales_invoice_lineitem->igst_amt = $sales_invoice_lineitem->igst_amount;
                 $lineitem_arr[] = $sales_invoice_lineitem;
+                $amt =  $sales_invoice_lineitem->price * $sales_invoice_lineitem->item_qty;
+                $gst_amount = $amt * $sales_invoice_lineitem->gst / 100;
+                $total_gst += $gst_amount;
             }
 //            $no_arr = count($lineitem_arr);
 //            if($no_arr < 10){
@@ -1212,7 +1216,16 @@ class Sales extends CI_Controller
 //                    $lineitem_arr[$i] = (object) $lineitem_arr[$i];
 //                }
 //            }
+            
             $data['lineitems'] = $lineitem_arr;
+            $data['total_gst'] = $total_gst;
+            if ($total_gst < 0) {
+                $gst_total_word = 'Minus ' . $this->numbertowords->convert_number(abs($total_gst));
+            } else {
+                $gst_total_word = $this->numbertowords->convert_number($total_gst);
+            }
+            $data['gst_total_word'] = $gst_total_word;
+
 //            echo '<pre>'; print_r($lineitem_arr); exit;
         } else {
             redirect($_SERVER['HTTP_REFERER']);
@@ -1342,6 +1355,7 @@ class Sales extends CI_Controller
                 $amount_total_word = $this->numbertowords->convert_number($result->amount_total);
             }
             $total_gst = $result->cgst_amount_total + $result->sgst_amount_total + $result->igst_amount_total;
+            
             if ($total_gst < 0) {
                 $gst_total_word = 'Minus ' . $this->numbertowords->convert_number(abs($total_gst));
             } else {
