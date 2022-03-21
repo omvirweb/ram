@@ -41,13 +41,13 @@
 
 							<?php 
 								if( isset($hsn) ){?>
-									<div style="border: 2px solid green;max-width: 280px;padding: 10px;"> 
+									<div style="border: 2px solid green;width: fit-content;padding: 10px;"> 
 										<?php 
 											$created_user = $this->crud->get_data_row_by_id('user', 'user_id', $created_by);
 											$updated_user = $this->crud->get_data_row_by_id('user', 'user_id', $updated_by);
 										?>
-										<p class="text-success"><b>Created by : <?php echo $created_user->user_name; ?> @<?php echo $created_at; ?></b></p>
-										<p class="text-success"><b>Updated by : <?php echo $updated_user->user_name; ?> @<?php echo $updated_at; ?></b></p>
+										<p class="text-success"><b>Add By : <?php echo $created_user->user_name; ?> @<?php echo $created_at; ?></b></p>
+										<p class="text-success"><b>Last Edit By : <?php echo $updated_user->user_name; ?> @<?php echo $updated_at; ?></b></p>
 										</div>
 								<?php }
 							?>

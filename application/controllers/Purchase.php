@@ -445,6 +445,8 @@ class Purchase extends CI_Controller {
             
             }
             
+            $action .= '&nbsp;<a href="' . base_url('purchase/format_3_invoice_print/' . $order->purchase_invoice_id) . '" target="_blank" title="Invoice Print" class="detail_button btn-info btn-xs"><span class="fa fa-print"></span></a>';
+
             $row[] = $action;
             $row[] = $order->bill_no;
             $row[] = $order->account_name;
@@ -556,6 +558,197 @@ class Purchase extends CI_Controller {
             $this->session->set_flashdata('success', false);
             $this->session->set_flashdata('message', 'You have not permission to access this page.');
             redirect('/');
+        }
+    }
+
+    function format_3_invoice_print($purchase_invoice_id, $is_multiple = '') {
+        if (!empty($purchase_invoice_id) && isset($purchase_invoice_id)) {
+            $result = $this->crud->get_data_row_by_id('purchase_invoice', 'purchase_invoice_id', $purchase_invoice_id);            
+            $user_detail = $this->crud->get_data_row_by_id('user', 'user_id', $result->created_by);
+            $account_detail = $this->crud->get_data_row_by_id('account', 'account_id', $result->account_id);
+            $this->load->library('numbertowords');
+            if ($result->amount_total < 0) {
+                $amount_total_word = 'Minus ' . $this->numbertowords->convert_number(abs($result->amount_total));
+            } else {
+                $amount_total_word = $this->numbertowords->convert_number($result->amount_total);
+            }
+            $print_type = $result->print_type;
+            $this->load->library('applib');
+            $purchase_invoice_no = $this->applib->format_invoice_number($result->purchase_invoice_id, $result->purchase_invoice_date);
+            $data = array(
+                'purchase_invoice_id' => $result->purchase_invoice_id,
+                'purchase_invoice_no' => $purchase_invoice_no,
+                'purchase_invoice_date' => date('d-m-Y', strtotime($result->purchase_invoice_date)),
+                'purchase_invoice_desc' => nl2br($result->purchase_invoice_desc),
+                'qty_total' => $result->qty_total,
+                'pure_amount_total' => $result->pure_amount_total,
+                'discount_total' => $result->discount_total,
+                'cgst_amount_total' => $result->cgst_amount_total,
+                'sgst_amount_total' => $result->sgst_amount_total,
+                'igst_amount_total' => $result->igst_amount_total,
+                'amount_total' => $result->amount_total,
+                'amount_total_word' => $amount_total_word,
+            );
+            $data['purchase_invoice_data'] = $result;
+            $data['user_name'] = $user_detail->user_name;
+            $data['user_address'] = $user_detail->address;
+            $data['user_gst_no'] = $user_detail->gst_no;
+            $data['user_country'] = 'India';
+            $usr_city = $this->crud->get_id_by_val('city', 'city_name', 'city_id', $user_detail->city);
+            $data['user_city'] = strtolower($usr_city);
+            $data['user_state'] = $this->crud->get_id_by_val('state', 'state_name', 'state_id', $user_detail->state);
+            $data['user_pan'] = $user_detail->pan;
+            $data['user_postal_code'] = $user_detail->postal_code;
+            $data['user_phone'] = $user_detail->phone;
+            $data['email_ids'] = $user_detail->email_ids;
+            $data['logo_image'] = $user_detail->logo_image;
+            $data['bank_name'] = $user_detail->bank_name;
+            $data['bank_branch'] = $user_detail->bank_branch;
+            $data['bank_ac_no'] = $user_detail->bank_ac_no;
+            $data['rtgs_ifsc_code'] = $user_detail->rtgs_ifsc_code;
+            $data['is_letter_pad'] = $this->session->userdata(PACKAGE_FOLDER_NAME . 'is_logged_in')['is_letter_pad'];
+
+            $data['account_name'] = $account_detail->account_name;
+            $cash_in_hand_acc = $this->applib->is_cash_in_hand_account($result->account_id);
+            if ($cash_in_hand_acc == true && !empty($result->cash_customer)) {
+                $data['account_name'] = $result->cash_customer;
+            }
+            $data['account_gst_no'] = $account_detail->account_gst_no;
+            if (!empty($result->is_shipping_same_as_billing_address) && $result->is_shipping_same_as_billing_address == '1') {
+                $data['account_address'] = $result->shipping_address;
+            } else {
+                $data['account_address'] = $account_detail->account_address;
+            }
+            $data['account_country'] = 'India';
+            $data['account_state'] = $this->crud->get_id_by_val('state', 'state_name', 'state_id', $account_detail->account_state);
+            $data['account_city'] = $this->crud->get_id_by_val('city', 'city_name', 'city_id', $account_detail->account_city);
+            $data['account_postal_code'] = $account_detail->account_postal_code;
+            $data['account_pan'] = $account_detail->account_pan;
+            $data['transport_name'] = $result->transport_name;
+            $data['lr_no'] = $result->lr_no;
+
+            $lineitem_arr = array();
+            $where = array('module' => '1', 'parent_id' => $purchase_invoice_id);
+            $purchase_invoice_lineitems = $this->crud->get_row_by_id('lineitems', $where);
+            
+            $total_gst = 0;
+            foreach ($purchase_invoice_lineitems as $purchase_invoice_lineitem) {
+                $purchase_invoice_lineitem->item_name = $this->crud->get_id_by_val('item', 'item_name', 'item_id', $purchase_invoice_lineitem->item_id);
+                $hsn_id = $this->crud->get_id_by_val('item', 'hsn_code', 'item_id', $purchase_invoice_lineitem->item_id);
+                if (!empty($hsn_id)) {
+                    $purchase_invoice_lineitem->hsn_code = $this->crud->get_id_by_val('hsn', 'hsn', 'hsn_id', $hsn_id);
+                } else {
+                    $purchase_invoice_lineitem->hsn_code = '';
+                }
+                
+                $purchase_invoice_lineitem->pure_amount = $purchase_invoice_lineitem->pure_amount;
+                $purchase_invoice_lineitem->cgst_amt = $purchase_invoice_lineitem->cgst_amount;
+                $purchase_invoice_lineitem->sgst_amt = $purchase_invoice_lineitem->sgst_amount;
+                $purchase_invoice_lineitem->igst_amt = $purchase_invoice_lineitem->igst_amount;
+                $lineitem_arr[] = $purchase_invoice_lineitem;
+                $amt =  $purchase_invoice_lineitem->price * $purchase_invoice_lineitem->item_qty;
+                $gst_amount = $amt * $purchase_invoice_lineitem->gst / 100;
+                $total_gst += $gst_amount;
+            }
+
+            
+            $data['lineitems'] = $lineitem_arr;
+
+            $data['total_gst'] = $total_gst;
+            if ($total_gst < 0) {
+                $gst_total_word = 'Minus ' . $this->numbertowords->convert_number(abs($total_gst));
+            } else {
+                $gst_total_word = $this->numbertowords->convert_number($total_gst);
+            }
+            $data['gst_total_word'] = $gst_total_word;
+
+//            echo '<pre>'; print_r($lineitem_arr); exit;
+        } else {
+            redirect($_SERVER['HTTP_REFERER']);
+            $data = array();
+        }
+        if (isset($data['amount_total'])) {
+            $round_off = $this->crud->get_column_value_by_id('settings', 'setting_value', array('setting_key' => 'round_off_apply'));
+            if (!empty($round_off)) {
+                $amount_total_r = number_format((float) $data['amount_total'], 0, '.', '');
+                $data['amount_total'] = number_format((float) $amount_total_r, 2, '.', '');
+            }
+        }
+
+        $letterpad_print = $this->crud->get_id_by_val('user', 'is_letter_pad', 'user_id', $this->logged_in_id);
+        $data['letterpad_print'] = $letterpad_print;
+        $data['printtype'] = 0;
+        $html = $this->load->view('purchase/invoice/invoice_print', $data, true);
+
+        $pdfFilePath = "purchase_invoice_miracle_print.pdf";
+        $this->load->library('m_pdf');
+        $this->m_pdf->pdf->AddPage('', '', '', '', '', 5, // margin_left
+                5, // margin right
+                5, // margin top
+                15, // margin bottom
+                5, // margin header
+                5); // margin footer
+
+       
+
+        $this->m_pdf->pdf->SetHTMLFooter('<table width="100%" style="vertical-align: bottom; font-family: serif; font-size: 8pt; color: #000000; font-weight: bold; font-style: italic;"><tr>
+        <td width="33%"><span style="font-weight: bold; font-style: italic;">{DATE j-m-Y}</span></td>
+        <td width="33%" align="center" style="font-weight: bold; font-style: italic;">{PAGENO}/{nbpg}</td>
+        <td width="33%" style="text-align: right; "></td></tr></table>'); 
+        $this->m_pdf->pdf->WriteHTML($html);
+
+        if ($print_type == 2) {
+            $data['printtype'] = 1;
+            $html = $this->load->view('purchase/invoice/invoice_print', $data, true);
+            $this->m_pdf->pdf->AddPage('', '', '', '', '', 5, // margin_left
+                    5, // margin right
+                    5, // margin top
+                    15, // margin bottom
+                    5, // margin header
+                    5); // margin footer
+            
+
+            $this->m_pdf->pdf->SetHTMLFooter('<table width="100%" style="vertical-align: bottom; font-family: serif; font-size: 8pt; color: #000000; font-weight: bold; font-style: italic;"><tr>
+                    <td width="33%"><span style="font-weight: bold; font-style: italic;">{DATE j-m-Y}</span></td>
+                    <td width="33%" align="center" style="font-weight: bold; font-style: italic;">{PAGENO}/{nbpg}</td>
+                    <td width="33%" style="text-align: right; "></td></tr></table>'); // Note that the second parameter is optional : default = 'O' for ODD
+            $this->m_pdf->pdf->WriteHTML($html);
+
+            $data['printtype'] = 2;
+            $html = $this->load->view('purchase/invoice/invoice_print', $data, true);
+            $this->m_pdf->pdf->AddPage('', '', '', '', '', 5, // margin_left
+                    5, // margin right
+                    5, // margin top
+                    15, // margin bottom
+                    5, // margin header
+                    5); // margin footer
+           
+
+            $this->m_pdf->pdf->SetHTMLFooter('<table width="100%" style="vertical-align: bottom; font-family: serif; font-size: 8pt; color: #000000; font-weight: bold; font-style: italic;"><tr>
+                    <td width="33%"><span style="font-weight: bold; font-style: italic;">{DATE j-m-Y}</span></td>
+                    <td width="33%" align="center" style="font-weight: bold; font-style: italic;">{PAGENO}/{nbpg}</td>
+                    <td width="33%" style="text-align: right; "></td></tr></table>'); // Note that the second parameter is optional : default = 'O' for ODD
+            $this->m_pdf->pdf->WriteHTML($html);
+        }
+        if ($print_type == 1) {
+            $data['printtype'] = 1;
+            $html = $this->load->view('purchase/invoice/invoice_print', $data, true);
+            $this->m_pdf->pdf->AddPage('', '', '', '', '', 5, // margin_left
+                    5, // margin right
+                    5, // margin top
+                    15, // margin bottom
+                    5, // margin header
+                    5); // margin footer
+            
+
+            $this->m_pdf->pdf->SetHTMLFooter('<table width="100%" style="vertical-align: bottom; font-family: serif; font-size: 8pt; color: #000000; font-weight: bold; font-style: italic;"><tr>
+                    <td width="33%"><span style="font-weight: bold; font-style: italic;">{DATE j-m-Y}</span></td>
+                    <td width="33%" align="center" style="font-weight: bold; font-style: italic;">{PAGENO}/{nbpg}</td>
+                    <td width="33%" style="text-align: right; "></td></tr></table>'); // Note that the second parameter is optional : default = 'O' for ODD
+            $this->m_pdf->pdf->WriteHTML($html);
+        }
+        if(empty($is_multiple)){
+            $this->m_pdf->pdf->Output($pdfFilePath, 'I');
         }
     }
 }

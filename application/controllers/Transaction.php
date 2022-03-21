@@ -1474,7 +1474,6 @@ class Transaction extends CI_Controller {
                 }
             }
         } else {
-            echo "added";die();
 
             if($voucher_type == 'sales') {
                 $invoice_no = $post_data['invoice_no'];
