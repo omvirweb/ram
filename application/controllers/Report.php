@@ -926,6 +926,7 @@ class Report extends CI_Controller {
         $ledger_data = array();
         $ledger_data = array_merge($ledger_data,$opening_balance);
         
+        
         $account_row = $this->crud->get_data_row_by_where('account',array('account_id' => $account_id));
 
         /*-------- Payment ------*/   
@@ -935,20 +936,21 @@ class Report extends CI_Controller {
             $ledger_data = array_merge($ledger_data,$from_payment_res);
         }
 
+
         $to_payment_res = $this->crud->getFromSQL("SELECT a.account_name as opp_acc_name,tr.*,tr.transaction_date AS tr_date,'to_payment' as tran_type FROM transaction_entry as tr LEFT JOIN account as a ON a.account_id = tr.from_account_id  WHERE tr.transaction_type = 1 AND tr.to_account_id=".$account_id." AND tr.transaction_date >= '".$from_date."' AND tr.transaction_date <= '".$to_date."'");
         
         if(!empty($to_payment_res)) {
             $ledger_data = array_merge($ledger_data,$to_payment_res);
         }
 
-        
+       
         /*------- Receipt -------*/
         $from_receipt_res = $this->crud->getFromSQL("SELECT a.account_name as opp_acc_name,tr.*,tr.transaction_date AS tr_date,'from_receipt' as tran_type FROM transaction_entry as tr LEFT JOIN account as a ON a.account_id = tr.to_account_id  WHERE tr.transaction_type = 2 AND tr.from_account_id=".$account_id." AND tr.transaction_date >= '".$from_date."' AND tr.transaction_date <= '".$to_date."'");
 
         if(!empty($from_receipt_res)) {
             $ledger_data = array_merge($ledger_data,$from_receipt_res);
         }
-
+        
         $to_receipt_res = $this->crud->getFromSQL("SELECT a.account_name as opp_acc_name,tr.*,tr.transaction_date AS tr_date,'to_receipt' as tran_type FROM transaction_entry as tr LEFT JOIN account as a ON a.account_id = tr.from_account_id  WHERE tr.transaction_type = 2 AND tr.to_account_id=".$account_id." AND tr.transaction_date >= '".$from_date."' AND tr.transaction_date <= '".$to_date."'");
 
         if(!empty($to_receipt_res)) {
@@ -1007,7 +1009,6 @@ class Report extends CI_Controller {
         if(!empty($purchase_res)) {
             $ledger_data = array_merge($ledger_data,$purchase_res);
         }
-
         $against_purchase_res = $this->crud->getFromSQL("SELECT a.account_name as opp_acc_name,tr.*,tr.purchase_invoice_date AS tr_date,'against_purchase' as tran_type FROM purchase_invoice as tr LEFT JOIN account as a ON a.account_id = tr.account_id WHERE tr.against_account_id=".$account_id." AND tr.purchase_invoice_date >= '".$from_date."' AND tr.purchase_invoice_date <= '".$to_date."'");
 
         if(!empty($against_purchase_res)) {
@@ -1559,6 +1560,9 @@ class Report extends CI_Controller {
             $row[] = $delete_link;
             $row[] = $tr_date;
             $row[] = $bill_no;
+            $row[] = isset( $list_row->qty_total ) ? $list_row->qty_total : 0;
+            $row[] = isset( $list_row->vehicle_no ) ? $list_row->vehicle_no : '';
+            $row[] = '';
             $row[] = $particular;
             $row[] = isset($list_row->opp_acc_name) ? $list_row->opp_acc_name : '';
             $row[] = abs($credit_amt);
@@ -1570,6 +1574,9 @@ class Report extends CI_Controller {
         $total[] = '';
         $total[] = '';
         $total[] = '';
+        $total[] = '';
+        $total[] = '';
+        $total[] = '';
         $total[] = 'Total';
         $total[] = $total_credit_amt;
         $total[] = $total_debit_amt;
@@ -1577,6 +1584,9 @@ class Report extends CI_Controller {
         $data[] = $total;
         
         $total = $total_debit_amt - $total_credit_amt;
+        $total2[] = '';
+        $total2[] = '';
+        $total2[] = '';
         $total2[] = '';
         $total2[] = '';
         $total2[] = '';

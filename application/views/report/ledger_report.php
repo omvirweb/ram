@@ -53,6 +53,9 @@
                                     <th>Action</th>
                                     <th>Date</th>
                                     <th>Bill No.</th>
+                                    <th>Total Qty</th>
+                                    <th>Vehicle No</th>
+                                    <th>Unit</th>
                                     <th>Particular</th>
                                     <th>Opp Account</th>
                                     <th>Credit</th>
