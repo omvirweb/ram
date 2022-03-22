@@ -1557,12 +1557,16 @@ class Report extends CI_Controller {
             $total_debit_amt += abs($debit_amt);
             $balance_amt = $total_debit_amt - $total_credit_amt;
 
+            if ( isset( $list_row->purchase_invoice_id )) {
+                $unit_data = $this->crud->getFromSQL("SELECT u.pack_unit_name as unit_name FROM lineitems as li LEFT JOIN pack_unit as u ON u.pack_unit_id = li.unit_id  WHERE li.parent_id=".$list_row->purchase_invoice_id."");
+            }
+
             $row[] = $delete_link;
             $row[] = $tr_date;
             $row[] = $bill_no;
             $row[] = isset( $list_row->qty_total ) ? $list_row->qty_total : 0;
             $row[] = isset( $list_row->vehicle_no ) ? $list_row->vehicle_no : '';
-            $row[] = '';
+            $row[] = isset( $unit_data[0]->unit_name ) ? $unit_data[0]->unit_name : '';
             $row[] = $particular;
             $row[] = isset($list_row->opp_acc_name) ? $list_row->opp_acc_name : '';
             $row[] = abs($credit_amt);
