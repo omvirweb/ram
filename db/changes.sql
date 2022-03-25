@@ -107,3 +107,11 @@ ALTER TABLE `purchase_invoice` ADD `driver_name` VARCHAR(255) CHARACTER SET lati
 --Parag : 2022_03_21 11:29 AM
 
 ALTER TABLE `hsn` ADD `gst_per` VARCHAR(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL AFTER `hsn`;
+
+--Parag : 2022_03_25 16:15 PM
+
+ALTER TABLE `settings` CHANGE `setting_id` `setting_id` INT(11) NOT NULL AUTO_INCREMENT;
+INSERT INTO `settings` (`setting_id`, `setting_key`, `setting_value`, `created_at`, `updated_at`, `user_created_by`, `user_updated_by`) VALUES (NULL, 'sales_terms', '1. Our risk and responsibility ceases as soon as the goods leave our premises.\r\n2. Goods once sold will not be taken back.', '2022-03-25 13:46:04.000000', '2022-03-25 13:46:04.000000', NULL, NULL);
+
+--Parag : 2022_03_25 19:15 PM
+ALTER TABLE `sites` ADD `site_address` VARCHAR(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL AFTER `site_name`;

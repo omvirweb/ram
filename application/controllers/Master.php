@@ -3870,6 +3870,7 @@ class Master extends CI_Controller
 			$data = array(
 				'id' => $result->site_id,
 				'name' => $result->site_name,
+				'site_address' => $result->site_address,
 			);
 			set_page('master/site', $data);
 		} else {
@@ -3879,7 +3880,7 @@ class Master extends CI_Controller
 	}
 
 	function site_datatable(){
-		$config['select'] = 'site_id, site_name';
+		$config['select'] = 'site_id, site_name,site_address';
 		$config['table'] = 'sites';
 		$config['column_order'] = array(null, 'site_name');
 		$config['column_search'] = array('site_name');
@@ -3897,6 +3898,7 @@ class Master extends CI_Controller
 			$action .= ' &nbsp; <a href="javascript:void(0);" class="delete_button btn-danger btn-xs" data-href="' . base_url('master/delete/' . $sites->site_id) . '"><i class="fa fa-trash"></i></a>';	
 			$row[] = $action;
 			$row[] = $sites->site_name;
+			$row[] = $sites->site_address;
 			$data[] = $row;
 		}
 
@@ -3921,6 +3923,7 @@ class Master extends CI_Controller
 				exit;
 			}
 			$data['site_name'] = $post_data['site_name'];
+			$data['site_address'] = $post_data['site_address'];
 			$data['updated_at'] = $this->now_time;
 			$data['updated_by'] = $this->logged_in_id;
 			$where_array['site_id'] = $post_data['id'];
@@ -3936,6 +3939,7 @@ class Master extends CI_Controller
 				exit;
 			}
 			$data['site_name'] = ucfirst($post_data['site_name']);
+			$data['site_address'] = $post_data['site_address'];
 			$data['created_at'] = $this->now_time;
 			$data['updated_at'] = $this->now_time;
 			$data['updated_by'] = $this->logged_in_id;

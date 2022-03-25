@@ -27,6 +27,10 @@
 								<label for="site_name">Site Name<span class="required-sign">*</span></label>
                                 <input type="text" name="site_name" class="form-control" id="site_name" placeholder="Enter Site" value="<?=isset($name) ? $name : '' ?>" pattern="[^'\x22]+" title="Invalid input" required autofocus="">
 							</div>
+							<div class="form-group">
+								<label for="site_address">Address<span class="required-sign">*</span></label>
+                                <input type="text" name="site_address" class="form-control" id="site_address" placeholder="Enter Address" value="<?=isset($site_address) ? $site_address : '' ?>" pattern="[^'\x22]+" title="Invalid input" required autofocus="">
+							</div>
 						</div>
 						<!-- /.box-body -->
 						<div class="box-footer">
@@ -56,6 +60,7 @@
 								<tr>
 									<th>Action</th>
 									<th>Site Name</th>
+									<th>Site Address</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -118,6 +123,7 @@
 						table.draw();
 						$('input[name="id"]').val("");
 						$('input[name="site_name"]').val("");
+						$('input[name="site_address"]').val("");
 						$('.addmorerow').remove();
 						show_notify('Site Successfully Added.', true);
 					}
@@ -127,6 +133,7 @@
 						$(".form_title").html('Add');
 						$('input[name="id"]').val("");
 						$('input[name="site_name"]').val("");
+						$('input[name="site_address"]').val("");
 						show_notify('Site Successfully Updated.', true);
 					}
 					return false;
