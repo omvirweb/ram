@@ -1071,6 +1071,10 @@ class App extends CI_Controller{
 	function set_invoice_type_select2_val_by_id($id){
 		$this->get_select2_text_by_id('invoice_type', 'invoice_type_id', 'invoice_type', $id);
 	}
+
+	function set_our_bank_label_select2_val_by_id($id){
+		$this->get_select2_text_by_id('account', 'account_id', 'account_name', $id);
+	}
         
 	function set_user_select2_val_by_id($id){
 		$this->get_select2_text_by_id('user', 'user_id', 'user_name', $id);
@@ -1705,5 +1709,17 @@ class App extends CI_Controller{
 	}
 	function sites_group_select2_val_by_id($id){
 		$this->get_select2_text_by_id('sites', 'site_id', 'site_name', $id);
+	}
+
+	function our_bank_label_select2_source(){
+        $search = isset($_GET['q']) ? $_GET['q'] : '';
+        $page = isset($_GET['page']) ? $_GET['page'] : 1;
+        $where = array('account_group_id'=>21);
+        $results = array(
+                "results" => $this->get_select2_data('account', 'account_id', 'account_name', $search, $page, $where),
+                "total_count" => $this->count_select2_data('account', 'account_id', 'account_name', $search, $where),
+        );
+        echo json_encode($results);
+        exit();
 	}
 }

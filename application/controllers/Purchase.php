@@ -348,7 +348,7 @@ class Purchase extends CI_Controller {
     }
 
     function invoice_datatable() {
-//        echo '<pre>';print_r($_POST); exit;
+        //echo '<pre>';print_r($_POST); exit;
         $from_date = '';
         $to_date = '';
         $account_id = '';

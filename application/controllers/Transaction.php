@@ -1239,6 +1239,7 @@ class Transaction extends CI_Controller {
             $invoice_data['bill_no'] = $post_data['bill_no'];
             $invoice_data['purchase_invoice_date'] = date('Y-m-d', strtotime($post_data['invoice_date']));
             $invoice_data['purchase_invoice_desc'] = $post_data['invoice_desc'];
+            $invoice_data['our_bank_id'] = $post_data['our_bank_label'];
 
         } elseif($voucher_type == 'credit_note') {
             $module = 3;
@@ -1519,7 +1520,7 @@ class Transaction extends CI_Controller {
             $invoice_data['created_by'] = $this->logged_in_id;
             $invoice_data['user_created_by'] = $this->session->userdata()['login_user_id'];
             $invoice_data['user_updated_by'] = $this->session->userdata()['login_user_id'];
-
+            
             if($voucher_type == 'sales') {
                 $this->crud->insert('sales_invoice', $invoice_data);
                 $this->session->set_flashdata('message','Sales Invoice Added Successfully');

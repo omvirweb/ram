@@ -118,3 +118,8 @@ ALTER TABLE `sites` ADD `site_address` VARCHAR(255) CHARACTER SET latin1 COLLATE
 
 --Parag : 2022_03_26 11:22 AM
 ALTER TABLE `account` ADD `bank_name` VARCHAR(255) CHARACTER SET latin1 COLLATE latin1_spanish_ci NULL DEFAULT NULL AFTER `is_bill_wise`, ADD `bank_acc_name` VARCHAR(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL AFTER `bank_name`, ADD `bank_branch` VARCHAR(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL AFTER `bank_acc_name`, ADD `bank_city` VARCHAR(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL AFTER `bank_branch`, ADD `bank_ac_no` VARCHAR(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL AFTER `bank_city`, ADD `rtgs_ifsc_code` VARCHAR(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL AFTER `bank_ac_no`;
+
+--Parag : 2022_03_26 12:37 PM
+ALTER TABLE `purchase_invoice` ADD `our_bank_id` INT NOT NULL AFTER `shipping_address`, ADD INDEX (`our_bank_id`);
+
+

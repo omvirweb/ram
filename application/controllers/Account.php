@@ -78,7 +78,7 @@ class Account extends CI_Controller {
     function save_account() {
         $return = '';
         $post_data = $this->input->post();
-        //echo 'data = <pre>';print_r($post_data);exit;
+        echo 'data = <pre>';print_r($post_data);exit;
         $account_id = isset($post_data['account_id']) ? $post_data['account_id'] : 0;
         $post_data['account_state'] = isset($post_data['account_state']) ? $post_data['account_state'] : null;
         $post_data['account_city'] = isset($post_data['account_city']) ? $post_data['account_city'] : null;

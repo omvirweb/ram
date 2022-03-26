@@ -1,8 +1,9 @@
-<?php $this->load->view('success_false_notify'); ?>
+<?php $this->load->view('success_false_notify'); 
+?>
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
-    <form id="form_voucher" class="" action="" enctype="multipart/form-data" data-parsley-trigger="keyup" data-parsley-validate autocomplete="off">
+    <form id="form_voucher" class="" action="" enctype="multipart/form-data" data-parsley-trigger="keyup" data-parsley-validate autocomplete="off">        
         <input type="hidden" name="voucher_type" id="voucher_type" value="<?=$voucher_type?>">
     <section class="content-header">
             <h1>
@@ -114,7 +115,7 @@
                                     </div>
                                     <?php } ?>
                                     <?php if($voucher_type != "material_in") { ?> 
-                                    <div class="<?=$voucher_type == "sales"?"col-md-2":"col-md-3"?>">
+                                    <div class="<?=$voucher_type == "sales"?"col-md-2":"col-md-2"?>">
                                     <?php } else { ?>
                                     <div class="col-md-6">
                                     <?php } ?>
@@ -124,7 +125,16 @@
                                         </div>
                                     </div>
                                     <?php if($voucher_type != "material_in") { ?> 
-                                        <div class="<?=$voucher_type == "sales"?"col-md-2":"col-md-3"?>">
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label for="our_bank_label" class="control-label">Our Bank Label</label>
+                                            <select name="our_bank_label" id="our_bank_label" class="form-control select2 our_bank_label" required data-index="1"></select>
+                                            
+                                        </div>
+                                    </div>
+                                <?php } ?>
+                                    <?php if($voucher_type != "material_in") { ?> 
+                                        <div class="col-md-2">
                                             <div class="form-group">
                                                 <label for="tax_type" class="control-label">Tax Type<span class="required-sign">*</span></label>
                                                 <select  name="tax_type" id="tax_type" class="form-control" data-index="3" required="">
@@ -134,6 +144,8 @@
                                             </div>
                                         </div>
                                     <?php } ?>
+                                    <!-- here -->
+                                    
                                     <?php if($voucher_type == "sales") { ?>
                                     <div class="col-md-2">
                                         <div class="form-group">
@@ -337,6 +349,7 @@
 <script type="text/javascript">
     var table;
     $(document).ready(function(){
+
         ss_data = '<?php echo $line_item_fields_data; ?>';
         ss_data1 = JSON.parse(ss_data);
         cgst_div = 0;
@@ -375,10 +388,18 @@
             allowClear: true,
         });
         initAjaxSelect2($("#account_id"),"<?=base_url('app/sp_account_select2_source_old/')?>");
+        
         <?php if($voucher_type == "sales") { ?>
         initAjaxSelect2($("#invoice_type"),"<?=base_url('app/invoice_type_select2_source/')?>");
         <?php if(isset($invoice_data->invoice_type) && !empty($invoice_data->invoice_type)){ ?>
         setSelect2Value($("#invoice_type"),"<?=base_url('app/set_invoice_type_select2_val_by_id/')?>" + <?= $invoice_data->invoice_type; ?>);
+        <?php } ?>
+        <?php } ?>
+
+        <?php if($voucher_type == "purchase") { ?>
+        initAjaxSelect2($("#our_bank_label"),"<?=base_url('app/our_bank_label_select2_source/')?>");
+        <?php if(isset($invoice_data->invoice_type) && !empty($invoice_data->invoice_type)){ ?>
+        setSelect2Value($("#our_bank_label"),"<?=base_url('app/set_our_bank_label_select2_val_by_id/')?>" + <?= $invoice_data->our_bank_id; ?>);
         <?php } ?>
         <?php } ?>
 
