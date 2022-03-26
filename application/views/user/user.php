@@ -73,7 +73,14 @@
                                         <textarea name="address" class="form-control" id="address" data-index="5" placeholder=""><?= isset($edit_address) ? $edit_address : '' ?></textarea>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label for="city" class="control-label">City</label>
+                                        <a class="btn btn-primary btn-xs pull-right add_account_link" href="javascript:;" data-url= "<?=base_url('master/city')?>"><i class="fa fa-plus"></i> Add City</a>
+                                        <select name="city" id="city" class="select2" data-index="8" ></select>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
                                     <div class="form-group"><br>
                                         <label><input type="checkbox" name="is_letter_pad" class="checkbox_ch" data-index="6" <?php echo (isset($edit_is_letter_pad) ? ($edit_is_letter_pad == 1 ? 'checked' : '') : ''); ?>>&nbsp;&nbsp;&nbsp;Letter Pad Print</label>
                                     </div>
@@ -86,13 +93,7 @@
                                         <select name="state" id="state" class="" data-index="7" ></select>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label for="city" class="control-label">City</label>
-                                        <a class="btn btn-primary btn-xs pull-right add_account_link" href="javascript:;" data-url= "<?=base_url('master/city')?>"><i class="fa fa-plus"></i> Add City</a>
-                                        <select name="city" id="city" class="select2" data-index="8" ></select>
-                                    </div>
-                                </div>
+                                
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="postal_code" class="control-label">Postal Code</label>

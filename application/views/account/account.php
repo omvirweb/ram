@@ -164,6 +164,46 @@
                                     </div>
                                 </div>
                                 <div class="clearfix"></div>
+                                <div class="col-md-12"><h4><b>Bank Details</b></h4><hr style="margin-top: 0px;"></div>
+                                <div class="clearfix"></div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="bank_name" class="control-label">Bank Name</label>
+                                        <input type="text" name="bank_name" id="bank_name" class="form-control" value="<?= isset($bank_name) ? $bank_name : ''; ?>" data-index="19">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="bank_acc_name" class="control-label">Bank Account Name</label>
+                                        <input type="text" name="bank_acc_name" id="bank_acc_name" class="form-control" value="<?= isset($bank_acc_name) ? $bank_acc_name : ''; ?>" data-index="20">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="bank_branch" class="control-label">Bank Branch</label>
+                                        <input type="text" name="bank_branch" id="bank_branch" class="form-control" value="<?= isset($bank_branch) ? $bank_branch : ''; ?>" data-index="21">
+                                    </div>
+                                </div>
+                                <div class="clearfix"></div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="bank_city" class="control-label">Bank City</label>
+                                        <input type="text" name="bank_city" id="bank_city" class="form-control" value="<?= isset($bank_city) ? $bank_city : ''; ?>" data-index="22">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="bank_ac_no" class="control-label">Bank Account No.</label>
+                                        <input type="text" name="bank_ac_no" id="bank_ac_no" class="form-control" value="<?= isset($bank_ac_no) ? $bank_ac_no : ''; ?>" data-index="23">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="rtgs_ifsc_code" class="control-label">RTGS / IFSC Code</label>
+                                        <input type="text" name="rtgs_ifsc_code" id="rtgs_ifsc_code" class="form-control" value="<?= isset($rtgs_ifsc_code) ? $rtgs_ifsc_code : ''; ?>" data-index="24">
+                                    </div>
+                                </div>
+                                <div class="clearfix"></div>
                             </div>
                         </div>
                         <!-- /.box-body -->

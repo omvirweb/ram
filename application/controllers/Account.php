@@ -47,6 +47,13 @@ class Account extends CI_Controller {
                     'credit_debit' => $result->credit_debit,
                     'consider_in_pl' => $result->consider_in_pl,
                     'is_bill_wise' => $result->is_bill_wise,
+
+                    'bank_name' => $result->bank_name,
+                    'bank_acc_name' => $result->bank_acc_name,
+                    'bank_branch' => $result->bank_branch,
+                    'bank_city' => $result->bank_city,
+                    'bank_ac_no' => $result->bank_ac_no,
+                    'rtgs_ifsc_code' => $result->rtgs_ifsc_code,
                 );
                 set_page('account/account', $data);
             } else {
@@ -71,7 +78,7 @@ class Account extends CI_Controller {
     function save_account() {
         $return = '';
         $post_data = $this->input->post();
-        //echo '<pre>';print_r($post_data);exit;
+        //echo 'data = <pre>';print_r($post_data);exit;
         $account_id = isset($post_data['account_id']) ? $post_data['account_id'] : 0;
         $post_data['account_state'] = isset($post_data['account_state']) ? $post_data['account_state'] : null;
         $post_data['account_city'] = isset($post_data['account_city']) ? $post_data['account_city'] : null;
@@ -87,6 +94,14 @@ class Account extends CI_Controller {
         $post_data['opening_balance'] = isset($post_data['opening_balance']) ? $post_data['opening_balance'] : null;
         $post_data['credit_debit'] = isset($post_data['credit_debit']) ? $post_data['credit_debit'] : null;
         $post_data['is_bill_wise'] = isset($post_data['is_bill_wise']) ? 1 : 0;
+
+        $post_data['bank_name'] = isset($post_data['bank_name']) ? $post_data['bank_name'] : null;
+        $post_data['bank_acc_name'] = isset($post_data['bank_acc_name']) ? $post_data['bank_acc_name'] : null;
+        $post_data['bank_branch'] = isset($post_data['bank_branch']) ? $post_data['bank_branch'] : null;
+        $post_data['bank_city'] = isset($post_data['bank_city']) ? $post_data['bank_city'] : null;
+        $post_data['bank_ac_no'] = isset($post_data['bank_ac_no']) ? $post_data['bank_ac_no'] : null;
+        $post_data['rtgs_ifsc_code'] = isset($post_data['rtgs_ifsc_code']) ? $post_data['rtgs_ifsc_code'] : null;
+
         $post_data['consider_in_pl'] = 1;
         if (isset($post_data['account_id']) && !empty($post_data['account_id'])) {
             $ac_id = $this->crud->get_id_by_val_count('account', 'account_id', array('account_name' => trim($post_data['account_name']), 'account_id !=' => $post_data['account_id'], 'created_by' => $this->logged_in_id));
