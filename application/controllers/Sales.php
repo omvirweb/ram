@@ -1191,7 +1191,7 @@ class Sales extends CI_Controller
             $sales_invoice_lineitems = $this->crud->get_row_by_id('lineitems', $where);
             $total_gst = 0;
 
-            foreach ($sales_invoice_lineitems as $sales_invoice_lineitem) {
+            foreach ($sales_invoice_lineitems as $key=>$sales_invoice_lineitem) {
                 $sales_invoice_lineitem->item_name = $this->crud->get_id_by_val('item', 'item_name', 'item_id', $sales_invoice_lineitem->item_id);
                 $hsn_id = $this->crud->get_id_by_val('item', 'hsn_code', 'item_id', $sales_invoice_lineitem->item_id);
                 if (!empty($hsn_id)) {
@@ -1208,6 +1208,11 @@ class Sales extends CI_Controller
                 $amt =  $sales_invoice_lineitem->price * $sales_invoice_lineitem->item_qty;
                 $gst_amount = $amt * $sales_invoice_lineitem->gst / 100;
                 $total_gst += $gst_amount;
+                if ($key == 0) {
+                    $site_data = $this->crud->get_row_by_id('sites', array('site_id' => $sales_invoice_lineitem->site_id));
+                    $data['site_name'] = $site_data[0]->site_name;
+                    $data['site_address'] = $site_data[0]->site_address;
+                }
             }
 //            $no_arr = count($lineitem_arr);
 //            if($no_arr < 10){
@@ -1240,8 +1245,12 @@ class Sales extends CI_Controller
         }
 //		echo '<pre>'; print_r($data); exit;
         $letterpad_print = $this->crud->get_id_by_val('user', 'is_letter_pad', 'user_id', $this->logged_in_id);
+        $termsdata = $this->crud->get_column_value_by_id('settings', 'setting_value', array('setting_key' => 'sales_terms'));
+        $data['terms_data'] = $termsdata;
         $data['letterpad_print'] = $letterpad_print;
         $data['printtype'] = 0;
+        $our_bank_label = $this->crud->get_column_value_by_id('account', 'account_name', array('account_id' => $data['sales_invoice_data']->our_bank_id));
+        $data['our_bank_label'] = $our_bank_label;
         $html = $this->load->view('sales/invoice/invoice_somnath_print', $data, true);
 
         $pdfFilePath = "sales_invoice_miracle_print.pdf";

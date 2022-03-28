@@ -396,7 +396,7 @@
         <?php } ?>
         <?php } ?>
 
-        <?php if($voucher_type == "purchase") { ?>
+        <?php if($voucher_type == "purchase" || $voucher_type == "sales") { ?>
         initAjaxSelect2($("#our_bank_label"),"<?=base_url('app/our_bank_label_select2_source/')?>");
         <?php if(isset($invoice_data->invoice_type) && !empty($invoice_data->invoice_type)){ ?>
         setSelect2Value($("#our_bank_label"),"<?=base_url('app/set_our_bank_label_select2_val_by_id/')?>" + <?= $invoice_data->our_bank_id; ?>);

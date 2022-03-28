@@ -122,4 +122,7 @@ ALTER TABLE `account` ADD `bank_name` VARCHAR(255) CHARACTER SET latin1 COLLATE 
 --Parag : 2022_03_26 12:37 PM
 ALTER TABLE `purchase_invoice` ADD `our_bank_id` INT NOT NULL AFTER `shipping_address`, ADD INDEX (`our_bank_id`);
 
+--Parag : 2022_03_28 06:45 PM
+ALTER TABLE `sales_invoice` ADD `our_bank_id` INT NOT NULL AFTER `shipping_address`, ADD INDEX (`our_bank_id`);
+
 
