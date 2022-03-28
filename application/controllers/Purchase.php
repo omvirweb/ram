@@ -632,7 +632,8 @@ class Purchase extends CI_Controller {
             $purchase_invoice_lineitems = $this->crud->get_row_by_id('lineitems', $where);
             
             $total_gst = 0;
-            foreach ($purchase_invoice_lineitems as $purchase_invoice_lineitem) {
+            foreach ($purchase_invoice_lineitems as $key=>$purchase_invoice_lineitem) {
+
                 $purchase_invoice_lineitem->item_name = $this->crud->get_id_by_val('item', 'item_name', 'item_id', $purchase_invoice_lineitem->item_id);
                 $hsn_id = $this->crud->get_id_by_val('item', 'hsn_code', 'item_id', $purchase_invoice_lineitem->item_id);
                 if (!empty($hsn_id)) {
@@ -645,12 +646,18 @@ class Purchase extends CI_Controller {
                 $purchase_invoice_lineitem->cgst_amt = $purchase_invoice_lineitem->cgst_amount;
                 $purchase_invoice_lineitem->sgst_amt = $purchase_invoice_lineitem->sgst_amount;
                 $purchase_invoice_lineitem->igst_amt = $purchase_invoice_lineitem->igst_amount;
+
                 $lineitem_arr[] = $purchase_invoice_lineitem;
                 $amt =  $purchase_invoice_lineitem->price * $purchase_invoice_lineitem->item_qty;
                 $gst_amount = $amt * $purchase_invoice_lineitem->gst / 100;
                 $total_gst += $gst_amount;
-            }
 
+                if ($key == 0) {
+                    $site_data = $this->crud->get_row_by_id('sites', array('site_id' => $purchase_invoice_lineitem->site_id));
+                    $data['site_name'] = $site_data[0]->site_name;
+                    $data['site_address'] = $site_data[0]->site_address;
+                }
+            }
             
             $data['lineitems'] = $lineitem_arr;
 
@@ -676,8 +683,12 @@ class Purchase extends CI_Controller {
         }
 
         $letterpad_print = $this->crud->get_id_by_val('user', 'is_letter_pad', 'user_id', $this->logged_in_id);
+        $termsdata = $this->crud->get_column_value_by_id('settings', 'setting_value', array('setting_key' => 'sales_terms'));
+        $data['terms_data'] = $termsdata;
         $data['letterpad_print'] = $letterpad_print;
         $data['printtype'] = 0;
+        $our_bank_label = $this->crud->get_column_value_by_id('account', 'account_name', array('account_id' => $data['purchase_invoice_data']->our_bank_id));
+        $data['our_bank_label'] = $our_bank_label;
         $html = $this->load->view('purchase/invoice/invoice_print', $data, true);
 
         $pdfFilePath = "purchase_invoice_miracle_print.pdf";

@@ -134,12 +134,21 @@ ob_start();
                 <td colspan="3" class="text_bold text_left no-border-bottom no-border-right no-border-top">Place Of Supply</td>
                 <td colspan="3" class=" text_left no-border-bottom no-border-left no-border-top"><b class="text_bold"> : </b><?=isset($account_state) ? $account_state : '';?></td>
             </tr>
+            <tr class="">
+                <td colspan="1" class="text_bold text_left no-border-bottom no-border-right no-border-top" style="white-space: nowrap;">Site Name : </td>
+                <td colspan="8" class=" text_left no-border-bottom no-border-left no-border-top">
+                    <?=isset($site_name) ? $site_name : '';?><br/>
+                    <?=isset($site_address) ? $site_address : '';?>
+                </td>
+                <td colspan="6" class="text_bold text_left no-border-bottom no-border-top">&nbsp;</td>
+            </tr>
             <tr class="border1">
                 <td colspan="1" width="50px" class="text_bold text_center">Sr No</td>
                 <td colspan="6" class="text_bold text_center" width="250px">Product Name</td>
                 <td colspan="2" class="text_bold text_center">HSN/SAC</td>
                 <td colspan="1" class="text_bold text_center">Qty</td>
-                <td colspan="2" class="text_bold text_center">Rate</td>
+                <td colspan="1" class="text_bold text_center">Unit</td>
+                <td colspan="1" class="text_bold text_center">Rate</td>
                 <td colspan="1" class="text_bold text_center">GST%</td>
                 <td colspan="2" class="text_bold text_center" width="100px">Amount</td>
             </tr>
@@ -158,7 +167,13 @@ ob_start();
                 <td valign="top" colspan="6" align="left"><?php echo $lineitem->item_name;?><br><?php echo $lineitem->note;?></td>
                 <td valign="top" colspan="2" align="center"><?php echo $lineitem->hsn_code; ?></td>
                 <td valign="top" colspan="1" class="divRight"><?php echo $lineitem->item_qty; ?></td>
-                <td valign="top" colspan="2" class="divRight"><?php echo $lineitem->price; ?></td>
+                <td valign="top" colspan="1" class="divRight">
+                    <?php 
+                    $unit_name = $this->crud->get_column_value_by_id('pack_unit', 'pack_unit_name', array('pack_unit_id' => $lineitem->unit_id));
+                    echo $unit_name;
+                    ?>
+                </td>
+                <td valign="top" colspan="1" class="divRight"><?php echo $lineitem->price; ?></td>
                 <?php //$gst = $lineitem->cgst +  $lineitem->sgst + $lineitem->igst?>
                 <td valign="top" colspan="1" class="divRight"><?php echo $lineitem->gst . '%'; ?></td>
                 <?php
@@ -191,7 +206,8 @@ ob_start();
                         <td colspan="6">&nbsp;</td>
                         <td colspan="2">&nbsp;</td>
                         <td colspan="1" class="divRight">&nbsp;</td>
-                        <td colspan="2" class="divRight">&nbsp;</td>
+                        <td colspan="1" class="divRight">&nbsp;</td>
+                        <td colspan="1" class="divRight">&nbsp;</td>
                         <td colspan="1" class="divRight">&nbsp;</td>
                         <td colspan="2" class="divRight">&nbsp;</td>
                     </tr>
@@ -218,29 +234,26 @@ ob_start();
                 <td colspan="3" class="no-border-right no-border-bottom no-border-top text_bold">Bank A/c. No.</td>
                 <td colspan="7" class="no-border"> : <?=isset($bank_ac_no) ? $bank_ac_no : '' ?></td>
                 <td colspan="3" class="no-border-top no-border-bottom no-border-right">CGST</td>
-                <td colspan="2" align="right" class="no-border-left no-border-top no-border-bottom"><?php echo number_format((float)$cgst_amount_total, 2, '.', ''); ?></td>
+                <td colspan="2" align="right" class="no-border-left no-border-top no-border-bottom"><?php echo number_format((float)($total_gst/2), 2, '.', ''); ?></td>
             </tr>
             <tr class="">
                 <td colspan="3" class="no-border-right no-border-bottom no-border-top text_bold">RTGS/IFSC Code</td>
                 <td colspan="7" class="no-border"> : <?=isset($rtgs_ifsc_code) ? $rtgs_ifsc_code : '' ?></td>
                 <td colspan="3" class="no-border-top no-border-bottom no-border-right">SGST</td>
-                <td colspan="2" align="right" class="no-border-left no-border-top no-border-bottom"><?php echo number_format((float)$sgst_amount_total, 2, '.', ''); ?></td>
+                <td colspan="2" align="right" class="no-border-left no-border-top no-border-bottom"><?php echo number_format((float)($total_gst/2), 2, '.', ''); ?></td>
+            </tr>
+            <tr class="">
+                <td colspan="3" class="no-border-right no-border-bottom no-border-top text_bold">Our Bank Label</td>
+                <td colspan="7" class="no-border"> : <?=isset($our_bank_label) ? $our_bank_label : '' ?></td>
+                <td colspan="3" class="no-border-top no-border-bottom no-border-right">Other Charges</td>
+                <td colspan="2" align="right" class="no-border-left no-border-top no-border-bottom"><?php echo number_format((float)$other_charges, 2, '.', ''); ?></td>
             </tr>
             <tr class="">
                 <td colspan="3" rowspan="2" class="border1 no-border-right no-border-bottom text_bold">Total GST</td>
                 <td colspan="7" rowspan="2" class=" border1 no-border-left no-border-bottom no-border-right"> : <?php echo $gst_total_word; ?></td>
-                <td colspan="3" class="no-border-top no-border-bottom no-border-right">IGST</td>
-                <td colspan="2" align="right" class="no-border-left no-border-top no-border-bottom"><?php echo number_format((float)$igst_amount_total, 2, '.', ''); ?></td>
-            </tr>
-            <tr class="">
-                <td colspan="3" class="no-border-top no-border-bottom no-border-right">Other Charges</td>
-                <td colspan="2" align="right" class="no-border-left no-border-top no-border-bottom"><?php echo number_format((float)$other_charges, 2, '.', ''); ?></td>
             </tr>
             <tr class="border1 no-border-top no-border-bottom text_bold">
-                <td colspan="3" class="no-border-right text_bold"></td>
-                <td colspan="7" class="no-border-top no-border-left no-border-right no-border-bottom"></td>
-                <td colspan="3" class="no-border-right">GST  </td>
-                <td colspan="2" align="right" class="border1 no-border-left"><?php echo number_format((float)$total_gst, 2, '.', ''); ?></td>
+                <td colspan="5" class="no-border-right text_bold">&nbsp;</td>
             </tr>
             <tr class="border1" style="background-color: #EAEAEA;">
                 <td colspan="3" class="no-border-right text_bold">Bill Amount</td>
@@ -250,10 +263,7 @@ ob_start();
             </tr>
             <tr class="border1">
                 <td valign="top" colspan="10" class="no-border-right" style="font-size: 12px;"><span class="text_bold" >Terms & Condition : </span><br/>
-                    1. Our risk and responsibility ceases as soon as the goods leave our premises.<br/>
-                    2. Interest @18% p.a. will be charged if payment is not made within due date.<br/>
-                    3. Goods once sold will not be taken back.<br/>
-                    4. "Subject to '<?php echo ucfirst($user_city); ?>' jurisdiction only. E.&.O.E."
+                    <?php echo $terms_data; ?>
                 </td>
                 <td valign="top" colspan="5" class="no-border-left text_bold">For, <?= isset($user_name) ? $user_name : '' ?><br/>
                     <br/>
