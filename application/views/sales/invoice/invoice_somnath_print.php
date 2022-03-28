@@ -251,9 +251,8 @@ ob_start();
                 <td colspan="3" rowspan="2" class="border1 no-border-right no-border-bottom text_bold">Total GST</td>
                 <td colspan="7" rowspan="2" class=" border1 no-border-left no-border-bottom no-border-right"> : <?php echo $gst_total_word; ?></td>
             </tr>
-            <tr class="">
-                <td colspan="3" class="no-border-top no-border-bottom no-border-right">Other Charges</td>
-                <td colspan="2" align="right" class="no-border-left no-border-top no-border-bottom"><?php echo number_format((float)$other_charges, 2, '.', ''); ?></td>
+            <tr class="border1 no-border-top no-border-bottom text_bold">
+                <td colspan="5" class="no-border-right text_bold">&nbsp;</td>
             </tr>
             
             <tr class="border1" style="background-color: #EAEAEA;">
