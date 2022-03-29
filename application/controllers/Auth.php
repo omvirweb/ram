@@ -123,14 +123,23 @@ class Auth extends CI_Controller
 
                             $last_visited_page = $this->crud->get_column_value_by_id('user', 'last_visited_page', array('user_id' => $user_id));
 
-                            // $ch = curl_init();
-                            // curl_setopt($ch, CURLOPT_URL, LARAVEL_BASE_URL."api/auth/login");
-                            // curl_setopt($ch, CURLOPT_POST, 1);
-                            // curl_setopt($ch, CURLOPT_POSTFIELDS,"email=".$_POST['email']."&password=".$_POST['pass']);
-                            // curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                            // $server_output = curl_exec($ch);
-                            // curl_close ($ch);
-                            // print_r($server_output);exit;
+                            $ch = curl_init();
+                            curl_setopt($ch, CURLOPT_URL, LARAVEL_BASE_URL."api/auth/login");
+                            curl_setopt($ch, CURLOPT_POST, 1);
+                            curl_setopt($ch, CURLOPT_POSTFIELDS,"email=".$_POST['email']."&password=".$_POST['pass']);
+                            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                            $server_output = curl_exec($ch);
+                            curl_close ($ch);
+                            if (isset(json_decode( $server_output)->id)) {
+                                $ip = $this->input->ip_address();
+                                //echo ($this->input->valid_ip($ip)?'Valid':'Not Valid');
+                                $string=exec('getmac');
+                                $mac=substr($string, 0, 17); 
+                                echo $mac;
+                                $this->session->set_userdata('laravel_login',$server_output);
+                            }
+                            
+                            //print_r(json_decode( $server_output) );exit;
                             
 
                             if(empty($last_visited_page)) {
