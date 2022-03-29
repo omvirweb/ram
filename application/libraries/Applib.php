@@ -57,8 +57,8 @@ class Applib
             $invoice_no_digit = $result->setting_value;
         }
         $lenght = strlen((string)$invoice_no);
-        if($invoice_no_digit != 0 || $invoice_no_digit != '' || $invoice_no_digit > $lenght) {
-            $no_of_zeros_to_add = $invoice_no_digit - $lenght;
+        if($invoice_no_digit != 0 || $invoice_no_digit != '' || (int)$invoice_no_digit > $lenght) {
+            $no_of_zeros_to_add = (int)$invoice_no_digit - (int)$lenght;
             if($no_of_zeros_to_add > 0) {
                 for($i = 1; $i <= $no_of_zeros_to_add; $i++){
                     $invoice_no = '0'.$invoice_no;
