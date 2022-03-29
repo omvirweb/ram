@@ -78,10 +78,12 @@ ob_start();
             </tr>
             <?php } else { ?>
                 <tr align="center" class="border1">
-                <td align="center" colspan="3" class="no-border-right">
+                <td align="center" colspan="4" class="no-border-right">
                     <img style="padding-left:20px;" src="<?php echo base_url('assets/dist/img/ram-logo.png');?>" class="saas-logo" alt="saas-logo">
                 </td>
-                <td align="center" colspan="12" class="no-border-left">&nbsp;</td>
+                <td align="center" colspan="8" class="no-border-left">&nbsp;</td>
+                <td align="center" colspan="3" class="no-border-left" style="text-align: left;">
+                    <?=isset($user_address) ? $user_address : '' ?>
                 <br/>
                 <br/>
                 <br/>
