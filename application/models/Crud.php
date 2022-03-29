@@ -1475,8 +1475,9 @@ class Crud extends CI_Model
 		if(!empty($account_id)){
 			$where .= " AND (`sales_invoice`.`account_id`='".$account_id."') ";
 		}
+		$where .= " GROUP BY sd.id";
 		$this->db->where($where);
-		$query = $this->db->get();
+		$query = $this->db->get();		
 		if($query->num_rows() > 0) {
 			$sales_stock_result = $query->result();
 			foreach ($sales_stock_result as $sales_stock_row) {
