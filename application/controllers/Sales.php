@@ -1161,10 +1161,10 @@ class Sales extends CI_Controller
             $data['user_phone'] = $user_detail->phone;
             $data['email_ids'] = $user_detail->email_ids;
             $data['logo_image'] = $user_detail->logo_image;
-            $data['bank_name'] = $user_detail->bank_name;
-            $data['bank_branch'] = $user_detail->bank_branch;
-            $data['bank_ac_no'] = $user_detail->bank_ac_no;
-            $data['rtgs_ifsc_code'] = $user_detail->rtgs_ifsc_code;
+            // $data['bank_name'] = $user_detail->bank_name;
+            // $data['bank_branch'] = $user_detail->bank_branch;
+            // $data['bank_ac_no'] = $user_detail->bank_ac_no;
+            // $data['rtgs_ifsc_code'] = $user_detail->rtgs_ifsc_code;
             $data['is_letter_pad'] = $this->session->userdata(PACKAGE_FOLDER_NAME . 'is_logged_in')['is_letter_pad'];
 
             $data['account_name'] = $account_detail->account_name;
@@ -1251,6 +1251,12 @@ class Sales extends CI_Controller
         $data['printtype'] = 0;
         $our_bank_label = $this->crud->get_column_value_by_id('account', 'account_name', array('account_id' => $data['sales_invoice_data']->our_bank_id));
         $data['our_bank_label'] = $our_bank_label;
+
+        $bank_details = $this->crud->get_data_row_by_where('account', array('account_id' => $data['sales_invoice_data']->our_bank_id));
+        $data['bank_name'] = $bank_details->bank_name;
+        $data['bank_branch'] = $bank_details->bank_branch;
+        $data['bank_ac_no'] = $bank_details->bank_ac_no;
+        $data['rtgs_ifsc_code'] = $bank_details->rtgs_ifsc_code;
         $html = $this->load->view('sales/invoice/invoice_somnath_print', $data, true);
 
         $pdfFilePath = "sales_invoice_miracle_print.pdf";
