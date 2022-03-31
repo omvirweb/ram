@@ -1253,10 +1253,10 @@ class Sales extends CI_Controller
         $data['our_bank_label'] = $our_bank_label;
 
         $bank_details = $this->crud->get_data_row_by_where('account', array('account_id' => $data['sales_invoice_data']->our_bank_id));
-        $data['bank_name'] = $bank_details->bank_name;
-        $data['bank_branch'] = $bank_details->bank_branch;
-        $data['bank_ac_no'] = $bank_details->bank_ac_no;
-        $data['rtgs_ifsc_code'] = $bank_details->rtgs_ifsc_code;
+        $data['bank_name'] = isset($bank_details->bank_name) ? $bank_details->bank_name : '';
+        $data['bank_branch'] = isset($bank_details->bank_branch) ? $bank_details->bank_branch : '';
+        $data['bank_ac_no'] = isset($bank_details->bank_ac_no) ? $bank_details->bank_ac_no : '';
+        $data['rtgs_ifsc_code'] = isset($bank_details->rtgs_ifsc_code) ? $bank_details->rtgs_ifsc_code : '';
         $html = $this->load->view('sales/invoice/invoice_somnath_print', $data, true);
 
         $pdfFilePath = "sales_invoice_miracle_print.pdf";
