@@ -78,17 +78,11 @@ ob_start();
             </tr>
             <?php } else { ?>
                 <tr align="center" class="border1">
-                <td align="center" colspan="4" class="no-border-right">
-                    <img style="padding-left:20px;" src="<?php if(isset($logo_image) && $logo_image != '') { echo base_url('assets/uploads/logo_image/'.$logo_image); } else {  echo base_url('assets/dist/img/ram-logo.png'); } ?>" class="saas-logo" alt="saas-logo">
-                </td>
-                <td align="center" colspan="8" class="no-border-left">&nbsp;</td>
-                <td align="center" colspan="3" class="no-border-left" style="text-align: left;">
+                <td align="left" colspan="15" class="no-border-right">
+                    <img src="<?php if(isset($logo_image) && $logo_image != '') { echo base_url('assets/uploads/logo_image/'.$logo_image); } else {  echo base_url('assets/dist/img/ram-logo.png'); } ?>" class="saas-logo" alt="saas-logo">
+                    <br>&nbsp;&nbsp;
                     <?=isset($user_address) ? $user_address : '' ?>
-                <br/>
-                <br/>
-                <br/>
-                <br/>
-                <br/>
+                </td>
             </tr>
             <?php } ?>
             <tr class="border1">
@@ -122,14 +116,8 @@ ob_start();
                 <td colspan="3" valign="top" class="text_bold text_left no-border-bottom no-border-right no-border-top">Date</td>
                 <td colspan="3" valign="top" class="text_bold text_left no-border-bottom no-border-left no-border-top"><b> : </b><?=isset($sales_invoice_date) ? $sales_invoice_date : '';?></td>
             </tr>
-            <tr class="">
-                <td colspan="3" class="text_bold text_left no-border-bottom no-border-right no-border-top">Transport Name</td>
-                <td colspan="3" class=" text_left no-border-bottom no-border-left no-border-top"><b class="text_bold"> : </b><?=isset($transport_name) ? $transport_name : '';?></td>
-            </tr>
-            <tr class="">
-                <td colspan="3" class="text_bold text_left no-border-bottom no-border-right no-border-top">LR No.</td>
-                <td colspan="3" class=" text_left no-border-bottom no-border-left no-border-top"><b class="text_bold"> : </b><?=isset($lr_no) ? $lr_no : '';?></td>
-            </tr>
+            <tr class=""></tr>
+            <tr class=""></tr>
             <tr class="">
                 <td colspan="1" class="text_bold text_left no-border-bottom no-border-right no-border-top" style="white-space: nowrap;">GSTIN No. : </td>
                 <td colspan="8" class=" text_left no-border-bottom no-border-left no-border-top"><?=isset($account_gst_no) ? $account_gst_no : '';?></td>
