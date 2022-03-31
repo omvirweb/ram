@@ -549,9 +549,10 @@ class App extends CI_Controller{
         $search = isset($_GET['q']) ? $_GET['q'] : '';
         $page = isset($_GET['page']) ? $_GET['page'] : 1;
         if (is_numeric($arg)) {
-            $where = array('a.account_group_id' => $arg, 'a.created_by' => $this->logged_in_id);
+            // $where = array('a.account_group_id' => $arg, 'a.created_by' => $this->logged_in_id);
+			$where = array('a.account_group_id' => $arg);
         } else {
-            $where = array('a.created_by' => $this->logged_in_id);
+            // $where = array('a.created_by' => $this->logged_in_id);
         }
         $account_group_ids = $this->applib->sundry_creditors_debtors_cash_in_hand_account_group_ids();
 
