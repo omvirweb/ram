@@ -173,6 +173,7 @@ class Sales extends CI_Controller
 			$sales_invoice_data['invoice_type'] = isset($post_data['invoice_type']) && !empty($post_data['invoice_type']) ? $post_data['invoice_type'] : null;
 			$sales_invoice_data['updated_at'] = $this->now_time;
             $sales_invoice_data['updated_by'] = $this->logged_in_id;
+            $sales_invoice_data['company_id'] = $this->logged_in_id;
             $sales_invoice_data['user_updated_by'] = $this->session->userdata()['login_user_id'];
             $where_array['sales_invoice_id'] = $post_data['sales_invoice_id'];
             $result = $this->crud->update('sales_invoice', $sales_invoice_data, $where_array);
@@ -225,6 +226,7 @@ class Sales extends CI_Controller
 
 						$add_lineitem['updated_at'] = $this->now_time;
 						$add_lineitem['updated_by'] = $this->logged_in_id;
+						$add_lineitem['company_id'] = $this->logged_in_id;
 						$add_lineitem['user_updated_by'] = $this->session->userdata()['login_user_id'];
 						$where_id['id'] = $lineitem->id;
 						$this->crud->update('lineitems', $add_lineitem, $where_id);
@@ -236,6 +238,7 @@ class Sales extends CI_Controller
 						$add_lineitem['user_created_by'] = $this->session->userdata()['login_user_id'];
 						$add_lineitem['updated_at'] = $this->now_time;
 						$add_lineitem['updated_by'] = $this->logged_in_id;
+						$add_lineitem['company_id'] = $this->logged_in_id;
 						$add_lineitem['user_updated_by'] = $this->session->userdata()['login_user_id'];
 						$this->crud->insert('lineitems',$add_lineitem);
 					}
@@ -323,6 +326,7 @@ class Sales extends CI_Controller
 					$add_lineitem['updated_by'] = $this->logged_in_id;
 					$add_lineitem['user_updated_by'] = $this->session->userdata()['login_user_id'];
 					$add_lineitem['created_by'] = $this->logged_in_id;
+					$add_lineitem['company_id'] = $this->logged_in_id;
 					$add_lineitem['user_created_by'] = $this->session->userdata()['login_user_id'];
 					$this->crud->insert('lineitems',$add_lineitem);
 

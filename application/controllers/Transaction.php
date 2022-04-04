@@ -1592,6 +1592,8 @@ class Transaction extends CI_Controller {
                 $add_lineitem['unit_id'] = isset($lineitem->unit_id)?$lineitem->unit_id:NULL;
                 $add_lineitem['gst'] = isset($lineitem->gst_rate)?$lineitem->gst_rate:0;
                 $add_lineitem['site_id'] = isset($lineitem->site_id)?$lineitem->site_id:NULL;
+                // Add Comapany id
+                $add_lineitem['company_id'] = $this->logged_in_id;
                 $add_lineitem['module'] = $module;
                 $add_lineitem['parent_id'] = $parent_id;
                 $add_lineitem['note'] = isset($lineitem->note)?$lineitem->note:'';
@@ -1679,6 +1681,7 @@ class Transaction extends CI_Controller {
                             $sub_arr['created_at'] = $this->now_time;
                             $sub_arr['updated_at'] = $this->now_time;
                             $sub_arr['updated_by'] = $this->logged_in_id;
+                            $sub_arr['company_id'] = $this->logged_in_id;
                             $sub_arr['user_updated_by'] = $this->session->userdata()['login_user_id'];
                             $sub_arr['created_by'] = $this->logged_in_id;
                             $sub_arr['user_created_by'] = $this->session->userdata()['login_user_id'];
@@ -1815,6 +1818,7 @@ class Transaction extends CI_Controller {
                 $add_lineitem['updated_by'] = $this->logged_in_id;
                 $add_lineitem['user_updated_by'] = $this->session->userdata()['login_user_id'];
                 $add_lineitem['created_by'] = $this->logged_in_id;
+                $add_lineitem['company_id'] = $this->logged_in_id;
                 $add_lineitem['user_created_by'] = $this->session->userdata()['login_user_id'];
                 $this->crud->insert('lineitems',$add_lineitem);
 
@@ -1838,6 +1842,7 @@ class Transaction extends CI_Controller {
             $invoice_data['invoice_type'] = ($post_data['invoice_type'] == "1"?1:2);
             $invoice_data['created_at'] = $this->now_time;
             $invoice_data['created_by'] = $this->logged_in_id;
+            $invoice_data['company_id'] = $this->logged_in_id;
             $invoice_data['user_created_by'] = $this->session->userdata()['login_user_id'];
             $invoice_data['updated_at'] = $this->now_time;
             $invoice_data['updated_by'] = $this->logged_in_id;
@@ -1855,6 +1860,7 @@ class Transaction extends CI_Controller {
                 $update_lineitem['note'] = $post_data['note'];
                 $update_lineitem['updated_at'] = $this->now_time;
                 $update_lineitem['updated_by'] = $this->logged_in_id;
+                $update_lineitem['company_id'] = $this->logged_in_id;
                 $update_lineitem['user_updated_by'] = $this->session->userdata()['login_user_id'];
 
                 $where_lineitems = array();
@@ -1905,6 +1911,7 @@ class Transaction extends CI_Controller {
                 $add_lineitem['created_at'] = $this->now_time;
                 $add_lineitem['updated_at'] = $this->now_time;
                 $add_lineitem['updated_by'] = $this->logged_in_id;
+                $add_lineitem['company_id'] = $this->logged_in_id;
                 $add_lineitem['user_updated_by'] = $this->session->userdata()['login_user_id'];
                 $add_lineitem['created_by'] = $this->logged_in_id;
                 $add_lineitem['user_created_by'] = $this->session->userdata()['login_user_id'];
@@ -1930,6 +1937,7 @@ class Transaction extends CI_Controller {
             $invoice_data['igst_amount_total'] = 0;
             $invoice_data['updated_at'] = $this->now_time;
             $invoice_data['updated_by'] = $this->logged_in_id;
+            $invoice_data['company_id'] = $this->logged_in_id;
             $invoice_data['user_updated_by'] = $this->session->userdata()['login_user_id'];
             if(isset($post_data['invoice_id']) && !empty($post_data['invoice_id'])){
                 $where_array = array();
@@ -1944,6 +1952,7 @@ class Transaction extends CI_Controller {
                 $update_lineitem['note'] = $post_data['note'];
                 $update_lineitem['updated_at'] = $this->now_time;
                 $update_lineitem['updated_by'] = $this->logged_in_id;
+                $update_lineitem['company_id'] = $this->logged_in_id;
                 $update_lineitem['user_updated_by'] = $this->session->userdata()['login_user_id'];
 
                 $where_lineitems = array();
@@ -1998,6 +2007,7 @@ class Transaction extends CI_Controller {
                 $add_lineitem['created_at'] = $this->now_time;
                 $add_lineitem['updated_at'] = $this->now_time;
                 $add_lineitem['updated_by'] = $this->logged_in_id;
+                $add_lineitem['company_id'] = $this->logged_in_id;
                 $add_lineitem['user_updated_by'] = $this->session->userdata()['login_user_id'];
                 $add_lineitem['created_by'] = $this->logged_in_id;
                 $add_lineitem['user_created_by'] = $this->session->userdata()['login_user_id'];
@@ -2023,6 +2033,7 @@ class Transaction extends CI_Controller {
             $invoice_data['igst_amount_total'] = 0;
             $invoice_data['updated_at'] = $this->now_time;
             $invoice_data['updated_by'] = $this->logged_in_id;
+            $invoice_data['company_id'] = $this->logged_in_id;
             $invoice_data['user_updated_by'] = $this->session->userdata()['login_user_id'];
             if(isset($post_data['invoice_id']) && !empty($post_data['invoice_id'])){
                 $where_array = array();
@@ -2036,7 +2047,7 @@ class Transaction extends CI_Controller {
                 $update_lineitem['amount'] = $post_data['amount'];
                 $update_lineitem['note'] = $post_data['note'];
                 $update_lineitem['updated_at'] = $this->now_time;
-                $update_lineitem['updated_by'] = $this->logged_in_id;
+                $update_lineitem['company_id'] = $this->logged_in_id;
                 $update_lineitem['user_updated_by'] = $this->session->userdata()['login_user_id'];
 
                 $where_lineitems = array();
@@ -2084,6 +2095,7 @@ class Transaction extends CI_Controller {
                 $add_lineitem['created_at'] = $this->now_time;
                 $add_lineitem['updated_at'] = $this->now_time;
                 $add_lineitem['updated_by'] = $this->logged_in_id;
+                $add_lineitem['company_id'] = $this->logged_in_id;
                 $add_lineitem['user_updated_by'] = $this->session->userdata()['login_user_id'];
                 $add_lineitem['created_by'] = $this->logged_in_id;
                 $add_lineitem['user_created_by'] = $this->session->userdata()['login_user_id'];
@@ -2279,6 +2291,7 @@ class Transaction extends CI_Controller {
                 if(isset($lineitem->id) && !empty($lineitem->id)){
                     $add_lineitem['updated_at'] = $this->now_time;
                     $add_lineitem['updated_by'] = $this->logged_in_id;
+                    $add_lineitem['company_id'] = $this->logged_in_id;
                     $add_lineitem['user_updated_by'] = $this->session->userdata()['login_user_id'];
                     $where_id['id'] = $lineitem->id;
                     $this->crud->update('lineitems', $add_lineitem, $where_id);
@@ -2288,6 +2301,7 @@ class Transaction extends CI_Controller {
                     $add_lineitem['user_created_by'] = $this->session->userdata()['login_user_id'];
                     $add_lineitem['updated_at'] = $this->now_time;
                     $add_lineitem['updated_by'] = $this->logged_in_id;
+                    $add_lineitem['company_id'] = $this->logged_in_id;
                     $add_lineitem['user_updated_by'] = $this->session->userdata()['login_user_id'];
                     $this->crud->insert('lineitems',$add_lineitem);
                 }
@@ -2295,6 +2309,7 @@ class Transaction extends CI_Controller {
         } else {            
             $invoice_data['created_at'] = $this->now_time;
             $invoice_data['created_by'] = $this->logged_in_id;
+            $invoice_data['company_id'] = $this->logged_in_id;
             $invoice_data['user_created_by'] = $this->session->userdata()['login_user_id'];
 
             $this->crud->insert('purchase_invoice', $invoice_data);
@@ -2337,6 +2352,7 @@ class Transaction extends CI_Controller {
                 $add_lineitem['updated_by'] = $this->logged_in_id;
                 $add_lineitem['user_updated_by'] = $this->session->userdata()['login_user_id'];
                 $add_lineitem['created_by'] = $this->logged_in_id;
+                $add_lineitem['company_id'] = $this->logged_in_id;
                 $add_lineitem['user_created_by'] = $this->session->userdata()['login_user_id'];
                 $this->crud->insert('lineitems',$add_lineitem);
             }

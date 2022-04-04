@@ -125,4 +125,14 @@ ALTER TABLE `purchase_invoice` ADD `our_bank_id` INT NOT NULL AFTER `shipping_ad
 --Parag : 2022_03_28 06:45 PM
 ALTER TABLE `sales_invoice` ADD `our_bank_id` INT NOT NULL AFTER `shipping_address`, ADD INDEX (`our_bank_id`);
 
+--Parag : 2022_04_04 06:20 PM
+ALTER TABLE `lineitems` ADD `company_id` INT NULL AFTER `site_id`;
 
+--Parag : 2022_04_04 07:06 PM
+ALTER TABLE `sales_invoice` ADD `company_id` INT NULL AFTER `our_bank_id`;
+
+--Parag : 2022_04_04 07:09 PM
+ALTER TABLE `purchase_invoice` ADD `company_id` INT NULL AFTER `our_bank_id`;
+
+--Parag : 2022_04_04 07:12 PM
+ALTER TABLE `credit_note` ADD `company_id` INT NULL AFTER `data_lock_unlock`;
