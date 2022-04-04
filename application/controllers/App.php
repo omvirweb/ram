@@ -332,7 +332,7 @@ class App extends CI_Controller{
 	function related_item_select2_source($id = null){
 		$search = isset($_GET['q']) ? $_GET['q'] : '';
 		$page = isset($_GET['page']) ? $_GET['page'] : 1;
-		$where = array('created_by' => $this->logged_in_id);
+		// $where = array('created_by' => $this->logged_in_id);
 		if(!empty($id) && $id != null){
 			$where['item_id != '] =  $id;
 		}
@@ -369,9 +369,10 @@ class App extends CI_Controller{
         $search = isset($_GET['q']) ? $_GET['q'] : '';
         $page = isset($_GET['page']) ? $_GET['page'] : 1;
         if (is_numeric($arg)) {
-            $where = array('a.account_group_id' => $arg, 'a.created_by' => $this->logged_in_id);
+            // $where = array('a.account_group_id' => $arg, 'a.created_by' => $this->logged_in_id);
+            $where = array('a.account_group_id' => $arg);
         } else {
-            $where = array('a.created_by' => $this->logged_in_id);
+            // $where = array('a.created_by' => $this->logged_in_id);
         }
 
         $acc_res = array();
@@ -428,7 +429,7 @@ class App extends CI_Controller{
     function gst_account_select2_source($arg = null) {
         $search = isset($_GET['q']) ? $_GET['q'] : '';
         $page = isset($_GET['page']) ? $_GET['page'] : 1;
-        $where = array('a.created_by' => $this->logged_in_id);
+        // $where = array('a.created_by' => $this->logged_in_id);
         $acc_res = array();
         $resultCount = 10;
         $offset = ($page - 1) * $resultCount;
@@ -486,9 +487,13 @@ class App extends CI_Controller{
         $search = isset($_GET['q']) ? $_GET['q'] : '';
         $page = isset($_GET['page']) ? $_GET['page'] : 1;
         if (is_numeric($arg)) {
-            $where = array('a.account_group_id' => $arg, 'a.created_by' => $this->logged_in_id, 'a.is_bill_wise' => '1');
+            $where = array('a.account_group_id' => $arg, 
+			// 'a.created_by' => $this->logged_in_id, 
+			'a.is_bill_wise' => '1');
         } else {
-            $where = array('a.created_by' => $this->logged_in_id, 'a.is_bill_wise' => '1');
+            $where = array(
+				// 'a.created_by' => $this->logged_in_id,
+				 'a.is_bill_wise' => '1');
         }
 
         $acc_res = array();
@@ -627,7 +632,7 @@ class App extends CI_Controller{
 		$this->db->select("a.account_id,a.account_name,a.account_gst_no,c.city_name");
 		$this->db->from("account a");
 		$this->db->join("city c","c.city_id=a.account_city","left");
-		$this->db->where('a.created_by',$this->logged_in_id);
+		// $this->db->where('a.created_by',$this->logged_in_id);
 		$this->db->where_in('a.account_group_id',$account_group_ids);
 		$this->db->where_not_in('a.account_group_id',array(SALES_BILL_ACCOUNT_GROUP_ID,PURCHASE_BILL_ACCOUNT_GROUP_ID,CREDIT_NOTE_BILL_ACCOUNT_GROUP_ID,DEBIT_NOTE_BILL_ACCOUNT_GROUP_ID));
 		if(!empty($search)) {
@@ -655,7 +660,7 @@ class App extends CI_Controller{
 		$this->db->select("a.account_id");
 		$this->db->from("account a");
 		$this->db->join("city c","c.city_id = a.account_city","left");
-		$this->db->where('a.created_by',$this->logged_in_id);
+		// $this->db->where('a.created_by',$this->logged_in_id);
 		$this->db->where_in('a.account_group_id',$account_group_ids);
 		$this->db->where_not_in('a.account_group_id',array(SALES_BILL_ACCOUNT_GROUP_ID,PURCHASE_BILL_ACCOUNT_GROUP_ID,CREDIT_NOTE_BILL_ACCOUNT_GROUP_ID,DEBIT_NOTE_BILL_ACCOUNT_GROUP_ID));
 		if(!empty($search)) {
@@ -699,7 +704,10 @@ class App extends CI_Controller{
         $search = isset($_GET['q']) ? $_GET['q'] : '';
         $page = isset($_GET['page']) ? $_GET['page'] : 1;
         
-        $where = array('account_group_id' => $against_account_group_id,'created_by' =>  $this->logged_in_id);
+        $where = array(
+			'account_group_id' => $against_account_group_id,
+			// 'created_by' =>  $this->logged_in_id
+	);
 
         $results = array(
             "results" => $this->get_select2_data('account', 'account_id', 'account_name', $search, $page, $where),
@@ -718,7 +726,7 @@ class App extends CI_Controller{
         $offset = ($page - 1) * $resultCount;
         $this->db->select("account_id,account_name");
         $this->db->from("account");
-        $this->db->where('created_by', $this->logged_in_id);
+        // $this->db->where('created_by', $this->logged_in_id);
         $this->db->where_in('account_group_id',$where_array);
         $this->db->limit($resultCount, $offset);
         $this->db->order_by("account_id");
@@ -930,7 +938,9 @@ class App extends CI_Controller{
 	}
 	
 	function item_select2_source(){
-        $separate = $this->crud->get_column_value_by_id('company_settings', 'setting_value', array('setting_key' => 'separate', 'company_id' => $this->logged_in_id, 'module_name' => 2));
+        $separate = $this->crud->get_column_value_by_id('company_settings', 'setting_value', array('setting_key' => 'separate', 
+		'company_id' => $this->logged_in_id,
+		 'module_name' => 2));
 
         $short_name = $this->crud->get_column_value_by_id('company_settings', 'setting_value', array('setting_key' => 'short_name', 'company_id' => $this->logged_in_id, 'module_name' => 2));
 
@@ -944,7 +954,7 @@ class App extends CI_Controller{
         $this->db->join('category c','c.cat_id=i.category_id','left');
     	$this->db->join('sub_category sc','sc.sub_cat_id=i.sub_category_id','left');
     	$this->db->join('item_group ig','ig.item_group_id=i.item_group_id','left');
-        $this->db->where('i.created_by', $this->logged_in_id);
+        // $this->db->where('i.created_by', $this->logged_in_id);
         
         if(!empty($search)) {
         	$this->db->group_start();
@@ -1000,7 +1010,7 @@ class App extends CI_Controller{
         $this->db->join('category c','c.cat_id=i.category_id','left');
     	$this->db->join('sub_category sc','sc.sub_cat_id=i.sub_category_id','left');
     	$this->db->join('item_group ig','ig.item_group_id=i.item_group_id','left');
-        $this->db->where('i.created_by',$this->logged_in_id);
+        // $this->db->where('i.created_by',$this->logged_in_id);
         if(!empty($search)) {
         	$this->db->group_start();
         	$this->db->like('i.item_name',$search);
@@ -1107,7 +1117,7 @@ class App extends CI_Controller{
         function item_group_select2_source(){
 		$search = isset($_GET['q']) ? $_GET['q'] : '';
 		$page = isset($_GET['page']) ? $_GET['page'] : 1;
-		$where = array('created_by' => $this->logged_in_id);
+		// $where = array('created_by' => $this->logged_in_id);
 		$results = array(
 			"results" => $this->get_select2_data('item_group', 'item_group_id', 'item_group_name', $search, $page, $where),
 			"total_count" => $this->count_select2_data('item_group', 'item_group_id', 'item_group_name', $search, $where),
@@ -1120,7 +1130,11 @@ class App extends CI_Controller{
 	}
     
     function item_select2_source_from_item_group($item_group_id){
-    	$short_name = $this->crud->get_column_value_by_id('company_settings', 'setting_value', array('setting_key' => 'short_name', 'company_id' => $this->logged_in_id, 'module_name' => 2));
+    	$short_name = $this->crud->get_column_value_by_id('company_settings', 'setting_value', 
+		array(
+			'setting_key' => 'short_name',
+			//  'company_id' => $this->logged_in_id,
+		 'module_name' => 2));
         $search = isset($_GET['q']) ? $_GET['q'] : '';
         $page = isset($_GET['page']) ? $_GET['page'] : 1;
         $select2_data = array();
@@ -1128,7 +1142,7 @@ class App extends CI_Controller{
         $offset = ($page - 1) * $resultCount;
         $this->db->select("item_id, item_name, shortname, sales_rate_val, current_stock_qty");
         $this->db->from("item");
-        $this->db->where('created_by', $this->logged_in_id);
+        // $this->db->where('created_by', $this->logged_in_id);
         if(!empty($item_group_id) && $item_group_id != 'null'){
             $this->db->where('item_group_id', $item_group_id);
         }
@@ -1167,7 +1181,7 @@ class App extends CI_Controller{
 
         $this->db->select("item_id");
         $this->db->from("item");
-        $this->db->where('created_by',$this->logged_in_id);
+        // $this->db->where('created_by',$this->logged_in_id);
         $this->db->where('item_group_id', $item_group_id);
 
         if(!empty($search)) {
@@ -1205,7 +1219,9 @@ class App extends CI_Controller{
 	}
 	function set_prefix_select2_val_by_id($id = ''){
                 if(empty($id)){
-                    $id = $this->crud->get_column_value_by_id('company_invoice_prefix', 'id',array('company_id'=>$this->logged_in_id, 'is_default' => 1));
+                    $id = $this->crud->get_column_value_by_id('company_invoice_prefix', 'id',array(
+						'company_id'=>$this->logged_in_id,
+						 'is_default' => 1));
                 }
 		$this->get_select2_text_by_id('company_invoice_prefix', 'id', 'prefix_name', $id);
 	}
@@ -1254,7 +1270,7 @@ class App extends CI_Controller{
     function item_select2_source_without_item_group() {
         $search = isset($_GET['q']) ? $_GET['q'] : '';
         $page = isset($_GET['page']) ? $_GET['page'] : 1;
-        $where = array('created_by' => $this->logged_in_id);
+        // $where = array('created_by' => $this->logged_in_id);
         $results = array(
             "results" => $this->get_select2_data('item', 'item_id', 'item_name', $search, $page, $where),
             "total_count" => $this->count_select2_data('item', 'item_id', 'item_name', $search, $where),
@@ -1427,7 +1443,7 @@ class App extends CI_Controller{
 
         $this->db->select("item_id");
         $this->db->from("item");
-        $this->db->where('created_by',$this->logged_in_id);
+        // $this->db->where('created_by',$this->logged_in_id);
         $this->db->where('category_id', $cat_id);
         if(!empty($search)) {
         	$this->db->group_start();
@@ -1454,7 +1470,10 @@ class App extends CI_Controller{
         function item_select2_source_from_sub_category($sub_cat_id){
 		$search = isset($_GET['q']) ? $_GET['q'] : '';
 		$page = isset($_GET['page']) ? $_GET['page'] : 1;
-		$where = array('sub_category_id' => $sub_cat_id,'created_by' => $this->logged_in_id);
+		$where = array(
+			'sub_category_id' => $sub_cat_id,
+			// 'created_by' => $this->logged_in_id
+		);
 		$results = array(
 			"results" => $this->get_select2_data('item', 'item_id', 'item_name', $search, $page, $where),
 			"total_count" => $this->count_select2_data('item', 'item_id', 'item_name', $search, $where),
@@ -1597,7 +1616,7 @@ class App extends CI_Controller{
         $this->db->join('company c','c.id=i.company_id','left');
 		$this->db->join('groups g','g.id=i.group_id','left');
 		$this->db->join('pack_unit pu','pu.pack_unit_id=i.alternate_unit_id','left');
-        $this->db->where('i.created_by', $this->logged_in_id);
+        // $this->db->where('i.created_by', $this->logged_in_id);
 		if(isset($_GET['item_code'])){
 			$this->db->where('i.item_code', $_GET['item_code']);
 		}
@@ -1638,7 +1657,7 @@ class App extends CI_Controller{
         $this->db->join('company c','c.id=i.company_id','left');
 		$this->db->join('groups g','g.id=i.group_id','left');
 		$this->db->join('pack_unit pu','pu.pack_unit_id=i.alternate_unit_id','left');
-        $this->db->where('i.created_by', $this->logged_in_id);
+        // $this->db->where('i.created_by', $this->logged_in_id);
 		if(isset($_GET['item_code'])){
 			$this->db->where('i.item_code', $_GET['item_code']);
 		}
@@ -1720,6 +1739,7 @@ class App extends CI_Controller{
                 "results" => $this->get_select2_data('account', 'account_id', 'account_name', $search, $page, $where),
                 "total_count" => $this->count_select2_data('account', 'account_id', 'account_name', $search, $where),
         );
+
         echo json_encode($results);
         exit();
 	}
