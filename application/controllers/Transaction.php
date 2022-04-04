@@ -1233,6 +1233,7 @@ class Transaction extends CI_Controller {
             $invoice_data['sales_invoice_desc'] = $post_data['invoice_desc'];
             $invoice_data['cash_customer'] = (isset($post_data['cash_customer'])?$post_data['cash_customer']:'');
             $invoice_data['tax_type'] = (isset($post_data['tax_type'])?$post_data['tax_type']:'');
+            $invoice_data['our_bank_id'] = $post_data['our_bank_label'];
 
         } elseif($voucher_type == 'purchase') {
             $module = 1;
