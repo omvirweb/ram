@@ -472,6 +472,21 @@ $is_single_line_item = 1;
                                                 </ul>
                                             </li>
                                         <?php } ?>
+                                        <?php if($this->applib->have_access_role(MODULE_SALES_INVOICE_ID,"view")) { ?>
+                                            <li class="dropdown-submenu">
+                                                <a tabindex="-1" href="<?php echo base_url() ?>sales/invoice_list"><i class="fa fa-circle-o"></i> Sales Invoice Type2</a>
+                                                <ul class="dropdown-menu">
+                                                    <?php if($this->applib->have_access_role(MODULE_SALES_INVOICE_ID,"add")) { ?>
+                                                        <?php if($is_single_line_item == 1){?>
+                                                            <li><a tabindex="-1" href="<?php echo base_url() ?>transaction/sales_purchase_transaction/sales2"><i class="fa fa-circle-o"></i> Add Invoice</a></li>
+                                                        <?php } else { ?>
+                                                            <li><a tabindex="-1" href="<?php echo base_url() ?>sales/invoice/"><i class="fa fa-circle-o"></i> Add Invoice</a></li>
+                                                        <?php } ?>
+                                                    <?php } ?>
+                                                    <li><a tabindex="-1" href="<?php echo base_url() ?>sales/invoice_list"><i class="fa fa-circle-o"></i> Sales Invoice List</a></li>
+                                                </ul>
+                                            </li>
+                                        <?php } ?>
                                     <?php if($this->applib->have_access_role(MODULE_CREDIT_NOTE_ID,"view")) { ?>
                                             <li class="dropdown-submenu">
                                                 <a tabindex="-1" href="<?php echo base_url() ?>credit_note/list_page/"><i class="fa fa-circle-o"></i> Credit Note</a>

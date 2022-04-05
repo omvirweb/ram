@@ -780,7 +780,34 @@ class Transaction extends CI_Controller {
                 $data['transaction_date'] = date('d-m-Y',strtotime($transaction_date));
             }
 
-        } elseif($voucher_type == "purchase") {
+        }elseif($voucher_type == "sales2") {
+            if (isset($_POST['sales_invoice_id'])) {
+                if(!($this->applib->have_access_role(MODULE_SALES_INVOICE_ID,"edit"))) {
+                    $this->session->set_flashdata('success', false);
+                    $this->session->set_flashdata('message', 'You have not permission to access this page.');
+                    redirect('/');
+                }
+                $invoice_id = $_POST['sales_invoice_id'];
+            } else {
+                if(!($this->applib->have_access_role(MODULE_SALES_INVOICE_ID,"add"))) {
+                    $this->session->set_flashdata('success', false);
+                    $this->session->set_flashdata('message', 'You have not permission to access this page.');
+                    redirect('/');
+                }
+            }
+            $page_title = 'Sales2 - CTRL + F1';
+            $voucher_label = 'Sales Invoice2';
+            $module_id = MODULE_SALES_INVOICE_ID;
+            $invoice_type = 2;
+            $invoice_list_url = base_url('sales/invoice_list');
+            $invoice_save_url = base_url('transaction/save_invoice');
+            $transaction_date = $this->crud->get_column_value_by_id('company_settings','setting_value',array('company_id' => $this->logged_in_id,'setting_key' => 'sales_invoice_date'));
+            if(!empty($transaction_date) && strtotime($transaction_date) > 0) {
+                $data['transaction_date'] = date('d-m-Y',strtotime($transaction_date));
+            }
+
+        }
+         elseif($voucher_type == "purchase") {
             if (isset($_POST['purchase_invoice_id'])) {
                 if(!($this->applib->have_access_role(MODULE_PURCHASE_INVOICE_ID,"edit"))) {
                     $this->session->set_flashdata('success', false);

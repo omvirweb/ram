@@ -389,14 +389,14 @@
         });
         initAjaxSelect2($("#account_id"),"<?=base_url('app/sp_account_select2_source_old/')?>");
         
-        <?php if($voucher_type == "sales") { ?>
+        <?php if($voucher_type == "sales" || $voucher_type == "sales2") { ?>
         initAjaxSelect2($("#invoice_type"),"<?=base_url('app/invoice_type_select2_source/')?>");
         <?php if(isset($invoice_data->invoice_type) && !empty($invoice_data->invoice_type)){ ?>
         setSelect2Value($("#invoice_type"),"<?=base_url('app/set_invoice_type_select2_val_by_id/')?>" + <?= $invoice_data->invoice_type; ?>);
         <?php } ?>
         <?php } ?>
 
-        <?php if($voucher_type == "purchase" || $voucher_type == "sales") { ?>
+        <?php if($voucher_type == "purchase" || $voucher_type == "sales" || $voucher_type == "sales2") { ?>
         initAjaxSelect2($("#our_bank_label"),"<?=base_url('app/our_bank_label_select2_source/')?>");
         <?php if(isset($invoice_data->invoice_type) && !empty($invoice_data->invoice_type)){ ?>
         setSelect2Value($("#our_bank_label"),"<?=base_url('app/set_our_bank_label_select2_val_by_id/')?>" + <?= $invoice_data->our_bank_id; ?>);
