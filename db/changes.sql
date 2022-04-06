@@ -136,3 +136,9 @@ ALTER TABLE `purchase_invoice` ADD `company_id` INT NULL AFTER `our_bank_id`;
 
 --Parag : 2022_04_04 07:12 PM
 ALTER TABLE `credit_note` ADD `company_id` INT NULL AFTER `data_lock_unlock`;
+
+--Parag : 2022_04_06 12:01 PM
+ALTER TABLE `sales_invoice` ADD `sales_type` INT NULL COMMENT '1=sales , 2=sales2' AFTER `invoice_type`;
+
+--Parag : 2022_04_06 03:06 PM
+UPDATE `sales_invoice` SET `sales_type` = '1';

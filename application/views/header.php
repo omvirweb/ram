@@ -483,7 +483,7 @@ $is_single_line_item = 1;
                                                             <li><a tabindex="-1" href="<?php echo base_url() ?>sales/invoice/"><i class="fa fa-circle-o"></i> Add Invoice</a></li>
                                                         <?php } ?>
                                                     <?php } ?>
-                                                    <li><a tabindex="-1" href="<?php echo base_url() ?>sales/invoice_list"><i class="fa fa-circle-o"></i> Sales Invoice List</a></li>
+                                                    <li><a tabindex="-1" href="<?php echo base_url() ?>sales/invoice_list/2"><i class="fa fa-circle-o"></i> Sales Invoice2 List</a></li>
                                                 </ul>
                                             </li>
                                         <?php } ?>

@@ -137,6 +137,15 @@
 			<?php endif;?>
 		</div>
 	</div>
+    <div class="clearfix"></div>
+        <div class="col-md-6">
+            <br/>
+            <div class="form-group">
+                <label for="line_item_des" class="control-label">Description</label>
+                <textarea name="line_item_des" id="line_item_des" class="form-control" data-index="5" placeholder=""><?=isset($invoice_data->line_item_des) ? $invoice_data->line_item_des : '' ?></textarea>
+            </div>
+        </div>
+    <div class="clearfix"></div>
 	<div class="col-md-12">
 		<div class="form-group">
 			<input type="button" id="add_lineitem" class="btn btn-primary pull-right add_lineitem" value="Save Product Line" data-index="46"/>
