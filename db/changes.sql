@@ -142,3 +142,8 @@ ALTER TABLE `sales_invoice` ADD `sales_type` INT NULL COMMENT '1=sales , 2=sales
 
 --Parag : 2022_04_06 03:06 PM
 UPDATE `sales_invoice` SET `sales_type` = '1';
+
+--Parag : 2022_04_06 05:11 PM
+ALTER TABLE `sales_invoice` ADD `total_pf_amount` FLOAT NULL AFTER `company_id`, ADD `aspergem_service_charge` FLOAT NULL AFTER `total_pf_amount`;
+
+ALTER TABLE `lineitems` ADD `line_item_des` TEXT NULL AFTER `company_id`;

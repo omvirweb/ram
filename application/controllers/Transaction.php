@@ -1295,9 +1295,9 @@ class Transaction extends CI_Controller {
             $invoice_data['cash_customer'] = (isset($post_data['cash_customer'])?$post_data['cash_customer']:'');
             $invoice_data['tax_type'] = (isset($post_data['tax_type'])?$post_data['tax_type']:'');
             $invoice_data['our_bank_id'] = $post_data['our_bank_label'];
+            $invoice_data['total_pf_amount'] = (isset($post_data['total_pf_amount'])) ? $post_data['total_pf_amount'] : '';
+            $invoice_data['aspergem_service_charge'] = (isset($post_data['aspergem_service_charge'])) ? $post_data['aspergem_service_charge'] : '';
             $invoice_data['sales_type'] = 2;
-
-
         }
          elseif($voucher_type == 'purchase') {
             $module = 1;
@@ -1526,6 +1526,7 @@ class Transaction extends CI_Controller {
                 $add_lineitem['module'] = $module;
                 $add_lineitem['parent_id'] = $parent_id;
                 $add_lineitem['note'] = isset($lineitem->note)?$lineitem->note:'';
+                $add_lineitem['line_item_des'] = isset($lineitem->line_item_des)?$lineitem->line_item_des:NULL;
                 if(isset($lineitem->id) && !empty($lineitem->id)){
                     $this->crud->update_item_current_stock_qty($lineitem->item_id,$parent_id,$voucher_type,$lineitem->item_qty,'update');
                     $add_lineitem['updated_at'] = $this->now_time;
@@ -1672,6 +1673,7 @@ class Transaction extends CI_Controller {
                 $add_lineitem['module'] = $module;
                 $add_lineitem['parent_id'] = $parent_id;
                 $add_lineitem['note'] = isset($lineitem->note)?$lineitem->note:'';
+                $add_lineitem['line_item_des'] = isset($lineitem->line_item_des)?$lineitem->line_item_des:NULL;
                 $add_lineitem['created_at'] = $this->now_time;
                 $add_lineitem['updated_at'] = $this->now_time;
                 $add_lineitem['updated_by'] = $this->logged_in_id;
@@ -2375,7 +2377,7 @@ class Transaction extends CI_Controller {
                 $add_lineitem['price_for_itax'] = isset($lineitem->price_for_itax)?$lineitem->price_for_itax:0;
                 $add_lineitem['igst_for_itax'] = isset($lineitem->igst_for_itax)?$lineitem->igst_for_itax:0;
                 $add_lineitem['note'] = isset($lineitem->note)?$lineitem->note:'';
-
+                $add_lineitem['line_item_des'] = isset($lineitem->line_item_des)?$lineitem->line_item_des:NULL;
                 if(isset($lineitem->id) && !empty($lineitem->id)){
                     $add_lineitem['updated_at'] = $this->now_time;
                     $add_lineitem['updated_by'] = $this->logged_in_id;
@@ -2435,6 +2437,7 @@ class Transaction extends CI_Controller {
                 $add_lineitem['price_for_itax'] = isset($lineitem->price_for_itax)?$lineitem->price_for_itax:0;
                 $add_lineitem['igst_for_itax'] = isset($lineitem->igst_for_itax)?$lineitem->igst_for_itax:0;
                 $add_lineitem['note'] = isset($lineitem->note)?$lineitem->note:'';
+                $add_lineitem['line_item_des'] = isset($lineitem->line_item_des)?$lineitem->line_item_des:NULL;
                 $add_lineitem['created_at'] = $this->now_time;
                 $add_lineitem['updated_at'] = $this->now_time;
                 $add_lineitem['updated_by'] = $this->logged_in_id;
