@@ -67,6 +67,14 @@
     	}
     } ?>
 
+    <?php if($voucher_type == 'sales2') { ?>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="line_item_des" class="control-label">Item Description</label>
+                <textarea name="line_items_data[line_item_des]" id="line_item_des" class="form-control" data-index="5" placeholder=""></textarea>
+            </div>
+        </div>
+    <?php } else {?>
 	<div class="col-md-3 pr0">
 		<div class="form-group">
 			<label for="item_id" class="control-label">Item</label>
@@ -80,6 +88,7 @@
 			<select name="line_items_data[item_id]" id="item_id" class="item_id" data-index="29"></select>
 		</div>
 	</div>
+    <?php } ?>
     <?php if($voucher_type != "material_in") { ?>
 	<div class="col-md-1 pr0">
 		<div class="form-group">
@@ -138,14 +147,7 @@
 		</div>
 	</div>
     <div class="clearfix"></div>
-    <?php if($voucher_type == 'sales2') { ?>
-        <div class="col-md-3">
-            <div class="form-group">
-                <label for="line_item_des" class="control-label">Description</label>
-                <textarea name="line_items_data[line_item_des]" id="line_item_des" class="form-control" data-index="5" placeholder=""></textarea>
-            </div>
-        </div>
-    <?php } ?>
+    
     <div class="clearfix"></div>
 	<div class="col-md-12">
 		<div class="form-group">
@@ -405,7 +407,14 @@
         initAjaxSelect2($("#site_id"), "<?= base_url('app/sites_select2_source') ?>");
 		//initAjaxSelect2($("#item_id"),"<?=base_url('app/li_item_select2_source/')?>");
 		initAjaxSelect2($("#item_id"),"<?=base_url('app/item_select2_source/')?>");
-		initAjaxSelect2($("#unit_id"),"<?=base_url('app/unit_select2_source_by_item_id/')?>");
+
+        <?php if($voucher_type != 'sales2') { ?>
+		  initAjaxSelect2($("#unit_id"),"<?=base_url('app/unit_select2_source_by_item_id/')?>");
+        <?php } else {?>
+            initAjaxSelect2($("#unit_id"),"<?=base_url('app/unit_select2_source/')?>");
+        <?php }?>
+
+
         initAjaxSelect2($("#item_group_id"),"<?=base_url('app/item_group_select2_source')?>");
         
         initAjaxSelect2($("#cat_id"),"<?=base_url('app/category_select2_source')?>");
@@ -669,10 +678,12 @@
 		
 		$('#add_lineitem').on('click', function() {
 			var item_id = $("#item_id").val();
+            <?php if($voucher_type != "sales2") { ?>
 			if(item_id == '' || item_id == null){
 				show_notify("Please select Product.", false);
 				return false;
 			}
+            <?php } ?>
 			var item_qty = $("#item_qty").val();
 			if(item_qty == '' || item_qty == null){
 				show_notify("Please enter Product Qty.", false);
@@ -1132,8 +1143,10 @@
                 item_name = value_item_name;
             }
             if(value.line_item_des != '' && value.line_item_des != null){
-                item_name = item_name + '<br> - '+ value.line_item_des;
+                /*item_name = item_name + '<br> - '+ value.line_item_des;*/
+                item_name = value.line_item_des;
             }
+
 			var lineitem_edit_btn = '';
 			lineitem_edit_btn = '<a class="btn btn-xs btn-primary btn-edit-item edit_lineitem_' + index + '" href="javascript:void(0);" onclick="edit_lineitem(' + index + ')"><i class="fa fa-edit"></i></a> ';
 			var row_html = '<tr class="lineitem_index_' + index + '"><td class="fix_fcolumn" style="border-color:#2b3984;">' +
@@ -1199,6 +1212,8 @@
 		$("html, body").animate({ scrollTop: $(".line_item_form").offset().top }, "slow");
 		//if(edit_lineitem_inc == 0){  edit_lineitem_inc = 1; $('.edit_lineitem_'+ index).click(); }
 		value = lineitem_objectdata[index];
+        /*console.log(value);
+        return false;*/
 		$("#line_items_index").val(index);
 //        console.log(value);
         if(typeof(value.item_group_id) !== "undefined" && value.item_group_id !== null && value.item_group_id !== 0) {
@@ -1215,10 +1230,12 @@
         	setSelect2Value($("#sub_cat_id"),"<?=base_url('app/set_sub_category_select2_val_by_id/')?>" + value.sub_cat_id);
         }
 
-        initAjaxSelect2($("#unit_id"),"<?=base_url('app/unit_select2_source_by_item_id/')?>" + value.item_id);
-        if(typeof(value.unit_id) !== "undefined" && value.unit_id !== null && value.unit_id !== 0) {
-        	setSelect2Value($("#unit_id"),"<?=base_url('app/set_pack_unit_select2_val_by_id/')?>" + value.unit_id);
-        }
+        <?php if($voucher_type != 'sales2') { ?>
+            initAjaxSelect2($("#unit_id"),"<?=base_url('app/unit_select2_source_by_item_id/')?>" + value.item_id);
+            if(typeof(value.unit_id) !== "undefined" && value.unit_id !== null && value.unit_id !== 0) {
+            	setSelect2Value($("#unit_id"),"<?=base_url('app/set_pack_unit_select2_val_by_id/')?>" + value.unit_id);
+            }
+        <?php } ?>
 
         if(typeof(value.site_id) !== "undefined" && value.site_id !== null && value.site_id !== 0) {
         	setSelect2Value($("#site_id"),"<?=base_url('app/sites_group_select2_val_by_id/')?>" + value.site_id);
