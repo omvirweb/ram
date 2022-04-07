@@ -341,9 +341,10 @@ class Sales extends CI_Controller
 	function invoice_list($id=null){
 		if($this->applib->have_access_role(MODULE_SALES_INVOICE_ID,"view")) {
 			$data = array();
-            if(isset($id) && $id == 2)
-            {
+            if(isset($id) && $id == 2){
                 $data=['list_type'=>2];
+            } else if (isset($id) && $id == 3){
+                $data=['list_type'=>3];
             }
 			set_page('sales/invoice/invoice_list', $data);
 		} else {
@@ -358,12 +359,10 @@ class Sales extends CI_Controller
         $list_type ='';
         if(isset($_POST['list_type']) && $_POST['list_type'] != '')
         {
-            if($_POST['list_type'] == 'sales')
-            {
-                $list_type =1;
-            }elseif($_POST['list_type'] == 'sales2')
-            {
-                $list_type =2;
+            if (isset($_POST['list_type']) && $_POST['list_type'] != '') {
+                $list_type = $_POST['list_type'];
+            }else {
+                $list_type = 1;
             }
         }
         if( isset($_POST['daterange_1']) && !empty($_POST['daterange_1']) && isset($_POST['daterange_2']) && !empty($_POST['daterange_2'])){

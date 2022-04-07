@@ -147,3 +147,6 @@ UPDATE `sales_invoice` SET `sales_type` = '1';
 ALTER TABLE `sales_invoice` ADD `total_pf_amount` FLOAT NULL AFTER `company_id`, ADD `aspergem_service_charge` FLOAT NULL AFTER `total_pf_amount`;
 
 ALTER TABLE `lineitems` ADD `line_item_des` TEXT NULL AFTER `company_id`;
+
+--Parag : 2022_04_07 11:09 PM
+ALTER TABLE `sales_invoice` CHANGE `sales_type` `sales_type` INT(11) NULL DEFAULT NULL COMMENT '1=sales , 2=sales2, 3=sales3';
