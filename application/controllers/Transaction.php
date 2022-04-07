@@ -1317,6 +1317,12 @@ class Transaction extends CI_Controller {
             $invoice_data['cash_customer'] = (isset($post_data['cash_customer'])?$post_data['cash_customer']:'');
             $invoice_data['tax_type'] = (isset($post_data['tax_type'])?$post_data['tax_type']:'');
             $invoice_data['our_bank_id'] = $post_data['our_bank_label'];
+            $invoice_data['book_no'] = (isset($post_data['book_no'])) ? $post_data['book_no'] : '';
+            $invoice_data['ship_party_name'] = (isset($post_data['ship_party_name'])) ? $post_data['ship_party_name'] : '';
+            $invoice_data['ship_party_address'] = (isset($post_data['ship_party_address'])) ? $post_data['ship_party_address'] : '';
+            $invoice_data['ship_party_gstin'] = (isset($post_data['ship_party_gstin'])) ? $post_data['ship_party_gstin'] : '';
+            $invoice_data['ship_party_state'] = (isset($post_data['ship_party_state'])) ? $post_data['ship_party_state'] : '';
+            $invoice_data['ship_party_code'] = (isset($post_data['ship_party_code'])) ? $post_data['ship_party_code'] : '';
             $invoice_data['sales_type'] = 3;
 
         }elseif($voucher_type == 'purchase') {

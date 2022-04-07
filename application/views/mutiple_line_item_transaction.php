@@ -283,6 +283,50 @@
                                         </div>
                                     <?php } ?>
 
+                                    <?php if($voucher_type == "sales3") { ?>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label for="book_no" class="control-label">Book No.</label>
+                                                <input type="text" name="book_no" id="book_no" class="form-control" data-index="7" value="<?=isset($invoice_data->book_no) ? $invoice_data->book_no : ''; ?>">
+                                            </div>
+                                        </div>
+                                        <div class="clearfix"></div>
+                                        <hr>
+                                        <div class="col-md-12">
+                                            <label class="control-label">Ship to party details.</label>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label for="ship_party_name" class="control-label">Name</label>
+                                                <input type="text" name="ship_party_name" id="ship_party_name" class="form-control" data-index="7" value="<?=isset($invoice_data->ship_party_name) ? $invoice_data->ship_party_name : ''; ?>">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label for="ship_party_address" class="control-label">Address</label>
+                                                <input type="text" name="ship_party_address" id="ship_party_address" class="form-control" data-index="7" value="<?=isset($invoice_data->ship_party_address) ? $invoice_data->ship_party_address : ''; ?>">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="form-group">
+                                                <label for="ship_party_gstin" class="control-label">GSTIN</label>
+                                                <input type="text" name="ship_party_gstin" id="ship_party_gstin" class="form-control" data-index="7" value="<?=isset($invoice_data->ship_party_gstin) ? $invoice_data->ship_party_gstin : ''; ?>">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="form-group">
+                                                <label for="ship_party_state" class="control-label">State</label>
+                                                <input type="text" name="ship_party_state" id="ship_party_state" class="form-control" data-index="7" value="<?=isset($invoice_data->ship_party_state) ? $invoice_data->ship_party_state : ''; ?>">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="form-group">
+                                                <label for="ship_party_code" class="control-label">Code</label>
+                                                <input type="text" name="ship_party_code" id="ship_party_code" class="form-control" data-index="7" value="<?=isset($invoice_data->ship_party_code) ? $invoice_data->ship_party_code : '24'; ?>">
+                                            </div>
+                                        </div>
+                                    <?php } ?>
+
                                     <?php if($voucher_type == "sales" || $voucher_type == "sales2" || $voucher_type == "sales3") { ?>
                                     
                                     <?php } elseif($voucher_type == "purchase" || $voucher_type == "material_in") { ?>
