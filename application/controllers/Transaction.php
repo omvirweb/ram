@@ -747,6 +747,7 @@ class Transaction extends CI_Controller {
 
 
     function sales_purchase_transaction($voucher_type, $order_id = '') {
+
         $data = array();
         $page_title = '';
         $invoice_id = 0;
@@ -761,10 +762,11 @@ class Transaction extends CI_Controller {
         }elseif($voucher_type == "sales3"){
             $sales_type=3;
         }
+
         $data['transaction_date'] = date('d-m-Y');
         $line_item_fields_data = $this->crud->getFromSQL('SELECT setting_key FROM company_settings WHERE company_id = "'.$this->logged_in_id.'" AND module_name = 2 AND setting_value = 1');
         $data['line_item_fields_data'] = json_encode($line_item_fields_data);
-//        echo "<pre>"; print_r($line_item_fields); exit;
+       /*echo "<pre>"; print_r($line_item_fields_data); exit;*/
         if($voucher_type == "sales" || $voucher_type == "sales2" || $voucher_type == "sales3") {
             if (isset($_POST['sales_invoice_id'])) {
                 if(!($this->applib->have_access_role(MODULE_SALES_INVOICE_ID,"edit"))) {
@@ -1095,6 +1097,9 @@ class Transaction extends CI_Controller {
                         $sales_invoice_lineitem->igst_amt = $sales_invoice_lineitem->igst_amount;
                         $lineitems .= "'".json_encode($sales_invoice_lineitem)."',";
                     }
+                    /*echo "<pre>";
+                    print_r( $lineitems);
+                    die();*/
                     $data['sales_invoice_lineitems'] = $lineitems;
                 } else {
                     $data['prefix'] = $this->crud->get_id_by_val('user', 'prefix', 'user_id', $this->logged_in_id);
@@ -1265,8 +1270,9 @@ class Transaction extends CI_Controller {
     function save_invoice(){
         $return = array();
         $post_data = $this->input->post();
-        // print_r($post_data);
-        // exit;
+        /*echo "<pre>";
+        print_r($post_data);
+        exit;*/
         $line_items_data = json_decode('['.$post_data['line_items_data'].']');
         
         $invoice_data = array();     
@@ -1298,6 +1304,8 @@ class Transaction extends CI_Controller {
             $invoice_data['our_bank_id'] = $post_data['our_bank_label'];
             $invoice_data['total_pf_amount'] = (isset($post_data['total_pf_amount'])) ? $post_data['total_pf_amount'] : '';
             $invoice_data['aspergem_service_charge'] = (isset($post_data['aspergem_service_charge'])) ? $post_data['aspergem_service_charge'] : '';
+            $invoice_data['sales_subject'] = (isset($post_data['sales_subject'])) ? $post_data['sales_subject'] : '';
+            $invoice_data['sales_note'] = (isset($post_data['sales_note'])) ? $post_data['sales_note'] : '';
             $invoice_data['sales_type'] = 2;
 
         }elseif($voucher_type == 'sales3') {
@@ -1532,7 +1540,7 @@ class Transaction extends CI_Controller {
                 $add_lineitem['item_group_id'] = isset($lineitem->item_group_id) ? $lineitem->item_group_id : null;
                 $add_lineitem['cat_id'] = isset($lineitem->cat_id) ? $lineitem->cat_id : NULL;
                 $add_lineitem['sub_cat_id'] = isset($lineitem->sub_cat_id) ? $lineitem->sub_cat_id : NULL;
-                $add_lineitem['item_id'] = $lineitem->item_id;
+                $add_lineitem['item_id'] = isset($lineitem->item_id) ? $lineitem->item_id : 0;
                 $add_lineitem['item_qty'] = $lineitem->item_qty;
                 $add_lineitem['price'] = isset($lineitem->price) ? $lineitem->price : NULL;
                 $add_lineitem['pure_amount'] = isset($lineitem->pure_amount)?$lineitem->pure_amount:NULL;
@@ -1545,14 +1553,14 @@ class Transaction extends CI_Controller {
                 $add_lineitem['note'] = isset($lineitem->note)?$lineitem->note:'';
                 $add_lineitem['line_item_des'] = isset($lineitem->line_item_des)?$lineitem->line_item_des:NULL;
                 if(isset($lineitem->id) && !empty($lineitem->id)){
-                    $this->crud->update_item_current_stock_qty($lineitem->item_id,$parent_id,$voucher_type,$lineitem->item_qty,'update');
+                    $this->crud->update_item_current_stock_qty(isset($lineitem->item_id)?$lineitem->item_id:0,$parent_id,$voucher_type,$lineitem->item_qty,'update');
                     $add_lineitem['updated_at'] = $this->now_time;
                     $add_lineitem['updated_by'] = $this->logged_in_id;
                     $add_lineitem['user_updated_by'] = $this->session->userdata()['login_user_id'];
                     $where_id['id'] = $lineitem->id;
                     $this->crud->update('lineitems', $add_lineitem, $where_id);
                 } else {
-                    $this->crud->update_item_current_stock_qty($lineitem->item_id,$parent_id,$voucher_type,$lineitem->item_qty,'add');
+                    $this->crud->update_item_current_stock_qty(isset( $lineitem->item_id ) ? $lineitem->item_id:0,$parent_id,$voucher_type,$lineitem->item_qty,'add');
 
                     $add_lineitem['created_at'] = $this->now_time;
                     $add_lineitem['created_by'] = $this->logged_in_id;
@@ -1680,7 +1688,9 @@ class Transaction extends CI_Controller {
                 $add_lineitem['item_group_id'] = isset($lineitem->item_group_id) ? $lineitem->item_group_id : null;
                 $add_lineitem['cat_id'] = isset($lineitem->cat_id) ? $lineitem->cat_id : NULL;
                 $add_lineitem['sub_cat_id'] = isset($lineitem->sub_cat_id) ? $lineitem->sub_cat_id : NULL;
-                $add_lineitem['item_id'] = $lineitem->item_id;
+
+
+                $add_lineitem['item_id'] = isset($lineitem->item_id)?$lineitem->item_id:0;
                 $add_lineitem['item_qty'] = $lineitem->item_qty;
                 $add_lineitem['price'] = isset($lineitem->price) ? $lineitem->price : NULL;
                 $add_lineitem['pure_amount'] = isset($lineitem->pure_amount)?$lineitem->pure_amount:NULL;
@@ -1700,8 +1710,11 @@ class Transaction extends CI_Controller {
                 $add_lineitem['user_updated_by'] = $this->session->userdata()['login_user_id'];
                 $add_lineitem['created_by'] = $this->logged_in_id;
                 $add_lineitem['user_created_by'] = $this->session->userdata()['login_user_id'];
+                /*echo "line item data => <pre>";
+                print_r( $add_lineitem );
+                die();*/
                 $this->crud->insert('lineitems',$add_lineitem);
-                // print_r($this->db->last_query());exit;
+                /* print_r($this->db->last_query());exit;*/
 
                 if($voucher_type == 'sales' && $voucher_type == 'sales2') {
                     if($voucher_type == 'purchase') {
@@ -1726,7 +1739,7 @@ class Transaction extends CI_Controller {
                     $stock_s_data['st_change_date'] =  date("Y-m-d");
                     $stock_s_data['from_status'] =  IN_WORK_DONE_ID;
                     $stock_s_data['to_status'] = IN_SALE_ID;
-                    $stock_s_data['item_id'] = $lineitem->item_id;
+                    $stock_s_data['item_id'] = isset( $lineitem->item_id )? $lineitem->item_id : 0;
                     $stock_s_data['qty'] =  $lineitem->item_qty;
                     $stock_s_data['tr_type'] =  '2';
                     $stock_s_data['tr_id'] =  $parent_id;
@@ -1738,7 +1751,7 @@ class Transaction extends CI_Controller {
                         $sub_item_data = array();
                         foreach ($lineitem->sub_item_data as $item){
                             $sub_item_data[] = (object) [
-                                'item_id' => $lineitem->item_id,
+                                'item_id' => isset($lineitem->item_id)?$lineitem->item_id:0,
                                 'item_level' => $item->sub_item_level,
                                 'item_qty' => $item->sub_item_qty,
                                 'item_unit_id' => $item->sub_item_unit_id,
@@ -1749,7 +1762,7 @@ class Transaction extends CI_Controller {
                             if(isset($lineitem->apply_to_master) && !empty($lineitem->apply_to_master)){
                                 $this->crud->delete('sub_item_add_less_settings', array('item_id' => $lineitem->item_id));
                                 $sub_arr = array();
-                                $sub_arr['item_id'] =  $lineitem->item_id;
+                                $sub_arr['item_id'] =  isset($lineitem->item_id)?$lineitem->item_id:0;
                                 $sub_arr['item_level'] = $item->sub_item_level;
                                 $sub_arr['item_qty'] = $item->sub_item_qty;
                                 $sub_arr['item_unit_id'] = $item->sub_item_unit_id;
@@ -1767,7 +1780,7 @@ class Transaction extends CI_Controller {
                             }
                             $sub_arr = array();
                             $sub_arr['sales_invoice_id'] =  $parent_id;
-                            $sub_arr['item_id'] =  $lineitem->item_id;
+                            $sub_arr['item_id'] =  isset($lineitem->item_id)?$lineitem->item_id:0;
                             $sub_arr['item_level'] = $item->sub_item_level;
                             $sub_arr['item_qty'] = $item->sub_item_qty;
                             $sub_arr['item_unit_id'] = $item->sub_item_unit_id;
@@ -1784,7 +1797,7 @@ class Transaction extends CI_Controller {
                             $sub_arr['user_created_by'] = $this->session->userdata()['login_user_id'];
                             $this->crud->insert('sub_item_add_less_settings_sales_invoice_wise',$sub_arr);
                         }
-                        $this->crud->update_item_current_stock_qty_by_sales($lineitem->item_id,$parent_id,$voucher_type,$lineitem->item_qty,'add',$sub_item_data);
+                        $this->crud->update_item_current_stock_qty_by_sales(isset($lineitem->item_id)?$lineitem->item_id:0,$parent_id,$voucher_type,$lineitem->item_qty,'add',$sub_item_data);
                     }
                 }
             }

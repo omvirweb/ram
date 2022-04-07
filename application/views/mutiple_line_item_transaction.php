@@ -255,8 +255,7 @@
                                                 <input type="text" name="lr_no" id="lr_no" class="form-control" data-index="7" value="<?=isset($invoice_data->lr_no) ? $invoice_data->lr_no : ''; ?>">
                                             </div>
                                         </div>
-                                    <?php } ?>
-
+                                    <?php } ?>                                    
                                     <?php if($voucher_type == "sales2") { ?>
                                         <div class="col-md-3">
                                             <div class="form-group">
@@ -268,6 +267,18 @@
                                             <div class="form-group">
                                                 <label for="aspergem_service_charge" class="control-label">As Per GEM - Service Charge</label>
                                                 <input type="text" name="aspergem_service_charge" id="aspergem_service_charge" class="form-control" data-index="7" value="<?=isset($invoice_data->aspergem_service_charge) ? $invoice_data->aspergem_service_charge : ''; ?>">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label for="sales_subject" class="control-label">Sub.</label>
+                                                <input type="text" name="sales_subject" id="sales_subject" class="form-control" data-index="7" value="<?=isset($invoice_data->sales_subject) ? $invoice_data->sales_subject : ''; ?>">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label for="sales_note" class="control-label">Note</label>
+                                                <input type="text" name="sales_note" id="sales_note" class="form-control" data-index="7" value="<?=isset($invoice_data->sales_note) ? $invoice_data->sales_note : ''; ?>">
                                             </div>
                                         </div>
                                     <?php } ?>

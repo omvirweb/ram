@@ -150,3 +150,9 @@ ALTER TABLE `lineitems` ADD `line_item_des` TEXT NULL AFTER `company_id`;
 
 --Parag : 2022_04_07 11:09 PM
 ALTER TABLE `sales_invoice` CHANGE `sales_type` `sales_type` INT(11) NULL DEFAULT NULL COMMENT '1=sales , 2=sales2, 3=sales3';
+
+--Parag : 2022_04_07 12:31 PM
+ALTER TABLE `sales_invoice` ADD `sales_subject` VARCHAR(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL AFTER `aspergem_service_charge`, ADD `sales_note` VARCHAR(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL AFTER `sales_subject`;
+
+--Parag : 2022_04_07 04:47 PM
+ALTER TABLE lineitems DROP FOREIGN KEY Fk_ItemLineItem;
