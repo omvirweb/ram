@@ -98,22 +98,22 @@ ob_start();
                 <td colspan="8" class="text_bold no-border-left no-border-right" style="text-align: center;">Ship to party/Delivery Address</td>
             </tr>
             <tr class="border1">
-                <td colspan="8" class="text_bold no-border-right" style="text-align: left;">Name : </td>
-                <td colspan="8" class="text_bold no-border-right" style="text-align: left;">Name : </td>
+                <td colspan="8" class="text_bold no-border-right" style="text-align: left;">Name : <?=isset($account_name) ?$account_name : '' ?></td>
+                <td colspan="8" class="text_bold no-border-right" style="text-align: left;">Name : <?=isset($ship_party_name) ?$ship_party_name : '' ?></td>
             </tr>
             <tr class="border1">
-                <td colspan="8" class="text_bold no-border-right" style="text-align: left;">Address : </td>
-                <td colspan="8" class="text_bold no-border-right" style="text-align: left;">Address : </td>
+                <td colspan="8" class="text_bold no-border-right" style="text-align: left;">Address : <?=isset($account_address) ?$account_address : '' ?><br><?=isset($account_city) ?$account_city : '' ?></td>
+                <td colspan="8" class="text_bold no-border-right" style="text-align: left;">Address : <?=isset($ship_party_address) ?$ship_party_address : '' ?></td>
             </tr>
             <tr class="border1">
-                <td colspan="8" class="text_bold no-border-right" style="text-align: left;">GSTIN : </td>
-                <td colspan="8" class="text_bold no-border-right" style="text-align: left;">GSTIN : </td>
+                <td colspan="8" class="text_bold no-border-right" style="text-align: left;">GSTIN : <?=isset($account_gst_no) ?$account_gst_no : '' ?></td>
+                <td colspan="8" class="text_bold no-border-right" style="text-align: left;">GSTIN : <?=isset($ship_party_gstin) ?$ship_party_gstin : '' ?></td>
             </tr>
             <tr class="border1">
-                <td colspan="5" class="text_bold no-border-right" style="text-align: left;">State : </td>
-                <td colspan="3" class="text_bold no-border-right" style="text-align: left;">Code : </td>
-                <td colspan="5" class="text_bold no-border-right" style="text-align: left;">State : </td>
-                <td colspan="3" class="text_bold no-border-right" style="text-align: left;">Code : </td>
+                <td colspan="5" class="text_bold no-border-right" style="text-align: left;">State : <?=isset($account_state) ?$account_state : '' ?></td>
+                <td colspan="3" class="text_bold no-border-right" style="text-align: left;">Code : <?=isset($account_postal_code) ?$account_postal_code : '' ?></td>
+                <td colspan="5" class="text_bold no-border-right" style="text-align: left;">State : <?=isset($ship_party_state) ?$ship_party_state : '' ?></td>
+                <td colspan="3" class="text_bold no-border-right" style="text-align: left;">Code : <?=isset($ship_party_code) ?$ship_party_code : '' ?></td>
             </tr>
             <tr class="border1">
                 <td colspan="1" width="50px" class="text_bold text_center">Sr No</td>
@@ -170,14 +170,14 @@ ob_start();
             <?php } ?>
             <tr class="border1" style="background-color: #EAEAEA;">
                 <td colspan="11" class="text_bold">GSTIN No. : <?=isset($user_gst_no) ? $user_gst_no : '' ?></td>
-                <td colspan="3" class="text_bold no-border-right">Total PF Amount </td>
-                <td colspan="2" align="right" class="text_bold no-border-left"></td>
+                <td colspan="3" class="text_bold no-border-right">Total Amount Before Tax</td>
+                <td colspan="2" align="right" class="text_bold no-border-left"><?php echo number_format((float)$pure_total_amt, 2, '.', ''); ?></td>
             </tr>
             <tr class="">
                 <td colspan="4" class="no-border-right no-border-bottom text_bold">Bank Name</td>
                 <td colspan="7" class="no-border-left no-border-right no-border-bottom"> : <?=isset($bank_name) ? $bank_name : '' ?></td>
-                <td colspan="3" class="text_bold no-border-right">SUB TOTAL </td>
-                <td colspan="2" align="right" class="text_bold no-border-left"><?php echo number_format((float)$pure_total_amt, 2, '.', ''); ?></td>
+                <td colspan="3" class="text_bold no-border-right"></td>
+                <td colspan="2" align="right" class="text_bold no-border-left"><?php //echo number_format((float)$pure_total_amt, 2, '.', ''); ?></td>
             </tr>
             <tr class="">
                 <td colspan="4" class="no-border-right no-border-top no-border-bottom text_bold">Branch</td>
@@ -195,9 +195,9 @@ ob_start();
             <tr class="">
                 <td colspan="4" class="no-border-right no-border-bottom no-border-top text_bold">RTGS/IFSC Code</td>
                 <td colspan="7" class="no-border"> : <?=isset($rtgs_ifsc_code) ? $rtgs_ifsc_code : '' ?></td>
-                <td colspan="3" class="no-border-top no-border-bottom no-border-right">As Per GEM - Service <br/>Charge(Without GST)</td>
+                <td colspan="3" class="no-border-top no-border-bottom no-border-right">Round of(+/-)<br/></td>
                 <?php // $discounted_amt_total = $pure_total_amt + $dis_total_amt;?>
-                <td colspan="2" align="right" class="no-border-left no-border-top no-border-bottom"></td>
+                <td colspan="2" align="right" class="no-border-left no-border-top no-border-bottom"><?=isset($round_off_amount) ? $round_off_amount : '' ?></td>
             </tr>
             <tr class="">
                 <td colspan="4" rowspan="2" class="border1 no-border-right no-border-bottom text_bold">Total GST</td>
@@ -210,7 +210,7 @@ ob_start();
             <tr class="border1" style="background-color: #EAEAEA;">
                 <td colspan="4" class="no-border-right text_bold">Bill Amount</td>
                 <td colspan="7" class="no-border-left no-border-right no-border-bottom"> : <?php echo $amount_total_word; ?></td>
-                <td colspan="3" class="text_bold no-border-right ">Total Due</td>                
+                <td colspan="3" class="text_bold no-border-right ">Total</td>                
                 <td colspan="2" align="right" class="text_bold no-border-left"><?php echo number_format((float)$amount_total, 2, '.', ''); ?></td>
             </tr>
             <tr class="border1">

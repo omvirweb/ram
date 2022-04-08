@@ -2306,7 +2306,12 @@ class Sales extends CI_Controller
                 'ship_party_gstin' => $result->ship_party_gstin,
                 'ship_party_state' => $result->ship_party_state,
                 'ship_party_code' => $result->ship_party_code,
+                'round_off_amount'=>$result->round_off_amount,
             );
+
+            // var_dump( $total_gst);
+            // exit();
+
             $data['sales_invoice_data'] = $result;
             $data['user_name'] = $user_detail->user_name;
             $data['user_address'] = $user_detail->address;
@@ -2379,6 +2384,7 @@ class Sales extends CI_Controller
         }
         if (isset($data['amount_total'])) {
             $round_off = $this->crud->get_column_value_by_id('settings', 'setting_value', array('setting_key' => 'round_off_apply'));
+    
             if (!empty($round_off)) {
                 $amount_total_r = number_format((float) $data['amount_total'], 0, '.', '');
                 $data['amount_total'] = number_format((float) $amount_total_r, 2, '.', '');
