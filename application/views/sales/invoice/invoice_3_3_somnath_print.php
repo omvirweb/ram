@@ -111,7 +111,7 @@ ob_start();
             </tr>
             <tr class="border1">
                 <td colspan="5" class="text_bold no-border-right" style="text-align: left;">State : <?=isset($account_state) ?$account_state : '' ?></td>
-                <td colspan="3" class="text_bold no-border-right" style="text-align: left;">Code : <?=isset($account_postal_code) ?$account_postal_code : '' ?></td>
+                <td colspan="3" class="text_bold no-border-right" style="text-align: left;">Code : <?=isset($account_state_code) ?$account_state_code : '' ?></td>
                 <td colspan="5" class="text_bold no-border-right" style="text-align: left;">State : <?=isset($ship_party_state) ?$ship_party_state : '' ?></td>
                 <td colspan="3" class="text_bold no-border-right" style="text-align: left;">Code : <?=isset($ship_party_code) ?$ship_party_code : '' ?></td>
             </tr>

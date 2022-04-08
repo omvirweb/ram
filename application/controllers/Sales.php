@@ -2339,6 +2339,7 @@ class Sales extends CI_Controller
             }
             $data['account_country'] = 'India';
             $data['account_state'] = $this->crud->get_id_by_val('state', 'state_name', 'state_id', $account_detail->account_state);
+            $data['account_state_code'] = $this->crud->get_id_by_val('state', 'state_code', 'state_id', $account_detail->account_state);
             $data['account_city'] = $this->crud->get_id_by_val('city', 'city_name', 'city_id', $account_detail->account_city);
             $data['account_postal_code'] = $account_detail->account_postal_code;
             $data['account_pan'] = $account_detail->account_pan;
