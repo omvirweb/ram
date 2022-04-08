@@ -1076,7 +1076,11 @@ class Transaction extends CI_Controller {
                     $data['sales_invoice_lineitems'] = $lineitems;
                 } else {
                     $data['prefix'] = $this->crud->get_id_by_val('user', 'prefix', 'user_id', $this->logged_in_id);
-                    $sales_invoice_no = $this->crud->get_max_number_where('sales_invoice', 'sales_invoice_no', array('created_by' => $this->logged_in_id, 'prefix' => $this->prefix));
+                    $in_where = array('created_by' => $this->logged_in_id);
+                    if($this->prefix){
+                        $in_where['prefix'] = $this->prefix;
+                    }
+                    $sales_invoice_no = $this->crud->get_max_number_where('sales_invoice', 'sales_invoice_no', $in_where);
                     if(empty($sales_invoice_no->sales_invoice_no)){
                         $data['invoice_no'] = $this->crud->get_id_by_val('user', 'invoice_no_start_from', 'prefix', $this->prefix);
                     } else {
