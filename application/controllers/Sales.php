@@ -2043,7 +2043,7 @@ class Sales extends CI_Controller
                 'cgst_amount_total' => $result->cgst_amount_total,
                 'sgst_amount_total' => $result->sgst_amount_total,
                 'igst_amount_total' => $result->igst_amount_total,
-                'amount_total' => ($result->amount_total + $result->aspergem_service_charge),
+                'amount_total' => ($result->amount_total + $result->aspergem_service_charge) + $result->total_pf_amount,
                 'amount_total_word' => $amount_total_word,
                 'gst_total_word' => $gst_total_word,
                 'sales_subject' => $result->sales_subject,
