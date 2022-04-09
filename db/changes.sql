@@ -136,3 +136,24 @@ ALTER TABLE `purchase_invoice` ADD `company_id` INT NULL AFTER `our_bank_id`;
 
 --Parag : 2022_04_04 07:12 PM
 ALTER TABLE `credit_note` ADD `company_id` INT NULL AFTER `data_lock_unlock`;
+
+--Parag : 2022_04_06 12:01 PM
+ALTER TABLE `sales_invoice` ADD `sales_type` INT NULL COMMENT '1=sales , 2=sales2' AFTER `invoice_type`;
+
+--Parag : 2022_04_06 03:06 PM
+UPDATE `sales_invoice` SET `sales_type` = '1';
+
+--Parag : 2022_04_06 05:11 PM
+ALTER TABLE `sales_invoice` ADD `total_pf_amount` FLOAT NULL AFTER `company_id`, ADD `aspergem_service_charge` FLOAT NULL AFTER `total_pf_amount`;
+
+ALTER TABLE `lineitems` ADD `line_item_des` TEXT NULL AFTER `company_id`;
+
+--Parag : 2022_04_07 11:09 PM
+ALTER TABLE `sales_invoice` CHANGE `sales_type` `sales_type` INT(11) NULL DEFAULT NULL COMMENT '1=sales , 2=sales2, 3=sales3';
+
+--Parag : 2022_04_07 12:31 PM
+ALTER TABLE `sales_invoice` ADD `sales_subject` VARCHAR(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL AFTER `aspergem_service_charge`, ADD `sales_note` VARCHAR(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL AFTER `sales_subject`;
+
+--Parag : 2022_04_07 04:47 PM
+ALTER TABLE lineitems DROP FOREIGN KEY Fk_ItemLineItem;
+ALTER TABLE `sales_invoice` ADD `book_no` VARCHAR(255) NULL AFTER `aspergem_service_charge`, ADD `ship_party_name` VARCHAR(255) NULL AFTER `book_no`, ADD `ship_party_address` TEXT NULL AFTER `ship_party_name`, ADD `ship_party_gstin` VARCHAR(255) NULL AFTER `ship_party_address`, ADD `ship_party_state` VARCHAR(255) NULL AFTER `ship_party_gstin`, ADD `ship_party_code` VARCHAR(255) NULL AFTER `ship_party_state`;

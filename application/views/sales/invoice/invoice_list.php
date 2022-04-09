@@ -4,9 +4,21 @@
     <!-- Content Header (Page header) -->
     <section class="content-header">
         <h1>
-            Sales Invoice
+            <?php
+            if(isset($list_type) && $list_type == 2){
+                echo "Sales Invoice 2";
+                $add_new_url = base_url('transaction/sales_purchase_transaction/sales2');
+            }else if(isset($list_type) && $list_type == 3){
+                echo "Sales Invoice 3";
+                $add_new_url = base_url('transaction/sales_purchase_transaction/sales3');
+            }else{
+                echo "Sales Invoice";
+                $add_new_url = base_url('transaction/sales_purchase_transaction/sales');
+            }
+            ?>
+            
             <?php if ($this->applib->have_access_role(MODULE_SALES_INVOICE_ID, "add")) { ?>
-                <a href="<?= base_url('sales/invoice'); ?>" class="btn btn-primary pull-right">Add New</a>
+                <a href="<?= $add_new_url; ?>" class="btn btn-primary pull-right">Add New</a>
             <?php } ?>
 
         </h1>
@@ -211,6 +223,7 @@
 					d.daterange_1 = datepicker1;
 					d.daterange_2 = datepicker2;
 					d.account_id = $("#account_id").val();
+                    d.list_type = "<?php echo (isset($list_type) && $list_type != '') ? $list_type : 0;  ?>"
 				},
 			},
 			"scrollY": '<?php echo MASTER_LIST_TABLE_HEIGHT;?>',
