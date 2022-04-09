@@ -2307,6 +2307,7 @@ class Sales extends CI_Controller
                 'ship_party_state' => $result->ship_party_state,
                 'ship_party_code' => $result->ship_party_code,
                 'round_off_amount'=>$result->round_off_amount,
+                'sales_note' => $result->sales_note,
             );
 
             // var_dump( $total_gst);

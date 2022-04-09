@@ -91,7 +91,8 @@ ob_start();
                 <td colspan="10" class="text_bold no-border-right" style="text-align: left;">Invoice No.: <?=isset($sales_invoice_no) ?$sales_invoice_no : '' ?></td>
             </tr>
             <tr class="border1">
-                <td colspan="16" class="text_bold no-border-left no-border-right" style="text-align: left;">Invoice Date: <?=isset($sales_invoice_date) ? $sales_invoice_date : '';?></td>
+                <td colspan="8" class="text_bold no-border-left no-border-right" style="text-align: left;">Invoice Date: <?=isset($sales_invoice_date) ? $sales_invoice_date : '';?></td>
+                <td colspan="8" class="text_bold no-border-right" style="text-align: left;">Supplier PAN.: <?=isset($user_pan) ?$user_pan : '' ?></td>
             </tr>
             <tr class="border1">
                 <td colspan="8" class="text_bold no-border-left no-border-right" style="text-align: center;">Bill to party</td>
@@ -214,7 +215,7 @@ ob_start();
                 <td colspan="2" align="right" class="text_bold no-border-left"><?php echo number_format((float)$amount_total, 2, '.', ''); ?></td>
             </tr>
             <tr class="border1">
-                <td valign="top" colspan="11" class="no-border-right" style="font-size: 12px;"><span class="text_bold" >Note : </span><br/>
+                <td valign="top" colspan="11" class="no-border-right" style="font-size: 12px;"><span class="text_bold" >Declaration : <?php echo (isset($sales_note)) ? $sales_note : '' ?> </span><br/>
                     
                 </td>
                 <td valign="top" colspan="5" class="no-border-left text_bold">For, <?= isset($user_name) ? $user_name : '' ?><br/>

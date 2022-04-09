@@ -290,6 +290,12 @@
                                                 <input type="text" name="book_no" id="book_no" class="form-control" data-index="7" value="<?=isset($invoice_data->book_no) ? $invoice_data->book_no : ''; ?>">
                                             </div>
                                         </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label for="sales_note" class="control-label">Declaration</label>
+                                                <input type="text" name="sales_note" id="sales_note" class="form-control" data-index="7" value="<?=isset($invoice_data->sales_note) ? $invoice_data->sales_note : ''; ?>">
+                                            </div>
+                                        </div>
                                         <div class="clearfix"></div>
                                         <hr>
                                         <div class="col-md-12">

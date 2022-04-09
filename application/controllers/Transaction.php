@@ -1300,6 +1300,7 @@ class Transaction extends CI_Controller {
             $invoice_data['ship_party_gstin'] = (isset($post_data['ship_party_gstin'])) ? $post_data['ship_party_gstin'] : '';
             $invoice_data['ship_party_state'] = (isset($post_data['ship_party_state'])) ? $post_data['ship_party_state'] : '';
             $invoice_data['ship_party_code'] = (isset($post_data['ship_party_code'])) ? $post_data['ship_party_code'] : '';
+            $invoice_data['sales_note'] = (isset($post_data['sales_note'])) ? $post_data['sales_note'] : '';
             $invoice_data['sales_type'] = 3;
 
         }elseif($voucher_type == 'purchase') {
