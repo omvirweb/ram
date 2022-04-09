@@ -2016,10 +2016,15 @@ class Sales extends CI_Controller
             $user_detail = $this->crud->get_data_row_by_id('user', 'user_id', $result->created_by);
             $account_detail = $this->crud->get_data_row_by_id('account', 'account_id', $result->account_id);
             $this->load->library('numbertowords');
-            if ($result->amount_total < 0) {
-                $amount_total_word = 'Minus ' . $this->numbertowords->convert_number(abs($result->amount_total + $result->aspergem_service_charge));
+            $total_pf_amount = 0;
+            if($result->total_pf_amount) {
+                $total_pf_amount = $result->total_pf_amount + ($result->total_pf_amount * 18 / 100);
+            }
+            $total_amount_word = $result->amount_total + $result->aspergem_service_charge + $total_pf_amount;
+            if ($total_amount_word < 0) {
+                $amount_total_word = 'Minus ' . $this->numbertowords->convert_number(abs($total_amount_word));
             } else {
-                $amount_total_word = $this->numbertowords->convert_number($result->amount_total + $result->aspergem_service_charge);
+                $amount_total_word = $this->numbertowords->convert_number($total_amount_word);
             }
             $total_gst = $result->cgst_amount_total + $result->sgst_amount_total + $result->igst_amount_total;
 			//$total_gst = $result->gst;
@@ -2043,7 +2048,7 @@ class Sales extends CI_Controller
                 'cgst_amount_total' => $result->cgst_amount_total,
                 'sgst_amount_total' => $result->sgst_amount_total,
                 'igst_amount_total' => $result->igst_amount_total,
-                'amount_total' => ($result->amount_total + $result->aspergem_service_charge) + $result->total_pf_amount,
+                'amount_total' => $total_amount_word,
                 'amount_total_word' => $amount_total_word,
                 'gst_total_word' => $gst_total_word,
                 'sales_subject' => $result->sales_subject,
@@ -2130,6 +2135,7 @@ class Sales extends CI_Controller
 //            }
             
             $data['lineitems'] = $lineitem_arr;
+            $total_gst = $total_gst + ($result->total_pf_amount * 18 / 100);
             $data['total_gst'] = $total_gst;
             if ($total_gst < 0) {
                 $gst_total_word = 'Minus ' . $this->numbertowords->convert_number(abs($total_gst));
@@ -2137,7 +2143,6 @@ class Sales extends CI_Controller
                 $gst_total_word = $this->numbertowords->convert_number($total_gst);
             }
             $data['gst_total_word'] = $gst_total_word;
-
 //            echo '<pre>'; print_r($lineitem_arr); exit;
         } else {
             redirect($_SERVER['HTTP_REFERER']);
