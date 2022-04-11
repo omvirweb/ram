@@ -79,7 +79,7 @@ ob_start();
             <?php } else { ?>
             <tr align="center" class="border1">
                 <td align="left" colspan="16" class="no-border-right">
-                    <img src="<?php if(isset($logo_image) && $logo_image != '') { echo base_url('assets/uploads/logo_image/'.$logo_image); } else {  echo base_url('assets/dist/img/ram-logo.png'); } ?>" class="saas-logo" alt="saas-logo">
+                    <img style="height: 76px;" src="<?php if(isset($logo_image) && $logo_image != '') { echo base_url('assets/uploads/logo_image/'.$logo_image); } else {  echo base_url('assets/dist/img/ram-logo.png'); } ?>" class="saas-logo" alt="saas-logo">
                 </td>
             </tr>
             <tr align="center" style="border: 1px 0px 1px 0px;">
