@@ -1244,10 +1244,10 @@ class Sales extends CI_Controller
                 $amt =  $sales_invoice_lineitem->price * $sales_invoice_lineitem->item_qty;
                 $gst_amount = $amt * $sales_invoice_lineitem->gst / 100;
                 $total_gst += $gst_amount;
-                if ($key == 0) {
+                if ($key == 0 && $sales_invoice_lineitem->site_id != null) {
                     $site_data = $this->crud->get_row_by_id('sites', array('site_id' => $sales_invoice_lineitem->site_id));
-                    $data['site_name'] = $site_data[0]->site_name;
-                    $data['site_address'] = $site_data[0]->site_address;
+                    $data['site_name'] = (isset($site_data)) ? $site_data[0]->site_name : '';
+                    $data['site_address'] = (isset($site_data)) ? $site_data[0]->site_address : '';
                 }
             }
 //            $no_arr = count($lineitem_arr);
@@ -2120,10 +2120,10 @@ class Sales extends CI_Controller
                 $amt =  $sales_invoice_lineitem->price * $sales_invoice_lineitem->item_qty;
                 $gst_amount = $amt * $sales_invoice_lineitem->gst / 100;
                 $total_gst += $gst_amount;
-                if ($key == 0) {
+                if ($key == 0 && $sales_invoice_lineitem->site_id != null) {
                     $site_data = $this->crud->get_row_by_id('sites', array('site_id' => $sales_invoice_lineitem->site_id));
-                    $data['site_name'] = $site_data[0]->site_name;
-                    $data['site_address'] = $site_data[0]->site_address;
+                    $data['site_name'] = (isset($site_data)) ? $site_data[0]->site_name : '';
+                    $data['site_address'] = (isset($site_data)) ? $site_data[0]->site_address : '';
                 }
             }
 //            $no_arr = count($lineitem_arr);
@@ -2371,10 +2371,10 @@ class Sales extends CI_Controller
                 $amt =  $sales_invoice_lineitem->price * $sales_invoice_lineitem->item_qty;
                 $gst_amount = $amt * $sales_invoice_lineitem->gst / 100;
                 $total_gst += $gst_amount;
-                if ($key == 0) {
+                if ($key == 0 && $sales_invoice_lineitem->site_id != null) {
                     $site_data = $this->crud->get_row_by_id('sites', array('site_id' => $sales_invoice_lineitem->site_id));
-                    $data['site_name'] = $site_data[0]->site_name;
-                    $data['site_address'] = $site_data[0]->site_address;
+                    $data['site_name'] = (isset($site_data)) ? $site_data[0]->site_name : '';
+                    $data['site_address'] = (isset($site_data)) ? $site_data[0]->site_address : '';
                 }
             }
             $data['lineitems'] = $lineitem_arr;
