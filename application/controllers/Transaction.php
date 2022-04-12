@@ -1283,6 +1283,7 @@ class Transaction extends CI_Controller {
             $invoice_data['aspergem_service_charge'] = (isset($post_data['aspergem_service_charge'])) ? $post_data['aspergem_service_charge'] : '';
             $invoice_data['sales_subject'] = (isset($post_data['sales_subject'])) ? $post_data['sales_subject'] : '';
             $invoice_data['sales_note'] = (isset($post_data['sales_note'])) ? $post_data['sales_note'] : '';
+            $invoice_data['prof_tax'] = (isset($post_data['prof_tax'])) ? $post_data['prof_tax'] : '';
             $invoice_data['sales_type'] = 2;
 
         }elseif($voucher_type == 'sales3') {

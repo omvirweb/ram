@@ -281,6 +281,12 @@
                                                 <input type="text" name="sales_note" id="sales_note" class="form-control" data-index="7" value="<?=isset($invoice_data->sales_note) ? $invoice_data->sales_note : ''; ?>">
                                             </div>
                                         </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label for="prof_tax" class="control-label">Prof. Tax</label>
+                                                <input type="number" name="prof_tax" id="prof_tax" class="form-control" data-index="7" value="<?=isset($invoice_data->prof_tax) ? $invoice_data->prof_tax : ''; ?>">
+                                            </div>
+                                        </div>
                                     <?php } ?>
 
                                     <?php if($voucher_type == "sales3") { ?>

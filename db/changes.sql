@@ -157,3 +157,6 @@ ALTER TABLE `sales_invoice` ADD `sales_subject` VARCHAR(255) CHARACTER SET latin
 --Parag : 2022_04_07 04:47 PM
 ALTER TABLE lineitems DROP FOREIGN KEY Fk_ItemLineItem;
 ALTER TABLE `sales_invoice` ADD `book_no` VARCHAR(255) NULL AFTER `aspergem_service_charge`, ADD `ship_party_name` VARCHAR(255) NULL AFTER `book_no`, ADD `ship_party_address` TEXT NULL AFTER `ship_party_name`, ADD `ship_party_gstin` VARCHAR(255) NULL AFTER `ship_party_address`, ADD `ship_party_state` VARCHAR(255) NULL AFTER `ship_party_gstin`, ADD `ship_party_code` VARCHAR(255) NULL AFTER `ship_party_state`;
+
+--Parag : 2022_04_12 05:27 PM
+ALTER TABLE `sales_invoice` ADD `prof_tax` FLOAT NULL DEFAULT NULL AFTER `user_updated_by`;
