@@ -221,14 +221,13 @@ ob_start();
                 <td colspan="7" rowspan="2" class=" border1 no-border-left no-border-bottom no-border-right"> : <?php echo $gst_total_word; ?></td>
                 <td colspan="3" class="no-border-top no-border-bottom no-border-right">Prof. Tax</td>
                 <td colspan="2" align="right" class="no-border-left no-border-top no-border-bottom"><?php echo number_format((float)($prof_tax), 2, '.', ''); ?></td><br>
-
             </tr>
             <tr class="">
                 <td colspan="3" rowspan="2" class="no-border-top no-border-bottom no-border-right">Round Off</td>
                 <td colspan="2" rowspan="2" align="right" class="no-border-left no-border-top no-border-bottom"><?php echo number_format((float)($round_off_amount), 2, '.', ''); ?></td>
             </tr>
             <tr class="border1 no-border-top no-border-bottom text_bold">
-                <td colspan="5" class="no-border-right text_bold">&nbsp;</td>
+                <td colspan="16" class="no-border-right text_bold">&nbsp;</td>
             </tr>
             
             <tr class="border1" style="background-color: #EAEAEA;">
