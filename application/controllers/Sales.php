@@ -2053,6 +2053,8 @@ class Sales extends CI_Controller
                 'gst_total_word' => $gst_total_word,
                 'sales_subject' => $result->sales_subject,
                 'sales_note' => $result->sales_note,
+                'prof_tax' => $result->prof_tax,
+                'round_off_amount' => $result->round_off_amount,
                 'total_pf_amount' => $result->total_pf_amount,
                 'aspergem_service_charge' => isset($result->aspergem_service_charge) ? $result->aspergem_service_charge:0 ,
                 

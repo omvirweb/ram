@@ -191,32 +191,41 @@ ob_start();
             <tr class="">
                 <td colspan="4" class="no-border-right no-border-bottom text_bold">Bank Name</td>
                 <td colspan="7" class="no-border-left no-border-right no-border-bottom"> : <?=isset($bank_name) ? $bank_name : '' ?></td>
-                <td colspan="3" class="text_bold no-border-right">SUB TOTAL </td>
-                <td colspan="2" align="right" class="text_bold no-border-left"><?php echo number_format((float)$pure_total_amt, 2, '.', ''); ?></td>
+                <td colspan="3" class="no-border-top no-border-bottom no-border-right">As Per GEM - Service <br/>Charge(Without GST)</td>
+                <td colspan="2" align="right" class="no-border-left no-border-top no-border-bottom"><?php echo number_format((float)($aspergem_service_charge), 2, '.', ''); ?></td>
+
             </tr>
             <tr class="">
                 <td colspan="4" class="no-border-right no-border-top no-border-bottom text_bold">Branch</td>
                 <td colspan="7" class="no-border"> : <?=isset($bank_branch) ? $bank_branch : '' ?></td>
-                
-                <td colspan="3" class="no-border-top no-border-bottom no-border-right">CGST</td>
-                <td colspan="2" align="right" class="no-border-left no-border-top no-border-bottom"><?php echo number_format((float)($total_gst/2), 2, '.', ''); ?></td>
+                <td colspan="3" class="text_bold no-border-right">SUB TOTAL </td>
+                <td colspan="2" align="right" class="text_bold no-border-left"><?php echo number_format((float)$pure_total_amt, 2, '.', ''); ?></td>
+
             </tr>
             <tr class="">
                 <td colspan="4" class="no-border-right no-border-bottom no-border-top text_bold">Bank A/c. No.</td>
                 <td colspan="7" class="no-border"> : <?=isset($bank_ac_no) ? $bank_ac_no : '' ?></td>
-                <td colspan="3" class="no-border-top no-border-bottom no-border-right">SGST</td>
+                <td colspan="3" class="no-border-top no-border-bottom no-border-right">CGST</td>
                 <td colspan="2" align="right" class="no-border-left no-border-top no-border-bottom"><?php echo number_format((float)($total_gst/2), 2, '.', ''); ?></td>
+
             </tr>
             <tr class="">
                 <td colspan="4" class="no-border-right no-border-bottom no-border-top text_bold">RTGS/IFSC Code</td>
                 <td colspan="7" class="no-border"> : <?=isset($rtgs_ifsc_code) ? $rtgs_ifsc_code : '' ?></td>
-                <td colspan="3" class="no-border-top no-border-bottom no-border-right">As Per GEM - Service <br/>Charge(Without GST)</td>
+                <td colspan="3" class="no-border-top no-border-bottom no-border-right">SGST</td>
                 <?php // $discounted_amt_total = $pure_total_amt + $dis_total_amt;?>
-                <td colspan="2" align="right" class="no-border-left no-border-top no-border-bottom"><?php echo number_format((float)($aspergem_service_charge), 2, '.', ''); ?></td>
+                <td colspan="2" align="right" class="no-border-left no-border-top no-border-bottom"><?php echo number_format((float)($total_gst/2), 2, '.', ''); ?></td>
             </tr>
             <tr class="">
                 <td colspan="4" rowspan="2" class="border1 no-border-right no-border-bottom text_bold">Total GST</td>
                 <td colspan="7" rowspan="2" class=" border1 no-border-left no-border-bottom no-border-right"> : <?php echo $gst_total_word; ?></td>
+                <td colspan="3" class="no-border-top no-border-bottom no-border-right">Prof. Tax</td>
+                <td colspan="2" align="right" class="no-border-left no-border-top no-border-bottom"><?php echo number_format((float)($prof_tax), 2, '.', ''); ?></td><br>
+
+            </tr>
+            <tr class="">
+                <td colspan="3" rowspan="2" class="no-border-top no-border-bottom no-border-right">Round Off</td>
+                <td colspan="2" rowspan="2" align="right" class="no-border-left no-border-top no-border-bottom"><?php echo number_format((float)($round_off_amount), 2, '.', ''); ?></td>
             </tr>
             <tr class="border1 no-border-top no-border-bottom text_bold">
                 <td colspan="5" class="no-border-right text_bold">&nbsp;</td>
