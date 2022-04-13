@@ -116,7 +116,7 @@ ob_start();
             <tr class=""></tr>
             <tr class="border1">
                 <td colspan="1" width="50px" class="text_bold text_center">Sr No</td>
-                <td colspan="9" class="text_bold text_center" width="250px">Product Name</td>
+                <td colspan="9" class="text_bold text_center" width="250px">Particular</td>
                 <!-- <td colspan="2" class="text_bold text_center">HSN/SAC</td> -->
                 <td colspan="2" class="text_bold text_center">Qty</td>
                 <!-- <td colspan="1" class="text_bold text_center">Unit</td> -->
@@ -191,7 +191,7 @@ ob_start();
             <tr class="">
                 <td colspan="4" class="no-border-right no-border-bottom text_bold">Bank Name</td>
                 <td colspan="7" class="no-border-left no-border-right no-border-bottom"> : <?=isset($bank_name) ? $bank_name : '' ?></td>
-                <td colspan="3" class="no-border-top no-border-bottom no-border-right">As Per GEM - Service <br/>Charge(Without GST)</td>
+                <td colspan="3" class="no-border-top no-border-bottom no-border-right">Service Charge</td>
                 <td colspan="2" align="right" class="no-border-left no-border-top no-border-bottom"><?php echo number_format((float)($aspergem_service_charge), 2, '.', ''); ?></td>
 
             </tr>
