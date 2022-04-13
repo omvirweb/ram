@@ -199,6 +199,9 @@ ob_start();
                 <td colspan="4" class="no-border-right no-border-top no-border-bottom text_bold">Branch</td>
                 <td colspan="7" class="no-border"> : <?=isset($bank_branch) ? $bank_branch : '' ?></td>
                 <td colspan="3" class="text_bold no-border-right">SUB TOTAL </td>
+                <?php 
+                    $pure_total_amt = $pure_total_amt + $total_pf_amount + $aspergem_service_charge;
+                ?>
                 <td colspan="2" align="right" class="text_bold no-border-left"><?php echo number_format((float)$pure_total_amt, 2, '.', ''); ?></td>
 
             </tr>
