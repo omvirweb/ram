@@ -358,20 +358,7 @@
 <div class="clearfix"></div>
 <script type="text/javascript">
 
-$('#line_item_des').change(function(){
-        var text=$('#line_item_des').val();
-        let result = text.replace(/<br>/g, " ");
-        $('#line_item_des').val(result);
-    });
-
-    function HtmlEncode(s){
-        var el = document.createElement("div");
-        el.innerText = el.textContent = s;
-        s = el.innerHTML;
-        return s;
-    };
-
-        sub_lineitem_objectdata = [];
+    sub_lineitem_objectdata = [];
 	var edit_lineitem_inc = 0;
 	var lineitem_objectdata = [];
 	//~ var lineitem_objectdata = ['{"item_company_id":"1","item_id":"1","item_qty":"3","item_qty2":"15","price":"100","amount":"300"}', '{"item_company_id":"1","item_id":"2","item_qty":"4","item_qty2":"40","price":"200","amount":"800"}', '{"item_company_id":"1","item_id":"3","item_qty":"5","item_qty2":"75","price":"300","amount":"1500"}'];
@@ -691,7 +678,7 @@ $('#line_item_des').change(function(){
 		});
 		$('#add_lineitem').on('click', function() {
 			var item_id = $("#item_id").val();
-            var line_item_des = HtmlEncode($("#line_item_des").val());
+            var line_item_des = nl2br($("#line_item_des").val());
 
             <?php if($voucher_type != "sales2" && $voucher_type != "sales3") { ?>
                 if(item_id == '' || item_id == null){
@@ -732,7 +719,7 @@ $('#line_item_des').change(function(){
             if ( gst_per == undefined || gst_per == '' ) {
                 gst_per = 0;
             }
-            lineitem['line_item_des'] =  HtmlEncode($("#line_item_des").val());
+            lineitem['line_item_des'] =  line_item_des;
             lineitem['cgst'] = 0;
             // console.log('rate for tax - '+rate_for_itax);
             // return false;
@@ -1265,11 +1252,9 @@ $('#line_item_des').change(function(){
 		if(typeof(value.id) != "undefined" && value.id !== null) {
 			$("#lineitem_id").val(value.id);
 		}
-        console.log('desac = '+value.line_item_des);
+
         if(typeof(value.line_item_des) != "undefined" && value.line_item_des !== null) {
-            var text=value.line_item_des;
-            let result = text.replace(/<br>/g, " ");
-            $('#line_item_des').val(result)
+            $('#line_item_des').val(value.line_item_des);
 		}
 
 		if(value.rate_for_itax == 1){
@@ -1337,5 +1322,14 @@ $('#line_item_des').change(function(){
 		decimal = 2;
 		return value ? parseFloat(value).toFixed(decimal) : 0;
 	}
+
+    // function nl2br (mystr, is_xhtml) {     
+    //     var simplebreaktag = (is_xhtml || typeof is_xhtml === 'undefined') ? '<br />' : '<br>';      
+    //     return (mystr + '').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1'+ simplebreaktag +'$2');  
+    // } 
+
+    function nl2br(str){
+        return str.replace(/(?:\r\n|\r|\n)/g, '<br>');
+    }
 	
 </script>
