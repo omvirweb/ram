@@ -724,31 +724,35 @@ $is_single_line_item = 1;
                         </div>
                         <div class="navbar-custom-menu">
                         	<ul class="nav navbar-nav">
-                        		<?php if($userType == 'Admin'){ ?>
-								<li class="dropdown staff-menu">
-									<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-										<i class="fa fa-users"></i>
-									</a>
-									<ul class="dropdown-menu" role="menu">
-										<!-- User image -->
-										<li class="">
-											<form>
-												<div class="form-group">
-													<?php $lead_owner = $this->crud->get_select_data_where('user',array('userType !=' => USER_TYPE_USER)); ?>
-													<div class="col-sm-12">
-														<select name="staff_session_id" id="staff_session_id" class="form-control input-sm select2">
-															<option value="">--Select--</option>
-															<?php foreach($lead_owner as $lo): ?>
-															<option value="<?= $lo->user_id; ?>"<?php if($this->session->userdata(PACKAGE_FOLDER_NAME.'is_logged_in')['user_id'] == $lo->user_id){echo 'selected';}?>><?= $lo->user_name; ?></option>
-															<?php endforeach; ?>
-														</select>
-													</div>
-												</div>
-											</form>
-										</li>
-									</ul>
-								</li>
-								<?php } ?>
+                        		<!-- <?php
+                                    // if($userType == 'Admin') {
+                                ?> -->
+                                    <li class="dropdown staff-menu">
+                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                            <i class="fa fa-users"></i>
+                                        </a>
+                                        <ul class="dropdown-menu" role="menu">
+                                            <!-- User image -->
+                                            <li class="">
+                                                <form>
+                                                    <div class="form-group">
+                                                        <?php $lead_owner = $this->crud->get_select_data_where('user',array('userType !=' => USER_TYPE_USER)); ?>
+                                                        <div class="col-sm-12">
+                                                            <select name="staff_session_id" id="staff_session_id" class="form-control input-sm select2">
+                                                                <option value="">--Select--</option>
+                                                                <?php foreach($lead_owner as $lo): ?>
+                                                                <option value="<?= $lo->user_id; ?>"<?php if($this->session->userdata(PACKAGE_FOLDER_NAME.'is_logged_in')['user_id'] == $lo->user_id){echo 'selected';}?>><?= $lo->user_name; ?></option>
+                                                                <?php endforeach; ?>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </li>
+                                        </ul>
+                                    </li>
+								<!-- <?php
+                                    // }
+                                ?> -->
 
 								<!-- User Account: style can be found in dropdown.less -->
 								<li class="dropdown user user-menu">
