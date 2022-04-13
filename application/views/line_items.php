@@ -357,6 +357,20 @@
 
 <div class="clearfix"></div>
 <script type="text/javascript">
+
+$('#line_item_des').change(function(){
+        var text=$('#line_item_des').val();
+        let result = text.replace(/<br>/g, " ");
+        $('#line_item_des').val(result);
+    });
+
+    function HtmlEncode(s){
+        var el = document.createElement("div");
+        el.innerText = el.textContent = s;
+        s = el.innerHTML;
+        return s;
+    };
+
         sub_lineitem_objectdata = [];
 	var edit_lineitem_inc = 0;
 	var lineitem_objectdata = [];
@@ -675,10 +689,10 @@
 		$(document).on('input','.discount',function () {
 			apply_discount_tax_get_amount();
 		});
-		
 		$('#add_lineitem').on('click', function() {
 			var item_id = $("#item_id").val();
-            var line_item_des = $("#line_item_des").val();
+            var line_item_des = HtmlEncode($("#line_item_des").val());
+
             <?php if($voucher_type != "sales2" && $voucher_type != "sales3") { ?>
                 if(item_id == '' || item_id == null){
                     show_notify("Please select Product.", false);
@@ -718,7 +732,7 @@
             if ( gst_per == undefined || gst_per == '' ) {
                 gst_per = 0;
             }
-            lineitem['line_item_des'] = $("#line_item_des").val();
+            lineitem['line_item_des'] =  HtmlEncode($("#line_item_des").val());
             lineitem['cgst'] = 0;
             // console.log('rate for tax - '+rate_for_itax);
             // return false;
@@ -1253,7 +1267,9 @@
 		}
         console.log('desac = '+value.line_item_des);
         if(typeof(value.line_item_des) != "undefined" && value.line_item_des !== null) {
-			$("#line_item_des").val(value.line_item_des);
+            var text=value.line_item_des;
+            let result = text.replace(/<br>/g, " ");
+            $('#line_item_des').val(result)
 		}
 
 		if(value.rate_for_itax == 1){
