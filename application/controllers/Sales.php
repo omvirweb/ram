@@ -2024,7 +2024,7 @@ class Sales extends CI_Controller
             if($result->aspergem_service_charge) {
                 $aspergem_service_charge = $result->aspergem_service_charge + ($result->aspergem_service_charge * 18 / 100);
             }
-            $total_amount_word = $result->amount_total + $total_pf_amount + $aspergem_service_charge + $result->prof_tax + $result->round_off_amount;
+            $total_amount_word = $result->amount_total + $total_pf_amount + $aspergem_service_charge + $result->prof_tax;
             if ($total_amount_word < 0) {
                 $amount_total_word = 'Minus ' . $this->numbertowords->convert_number(abs($total_amount_word));
             } else {
