@@ -1338,7 +1338,7 @@
     // } 
 
     function nl2br(str){
-        if(str != "undefined" && value.line_item_des !== null){
+        if(str != "undefined" && str !== null){
             return str.replace(/(?:\r\n|\r|\n)/g, '<br>');
         }
     }
