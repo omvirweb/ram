@@ -833,6 +833,7 @@
 			$("#amount").val('');
 			$("#line_items_index").val('');
             $("#line_item_des").val('');
+            $("#hsn").val('');
 		});
                 
             $(document).on("click",".sub_qty_setting",function(){

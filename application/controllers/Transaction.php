@@ -1718,6 +1718,7 @@ class Transaction extends CI_Controller {
                 $add_lineitem['gst'] = isset($lineitem->gst_rate)?$lineitem->gst_rate:0;
                 $add_lineitem['site_id'] = isset($lineitem->site_id)?$lineitem->site_id:NULL;
                 // Add Comapany id
+                $add_lineitem['hsn'] = isset($lineitem->hsn) ? $lineitem->hsn:NULL;  
                 $add_lineitem['company_id'] = $this->logged_in_id;
                 $add_lineitem['module'] = $module;
                 $add_lineitem['parent_id'] = $parent_id;
