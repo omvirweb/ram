@@ -122,6 +122,7 @@ class Auth extends CI_Controller
                             }
 
                             $last_visited_page = $this->crud->get_column_value_by_id('user', 'last_visited_page', array('user_id' => $user_id));
+
                             if(empty($last_visited_page)) {
                                 redirect('');
                             } else {

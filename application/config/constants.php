@@ -248,3 +248,10 @@ define('UTGST_INTEREST_TYPE_ID', 17);
 define('UTGST_PENALTY_TYPE_ID', 18);
 define('UTGST_FEES_TYPE_ID', 19);
 define('UTGST_OTHER_CHARGES_TYPE_ID', 20);
+
+
+// VUE App URL
+define('VUE_BASE_URL', 'http://192.168.0.119:8081/');
+
+// Laravel App URL
+define('LARAVEL_BASE_URL', 'http://localhost/ram-laravel/public/');
