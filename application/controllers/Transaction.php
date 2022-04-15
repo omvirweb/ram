@@ -761,13 +761,15 @@ class Transaction extends CI_Controller {
             $sales_type=2;
         }elseif($voucher_type == "sales3"){
             $sales_type=3;
+        }elseif($voucher_type == "sales4"){
+            $sales_type=4;
         }
 
         $data['transaction_date'] = date('d-m-Y');
         $line_item_fields_data = $this->crud->getFromSQL('SELECT setting_key FROM company_settings WHERE company_id = "'.$this->logged_in_id.'" AND module_name = 2 AND setting_value = 1');
         $data['line_item_fields_data'] = json_encode($line_item_fields_data);
        /*echo "<pre>"; print_r($line_item_fields_data); exit;*/
-        if($voucher_type == "sales" || $voucher_type == "sales2" || $voucher_type == "sales3") {
+        if($voucher_type == "sales" || $voucher_type == "sales2" || $voucher_type == "sales3" || $voucher_type == "sales4") {
             if (isset($_POST['sales_invoice_id'])) {
                 if(!($this->applib->have_access_role(MODULE_SALES_INVOICE_ID,"edit"))) {
                     $this->session->set_flashdata('success', false);
@@ -794,6 +796,10 @@ class Transaction extends CI_Controller {
                 $page_title = 'Sales3 - CTRL + F1';
                 $voucher_label = 'Sales3 Invoice';
                 $invoice_list_url = base_url('sales/invoice_list/3');
+            }elseif($sales_type==4){
+                $page_title = 'Sales4 - CTRL + F1';
+                $voucher_label = 'Sales4 Invoice';
+                $invoice_list_url = base_url('sales/invoice_list/4');
             }
             
             $module_id = MODULE_SALES_INVOICE_ID;
@@ -1049,7 +1055,7 @@ class Transaction extends CI_Controller {
             $data['invoice_line_item_fields'] = $invoice_line_item_fields;
             $data['company_invoice_prefix'] = $this->crud->get_row_by_id('company_invoice_prefix', array('company_id' => $this->logged_in_id));
 
-            if($voucher_type == "sales" || $voucher_type == "sales2" || $voucher_type == "sales3") {
+            if($voucher_type == "sales" || $voucher_type == "sales2" || $voucher_type == "sales3" || $voucher_type == "sales4") {
                 if(isset($_POST['sales_invoice_id'])) {
                     $where = array('sales_invoice_id' => $_POST['sales_invoice_id']);
                     $sales_invoice_data = $this->crud->get_row_by_id('sales_invoice', $where);
@@ -1304,6 +1310,25 @@ class Transaction extends CI_Controller {
             $invoice_data['sales_note'] = (isset($post_data['sales_note'])) ? $post_data['sales_note'] : '';
             $invoice_data['sales_type'] = 3;
 
+        }elseif($voucher_type == 'sales4') {
+            $module = 2;
+            $invoice_data['prefix'] = $post_data['prefix'];
+            $invoice_data['sales_invoice_no'] = $post_data['invoice_no'];
+            $invoice_data['sales_invoice_date'] = date('Y-m-d', strtotime($post_data['invoice_date']));
+            $invoice_data['sales_invoice_desc'] = $post_data['invoice_desc'];
+            $invoice_data['cash_customer'] = (isset($post_data['cash_customer'])?$post_data['cash_customer']:'');
+            $invoice_data['tax_type'] = (isset($post_data['tax_type'])?$post_data['tax_type']:'');
+            $invoice_data['our_bank_id'] = $post_data['our_bank_label'];
+            $invoice_data['book_no'] = (isset($post_data['book_no'])) ? $post_data['book_no'] : '';
+            $invoice_data['ship_party_name'] = (isset($post_data['ship_party_name'])) ? $post_data['ship_party_name'] : '';
+            $invoice_data['ship_party_address'] = (isset($post_data['ship_party_address'])) ? $post_data['ship_party_address'] : '';
+            $invoice_data['ship_party_gstin'] = (isset($post_data['ship_party_gstin'])) ? $post_data['ship_party_gstin'] : '';
+            $invoice_data['ship_party_state'] = (isset($post_data['ship_party_state'])) ? $post_data['ship_party_state'] : '';
+            $invoice_data['ship_party_code'] = (isset($post_data['ship_party_code'])) ? $post_data['ship_party_code'] : '';
+            $invoice_data['sales_subject'] = (isset($post_data['sales_subject'])) ? $post_data['sales_subject'] : '';
+            $invoice_data['sales_note'] = (isset($post_data['sales_note'])) ? $post_data['sales_note'] : '';
+            $invoice_data['sales_type'] = 4;
+
         }elseif($voucher_type == 'purchase') {
             $module = 1;
             $invoice_data['bill_no'] = $post_data['bill_no'];
@@ -1344,7 +1369,7 @@ class Transaction extends CI_Controller {
             $invoice_data['invoice_type'] = !empty($post_data['invoice_type']) ? $post_data['invoice_type'] : null;
         }
 
-        if($voucher_type == 'sales' || $voucher_type == 'sales2' || $voucher_type == 'sales3' || $voucher_type == 'purchase' || $voucher_type == 'dispatch') {
+        if($voucher_type == 'sales' || $voucher_type == 'sales2' || $voucher_type == 'sales3' || $voucher_type == 'sales4' || $voucher_type == 'purchase' || $voucher_type == 'dispatch') {
 
             $invoice_data['transport_name'] = $post_data['transport_name'];
             $invoice_data['lr_no'] = $post_data['lr_no'];
@@ -1404,7 +1429,7 @@ class Transaction extends CI_Controller {
 
         if(isset($post_data['invoice_id']) && !empty($post_data['invoice_id'])) {
             
-            if($voucher_type == 'sales' || $voucher_type == 'sales2' || $voucher_type == 'sales3') {
+            if($voucher_type == 'sales' || $voucher_type == 'sales2' || $voucher_type == 'sales3' || $voucher_type == 'sales4') {
                 $invoice_no = $post_data['invoice_no'];
                 $invoice_prefix = isset($post_data['prefix']) ? $post_data['prefix'] : null;
 
@@ -1466,6 +1491,11 @@ class Transaction extends CI_Controller {
                 $where_array['sales_invoice_id'] = $post_data['invoice_id'];
                 $this->crud->update('sales_invoice', $invoice_data, $where_array);
                 $this->session->set_flashdata('message','Sales Invoice3 Updated Successfully');
+
+            }elseif($voucher_type == 'sales4') {
+                $where_array['sales_invoice_id'] = $post_data['invoice_id'];
+                $this->crud->update('sales_invoice', $invoice_data, $where_array);
+                $this->session->set_flashdata('message','Sales Invoice4 Updated Successfully');
 
             }
             elseif($voucher_type == 'purchase') {
@@ -1532,7 +1562,7 @@ class Transaction extends CI_Controller {
                 $add_lineitem['amount'] = isset($lineitem->amount)?$lineitem->amount:NULL;
                 $add_lineitem['unit_id'] = isset($lineitem->unit_id)?$lineitem->unit_id:NULL;
                 $add_lineitem['gst'] = $gst_per;
-                $add_lineitem['hsn'] = isset($lineitem->hsn)?$lineitem->hsn:NULL;  
+                $add_lineitem['hsn'] = isset($lineitem->hsn) ? $lineitem->hsn:NULL;  
                 $add_lineitem['site_id'] = isset($lineitem->site_id)?$lineitem->site_id:NULL;     
                 $add_lineitem['module'] = $module;
                 $add_lineitem['parent_id'] = $parent_id;
@@ -1559,7 +1589,7 @@ class Transaction extends CI_Controller {
             }
         } else {
 
-            if($voucher_type == 'sales' || $voucher_type == 'sales2' || $voucher_type == 'sales3') {
+            if($voucher_type == 'sales' || $voucher_type == 'sales2' || $voucher_type == 'sales3' || $voucher_type == 'sales4') {
                 $invoice_no = $post_data['invoice_no'];
                 $invoice_prefix = $post_data['prefix'];
                 $where = array('prefix' => $invoice_prefix, 'sales_invoice_no' => $invoice_no, 'created_by' => $this->logged_in_id);
@@ -1615,6 +1645,9 @@ class Transaction extends CI_Controller {
             } elseif($voucher_type == 'sales3') {
                 $this->crud->insert('sales_invoice', $invoice_data);
                 $this->session->set_flashdata('message','Sales Invoice3 Added Successfully');
+            } elseif($voucher_type == 'sales4') {
+                $this->crud->insert('sales_invoice', $invoice_data);
+                $this->session->set_flashdata('message','Sales Invoice4 Added Successfully');
             } 
             elseif($voucher_type == 'purchase') {
                 $this->crud->insert('purchase_invoice', $invoice_data);
@@ -1646,7 +1679,7 @@ class Transaction extends CI_Controller {
 
             $parent_id = $this->db->insert_id();
 
-            if($voucher_type == 'sales' || $voucher_type == 'sales2' || $voucher_type == 'sales3' ) {
+            if($voucher_type == 'sales' || $voucher_type == 'sales2' || $voucher_type == 'sales3' || $voucher_type == 'sales4' ) {
                 $company_settings_id = $this->crud->get_column_value_by_id('company_settings','company_settings_id',array('company_id' => $this->logged_in_id,'setting_key' => 'sales_invoice_date'));
                 if(!empty($company_settings_id)) {
                     $this->crud->update('company_settings',array("setting_value" => $invoice_data['sales_invoice_date'],'updated_at' => $this->now_time,'updated_by' => $this->logged_in_id),array('company_settings_id'=>$company_settings_id));
@@ -1702,7 +1735,7 @@ class Transaction extends CI_Controller {
                 $this->crud->insert('lineitems',$add_lineitem);
                 /* print_r($this->db->last_query());exit;*/
 
-                if($voucher_type == 'sales' && $voucher_type == 'sales2' && $voucher_type == 'sales3') {
+                if($voucher_type == 'sales' && $voucher_type == 'sales2' && $voucher_type == 'sales3' && $voucher_type == 'sales4') {
                     if($voucher_type == 'purchase') {
                         // Stock change update main item : Start //
                         $stock_s_data = array();
@@ -1824,7 +1857,7 @@ class Transaction extends CI_Controller {
         $response = array();
         $voucher_type = $post_data['voucher_type'];
 
-        if($voucher_type == "sales" || $voucher_type == 'sales2' || $voucher_type == 'sales3') {
+        if($voucher_type == "sales" || $voucher_type == 'sales2' || $voucher_type == 'sales3' || $voucher_type == 'sales4') {
             $invoice_data = array();
             $invoice_data['account_id'] = $post_data['account_id'];
             $invoice_data['against_account_id'] = $post_data['against_account_id'];
@@ -1867,6 +1900,8 @@ class Transaction extends CI_Controller {
                     $this->session->set_flashdata('message','Sales Invoice2 Updated Successfully');
                 }else if($voucher_type == 'sales3'){
                     $this->session->set_flashdata('message','Sales Invoice3 Updated Successfully');
+                }else if($voucher_type == 'sales4'){
+                    $this->session->set_flashdata('message','Sales Invoice4 Updated Successfully');
                 }else{
                     $this->session->set_flashdata('message','Sales Invoice Updated Successfully');
                 }
@@ -1899,6 +1934,8 @@ class Transaction extends CI_Controller {
                     $this->session->set_flashdata('message','Sales Invoice2 Added Successfully');
                 }else if($voucher_type == 'sales3'){
                     $this->session->set_flashdata('message','Sales Invoice3 Added Successfully');
+                }else if($voucher_type == 'sales4'){
+                    $this->session->set_flashdata('message','Sales Invoice4 Added Successfully');
                 }else{
                     $this->session->set_flashdata('message','Sales Invoice Added Successfully');
                 }

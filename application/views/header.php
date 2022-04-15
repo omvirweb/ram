@@ -489,16 +489,27 @@ $is_single_line_item = 1;
                                         <?php } ?>
                                         <?php if($this->applib->have_access_role(MODULE_SALES_INVOICE_ID,"view")) { ?>
                                             <li class="dropdown-submenu">
-                                                <a tabindex="-1" href="<?php echo base_url() ?>sales/invoice_list/3"><i class="fa fa-circle-o"></i> Sales Invoice Type3</a>
+                                                <a tabindex="-1" href="<?php echo base_url() ?>sales/invoice_list/4"><i class="fa fa-circle-o"></i> Sales Invoice Type3</a>
                                                 <ul class="dropdown-menu">
-                                                    <?php if($this->applib->have_access_role(MODULE_SALES_INVOICE_ID,"add")) { ?>
+
+                                                <?php if($this->applib->have_access_role(MODULE_SALES_INVOICE_ID,"add")) { ?>
                                                         <?php if($is_single_line_item == 1){?>
-                                                            <li><a tabindex="-1" href="<?php echo base_url() ?>transaction/sales_purchase_transaction/sales3"><i class="fa fa-circle-o"></i> Add Invoice</a></li>
+                                                            <li><a tabindex="-1" href="<?php echo base_url() ?>transaction/sales_purchase_transaction/sales4"><i class="fa fa-circle-o"></i> Add Invoice</a></li>
                                                         <?php } else { ?>
                                                             <li><a tabindex="-1" href="<?php echo base_url() ?>sales/invoice/"><i class="fa fa-circle-o"></i> Add Invoice</a></li>
                                                         <?php } ?>
                                                     <?php } ?>
-                                                    <li><a tabindex="-1" href="<?php echo base_url() ?>sales/invoice_list/3"><i class="fa fa-circle-o"></i> Sales Invoice3 List</a></li>
+                                                    <li><a tabindex="-1" href="<?php echo base_url() ?>sales/invoice_list/4"><i class="fa fa-circle-o"></i> Sales Invoice4 List</a></li>
+
+                                                    <?php if($this->applib->have_access_role(MODULE_SALES_INVOICE_ID,"add")) { ?>
+                                                        <?php if($is_single_line_item == 1){?>
+                                                            <li><a tabindex="-1" href="<?php echo base_url() ?>transaction/sales_purchase_transaction/sales3"><i class="fa fa-circle-o"></i> Old Invoice</a></li>
+                                                        <?php } else { ?>
+                                                            <li><a tabindex="-1" href="<?php echo base_url() ?>sales/invoice/"><i class="fa fa-circle-o"></i>Add Invoice Old</a></li>
+                                                        <?php } ?>
+                                                    <?php } ?>
+                                                    <li><a tabindex="-1" href="<?php echo base_url() ?>sales/invoice_list/3"><i class="fa fa-circle-o"></i>Sales Invoice List Old</a></li>
+
                                                 </ul>
                                             </li>
                                         <?php } ?>

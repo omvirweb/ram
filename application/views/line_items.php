@@ -67,7 +67,7 @@
     	}
     } ?>
 
-    <?php if($voucher_type == 'sales2' || $voucher_type == 'sales3') { ?>
+    <?php if($voucher_type == 'sales2' || $voucher_type == 'sales3' || $voucher_type == 'sales4') { ?>
         <div class="col-md-3">
             <div class="form-group">
                 <label for="line_item_des" class="control-label">Item Description</label>
@@ -409,7 +409,7 @@
 		//initAjaxSelect2($("#item_id"),"<?=base_url('app/li_item_select2_source/')?>");
 		initAjaxSelect2($("#item_id"),"<?=base_url('app/item_select2_source/')?>");
 
-        <?php if($voucher_type != 'sales2' && $voucher_type != 'sales3') { ?>
+        <?php if($voucher_type != 'sales2' && $voucher_type != 'sales3' && $voucher_type != 'sales4') { ?>
 		  initAjaxSelect2($("#unit_id"),"<?=base_url('app/unit_select2_source_by_item_id/')?>");
         <?php } else {?>
             initAjaxSelect2($("#unit_id"),"<?=base_url('app/unit_select2_source/')?>");
@@ -680,7 +680,7 @@
 			var item_id = $("#item_id").val();
             var line_item_des = nl2br($("#line_item_des").val());
 
-            <?php if($voucher_type != "sales2" && $voucher_type != "sales3") { ?>
+            <?php if($voucher_type != "sales2" && $voucher_type != "sales3" && $voucher_type != "sales4") { ?>
                 if(item_id == '' || item_id == null){
                     show_notify("Please select Product.", false);
                     return false;
@@ -1237,7 +1237,7 @@
         	setSelect2Value($("#sub_cat_id"),"<?=base_url('app/set_sub_category_select2_val_by_id/')?>" + value.sub_cat_id);
         }
 
-        <?php if($voucher_type != 'sales2' || $voucher_type != 'sales3') { ?>
+        <?php if($voucher_type != 'sales2' || $voucher_type != 'sales3' || $voucher_type != 'sales4') { ?>
             initAjaxSelect2($("#unit_id"),"<?=base_url('app/unit_select2_source_by_item_id/')?>" + value.item_id);
             if(typeof(value.unit_id) !== "undefined" && value.unit_id !== null && value.unit_id !== 0) {
             	setSelect2Value($("#unit_id"),"<?=base_url('app/set_pack_unit_select2_val_by_id/')?>" + value.unit_id);

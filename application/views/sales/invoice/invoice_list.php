@@ -11,6 +11,9 @@
             }else if(isset($list_type) && $list_type == 3){
                 echo "Sales Invoice 3";
                 $add_new_url = base_url('transaction/sales_purchase_transaction/sales3');
+            }else if(isset($list_type) && $list_type == 4){
+                echo "Sales Invoice 4";
+                $add_new_url = base_url('transaction/sales_purchase_transaction/sales4');
             }else{
                 echo "Sales Invoice";
                 $add_new_url = base_url('transaction/sales_purchase_transaction/sales');
