@@ -1114,6 +1114,8 @@ class App extends CI_Controller{
 		exit();
 	}
 
+
+
         function item_group_select2_source(){
 		$search = isset($_GET['q']) ? $_GET['q'] : '';
 		$page = isset($_GET['page']) ? $_GET['page'] : 1;
@@ -1742,5 +1744,18 @@ class App extends CI_Controller{
 
         echo json_encode($results);
         exit();
+	}
+
+	function unit_select2_source($arg = null){
+		$search = isset($_GET['q']) ? $_GET['q'] : '';
+		$page = isset($_GET['page']) ? $_GET['page'] : 1;
+		$where = '';	
+		
+		$results = array(
+			"results" => $this->get_select2_data('pack_unit', 'pack_unit_id', 'pack_unit_name', $search, $page, $where),
+			"total_count" => $this->count_select2_data('pack_unit', 'pack_unit_id', 'pack_unit_name', $search, $where),
+		);
+		echo json_encode($results);
+		exit();
 	}
 }
