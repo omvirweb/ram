@@ -338,9 +338,13 @@ class Sales extends CI_Controller
 		exit;
 	}
 	
-	function invoice_list(){
+	function invoice_list($id=null){
 		if($this->applib->have_access_role(MODULE_SALES_INVOICE_ID,"view")) {
 			$data = array();
+            if(isset($id) && $id == 2)
+            {
+                $data=['list_type'=>2];
+            }
 			set_page('sales/invoice/invoice_list', $data);
 		} else {
 			redirect('/');
@@ -351,6 +355,17 @@ class Sales extends CI_Controller
 		$from_date = '';
         $to_date = '';
         $account_id = '';
+        $list_type ='';
+        if(isset($_POST['list_type']) && $_POST['list_type'] != '')
+        {
+            if($_POST['list_type'] == 'sales')
+            {
+                $list_type =1;
+            }elseif($_POST['list_type'] == 'sales2')
+            {
+                $list_type =2;
+            }
+        }
         if( isset($_POST['daterange_1']) && !empty($_POST['daterange_1']) && isset($_POST['daterange_2']) && !empty($_POST['daterange_2'])){
             $from_date = trim($_POST['daterange_1']);
             $from_date = substr($from_date, 6, 4).'-'.substr($from_date, 3, 2).'-'.substr($from_date, 0, 2);
@@ -368,6 +383,10 @@ class Sales extends CI_Controller
 		$config['wheres'][] = array('column_name' => 'si.created_by', 'column_value' => $this->logged_in_id);
         if (!empty($account_id)) {
             $config['wheres'][] = array('column_name' => 'si.account_id', 'column_value' => $account_id);
+        }
+        if(!empty($list_type))
+        {
+            $config['wheres'][] = array('column_name' => 'si.sales_type', 'column_value' => $list_type);
         }
         if (!empty($from_date) && !empty($to_date)) {
             $config['wheres'][] = array('column_name' => 'si.sales_invoice_date >=', 'column_value' => $from_date);
@@ -392,13 +411,21 @@ class Sales extends CI_Controller
 
 			if($invoice->data_lock_unlock == 0){
 				if($isEdit) {
+                    $tt="";
+                    if($list_type=1)
+                    {
+                        $tt="sales";
+                    }elseif($list_type=2)
+                    {
+                        $tt="sales2";
+                    }
 					if($this->is_single_line_item == 1) {
-						$action .= '<form id="edit_' . $invoice->sales_invoice_id . '" method="post" action="' . base_url() . 'transaction/sales_purchase_transaction/sales" style="width: 25px; display: initial;" >
+						$action .= '<form id="edit_' . $invoice->sales_invoice_id . '" method="post" action="' . base_url() . 'transaction/sales_purchase_transaction/'.$_POST['list_type'].'" style="width: 25px; display: initial;" >
 	                            <input type="hidden" name="sales_invoice_id" id="sales_invoice_id" value="' . $invoice->sales_invoice_id . '">
 	                            <a class="edit_button btn-primary btn-xs" href="javascript:{}" onclick="document.getElementById(\'edit_' . $invoice->sales_invoice_id . '\').submit();" title="Edit Invoice"><i class="fa fa-edit"></i></a>
 	                        </form> ';
 					} else {
-						$action .= '<form id="edit_' . $invoice->sales_invoice_id . '" method="post" action="' . base_url() . 'transaction/sales_purchase_transaction/sales" style="width: 25px; display: initial;" >
+						$action .= '<form id="edit_' . $invoice->sales_invoice_id . '" method="post" action="' . base_url() . 'transaction/sales_purchase_transaction/'.$_POST['list_type'].'" style="width: 25px; display: initial;" >
 	                            <input type="hidden" name="sales_invoice_id" id="sales_invoice_id" value="' . $invoice->sales_invoice_id . '">
 	                            <a class="edit_button btn-primary btn-xs" href="javascript:{}" onclick="document.getElementById(\'edit_' . $invoice->sales_invoice_id . '\').submit();" title="Edit Invoice"><i class="fa fa-edit"></i></a>
 	                        </form> ';

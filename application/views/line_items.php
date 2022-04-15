@@ -137,6 +137,16 @@
 			<?php endif;?>
 		</div>
 	</div>
+    <div class="clearfix"></div>
+    <?php if($voucher_type == 'sales2') { ?>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="line_item_des" class="control-label">Description</label>
+                <textarea name="line_items_data[line_item_des]" id="line_item_des" class="form-control" data-index="5" placeholder=""></textarea>
+            </div>
+        </div>
+    <?php } ?>
+    <div class="clearfix"></div>
 	<div class="col-md-12">
 		<div class="form-group">
 			<input type="button" id="add_lineitem" class="btn btn-primary pull-right add_lineitem" value="Save Product Line" data-index="46"/>
@@ -691,7 +701,8 @@
             if ( gst_per == undefined || gst_per == '' ) {
                 gst_per = 0;
             }
-            lineitem['gst_rate'] = gst_per;
+            lineitem['line_item_des'] = $("#line_item_des").val();
+            lineitem['cgst'] = 0;
             // console.log('rate for tax - '+rate_for_itax);
             // return false;
 			if(rate_for_itax == 1){
@@ -803,7 +814,7 @@
 			$("#other_charges").val('');
 			$("#amount").val('');
 			$("#line_items_index").val('');
-                        
+            $("#line_item_des").val('');
 		});
                 
             $(document).on("click",".sub_qty_setting",function(){
@@ -1120,6 +1131,9 @@
             } else {
                 item_name = value_item_name;
             }
+            if(value.line_item_des != '' && value.line_item_des != null){
+                item_name = item_name + '<br> - '+ value.line_item_des;
+            }
 			var lineitem_edit_btn = '';
 			lineitem_edit_btn = '<a class="btn btn-xs btn-primary btn-edit-item edit_lineitem_' + index + '" href="javascript:void(0);" onclick="edit_lineitem(' + index + ')"><i class="fa fa-edit"></i></a> ';
 			var row_html = '<tr class="lineitem_index_' + index + '"><td class="fix_fcolumn" style="border-color:#2b3984;">' +
@@ -1214,6 +1228,11 @@
 		if(typeof(value.id) != "undefined" && value.id !== null) {
 			$("#lineitem_id").val(value.id);
 		}
+
+        if(typeof(value.line_item_des) != "undefined" && value.line_item_des !== null) {
+			$("#line_item_des").val(value.line_item_des);
+		}
+
 		if(value.rate_for_itax == 1){
 			$("#item_qty").val(value.item_qty);
 			$("#price").val(value.price_for_itax);
