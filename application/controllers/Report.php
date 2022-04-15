@@ -3666,5 +3666,26 @@ class Report extends CI_Controller {
         echo json_encode($output);
         exit;
     }
+
+    function site_report(){
+        $data = array();
+        $data['module_option']=[
+            '--All--',
+            'Purchase Invoice',
+            'Sales Invoice',
+            'Credit Note',
+            'Debit Note',
+            'Sales Quotation',
+            'Purchse Quotation',
+            'Dispatch',
+            'Material In'
+        ];
+        set_page('report/site_report',$data);
+    }
+
+    public function site_report_datatable()
+    {
+        
+    }
     
 }

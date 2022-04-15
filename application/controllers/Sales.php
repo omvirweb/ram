@@ -379,7 +379,7 @@ class Sales extends CI_Controller
         }
         
 		$config['table'] = 'sales_invoice si';
-		$config['select'] = 'pd.transaction_id,si.invoice_type, si.sales_invoice_id, si.sales_invoice_no, si.sales_invoice_date, si.amount_total, si.data_lock_unlock, a.account_name, a.account_group_id';
+		$config['select'] = 'pd.transaction_id,si.invoice_type, si.sales_invoice_id, si.sales_invoice_no, si.sales_invoice_date, si.amount_total, si.data_lock_unlock, a.account_name, a.account_group_id, si.created_by, si.created_at, si.updated_by, si.updated_at, si.user_created_by, si.user_updated_by,';
 		$config['column_order'] = array(null, 'si.sales_invoice_no', 'a.account_name', 'si.sales_invoice_date', 'si.amount_total');
 		$config['column_search'] = array('si.sales_invoice_no', 'a.account_name', 'DATE_FORMAT(si.sales_invoice_date,"%d-%m-%Y")', 'si.amount_total');
 		$config['wheres'][] = array('column_name' => 'si.created_by', 'column_value' => $this->logged_in_id);

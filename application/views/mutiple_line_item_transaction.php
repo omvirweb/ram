@@ -359,7 +359,7 @@
                                             </div>
                                         </div>
                                         <div class="clearfix"></div>
-                                        <hr>
+                                        
                                         <!-- <div class="col-md-12">
                                             <label class="control-label">Ship to party details.</label>
                                         </div>
@@ -396,19 +396,41 @@
                                     <?php } ?>
 
                                     <?php if($voucher_type == "sales" || $voucher_type == "sales2" || $voucher_type == "sales3" || $voucher_type == "sales4") { ?>
-                                    
-                                    <?php } elseif($voucher_type == "purchase" || $voucher_type == "material_in") { ?>
-                                    <div class="col-md-3 hidden">
-                                        <div class="form-group">
-                                            <label for="invoice_type" class="control-label">Invoice Type<span class="required-sign">*</span></label>
-                                            <select name="invoice_type" id="invoice_type" class="form-control" data-index="8" required="">
-                                                <option value='1' <?=$invoice_type == 1?'selected':''?>>Order</option>
-                                                <option value='2' <?=$invoice_type == 2?'selected':''?>>Purchase</option>
-                                                <option value='3' <?=$invoice_type == 3?'selected':''?>>Sales Order</option>
-                                                <option value='4' <?=$invoice_type == 4?'selected':''?>>Material In</option>
-                                            </select>
-                                        </div>
+                                        <?php if($invoice_id>0) { ?>
+                                        <div class="clearfix"></div>
+                            <div class="col-md-12 row">
+                                <div class="col-lg-offset-9">
+                                    <div style="border: 2px solid green;width: fit-content;padding: 10px;"> 
+										<?php 
+                                            if(isset($invoice_data->created_by))
+                                            {
+                                                $created_user = $this->crud->get_data_row_by_id('user', 'user_id', $invoice_data->created_by);
+                                            }
+                                            if(isset($invoice_data->updated_by))
+                                            {
+                                                $updated_user = $this->crud->get_data_row_by_id('user', 'user_id', $invoice_data->updated_by);
+                                            }
+										?>
+										<p class="text-success"><b>Add By : <?php  echo isset($created_user->user_name) ? $created_user->user_name : ''; ?> @<?php echo isset($invoice_data->created_at) ? $invoice_data->created_at : ''; ?></b></p>
+										<p class="text-success"><b>Last Edit By : <?php  echo isset($updated_user->user_name) ? $updated_user->user_name : ''; ?> @<?php echo isset($invoice_data->updated_at) ? $invoice_data->updated_at : ''; ?></b></p>
                                     </div>
+                                </div>
+                            </div>
+                                    <?php } ?>
+                                    <?php } elseif($voucher_type == "purchase" || $voucher_type == "material_in") { ?>
+                                    
+                                        <div class="col-md-3 hidden">
+                                            <div class="form-group">
+                                                <label for="invoice_type" class="control-label">Invoice Type<span class="required-sign">*</span></label>
+                                                <select name="invoice_type" id="invoice_type" class="form-control" data-index="8" required="">
+                                                    <option value='1' <?=$invoice_type == 1?'selected':''?>>Order</option>
+                                                    <option value='2' <?=$invoice_type == 2?'selected':''?>>Purchase</option>
+                                                    <option value='3' <?=$invoice_type == 3?'selected':''?>>Sales Order</option>
+                                                    <option value='4' <?=$invoice_type == 4?'selected':''?>>Material In</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    
                                     <?php } ?>
 
                                     <?php if($voucher_type == "sales" || $voucher_type == "sales2" || $voucher_type == "sales3" || $voucher_type == "sales4" || $voucher_type == "purchase" || $voucher_type == "dispatch") { ?>
@@ -419,7 +441,7 @@
                                         </div>
                                     </div>
                                     <?php } ?>
-
+                                    <hr>
                                     <div class="clearfix"></div>
                                     <?php if(!empty($invoice_main_fields)) { 
                                         $tmp_invoice_main_fields = array('your_invoice_no' => 'Your Invoice No.','shipment_invoice_no' => 'Shipment Invoice No.', 'shipment_invoice_date' => 'Shipment Invoice Date' , 'sbill_no' => 'S/Bill No.',  'sbill_date' => 'S/Bill Date' , 'origin_port' => 'Origin Port' , 'port_of_discharge' => 'Port of Discharge', 'container_size' => 'Container Size', 'container_bill_no' => 'Container Bill No', 'container_date' => 'Container Date' , 'container_no' => 'Container No.' , 'vessel_name_voy' => 'Vessel Name / Voy' ,  'print_date' => 'Print Date');

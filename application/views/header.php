@@ -692,11 +692,14 @@ $is_single_line_item = 1;
 					                        </li>
 					                    <?php } ?>
 					                    <li class="<?= ($segment2 == 'stock_status_report') ? 'active' : '' ?>">
-                                                                <a href="<?php echo base_url() ?>report/stock_status_report/"><i class="fa fa-circle-o"></i> Stock Status Report </a>
-                                                            </li>
+                                            <a href="<?php echo base_url() ?>report/stock_status_report/"><i class="fa fa-circle-o"></i> Stock Status Report </a>
+                                        </li>
 					                    <li class="<?= ($segment2 == 'pending_bills_report') ? 'active' : '' ?>">
-                                                                <a href="<?php echo base_url() ?>report/pending_bills_report/"><i class="fa fa-circle-o"></i> Pending Bills Report </a>
-                                                            </li>
+                                            <a href="<?php echo base_url() ?>report/pending_bills_report/"><i class="fa fa-circle-o"></i> Pending Bills Report </a>
+                                        </li>
+                                        <li class="<?= ($segment2 == 'site_report') ? 'active' : '' ?>">
+                                            <a href="<?php echo base_url() ?>report/site_report/"><i class="fa fa-circle-o"></i> Site Report </a>
+                                        </li>
                                     </ul>
                                 </li>	
                                 <?php } ?>
