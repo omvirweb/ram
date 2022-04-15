@@ -503,7 +503,7 @@ $is_single_line_item = 1;
 
                                                     <?php if($this->applib->have_access_role(MODULE_SALES_INVOICE_ID,"add")) { ?>
                                                         <?php if($is_single_line_item == 1){?>
-                                                            <li><a tabindex="-1" href="<?php echo base_url() ?>transaction/sales_purchase_transaction/sales3"><i class="fa fa-circle-o"></i> Old Invoice</a></li>
+                                                            <li><a tabindex="-1" href="<?php echo base_url() ?>transaction/sales_purchase_transaction/sales3"><i class="fa fa-circle-o"></i>Add Invoice Old</a></li>
                                                         <?php } else { ?>
                                                             <li><a tabindex="-1" href="<?php echo base_url() ?>sales/invoice/"><i class="fa fa-circle-o"></i>Add Invoice Old</a></li>
                                                         <?php } ?>

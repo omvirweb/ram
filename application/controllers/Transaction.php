@@ -797,8 +797,8 @@ class Transaction extends CI_Controller {
                 $voucher_label = 'Sales3 Invoice';
                 $invoice_list_url = base_url('sales/invoice_list/3');
             }elseif($sales_type==4){
-                $page_title = 'Sales4 - CTRL + F1';
-                $voucher_label = 'Sales4 Invoice';
+                $page_title = 'Sales3 - CTRL + F1';
+                $voucher_label = 'Sales3 Invoice';
                 $invoice_list_url = base_url('sales/invoice_list/4');
             }
             
@@ -1495,7 +1495,7 @@ class Transaction extends CI_Controller {
             }elseif($voucher_type == 'sales4') {
                 $where_array['sales_invoice_id'] = $post_data['invoice_id'];
                 $this->crud->update('sales_invoice', $invoice_data, $where_array);
-                $this->session->set_flashdata('message','Sales Invoice4 Updated Successfully');
+                $this->session->set_flashdata('message','Sales Invoice3 Updated Successfully');
 
             }
             elseif($voucher_type == 'purchase') {
@@ -1647,7 +1647,7 @@ class Transaction extends CI_Controller {
                 $this->session->set_flashdata('message','Sales Invoice3 Added Successfully');
             } elseif($voucher_type == 'sales4') {
                 $this->crud->insert('sales_invoice', $invoice_data);
-                $this->session->set_flashdata('message','Sales Invoice4 Added Successfully');
+                $this->session->set_flashdata('message','Sales Invoice3 Added Successfully');
             } 
             elseif($voucher_type == 'purchase') {
                 $this->crud->insert('purchase_invoice', $invoice_data);
@@ -1901,7 +1901,7 @@ class Transaction extends CI_Controller {
                 }else if($voucher_type == 'sales3'){
                     $this->session->set_flashdata('message','Sales Invoice3 Updated Successfully');
                 }else if($voucher_type == 'sales4'){
-                    $this->session->set_flashdata('message','Sales Invoice4 Updated Successfully');
+                    $this->session->set_flashdata('message','Sales Invoice3 Updated Successfully');
                 }else{
                     $this->session->set_flashdata('message','Sales Invoice Updated Successfully');
                 }
@@ -1935,7 +1935,7 @@ class Transaction extends CI_Controller {
                 }else if($voucher_type == 'sales3'){
                     $this->session->set_flashdata('message','Sales Invoice3 Added Successfully');
                 }else if($voucher_type == 'sales4'){
-                    $this->session->set_flashdata('message','Sales Invoice4 Added Successfully');
+                    $this->session->set_flashdata('message','Sales Invoice3 Added Successfully');
                 }else{
                     $this->session->set_flashdata('message','Sales Invoice Added Successfully');
                 }
