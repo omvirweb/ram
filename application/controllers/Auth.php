@@ -718,7 +718,8 @@ class Auth extends CI_Controller
                     $this->session->set_userdata('li_'.$line_item->setting_key,$line_item->setting_value);
                 }
             }
-            $user_id = $response[0]['user_id'];
+            // $user_id = $response[0]['user_id'];
+            $user_id = $this->session->userdata()['login_user_id'];
             $sql = "
                 SELECT
                         ur.user_id,ur.website_module_id,ur.role_type_id, LOWER(r.title) as role, LOWER(m.title) as module
