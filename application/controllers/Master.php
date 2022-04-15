@@ -3884,6 +3884,7 @@ class Master extends CI_Controller
 		$config['table'] = 'sites';
 		$config['column_order'] = array(null, 'site_name');
 		$config['column_search'] = array('site_name');
+		$config['wheres'][] = array('column_name' => 'created_by', 'column_value' => $this->logged_in_id);
 		$config['order'] = array('site_name' => 'desc');
 		$this->load->library('datatables', $config, 'datatable');
 		$list = $this->datatable->get_datatables();
