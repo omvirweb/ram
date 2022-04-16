@@ -3685,7 +3685,13 @@ class Report extends CI_Controller {
 
     public function site_report_datatable()
     {
-        
+        $output = array(
+            "draw" => $_POST['draw'],
+            "data" => array(),
+        );
+        //output to json format
+        echo json_encode($output);
+        exit;
     }
     
 }
