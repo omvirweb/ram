@@ -70,7 +70,7 @@
 							</thead>
 							<tbody>
 							</tbody>
-							<tfoot>
+							<!-- <tfoot>
                                 <tr>
                                     <th></th>
                                     <th></th>
@@ -84,13 +84,13 @@
                                     <th></th>
                                     <th></th>
                                     <th>In - Out</th>
-                                    <th colspan=2></th>     
-                                    <th colspan=2></th>     
-                                    <!-- <th></th>     
+                                    <th colspan=2 id="no_effect_in_out"></th>     
+                                    <th colspan=2 id="effect_in_out"></th>
                                     <th></th>     
-                                    <th></th>      -->
+                                    <th></th>     
+                                    <th></th>     
                                 </tr>
-                            </tfoot>
+                            </tfoot> -->
 						</table>
 					</div>
 				</div>
@@ -131,102 +131,14 @@
 
     var title = 'Trial Balance (From Date : ' + $('#datepicker1').val() + ' To Date : ' + $('#datepicker2').val() +')';
 
-    var buttonCommon = {
-        exportOptions: {
-            format: { body: function ( data, row, column, node ) { return data.toString().replace(/(&nbsp;|<([^>]+)>)/ig, ""); } },
-            columns: [0, 1, 2, 3, 4],
-        }
-    };
+    // var buttonCommon = {
+    //     exportOptions: {
+    //         format: { body: function ( data, row, column, node ) { return data.toString().replace(/(&nbsp;|<([^>]+)>)/ig, ""); } },
+    //         columns: [0, 1, 2, 3, 4, 5, 6, 7],
+    //     }
+    // };
 
 	table = $('#site_report_table').DataTable({
-            dom: 'Bfrtip',
-            buttons: [
-                $.extend( true, {}, buttonCommon, { extend: 'copy',footer: true, title: function () { return (title)} } ),
-                $.extend( true, {}, buttonCommon, { extend: 'csvHtml5',footer: true, title: function () { return (title)}, customize: function (csv) {
-                        return 'Trial Balance ( From Date : ' + $('#datepicker1').val() + ' To Date : ' + $('#datepicker2').val() + ' )\n\n'+  csv;
-                    } 
-                }),
-                $.extend( true, {}, buttonCommon, { extend: 'pdf',footer: true, orientation: 'portrait', pageSize: 'LEGAL', title: function () { return (title)}, action: newExportAction,
-                    customize : function(doc){
-                        var objLayout = {};
-                        objLayout['hLineWidth'] = function(i) { return .5; };
-                        objLayout['vLineWidth'] = function(i) { return .5; };
-                        doc.content[1].layout = objLayout;
-                        doc.content[1].table.widths = ["14%","14%","33%","10%","10%","10%","10%"]; 
-                        var rowCount = document.getElementById("site_report_table").rows.length;
-                        for (i = 0; i < rowCount; i++) {
-                            doc.content[1].table.body[i][0].alignment = 'center';
-                            doc.content[1].table.body[i][1].alignment = 'center';
-                            doc.content[1].table.body[i][3].alignment = 'center';
-                            doc.content[1].table.body[i][4].alignment = 'center';
-                        };
-                    }
-                }),
-                $.extend( true, {}, buttonCommon, { extend: 'excelHtml5',footer: true, title: function () { return (title)} ,
-
-                    customize : function (xlsx) {
-
-                        var sheet = xlsx.xl.worksheets['sheet1.xml'];
-
-                        var downrows = 4;
-                        var clRow = $('row', sheet);
-                        //update Row
-                        clRow.each(function () {
-                            var attr = $(this).attr('r');
-                            var ind = parseInt(attr);
-                            ind = ind + downrows;
-                            $(this).attr("r",ind);
-                        });
-
-                        // Update  row > c
-                        $('row c ', sheet).each(function () {
-                            var attr = $(this).attr('r');
-                            var pre = attr.substring(0, 1);
-                            var ind = parseInt(attr.substring(1, attr.length));
-                            ind = ind + downrows;
-                            $(this).attr("r", pre + ind);
-                        });
-
-                        function Addrow(index,data) {
-                            msg='<row r="'+index+'">'
-                            for(i=0;i<data.length;i++){
-                                var key=data[i].k;
-                                var value=data[i].v;
-                                msg += '<c t="inlineStr" r="' + key + index + '" s="42">';
-                                msg += '<is>';
-                                msg +=  '<t>'+value+'</t>';
-                                msg+=  '</is>';
-                                msg+='</c>';
-                            }
-                            msg += '</row>';
-                            return msg;
-                        }
-                        //insert
-                        var r1 = Addrow(1, [{ k: 'A', v: 'From Date :' }, { k: 'B', v: $('#datepicker1').val() }]);
-                        var r2 = Addrow(2, [{ k: 'A', v: 'To Date :' }, { k: 'B', v: $('#datepicker2').val() }]);
-
-                        sheet.childNodes[0].childNodes[1].innerHTML = r1 + r2 +sheet.childNodes[0].childNodes[1].innerHTML;
-                    }
-                }),
-                $.extend( true, {}, buttonCommon, { extend: 'print',footer: true,  title: function () { return (title)},
-                    // customize : function(win){
-                    //     $(win.document.body).find('table thead th:nth-child(1)').css('text-align', 'center');
-                    //     $(win.document.body).find('table thead th:nth-child(2)').css('text-align', 'center');
-                    //     $(win.document.body).find('table thead th:nth-child(4)').css('text-align', 'center');
-                    //     $(win.document.body).find('table thead th:nth-child(5)').css('text-align', 'center');
-
-                    //     $(win.document.body).find('table tbody td:nth-child(1)').css('text-align', 'center');
-                    //     $(win.document.body).find('table tbody td:nth-child(2)').css('text-align', 'center');
-                    //     $(win.document.body).find('table tbody td:nth-child(4)').css('text-align', 'center');
-                    //     $(win.document.body).find('table tbody td:nth-child(5)').css('text-align', 'center');
-
-                    //     $(win.document.body).find('table tfoot th:nth-child(1)').css('text-align', 'center');
-                    //     $(win.document.body).find('table tfoot th:nth-child(2)').css('text-align', 'center');
-                    //     $(win.document.body).find('table tfoot th:nth-child(4)').css('text-align', 'center');
-                    //     $(win.document.body).find('table tfoot th:nth-child(5)').css('text-align', 'center');
-                    // }
-                }),
-            ],
             "serverSide": true,
             "ordering": false,
             "searching": false,
@@ -240,30 +152,29 @@
                     d.site_id = $("#site_id").val();
                     d.module = $("#module").val();
                 },
-                "dataSrc": function ( jsondata ) {
-                    if(jsondata.total_net_amount){
-                        $('#total_net_amount').val(jsondata.total_net_amount);
-                    } else {
-                        $('#total_net_amount').val('');
-                    }
-                    return jsondata.data;
-                }
+                'columns': [
+                        {data: 'date', name: 'date'},
+                        {data: 'item_name', name: 'item_name'},
+                        {data: 'module', name: 'module'},
+                        {data: 'no_effect_in', name: 'no_effect_in'},
+                        {data: 'no_effect_out', name: 'no_effect_out'},
+                        {data: 'effect_in', name: 'effect_in'},
+                        {data: 'effect_out', name: 'effect_out'}
+                    ]
+                
             },
-            "scrollY": '<?php echo MASTER_LIST_TABLE_HEIGHT;?>',
-            "scroller": {
-                "loadingIndicator": true
-            },
-            "columnDefs": [
-                {"className": "text-center", "targets": [1,4] },
-            ],
-            "footerCallback": function ( row, data, start, end, display ) {
-                var api = this.api(), data;
-                $( api.column( 1 ).footer() ).html('');
-                $( api.column( 1 ).footer() ).html($('#total_net_amount').val());
-                $( api.column( 4 ).footer() ).html('');
-                $( api.column( 4 ).footer() ).html($('#total_net_amount').val());
-            }
+            
+            // "footerCallback": function ( row, data, start, end, display ) {
+            //     var api = this.api(), data;
+            //     console.log(data)
+            //     // $( api.column( 3 ).footer() ).html(data[4]);
+            //     // $( api.column( 4 ).footer() ).html(data);
+            //     // $( api.column( 5 ).footer() ).html(data);
+            //     // $( api.column( 6 ).footer() ).html(data);
+            // }
         });  
+
+        table.draw(); 
 	});
 
 	$(document).on('click','#btn_search',function(){
