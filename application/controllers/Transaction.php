@@ -1334,7 +1334,7 @@ class Transaction extends CI_Controller {
             $invoice_data['bill_no'] = $post_data['bill_no'];
             $invoice_data['purchase_invoice_date'] = date('Y-m-d', strtotime($post_data['invoice_date']));
             $invoice_data['purchase_invoice_desc'] = $post_data['invoice_desc'];
-            $invoice_data['our_bank_id'] = $post_data['our_bank_label'];
+            $invoice_data['our_bank_id'] = (isset($post_data['our_bank_label'])?$post_data['our_bank_label']:'');
 
         } elseif($voucher_type == 'credit_note') {
             $module = 3;

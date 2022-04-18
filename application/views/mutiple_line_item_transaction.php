@@ -124,7 +124,7 @@
                                             <input type="text" name="invoice_date" id="datepicker2" class="form-control date-size" data-index="2" required value="<?=isset($invoice_data->invoice_date) ? date('d-m-Y', strtotime($invoice_data->invoice_date)) : date('d-m-Y', strtotime($transaction_date)); ?>">
                                         </div>
                                     </div>
-                                    <?php if($voucher_type != "material_in") { ?> 
+                                    <?php if($voucher_type != "material_in" && $voucher_type != "purchase") { ?>
                                     <div class="col-md-2">
                                         <div class="form-group">
                                             <label for="our_bank_label" class="control-label">Our Bank Label</label>
