@@ -12,7 +12,7 @@
                 <a href="<?=$invoice_list_url;?>" class="btn btn-primary pull-right"><?=$voucher_label?> List</a> &nbsp;
                 <?php } ?>
                 
-                <?php if($voucher_type == "sales" || $voucher_type == "sales2" || $voucher_type == "sales3" || $voucher_type == "dispatch") { ?>
+                <?php if($voucher_type == "sales" || $voucher_type == "sales2" || $voucher_type == "sales3" || $voucher_type == "sales4" || $voucher_type == "dispatch") { ?>
                     <button type="submit" class="btn btn-primary form_btn pull-right save" id="save_btn"><?=$invoice_id > 0 ? 'Update' : 'Save' ?></button> &nbsp;
 
                     <?php if($invoice_id == 0) { ?>
@@ -77,7 +77,7 @@
                                 ?>
                             </h3>&nbsp;&nbsp;&nbsp;&nbsp;
 
-                            <?php if($voucher_type == "sales" || $voucher_type == "sales2" || $voucher_type == "sales3" || $voucher_type == "purchase"|| $voucher_type == "dispatch") { ?>
+                            <?php if($voucher_type == "sales" || $voucher_type == "sales2" || $voucher_type == "sales3" || $voucher_type == "sales4" || $voucher_type == "purchase"|| $voucher_type == "dispatch") { ?>
                                 <?php 
                                 if(isset($invoice_data->is_shipping_same_as_billing_address) && $invoice_data->is_shipping_same_as_billing_address == 1){
                                     $checked = '';
@@ -98,7 +98,7 @@
                         <div class="box-body">
                             <div class="overlay" style="display: none" ><i class="fa fa-refresh fa-spin"></i></div>
                                 <div class="row">
-                                    <div class="<?=($voucher_type == "sales" || $voucher_type == "sales2" || $voucher_type == "sales3")?"col-md-3":"col-md-6"?>">
+                                    <div class="<?=($voucher_type == "sales" || $voucher_type == "sales2" || $voucher_type == "sales3" || $voucher_type == "sales4")?"col-md-3":"col-md-6"?>">
                                         <div class="form-group">
                                             <label for="account_id" class="control-label">Account<span class="required-sign">*</span></label>
                                             <a class="btn btn-primary btn-xs pull-right add_account_link" href="javascript:;" data-url= "<?=base_url('account/account/')?>"><i class="fa fa-plus"></i> Add Account</a>
@@ -106,7 +106,7 @@
                                             <b>Current Balance : <span class="account_curr_balance"></span></b>
                                         </div>
                                     </div>
-                                    <?php if($voucher_type == "sales" || $voucher_type == "sales2" || $voucher_type == "sales3") { ?>
+                                    <?php if($voucher_type == "sales" || $voucher_type == "sales2" || $voucher_type == "sales3" || $voucher_type == "sales4") { ?>
                                     <div class="col-md-3 cash_customer_div" style="display: none;">
                                         <div class="form-group">
                                             <label for="cash_customer" class="control-label" id="cash_customer_label">Cash Customer</label>
@@ -115,7 +115,7 @@
                                     </div>
                                     <?php } ?>
                                     <?php if($voucher_type != "material_in") { ?> 
-                                    <div class="<?=($voucher_type == "sales" || $voucher_type == "sales2" || $voucher_type == "sales3")?"col-md-2":"col-md-2"?>">
+                                    <div class="<?=($voucher_type == "sales" || $voucher_type == "sales2" || $voucher_type == "sales3" || $voucher_type == "sales4")?"col-md-2":"col-md-2"?>">
                                     <?php } else { ?>
                                     <div class="col-md-6">
                                     <?php } ?>
@@ -146,7 +146,7 @@
                                     <?php } ?>
                                     <!-- here -->
                                     
-                                    <?php if($voucher_type == "sales" || $voucher_type == "sales2" || $voucher_type == "sales3") { ?>
+                                    <?php if($voucher_type == "sales" || $voucher_type == "sales2" || $voucher_type == "sales3" || $voucher_type == "sales4") { ?>
                                     <div class="col-md-2">
                                         <div class="form-group">
                                             <label for="invoice_type" class="control-label">Invoice Type<span class="required-sign">*</span></label>
@@ -155,7 +155,7 @@
                                     </div>
                                     <?php } ?>
                                     <div class="clearfix"></div>
-                                    <?php if($voucher_type == "sales" || $voucher_type == "sales2" || $voucher_type == "sales3" ) { ?>
+                                    <?php if($voucher_type == "sales" || $voucher_type == "sales2" || $voucher_type == "sales3" || $voucher_type == "sales4" ) { ?>
                                         <?php if(isset($company_invoice_prefix) && !empty($company_invoice_prefix)){ ?>
                                         <div class="col-md-3">
                                             <div class="form-group">
@@ -230,7 +230,7 @@
                                         </div>
                                     <?php } ?>
 
-                                    <?php if($voucher_type == "sales" || $voucher_type == "sales2" || $voucher_type == "sales3" || $voucher_type == "purchase" || $voucher_type == "dispatch") { ?> 
+                                    <?php if($voucher_type == "sales" || $voucher_type == "sales2" || $voucher_type == "sales3" || $voucher_type == "sales4" || $voucher_type == "purchase" || $voucher_type == "dispatch") { ?> 
                                         <?php 
                                             $transport_name_display = 'hidden';
                                             if($this->applib->have_access_role($module_id,"Transport Name")) {
@@ -339,23 +339,101 @@
                                         </div>
                                     <?php } ?>
 
-                                    <?php if($voucher_type == "sales" || $voucher_type == "sales2" || $voucher_type == "sales3") { ?>
-                                    
-                                    <?php } elseif($voucher_type == "purchase" || $voucher_type == "material_in") { ?>
-                                    <div class="col-md-3 hidden">
-                                        <div class="form-group">
-                                            <label for="invoice_type" class="control-label">Invoice Type<span class="required-sign">*</span></label>
-                                            <select name="invoice_type" id="invoice_type" class="form-control" data-index="8" required="">
-                                                <option value='1' <?=$invoice_type == 1?'selected':''?>>Order</option>
-                                                <option value='2' <?=$invoice_type == 2?'selected':''?>>Purchase</option>
-                                                <option value='3' <?=$invoice_type == 3?'selected':''?>>Sales Order</option>
-                                                <option value='4' <?=$invoice_type == 4?'selected':''?>>Material In</option>
-                                            </select>
+                                    <?php if($voucher_type == "sales4") { ?>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label for="book_no" class="control-label">Book No.</label>
+                                                <input type="text" name="book_no" id="book_no" class="form-control" data-index="7" value="<?=isset($invoice_data->book_no) ? $invoice_data->book_no : ''; ?>">
+                                            </div>
                                         </div>
-                                    </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label for="sales_note" class="control-label">Declaration</label>
+                                                <input type="text" name="sales_note" id="sales_note" class="form-control" data-index="7" value="<?=isset($invoice_data->sales_note) ? $invoice_data->sales_note : ''; ?>">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label for="sales_subject" class="control-label">Nature of supply</label>
+                                                <input type="text" name="sales_subject" id="sales_subject" class="form-control" data-index="7" value="<?=isset($invoice_data->sales_subject) ? $invoice_data->sales_subject : 'Material Supply'; ?>">
+                                            </div>
+                                        </div>
+                                        <div class="clearfix"></div>
+                                        
+                                        <!-- <div class="col-md-12">
+                                            <label class="control-label">Ship to party details.</label>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label for="ship_party_name" class="control-label">Name</label>
+                                                <input type="text" name="ship_party_name" id="ship_party_name" class="form-control" data-index="7" value="<?=isset($invoice_data->ship_party_name) ? $invoice_data->ship_party_name : ''; ?>">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label for="ship_party_address" class="control-label">Address</label>
+                                                <input type="text" name="ship_party_address" id="ship_party_address" class="form-control" data-index="7" value="<?=isset($invoice_data->ship_party_address) ? $invoice_data->ship_party_address : ''; ?>">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="form-group">
+                                                <label for="ship_party_gstin" class="control-label">GSTIN</label>
+                                                <input type="text" name="ship_party_gstin" id="ship_party_gstin" class="form-control" data-index="7" value="<?=isset($invoice_data->ship_party_gstin) ? $invoice_data->ship_party_gstin : ''; ?>">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="form-group">
+                                                <label for="ship_party_state" class="control-label">State</label>
+                                                <input type="text" name="ship_party_state" id="ship_party_state" class="form-control" data-index="7" value="<?=isset($invoice_data->ship_party_state) ? $invoice_data->ship_party_state : ''; ?>">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="form-group">
+                                                <label for="ship_party_code" class="control-label">Code</label>
+                                                <input type="text" name="ship_party_code" id="ship_party_code" class="form-control" data-index="7" value="<?=isset($invoice_data->ship_party_code) ? $invoice_data->ship_party_code : '24'; ?>">
+                                            </div>
+                                        </div> -->
                                     <?php } ?>
 
-                                    <?php if($voucher_type == "sales" || $voucher_type == "sales2" || $voucher_type == "sales3" || $voucher_type == "purchase" || $voucher_type == "dispatch") { ?>
+                                    <?php if($voucher_type == "sales" || $voucher_type == "sales2" || $voucher_type == "sales3" || $voucher_type == "sales4") { ?>
+                                        <?php if($invoice_id>0) { ?>
+                                        <div class="clearfix"></div>
+                            <div class="col-md-12 row">
+                                <div class="col-lg-offset-9">
+                                    <div style="border: 2px solid green;width: fit-content;padding: 10px;"> 
+										<?php 
+                                            if(isset($invoice_data->created_by))
+                                            {
+                                                $created_user = $this->crud->get_data_row_by_id('user', 'user_id', $invoice_data->created_by);
+                                            }
+                                            if(isset($invoice_data->updated_by))
+                                            {
+                                                $updated_user = $this->crud->get_data_row_by_id('user', 'user_id', $invoice_data->updated_by);
+                                            }
+										?>
+										<p class="text-success"><b>Add By : <?php  echo isset($created_user->user_name) ? $created_user->user_name : ''; ?> @<?php echo isset($invoice_data->created_at) ? $invoice_data->created_at : ''; ?></b></p>
+										<p class="text-success"><b>Last Edit By : <?php  echo isset($updated_user->user_name) ? $updated_user->user_name : ''; ?> @<?php echo isset($invoice_data->updated_at) ? $invoice_data->updated_at : ''; ?></b></p>
+                                    </div>
+                                </div>
+                            </div>
+                                    <?php } ?>
+                                    <?php } elseif($voucher_type == "purchase" || $voucher_type == "material_in") { ?>
+                                    
+                                        <div class="col-md-3 hidden">
+                                            <div class="form-group">
+                                                <label for="invoice_type" class="control-label">Invoice Type<span class="required-sign">*</span></label>
+                                                <select name="invoice_type" id="invoice_type" class="form-control" data-index="8" required="">
+                                                    <option value='1' <?=$invoice_type == 1?'selected':''?>>Order</option>
+                                                    <option value='2' <?=$invoice_type == 2?'selected':''?>>Purchase</option>
+                                                    <option value='3' <?=$invoice_type == 3?'selected':''?>>Sales Order</option>
+                                                    <option value='4' <?=$invoice_type == 4?'selected':''?>>Material In</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    
+                                    <?php } ?>
+
+                                    <?php if($voucher_type == "sales" || $voucher_type == "sales2" || $voucher_type == "sales3" || $voucher_type == "sales4" || $voucher_type == "purchase" || $voucher_type == "dispatch") { ?>
                                     <div class="col-md-3 <?php echo $none; ?>" id="shipping">
                                         <div class="form-group">
                                             <label for="shipping_address" class="control-label">Shipping Address</label>
@@ -363,7 +441,7 @@
                                         </div>
                                     </div>
                                     <?php } ?>
-
+                                    <hr>
                                     <div class="clearfix"></div>
                                     <?php if(!empty($invoice_main_fields)) { 
                                         $tmp_invoice_main_fields = array('your_invoice_no' => 'Your Invoice No.','shipment_invoice_no' => 'Shipment Invoice No.', 'shipment_invoice_date' => 'Shipment Invoice Date' , 'sbill_no' => 'S/Bill No.',  'sbill_date' => 'S/Bill Date' , 'origin_port' => 'Origin Port' , 'port_of_discharge' => 'Port of Discharge', 'container_size' => 'Container Size', 'container_bill_no' => 'Container Bill No', 'container_date' => 'Container Date' , 'container_no' => 'Container No.' , 'vessel_name_voy' => 'Vessel Name / Voy' ,  'print_date' => 'Print Date');
@@ -471,14 +549,14 @@
         });
         initAjaxSelect2($("#account_id"),"<?=base_url('app/sp_account_select2_source_old/')?>");
         
-        <?php if($voucher_type == "sales" || $voucher_type == "sales2" || $voucher_type == "sales3") { ?>
+        <?php if($voucher_type == "sales" || $voucher_type == "sales2" || $voucher_type == "sales3" || $voucher_type == "sales4") { ?>
         initAjaxSelect2($("#invoice_type"),"<?=base_url('app/invoice_type_select2_source/')?>");
         <?php if(isset($invoice_data->invoice_type) && !empty($invoice_data->invoice_type)){ ?>
         setSelect2Value($("#invoice_type"),"<?=base_url('app/set_invoice_type_select2_val_by_id/')?>" + <?= $invoice_data->invoice_type; ?>);
         <?php } ?>
         <?php } ?>
 
-        <?php if($voucher_type == "purchase" || $voucher_type == "sales" || $voucher_type == "sales2" || $voucher_type == "sales3") { ?>
+        <?php if($voucher_type == "purchase" || $voucher_type == "sales" || $voucher_type == "sales2" || $voucher_type == "sales3" || $voucher_type == "sales4") { ?>
         initAjaxSelect2($("#our_bank_label"),"<?=base_url('app/our_bank_label_select2_source/')?>");
         <?php if(isset($invoice_data->invoice_type) && !empty($invoice_data->invoice_type)){ ?>
         setSelect2Value($("#our_bank_label"),"<?=base_url('app/set_our_bank_label_select2_val_by_id/')?>" + <?= $invoice_data->our_bank_id; ?>);
@@ -503,7 +581,7 @@
                 dataType: 'json',
                 success: function (res) {
                     $('.account_curr_balance').html(res.balance);
-                    <?php if($voucher_type == "sales" || $voucher_type == "sales2" || $voucher_type == "sales3") { ?>
+                    <?php if($voucher_type == "sales" || $voucher_type == "sales2" || $voucher_type == "sales3" || $voucher_type == "sales4") { ?>
                         if(res.cash_in_hand_acc == true) {
                             $(".cash_customer_div").show();
                             $("#cash_customer_label").html('Cash Customer<span class="required-sign">*</span>');
@@ -533,7 +611,7 @@
                     dataType: 'json',
                     success: function (res) {
                         $('.account_curr_balance').html(res.balance);
-                        <?php if($voucher_type == "sales" || $voucher_type == "sales2" || $voucher_type == "sales3") { ?>
+                        <?php if($voucher_type == "sales" || $voucher_type == "sales2" || $voucher_type == "sales3" || $voucher_type == "sales4") { ?>
                             if(res.cash_in_hand_acc == true) {
                                 $(".cash_customer_div").show();
                                 $("#cash_customer_label").html('Cash Customer<span class="required-sign">*</span>');

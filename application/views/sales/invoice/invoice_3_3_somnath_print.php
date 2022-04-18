@@ -137,7 +137,7 @@ ob_start();
             <tr>
                 <td valign="top" colspan="1" class="text_center"><?php echo $inc; ?></td>
                 <td valign="top" colspan="9" align="left"><?php echo $lineitem->line_item_des."&nbsp;".$site_name; ?><br><?php echo $lineitem->note;?></td>
-                <td valign="top" colspan="1" align="center"><?php echo $lineitem->hsn_code; ?></td>
+                <td valign="top" colspan="1" align="center"><?php echo $lineitem->hsn; ?></td>
                 <?php $unit = $this->crud->get_column_value_by_id('pack_unit', 'pack_unit_name', array('pack_unit_id' => $lineitem->unit_id)); ?>
                 <td valign="top" colspan="1" class="divRight"><?php echo $lineitem->item_qty; ?></td>
                 <td valign="top" colspan="2" class="divRight"><?php echo $lineitem->price; ?></td>
