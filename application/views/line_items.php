@@ -679,7 +679,6 @@
 		$('#add_lineitem').on('click', function() {
 			var item_id = $("#item_id").val();
             var line_item_des = nl2br($("#line_item_des").val());
-
             <?php if($voucher_type != "sales2" && $voucher_type != "sales3" && $voucher_type != "sales4") { ?>
                 if(item_id == '' || item_id == null){
                     show_notify("Please select Product.", false);
@@ -1338,10 +1337,13 @@
     //     return (mystr + '').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1'+ simplebreaktag +'$2');  
     // } 
 
+    
     function nl2br(str){
-        if(str != "undefined" && str !== null){
-            return str.replace(/(?:\r\n|\r|\n)/g, '<br>');
-        }
+        <?php if($voucher_type == "sales2" || $voucher_type == "sales3" || $voucher_type == "sales4") { ?>
+            if(str != "undefined" && str !== null){
+                return str.replace(/(?:\r\n|\r|\n)/g, '<br>');
+            }
+        <?php } ?>
     }
 	
 </script>
