@@ -58,13 +58,13 @@
 									<th width="70px">Sr. No.</th>
 									<th>Item Name</th>
 									<th>Opening Stock</th>
-									<th>Opening Amount</th>
+									<!-- <th>Opening Amount</th> -->
 									<th>Inward</th>
-									<th>Inward Amount</th>
+									<!-- <th>Inward Amount</th> -->
 									<th>Out ward</th>
-									<th>Out ward Amount</th>
+									<!-- <th>Out ward Amount</th> -->
 									<th>Closing</th>
-									<th>Closing Amount</th>
+									<!-- <th>Closing Amount</th> -->
 								</tr>
 							</thead>
 							<tbody>
@@ -120,19 +120,19 @@
 						objLayout['hLineWidth'] = function(i) { return .5; };
 						objLayout['vLineWidth'] = function(i) { return .5; };
 						doc.content[1].layout = objLayout;
-						doc.content[1].table.widths = ["5%","25%","8%", "8%", "8%", "8%", "8%", "8%", "8%", "8%", "8%"]; //costringe le colonne ad occupare un dato spazio per gestire il baco del 100% width che non si concretizza mai
+						// doc.content[1].table.widths = ["5%","25%","8%", "8%", "8%", "8%", "8%", "8%", "8%", "8%", "8%"]; //costringe le colonne ad occupare un dato spazio per gestire il baco del 100% width che non si concretizza mai
 						var rowCount = document.getElementById("stock-table").rows.length;
 
 						for (i = 1; i < rowCount; i++) {
 								doc.content[1].table.body[i][0].alignment = 'right';
 								doc.content[1].table.body[i][2].alignment = 'right';
-								doc.content[1].table.body[i][3].alignment = 'right';
+								// doc.content[1].table.body[i][3].alignment = 'right';
 								doc.content[1].table.body[i][4].alignment = 'right';
-								doc.content[1].table.body[i][5].alignment = 'right';
+								// doc.content[1].table.body[i][5].alignment = 'right';
 								doc.content[1].table.body[i][6].alignment = 'right';
-								doc.content[1].table.body[i][7].alignment = 'right';
+								// doc.content[1].table.body[i][7].alignment = 'right';
 								doc.content[1].table.body[i][8].alignment = 'right';
-								doc.content[1].table.body[i][9].alignment = 'right';
+								// doc.content[1].table.body[i][9].alignment = 'right';
 						};
 					}
                 } ),
@@ -184,26 +184,26 @@
                 }),
                 $.extend( true, {}, buttonCommon, { extend: 'print',  title: function () { return (title)},
                     customize : function(win){
-                        $(win.document.body).find('table thead th:nth-child(3)').css('text-align', 'right');
-                        $(win.document.body).find('table tbody td:nth-child(3)').css('text-align', 'right');
+                        // $(win.document.body).find('table thead th:nth-child(3)').css('text-align', 'right');
+                        // $(win.document.body).find('table tbody td:nth-child(3)').css('text-align', 'right');
 
                         $(win.document.body).find('table thead th:nth-child(4)').css('text-align', 'right');
                         $(win.document.body).find('table tbody td:nth-child(4)').css('text-align', 'right');
                         
-                        $(win.document.body).find('table thead th:nth-child(5)').css('text-align', 'right');
-                        $(win.document.body).find('table tbody td:nth-child(5)').css('text-align', 'right');
+                        // $(win.document.body).find('table thead th:nth-child(5)').css('text-align', 'right');
+                        // $(win.document.body).find('table tbody td:nth-child(5)').css('text-align', 'right');
                         
                         $(win.document.body).find('table thead th:nth-child(6)').css('text-align', 'right');
                         $(win.document.body).find('table tbody td:nth-child(6)').css('text-align', 'right');
                         
-                        $(win.document.body).find('table thead th:nth-child(7)').css('text-align', 'right');
-                        $(win.document.body).find('table tbody td:nth-child(7)').css('text-align', 'right');
+                        // $(win.document.body).find('table thead th:nth-child(7)').css('text-align', 'right');
+                        // $(win.document.body).find('table tbody td:nth-child(7)').css('text-align', 'right');
                         
                         $(win.document.body).find('table thead th:nth-child(8)').css('text-align', 'right');
                         $(win.document.body).find('table tbody td:nth-child(8)').css('text-align', 'right');
                         
-                        $(win.document.body).find('table thead th:nth-child(9)').css('text-align', 'right');
-                        $(win.document.body).find('table tbody td:nth-child(9)').css('text-align', 'right');
+                        // $(win.document.body).find('table thead th:nth-child(9)').css('text-align', 'right');
+                        // $(win.document.body).find('table tbody td:nth-child(9)').css('text-align', 'right');
                         
                         $(win.document.body).find('table thead th:nth-child(10)').css('text-align', 'right');
                         $(win.document.body).find('table tbody td:nth-child(10)').css('text-align', 'right');
@@ -227,40 +227,40 @@
 				"loadingIndicator": true
 			},
 			"columnDefs": [
-                {"className": "text-right","targets": [2,3,4,5,6,7,8,9]},
-                //{"targets": [3,5,7,9],"visible": false,"searchable": false},
+                {"className": "text-right","targets": [2,3,4,5]},
+                // {"targets": [3,5,7,9],"visible": false,"searchable": false},
             ]
 		});
         
-        $(document).on('change','#display_amt',function(e){
-            if($(this).is(":checked")) {
-                table.column(3).visible(true);
-                table.column(5).visible(true);
-                table.column(7).visible(true);
-                table.column(9).visible(true);
-            } else {
-                table.column(3).visible(false);
-                table.column(5).visible(false);
-                table.column(7).visible(false);
-                table.column(9).visible(false);
-            }
-        });
+        // $(document).on('change','#display_amt',function(e){
+        //     if($(this).is(":checked")) {
+        //         table.column(3).visible(true);
+        //         table.column(5).visible(true);
+        //         table.column(7).visible(true);
+        //         table.column(9).visible(true);
+        //     } else {
+        //         table.column(3).visible(false);
+        //         table.column(5).visible(false);
+        //         table.column(7).visible(false);
+        //         table.column(9).visible(false);
+        //     }
+        // });
         
-        $(document).on('change','#purchase_amt',function(e){
-            if($(this).is(":checked")) {
-                table.column( 4 ).visible( true );
-            } else {
-                table.column( 4 ).visible( false );
-            }
-        });
+        // $(document).on('change','#purchase_amt',function(e){
+        //     if($(this).is(":checked")) {
+        //         table.column( 4 ).visible( true );
+        //     } else {
+        //         table.column( 4 ).visible( false );
+        //     }
+        // });
         
-        $(document).on('change','#sales_amt',function(e){
-            if($(this).is(":checked")) {
-                table.column( 6 ).visible( true );
-            } else {
-                table.column( 6 ).visible( false );
-            }
-        });
+        // $(document).on('change','#sales_amt',function(e){
+        //     if($(this).is(":checked")) {
+        //         table.column( 6 ).visible( true );
+        //     } else {
+        //         table.column( 6 ).visible( false );
+        //     }
+        // });
         
 		$(document).on('click','#btn_datepicker',function(e){
 			e.preventDefault();

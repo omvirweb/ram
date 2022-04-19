@@ -70,13 +70,13 @@ class Report extends CI_Controller {
             $row[] = $inc;
             $row[] = $list_row->item_name;
             $row[] = $item_data['opening_stock'];
-            $row[] = number_format($item_data['opening_amt'], 2, '.', '');
+            // $row[] = number_format($item_data['opening_amt'], 2, '.', '');
             $row[] = $item_data['inward'];
-            $row[] = number_format($item_data['inward_amt'], 2, '.', '');
+            // $row[] = number_format($item_data['inward_amt'], 2, '.', '');
             $row[] = $item_data['outward'];
-            $row[] = number_format($item_data['outward_amt'], 2, '.', '');
+            // $row[] = number_format($item_data['outward_amt'], 2, '.', '');
             $row[] = $item_data['closing_stock'];
-            $row[] = number_format($item_data['closing_amt'], 2, '.', '');
+            // $row[] = number_format($item_data['closing_amt'], 2, '.', '');
             $data[] = $row;
             $inc++;
         }
