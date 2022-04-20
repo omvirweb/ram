@@ -131,8 +131,10 @@ ob_start();
                 $dis_total_amt = 0;
                 $pure_total_amt = 0;
                 $gst_amt = 0;
-                $row_count = count($lineitems);
+                // $row_count = count($lineitems);
+                $row_count = 0;
                 foreach($lineitems as $lineitem){ 
+                    $row_count += (substr_count($lineitem->line_item_des, "<br>" ) + 1);
             ?>
             <tr>
                 <td valign="top" colspan="1" class="text_center"><?php echo $inc; ?></td>
@@ -157,7 +159,7 @@ ob_start();
                     $pure_total_amt += $pure_amt;
                     $inc++; 
                 }
-                $row_inc = 12 - $row_count;
+                $row_inc = 14 - $row_count;
                 for($i = 1; $i <= $row_inc; $i++){
             ?>
                 <tr>
