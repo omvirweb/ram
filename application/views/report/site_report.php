@@ -55,17 +55,21 @@
 							<thead>
                                 <tr>
                                     <th colspan=3> </th>
-                                    <th colspan=2>No Effect On Stock</th>
-                                    <th colspan=3>Effect On Stock</th>
+                                    <th colspan=4>No Effect On Stock</th>
+                                    <th colspan=4>Effect On Stock</th>
                                 </tr>
 								<tr>
 									<th>Date</th>
                                     <th>Item</th>
                                     <th>Module</th>
                                     <th>In</th>
+                                    <th>In Amount</th>
                                     <th>Out</th>
+                                    <th>Out Amount</th>
                                     <th>In</th>
+                                    <th>In Amount</th>
                                     <th>Out</th>
+                                    <th>Out Amount</th>
                                 </tr>
 							</thead>
 							<tbody>
@@ -258,6 +262,10 @@
                 {"className": "text-right", "targets": [4] },
                 {"className": "text-right", "targets": [5] },
                 {"className": "text-right", "targets": [6] },
+                {"className": "text-right", "targets": [7] },
+                {"className": "text-right", "targets": [8] },
+                {"className": "text-right", "targets": [9] },
+                {"className": "text-right", "targets": [10] }
             ],
             "footerCallback": function (row, data, start, end, display) {
                 var api = this.api(), data;

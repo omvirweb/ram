@@ -3734,6 +3734,10 @@ class Report extends CI_Controller {
         foreach ($list as $iteam) {
 			$row = array();
             $no_effect_in = 0;
+            $no_effect_in_amt = 0;
+            $no_effect_out_amt = 0;
+            $effect_out_amt = 0;
+            $effect_in_amt = 0;
             $no_effect_out = 0;
             $effect_in = 0;
             $effect_out = 0;
@@ -3742,12 +3746,15 @@ class Report extends CI_Controller {
             if($iteam->module == 1){
                 if($iteam->invoice_type == 1){
                     $no_effect_in=$iteam->item_qty;
+                    $no_effect_in_amt=$iteam->item_qty*$iteam->price;
                     $module ="Purchase Order";
                 }elseif($iteam->invoice_type == 2){
                     $effect_in=$iteam->item_qty;
+                    $effect_in_amt=$iteam->item_qty*$iteam->price;
                     $module ="Purchase Invoice";
                 }elseif($iteam->invoice_type == 4){
                     $no_effect_out=$iteam->item_qty;
+                    $no_effect_out_amt=$iteam->item_qty*$iteam->price;
                     $module ="Sales Order";
                 }
             }elseif($iteam->module == 2){
@@ -3759,26 +3766,37 @@ class Report extends CI_Controller {
                 }
                 $module = $module."Type ".$iteam->sales_type;
                 $effect_out = $iteam->item_qty;
+                $effect_out_amt = $iteam->item_qty*$iteam->price;
             }elseif($iteam->module == 3){
                 $effect_in = $iteam->item_qty;
+                $effect_in_amt = $iteam->item_qty*$iteam->price;
             }elseif($iteam->module == 4){
                 $effect_out = $iteam->item_qty;
+                $effect_out_amt = $iteam->item_qty*$iteam->price;
             }elseif($iteam->module == 5){
                 $no_effect_out = $iteam->item_qty;
+                $no_effect_out_amt = $iteam->item_qty*$iteam->price;
             }elseif($iteam->module == 6){
                 $no_effect_in = $iteam->item_qty;
+                $no_effect_in_amt = $iteam->item_qty*$iteam->price;
             }elseif($iteam->module == 7){
                 $effect_out = $iteam->item_qty;
+                $effect_out_amt = $iteam->item_qty*$iteam->price;
             }elseif($iteam->module == 8){
                 $effect_in = $iteam->item_qty;
+                $effect_in_amt = $iteam->item_qty*$iteam->price;
             }
 			$row[] = $iteam->tbl_date;
             $row[] = $item_name;
             $row[] = $module;
             $row[] = $no_effect_in;
+            $row[] = $no_effect_in_amt;
             $row[] = $no_effect_out;
+            $row[] = $no_effect_out_amt;
             $row[] = $effect_in;
+            $row[] = $effect_in_amt;
             $row[] = $effect_out;
+            $row[] = $effect_out_amt;
 			$data[] = $row;
 		}
 
