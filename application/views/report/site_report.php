@@ -79,17 +79,23 @@
                                     <th></th>
                                     <th></th>
                                     <th>Total : </th>
+                                    <th></th>
+                                    <th></th>     
+                                    <th></th>     
+                                    <th></th>     
                                     <th></th>     
                                     <th></th>     
                                     <th></th>     
                                     <th></th>     
                                 </tr>
                                 <tr>
-                                    <th></th>
-                                    <th></th>
-                                    <th>In - Out</th>
-                                    <th colspan=2></th>     
-                                    <th colspan=2></th>
+                                    <th class="text-center" ></th>
+                                    <th class="text-center" ></th>
+                                    <th class="text-center" >In - Out</th>
+                                    <th class="text-center"  colspan=2></th>     
+                                    <th class="text-center"  colspan=2></th>     
+                                    <th class="text-center"  colspan=2></th>     
+                                    <th  class="text-center" colspan=2></th>
                                 </tr>
                             </tfoot>
 						</table>
@@ -283,31 +289,65 @@
                             return intVal(a) + intVal(b);
                         }, 0);
                 $(api.column(3).footer()).html(nein.toFixed(2));
-                var neout = api
+                var neinam = api
                         .column(4)
                         .data()
                         .reduce(function (a, b) {
                             return intVal(a) + intVal(b);
                         }, 0);
-                $(api.column(4).footer()).html(neout.toFixed(2));
-                var efin = api
+                $(api.column(4).footer()).html(neinam.toFixed(2));
+                var neout = api
                         .column(5)
                         .data()
                         .reduce(function (a, b) {
                             return intVal(a) + intVal(b);
                         }, 0);
-                $(api.column(5).footer()).html(efin.toFixed(2));
-                var efout = api
+                $(api.column(5).footer()).html(neout.toFixed(2));
+                var neamout = api
                         .column(6)
                         .data()
                         .reduce(function (a, b) {
                             return intVal(a) + intVal(b);
                         }, 0);
-                $(api.column(6).footer()).html(efout.toFixed(2));
+                $(api.column(6).footer()).html(neamout.toFixed(2));
+                var ein = api
+                        .column(7)
+                        .data()
+                        .reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+                $(api.column(7).footer()).html(ein.toFixed(2));
+                var eamin = api
+                        .column(8)
+                        .data()
+                        .reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+                $(api.column(8).footer()).html(eamin.toFixed(2));
+                var eout = api
+                        .column(9)
+                        .data()
+                        .reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+                $(api.column(9).footer()).html(eout.toFixed(2));
+                var eamout = api
+                        .column(10)
+                        .data()
+                        .reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+                $(api.column(10).footer()).html(eamout.toFixed(2));
+
                 var total_ne = (nein - neout);
                 $('tr:eq(1) th:eq(3)', api.table().footer()).html(total_ne.toFixed(2));
-                var total_ef = (efin - efout);
-                $('tr:eq(1) th:eq(4)', api.table().footer()).html(total_ef.toFixed(2));
+                var total_neam = (neinam - neamout);
+                $('tr:eq(1) th:eq(4)', api.table().footer()).html(total_neam.toFixed(2));
+
+                var total_ef = (ein - eout);
+                $('tr:eq(1) th:eq(5)', api.table().footer()).html(total_ef.toFixed(2));
+                var total_efam = (eamin - eamout);
+                $('tr:eq(1) th:eq(6)', api.table().footer()).html(total_efam.toFixed(2));
             }
         });
 
