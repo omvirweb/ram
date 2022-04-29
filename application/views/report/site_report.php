@@ -1,7 +1,7 @@
 <?php $this->load->view('success_false_notify'); ?>
 <div class="content-wrapper">
 	<section class="content-header">
-		<h1>Trial Balance</h1>
+		<h1>Site Report</h1>
 	</section>
 	<section class="content">
 		<div class="row">
@@ -51,21 +51,25 @@
 			<div class="col-md-12">
 				<div class="box box-primary">
 					<div class="box-body">
-						<table class="table table-striped table-bordered" id="site_report_table">
+                        <table class="table table-striped table-bordered sales-table" id="sales-table">
 							<thead>
                                 <tr>
                                     <th colspan=3> </th>
-                                    <th colspan=2>No Effect On Stock</th>
-                                    <th colspan=3>Effect On Stock</th>
+                                    <th colspan=4>No Effect On Stock</th>
+                                    <th colspan=4>Effect On Stock</th>
                                 </tr>
 								<tr>
 									<th>Date</th>
                                     <th>Item</th>
                                     <th>Module</th>
                                     <th>In</th>
+                                    <th>In Amount</th>
                                     <th>Out</th>
+                                    <th>Out Amount</th>
                                     <th>In</th>
+                                    <th>In Amount</th>
                                     <th>Out</th>
+                                    <th>Out Amount</th>
                                 </tr>
 							</thead>
 							<tbody>
@@ -75,20 +79,23 @@
                                     <th></th>
                                     <th></th>
                                     <th>Total : </th>
+                                    <th></th>
+                                    <th></th>     
+                                    <th></th>     
+                                    <th></th>     
                                     <th></th>     
                                     <th></th>     
                                     <th></th>     
                                     <th></th>     
                                 </tr>
                                 <tr>
-                                    <th></th>
-                                    <th></th>
-                                    <th>In - Out</th>
-                                    <th colspan=2></th>     
-                                    <th colspan=2></th>     
-                                    <!-- <th></th>     
-                                    <th></th>     
-                                    <th></th>      -->
+                                    <th class="text-center" ></th>
+                                    <th class="text-center" ></th>
+                                    <th class="text-center" >In - Out</th>
+                                    <th class="text-center"  colspan=2></th>     
+                                    <th class="text-center"  colspan=2></th>     
+                                    <th class="text-center"  colspan=2></th>     
+                                    <th  class="text-center" colspan=2></th>
                                 </tr>
                             </tfoot>
 						</table>
@@ -101,69 +108,67 @@
 <input type="hidden" name="total_net_amount" id="total_net_amount">
 <script type="text/javascript">
 	$(document).ready(function(){
-    $("#site_id").select2({
-        placeholder: " --ALL-- ",
-        allowClear: true,
-        width:"100%",
-        ajax: {
-            url: "<?= base_url('app/sites_select2_source') ?>",
-            dataType: 'json',
-            delay: 250,
-            data: function (params) {
-                return {
-                    q: params.term, // search term
-                    page: params.page
-                };
-            },
-            processResults: function (data,params) {
-                params.page = params.page || 1;
-                return {
-                    results: data.results,
-                    pagination: {
-                        more: (params.page * 5) < data.total_count
-                    }
-                };
-            },
-            cache: true
-        }
-    });
+        $("#site_id").select2({
+            placeholder: " --ALL-- ",
+            allowClear: true,
+            width:"100%",
+            ajax: {
+                url: "<?= base_url('app/sites_select2_source') ?>",
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        q: params.term, // search term
+                        page: params.page
+                    };
+                },
+                processResults: function (data,params) {
+                    params.page = params.page || 1;
+                    return {
+                        results: data.results,
+                        pagination: {
+                            more: (params.page * 5) < data.total_count
+                        }
+                    };
+                },
+                cache: true
+            }
+        });
 
-
-    var title = 'Trial Balance (From Date : ' + $('#datepicker1').val() + ' To Date : ' + $('#datepicker2').val() +')';
-
-    var buttonCommon = {
-        exportOptions: {
-            format: { body: function ( data, row, column, node ) { return data.toString().replace(/(&nbsp;|<([^>]+)>)/ig, ""); } },
-            columns: [0, 1, 2, 3, 4],
-        }
-    };
-
-	table = $('#site_report_table').DataTable({
+        var title = 'Site Report (From Date : ' + $('#datepicker1').val() + ' To Date : ' + $('#datepicker2').val() +')';
+        var buttonCommon = {
+			exportOptions: {
+				format: { body: function ( data, row, column, node ) { return data.toString().replace(/(&nbsp;|<([^>]+)>)/ig, ""); } },
+			}
+		};
+        table = $('.sales-table').DataTable({
             dom: 'Bfrtip',
             buttons: [
-                $.extend( true, {}, buttonCommon, { extend: 'copy',footer: true, title: function () { return (title)} } ),
-                $.extend( true, {}, buttonCommon, { extend: 'csvHtml5',footer: true, title: function () { return (title)}, customize: function (csv) {
-                        return 'Trial Balance ( From Date : ' + $('#datepicker1').val() + ' To Date : ' + $('#datepicker2').val() + ' )\n\n'+  csv;
-                    } 
-                }),
-                $.extend( true, {}, buttonCommon, { extend: 'pdf',footer: true, orientation: 'portrait', pageSize: 'LEGAL', title: function () { return (title)}, action: newExportAction,
+                $.extend( true, {}, buttonCommon, { extend: 'copy', title: function () { return (title)}, action: newExportAction } ),
+                $.extend( true, {}, buttonCommon, { extend: 'csvHtml5', title: function () { return (title)}, action: newExportAction } ),
+                $.extend( true, {}, buttonCommon, { extend: 'pdf', orientation: 'landscape', pageSize: 'LEGAL', title: function () { return (title)}, action: newExportAction,
                     customize : function(doc){
-                        var objLayout = {};
-                        objLayout['hLineWidth'] = function(i) { return .5; };
-                        objLayout['vLineWidth'] = function(i) { return .5; };
-                        doc.content[1].layout = objLayout;
-                        doc.content[1].table.widths = ["14%","14%","33%","10%","10%","10%","10%"]; 
-                        var rowCount = document.getElementById("site_report_table").rows.length;
-                        for (i = 0; i < rowCount; i++) {
-                            doc.content[1].table.body[i][0].alignment = 'center';
-                            doc.content[1].table.body[i][1].alignment = 'center';
-                            doc.content[1].table.body[i][3].alignment = 'center';
-                            doc.content[1].table.body[i][4].alignment = 'center';
-                        };
-                    }
-                }),
-                $.extend( true, {}, buttonCommon, { extend: 'excelHtml5',footer: true, title: function () { return (title)} ,
+						var objLayout = {};
+						objLayout['hLineWidth'] = function(i) { return .5; };
+						objLayout['vLineWidth'] = function(i) { return .5; };
+						doc.content[1].layout = objLayout;
+						doc.content[1].table.widths = ["5%","25%","8%", "8%", "8%", "8%", "8%", "8%", "8%", "8%", "8%"]; //costringe le colonne ad occupare un dato spazio per gestire il baco del 100% width che non si concretizza mai
+						var rowCount = document.getElementById("stock-table").rows.length;
 
+						for (i = 1; i < rowCount; i++) {
+								doc.content[1].table.body[i][0].alignment = 'right';
+								doc.content[1].table.body[i][2].alignment = 'right';
+								doc.content[1].table.body[i][3].alignment = 'right';
+								doc.content[1].table.body[i][4].alignment = 'right';
+								doc.content[1].table.body[i][5].alignment = 'right';
+								doc.content[1].table.body[i][6].alignment = 'right';
+								doc.content[1].table.body[i][7].alignment = 'right';
+								doc.content[1].table.body[i][8].alignment = 'right';
+								doc.content[1].table.body[i][9].alignment = 'right';
+						};
+					}
+                } ),
+                $.extend( true, {}, buttonCommon, { extend: 'excelHtml5', title: function () { return (title)}, action: newExportAction ,
                     customize : function (xlsx) {
 
                         var sheet = xlsx.xl.worksheets['sheet1.xml'];
@@ -202,71 +207,152 @@
                             return msg;
                         }
                         //insert
-                        var r1 = Addrow(1, [{ k: 'A', v: 'From Date :' }, { k: 'B', v: $('#datepicker1').val() }]);
-                        var r2 = Addrow(2, [{ k: 'A', v: 'To Date :' }, { k: 'B', v: $('#datepicker2').val() }]);
+                        var r1 = Addrow(1, [{ k: 'A', v: 'Client :' }, { k: 'B', v: client }]);
+                        var r2 = Addrow(2, [{ k: 'A', v: 'From :' }, { k: 'B', v: $('#datepicker1').val() }]);
+                        var r3 = Addrow(3, [{ k: 'A', v: 'To :' }, { k: 'B', v: $('#datepicker2').val() }]);
 
-                        sheet.childNodes[0].childNodes[1].innerHTML = r1 + r2 +sheet.childNodes[0].childNodes[1].innerHTML;
+                        sheet.childNodes[0].childNodes[1].innerHTML = r1 + r2 + r3  + sheet.childNodes[0].childNodes[1].innerHTML;
                     }
                 }),
-                $.extend( true, {}, buttonCommon, { extend: 'print',footer: true,  title: function () { return (title)},
-                    // customize : function(win){
-                    //     $(win.document.body).find('table thead th:nth-child(1)').css('text-align', 'center');
-                    //     $(win.document.body).find('table thead th:nth-child(2)').css('text-align', 'center');
-                    //     $(win.document.body).find('table thead th:nth-child(4)').css('text-align', 'center');
-                    //     $(win.document.body).find('table thead th:nth-child(5)').css('text-align', 'center');
+                $.extend( true, {}, buttonCommon, { extend: 'print',  title: function () { return (title)},
+                    customize : function(win){
+                        $(win.document.body).find('table thead th:nth-child(3)').css('text-align', 'right');
+                        $(win.document.body).find('table tbody td:nth-child(3)').css('text-align', 'right');
 
-                    //     $(win.document.body).find('table tbody td:nth-child(1)').css('text-align', 'center');
-                    //     $(win.document.body).find('table tbody td:nth-child(2)').css('text-align', 'center');
-                    //     $(win.document.body).find('table tbody td:nth-child(4)').css('text-align', 'center');
-                    //     $(win.document.body).find('table tbody td:nth-child(5)').css('text-align', 'center');
-
-                    //     $(win.document.body).find('table tfoot th:nth-child(1)').css('text-align', 'center');
-                    //     $(win.document.body).find('table tfoot th:nth-child(2)').css('text-align', 'center');
-                    //     $(win.document.body).find('table tfoot th:nth-child(4)').css('text-align', 'center');
-                    //     $(win.document.body).find('table tfoot th:nth-child(5)').css('text-align', 'center');
-                    // }
-                }),
+                        $(win.document.body).find('table thead th:nth-child(4)').css('text-align', 'right');
+                        $(win.document.body).find('table tbody td:nth-child(4)').css('text-align', 'right');
+                        
+                        $(win.document.body).find('table thead th:nth-child(5)').css('text-align', 'right');
+                        $(win.document.body).find('table tbody td:nth-child(5)').css('text-align', 'right');
+                        
+                        $(win.document.body).find('table thead th:nth-child(6)').css('text-align', 'right');
+                        $(win.document.body).find('table tbody td:nth-child(6)').css('text-align', 'right');
+                        
+                        $(win.document.body).find('table thead th:nth-child(7)').css('text-align', 'right');
+                        $(win.document.body).find('table tbody td:nth-child(7)').css('text-align', 'right');
+                        
+                        $(win.document.body).find('table thead th:nth-child(8)').css('text-align', 'right');
+                        $(win.document.body).find('table tbody td:nth-child(8)').css('text-align', 'right');
+                        
+                        $(win.document.body).find('table thead th:nth-child(9)').css('text-align', 'right');
+                        $(win.document.body).find('table tbody td:nth-child(9)').css('text-align', 'right');
+                        
+                        $(win.document.body).find('table thead th:nth-child(10)').css('text-align', 'right');
+                        $(win.document.body).find('table tbody td:nth-child(10)').css('text-align', 'right');
+                    }, action: newExportAction } ),
             ],
             "serverSide": true,
-            "ordering": false,
-            "searching": false,
-            "bInfo" : false,
+            "ordering": true,
+            "searching": true,
+            "aaSorting": [[1, 'desc']],
             "ajax": {
                 "url": "<?php echo base_url('report/site_report_datatable')?>",
                 "type": "POST",
                 "data": function(d){
-                	d.from_date = $("#datepicker1").val();
-                	d.to_date = $("#datepicker2").val();
+                    d.from_date = $("#datepicker1").val();
+                    d.to_date = $("#datepicker2").val();
                     d.site_id = $("#site_id").val();
                     d.module = $("#module").val();
                 },
-                "dataSrc": function ( jsondata ) {
-                    if(jsondata.total_net_amount){
-                        $('#total_net_amount').val(jsondata.total_net_amount);
-                    } else {
-                        $('#total_net_amount').val('');
-                    }
-                    return jsondata.data;
-                }
             },
             "scrollY": '<?php echo MASTER_LIST_TABLE_HEIGHT;?>',
             "scroller": {
                 "loadingIndicator": true
             },
             "columnDefs": [
-                {"className": "text-center", "targets": [1,4] },
+                {"targets": 0, "orderable": false },
+                {"className": "text-right", "targets": [0] },
+                {"className": "text-right", "targets": [1] },
+                {"className": "text-right", "targets": [2] },
+                {"className": "text-right", "targets": [3] },
+                {"className": "text-right", "targets": [4] },
+                {"className": "text-right", "targets": [5] },
+                {"className": "text-right", "targets": [6] },
+                {"className": "text-right", "targets": [7] },
+                {"className": "text-right", "targets": [8] },
+                {"className": "text-right", "targets": [9] },
+                {"className": "text-right", "targets": [10] }
             ],
-            "footerCallback": function ( row, data, start, end, display ) {
+            "footerCallback": function (row, data, start, end, display) {
                 var api = this.api(), data;
-                $( api.column( 1 ).footer() ).html('');
-                $( api.column( 1 ).footer() ).html($('#total_net_amount').val());
-                $( api.column( 4 ).footer() ).html('');
-                $( api.column( 4 ).footer() ).html($('#total_net_amount').val());
-            }
-        });  
-	});
+                // Remove the formatting to get integer data for summation
+                var intVal = function (i) {
+                    return typeof i === 'string' ?
+                            i.replace(/[\$,]/g, '') * 1 :
+                            typeof i === 'number' ?
+                            i : 0;
+                };
+                var nein = api
+                        .column(3)
+                        .data()
+                        .reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+                $(api.column(3).footer()).html(nein.toFixed(2));
+                var neinam = api
+                        .column(4)
+                        .data()
+                        .reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+                $(api.column(4).footer()).html(neinam.toFixed(2));
+                var neout = api
+                        .column(5)
+                        .data()
+                        .reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+                $(api.column(5).footer()).html(neout.toFixed(2));
+                var neamout = api
+                        .column(6)
+                        .data()
+                        .reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+                $(api.column(6).footer()).html(neamout.toFixed(2));
+                var ein = api
+                        .column(7)
+                        .data()
+                        .reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+                $(api.column(7).footer()).html(ein.toFixed(2));
+                var eamin = api
+                        .column(8)
+                        .data()
+                        .reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+                $(api.column(8).footer()).html(eamin.toFixed(2));
+                var eout = api
+                        .column(9)
+                        .data()
+                        .reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+                $(api.column(9).footer()).html(eout.toFixed(2));
+                var eamout = api
+                        .column(10)
+                        .data()
+                        .reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+                $(api.column(10).footer()).html(eamout.toFixed(2));
 
-	$(document).on('click','#btn_search',function(){
-        table.draw();            
+                var total_ne = (nein - neout);
+                $('tr:eq(1) th:eq(3)', api.table().footer()).html(total_ne.toFixed(2));
+                var total_neam = (neinam - neamout);
+                $('tr:eq(1) th:eq(4)', api.table().footer()).html(total_neam.toFixed(2));
+
+                var total_ef = (ein - eout);
+                $('tr:eq(1) th:eq(5)', api.table().footer()).html(total_ef.toFixed(2));
+                var total_efam = (eamin - eamout);
+                $('tr:eq(1) th:eq(6)', api.table().footer()).html(total_efam.toFixed(2));
+            }
+        });
+
+        $(document).on('click','#btn_search',function(){
+            table.draw();            
+        });
     });
 </script>
