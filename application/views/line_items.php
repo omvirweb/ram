@@ -357,7 +357,8 @@
 
 <div class="clearfix"></div>
 <script type="text/javascript">
-        sub_lineitem_objectdata = [];
+
+    sub_lineitem_objectdata = [];
 	var edit_lineitem_inc = 0;
 	var lineitem_objectdata = [];
 	//~ var lineitem_objectdata = ['{"item_company_id":"1","item_id":"1","item_qty":"3","item_qty2":"15","price":"100","amount":"300"}', '{"item_company_id":"1","item_id":"2","item_qty":"4","item_qty2":"40","price":"200","amount":"800"}', '{"item_company_id":"1","item_id":"3","item_qty":"5","item_qty2":"75","price":"300","amount":"1500"}'];
@@ -518,7 +519,7 @@
                 dataType: 'json',
                 data: {item_id: item_id, item_group_id: item_group_id, cat_id: cat_id, sales_date : $('#datepicker2').val(), acc_id: $('#account_id').val()},
                 success: function (response) {
-                    console.log(response);
+                    // console.log(response);
                     if(response.discount_type){     
                         if(response.discount_type == 1){
                             $("#discount_type").val('1').trigger("change");
@@ -675,10 +676,10 @@
 		$(document).on('input','.discount',function () {
 			apply_discount_tax_get_amount();
 		});
-		
 		$('#add_lineitem').on('click', function() {
 			var item_id = $("#item_id").val();
-            var line_item_des = $("#line_item_des").val();
+            var line_item_des = nl2br($("#line_item_des").val());
+
             <?php if($voucher_type != "sales2" && $voucher_type != "sales3") { ?>
                 if(item_id == '' || item_id == null){
                     show_notify("Please select Product.", false);
@@ -718,7 +719,7 @@
             if ( gst_per == undefined || gst_per == '' ) {
                 gst_per = 0;
             }
-            lineitem['line_item_des'] = $("#line_item_des").val();
+            lineitem['line_item_des'] =  line_item_des;
             lineitem['cgst'] = 0;
             // console.log('rate for tax - '+rate_for_itax);
             // return false;
@@ -778,7 +779,7 @@
 				$('#sgst').removeAttr('readonly', 'readonly');
 				$('#igst').removeAttr('readonly', 'readonly');
 			}
-                        console.log(sub_lineitem_objectdata);
+                        // console.log(sub_lineitem_objectdata);
                         lineitem['sub_item_data'] = JSON.parse(JSON.stringify(sub_lineitem_objectdata));
                         if ($('#apply_to_master').prop('checked')==true){ 
                             lineitem['apply_to_master'] = '1';
@@ -786,7 +787,7 @@
                             lineitem['apply_to_master'] = '0';
                         }
                         sub_lineitem_objectdata = [];
-                        console.log(lineitem);
+                        // console.log(lineitem);
 			var new_lineitem = JSON.parse(JSON.stringify(lineitem));
 			var line_items_index = $("#line_items_index").val();
 			if(line_items_index != ''){
@@ -956,7 +957,7 @@
                 slineitem['sub_unit_name'] = $('#sub_sub_item_unit_id option:selected').html();
                 var snew_lineitem = JSON.parse(JSON.stringify(slineitem));
                 sub_lineitem_objectdata.push(snew_lineitem);
-                console.log(sub_lineitem_objectdata);
+                // console.log(sub_lineitem_objectdata);
                 sub_display_lineitem_html(sub_lineitem_objectdata);
                 $('#lineitem_id').val('');
                 $("#item_qty").val('');
@@ -1055,7 +1056,7 @@
 	}
 	
 	function display_lineitem_html(lineitem_objectdata,is_use_db_round_off_amount){
-        console.log(lineitem_objectdata);
+        // console.log(lineitem_objectdata);
 		
 		if(typeof(is_use_db_round_off_amount) != "undefined" && is_use_db_round_off_amount !== null) {
 			var use_db_round_off_amount = true;
@@ -1236,7 +1237,7 @@
         	setSelect2Value($("#sub_cat_id"),"<?=base_url('app/set_sub_category_select2_val_by_id/')?>" + value.sub_cat_id);
         }
 
-        <?php if($voucher_type != 'sales2' && $voucher_type != 'sales3') { ?>
+        <?php if($voucher_type != 'sales2' || $voucher_type != 'sales3') { ?>
             initAjaxSelect2($("#unit_id"),"<?=base_url('app/unit_select2_source_by_item_id/')?>" + value.item_id);
             if(typeof(value.unit_id) !== "undefined" && value.unit_id !== null && value.unit_id !== 0) {
             	setSelect2Value($("#unit_id"),"<?=base_url('app/set_pack_unit_select2_val_by_id/')?>" + value.unit_id);
@@ -1251,9 +1252,18 @@
 		if(typeof(value.id) != "undefined" && value.id !== null) {
 			$("#lineitem_id").val(value.id);
 		}
-        console.log('desac = '+value.line_item_des);
+
         if(typeof(value.line_item_des) != "undefined" && value.line_item_des !== null) {
-			$("#line_item_des").val(value.line_item_des);
+            $('#line_item_des').val(value.line_item_des);
+		}
+
+        if(typeof(value.gst) != "undefined" && value.gst !== null) {
+            $('#gst_rate').val(value.gst);
+		}
+
+        if(typeof(value.hsn) != "undefined" && value.hsn !== null) {
+            $('#hsn').val(value.hsn);
+
 		}
 
 		if(value.rate_for_itax == 1){
@@ -1321,5 +1331,16 @@
 		decimal = 2;
 		return value ? parseFloat(value).toFixed(decimal) : 0;
 	}
+
+    // function nl2br (mystr, is_xhtml) {     
+    //     var simplebreaktag = (is_xhtml || typeof is_xhtml === 'undefined') ? '<br />' : '<br>';      
+    //     return (mystr + '').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1'+ simplebreaktag +'$2');  
+    // } 
+
+    function nl2br(str){
+        if(str != "undefined" && str !== null){
+            return str.replace(/(?:\r\n|\r|\n)/g, '<br>');
+        }
+    }
 	
 </script>

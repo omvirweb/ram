@@ -1247,9 +1247,9 @@ class Transaction extends CI_Controller {
     function save_invoice(){
         $return = array();
         $post_data = $this->input->post();
-        /*echo "<pre>";
-        print_r($post_data);
-        exit;*/
+        // echo "<pre>";
+        // print_r($post_data['line_items_data']);
+        // exit;
         $line_items_data = json_decode('['.$post_data['line_items_data'].']');
         
         $invoice_data = array();     
@@ -1283,6 +1283,7 @@ class Transaction extends CI_Controller {
             $invoice_data['aspergem_service_charge'] = (isset($post_data['aspergem_service_charge'])) ? $post_data['aspergem_service_charge'] : '';
             $invoice_data['sales_subject'] = (isset($post_data['sales_subject'])) ? $post_data['sales_subject'] : '';
             $invoice_data['sales_note'] = (isset($post_data['sales_note'])) ? $post_data['sales_note'] : '';
+            $invoice_data['prof_tax'] = (isset($post_data['prof_tax'])) ? $post_data['prof_tax'] : '';
             $invoice_data['sales_type'] = 2;
 
         }elseif($voucher_type == 'sales3') {
@@ -1531,6 +1532,7 @@ class Transaction extends CI_Controller {
                 $add_lineitem['amount'] = isset($lineitem->amount)?$lineitem->amount:NULL;
                 $add_lineitem['unit_id'] = isset($lineitem->unit_id)?$lineitem->unit_id:NULL;
                 $add_lineitem['gst'] = $gst_per;
+                $add_lineitem['hsn'] = isset($lineitem->hsn)?$lineitem->hsn:NULL;  
                 $add_lineitem['site_id'] = isset($lineitem->site_id)?$lineitem->site_id:NULL;     
                 $add_lineitem['module'] = $module;
                 $add_lineitem['parent_id'] = $parent_id;

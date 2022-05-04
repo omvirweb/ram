@@ -79,7 +79,7 @@ ob_start();
             <?php } else { ?>
             <tr align="center" class="border1">
                 <td align="left" colspan="16" class="no-border-right">
-                    <img src="<?php if(isset($logo_image) && $logo_image != '') { echo base_url('assets/uploads/logo_image/'.$logo_image); } else {  echo base_url('assets/dist/img/ram-logo.png'); } ?>" class="saas-logo" alt="saas-logo">
+                    <img style="height: 76px;" src="<?php if(isset($logo_image) && $logo_image != '') { echo base_url('assets/uploads/logo_image/'.$logo_image); } else {  echo base_url('assets/dist/img/ram-logo.png'); } ?>" class="saas-logo" alt="saas-logo">
                 </td>
             </tr>
             <tr align="center" style="border: 1px 0px 1px 0px;">
@@ -116,7 +116,7 @@ ob_start();
             <tr class=""></tr>
             <tr class="border1">
                 <td colspan="1" width="50px" class="text_bold text_center">Sr No</td>
-                <td colspan="9" class="text_bold text_center" width="250px">Product Name</td>
+                <td colspan="9" class="text_bold text_center" width="250px">Particular</td>
                 <!-- <td colspan="2" class="text_bold text_center">HSN/SAC</td> -->
                 <td colspan="2" class="text_bold text_center">Qty</td>
                 <!-- <td colspan="1" class="text_bold text_center">Unit</td> -->
@@ -169,7 +169,7 @@ ob_start();
                 
                 $inc++; 
                 }
-                $row_inc = 15 - $row_count;
+                $row_inc = 13 - $row_count;
                 for($i = 1; $i <= $row_inc; $i++){
             ?>
                     <tr>
@@ -191,35 +191,46 @@ ob_start();
             <tr class="">
                 <td colspan="4" class="no-border-right no-border-bottom text_bold">Bank Name</td>
                 <td colspan="7" class="no-border-left no-border-right no-border-bottom"> : <?=isset($bank_name) ? $bank_name : '' ?></td>
-                <td colspan="3" class="text_bold no-border-right">SUB TOTAL </td>
-                <td colspan="2" align="right" class="text_bold no-border-left"><?php echo number_format((float)$pure_total_amt, 2, '.', ''); ?></td>
+                <td colspan="3" class="no-border-top no-border-bottom no-border-right">Service Charge</td>
+                <td colspan="2" align="right" class="no-border-left no-border-top no-border-bottom"><?php echo number_format((float)($aspergem_service_charge), 2, '.', ''); ?></td>
+
             </tr>
             <tr class="">
                 <td colspan="4" class="no-border-right no-border-top no-border-bottom text_bold">Branch</td>
                 <td colspan="7" class="no-border"> : <?=isset($bank_branch) ? $bank_branch : '' ?></td>
-                
-                <td colspan="3" class="no-border-top no-border-bottom no-border-right">CGST</td>
-                <td colspan="2" align="right" class="no-border-left no-border-top no-border-bottom"><?php echo number_format((float)($total_gst/2), 2, '.', ''); ?></td>
+                <td colspan="3" class="text_bold no-border-right">SUB TOTAL </td>
+                <?php 
+                    $pure_total_amt = $pure_total_amt + $total_pf_amount + $aspergem_service_charge;
+                ?>
+                <td colspan="2" align="right" class="text_bold no-border-left"><?php echo number_format((float)$pure_total_amt, 2, '.', ''); ?></td>
+
             </tr>
             <tr class="">
                 <td colspan="4" class="no-border-right no-border-bottom no-border-top text_bold">Bank A/c. No.</td>
                 <td colspan="7" class="no-border"> : <?=isset($bank_ac_no) ? $bank_ac_no : '' ?></td>
-                <td colspan="3" class="no-border-top no-border-bottom no-border-right">SGST</td>
+                <td colspan="3" class="no-border-top no-border-bottom no-border-right">CGST</td>
                 <td colspan="2" align="right" class="no-border-left no-border-top no-border-bottom"><?php echo number_format((float)($total_gst/2), 2, '.', ''); ?></td>
+
             </tr>
             <tr class="">
                 <td colspan="4" class="no-border-right no-border-bottom no-border-top text_bold">RTGS/IFSC Code</td>
                 <td colspan="7" class="no-border"> : <?=isset($rtgs_ifsc_code) ? $rtgs_ifsc_code : '' ?></td>
-                <td colspan="3" class="no-border-top no-border-bottom no-border-right">As Per GEM - Service <br/>Charge(Without GST)</td>
+                <td colspan="3" class="no-border-top no-border-bottom no-border-right">SGST</td>
                 <?php // $discounted_amt_total = $pure_total_amt + $dis_total_amt;?>
-                <td colspan="2" align="right" class="no-border-left no-border-top no-border-bottom"><?php echo number_format((float)($aspergem_service_charge), 2, '.', ''); ?></td>
+                <td colspan="2" align="right" class="no-border-left no-border-top no-border-bottom"><?php echo number_format((float)($total_gst/2), 2, '.', ''); ?></td>
             </tr>
             <tr class="">
                 <td colspan="4" rowspan="2" class="border1 no-border-right no-border-bottom text_bold">Total GST</td>
                 <td colspan="7" rowspan="2" class=" border1 no-border-left no-border-bottom no-border-right"> : <?php echo $gst_total_word; ?></td>
+                <td colspan="3" class="no-border-top no-border-bottom no-border-right">Prof. Tax</td>
+                <td colspan="2" align="right" class="no-border-left no-border-top no-border-bottom"><?php echo number_format((float)($prof_tax), 2, '.', ''); ?></td><br>
+            </tr>
+            <tr class="">
+                <td colspan="3" rowspan="2" class="no-border-top no-border-bottom no-border-right">Round Off</td>
+                <td colspan="2" rowspan="2" align="right" class="no-border-left no-border-top no-border-bottom"><?php echo number_format((float)($round_off_amount), 2, '.', ''); ?></td>
             </tr>
             <tr class="border1 no-border-top no-border-bottom text_bold">
-                <td colspan="5" class="no-border-right text_bold">&nbsp;</td>
+                <td colspan="16" class="no-border-right text_bold">&nbsp;</td>
             </tr>
             
             <tr class="border1" style="background-color: #EAEAEA;">

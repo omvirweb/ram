@@ -1244,10 +1244,12 @@ class Sales extends CI_Controller
                 $amt =  $sales_invoice_lineitem->price * $sales_invoice_lineitem->item_qty;
                 $gst_amount = $amt * $sales_invoice_lineitem->gst / 100;
                 $total_gst += $gst_amount;
-                if ($key == 0) {
+                $data['site_name'] = '';
+                $data['site_address'] = '';
+                if ($key == 0 && $sales_invoice_lineitem->site_id != null) {
                     $site_data = $this->crud->get_row_by_id('sites', array('site_id' => $sales_invoice_lineitem->site_id));
-                    $data['site_name'] = $site_data[0]->site_name;
-                    $data['site_address'] = $site_data[0]->site_address;
+                    $data['site_name'] = (isset($site_data)) ? $site_data[0]->site_name : '';
+                    $data['site_address'] = (isset($site_data)) ? $site_data[0]->site_address : '';
                 }
             }
 //            $no_arr = count($lineitem_arr);
@@ -2020,12 +2022,18 @@ class Sales extends CI_Controller
             if($result->total_pf_amount) {
                 $total_pf_amount = $result->total_pf_amount + ($result->total_pf_amount * 18 / 100);
             }
-            $total_amount_word = $result->amount_total + $result->aspergem_service_charge + $total_pf_amount;
+            $aspergem_service_charge = 0;
+            if($result->aspergem_service_charge) {
+                $aspergem_service_charge = $result->aspergem_service_charge + ($result->aspergem_service_charge * 18 / 100);
+            }
+            $total_amount_word = $result->amount_total + $total_pf_amount + $aspergem_service_charge + $result->prof_tax;
             if ($total_amount_word < 0) {
                 $amount_total_word = 'Minus ' . $this->numbertowords->convert_number(abs($total_amount_word));
             } else {
                 $amount_total_word = $this->numbertowords->convert_number($total_amount_word);
             }
+
+
             $total_gst = $result->cgst_amount_total + $result->sgst_amount_total + $result->igst_amount_total;
 			//$total_gst = $result->gst;
             if ($total_gst < 0) {
@@ -2053,6 +2061,8 @@ class Sales extends CI_Controller
                 'gst_total_word' => $gst_total_word,
                 'sales_subject' => $result->sales_subject,
                 'sales_note' => $result->sales_note,
+                'prof_tax' => $result->prof_tax,
+                'round_off_amount' => $result->round_off_amount,
                 'total_pf_amount' => $result->total_pf_amount,
                 'aspergem_service_charge' => isset($result->aspergem_service_charge) ? $result->aspergem_service_charge:0 ,
                 
@@ -2120,10 +2130,12 @@ class Sales extends CI_Controller
                 $amt =  $sales_invoice_lineitem->price * $sales_invoice_lineitem->item_qty;
                 $gst_amount = $amt * $sales_invoice_lineitem->gst / 100;
                 $total_gst += $gst_amount;
-                if ($key == 0) {
+                $data['site_name'] = '';
+                $data['site_address'] = '';
+                if ($key == 0 && $sales_invoice_lineitem->site_id != null) {
                     $site_data = $this->crud->get_row_by_id('sites', array('site_id' => $sales_invoice_lineitem->site_id));
-                    $data['site_name'] = $site_data[0]->site_name;
-                    $data['site_address'] = $site_data[0]->site_address;
+                    $data['site_name'] = (isset($site_data)) ? $site_data[0]->site_name : '';
+                    $data['site_address'] = (isset($site_data)) ? $site_data[0]->site_address : '';
                 }
             }
 //            $no_arr = count($lineitem_arr);
@@ -2136,6 +2148,7 @@ class Sales extends CI_Controller
             
             $data['lineitems'] = $lineitem_arr;
             $total_gst = $total_gst + ($result->total_pf_amount * 18 / 100);
+            $total_gst = $total_gst + ($result->aspergem_service_charge * 18 / 100);
             $data['total_gst'] = $total_gst;
             if ($total_gst < 0) {
                 $gst_total_word = 'Minus ' . $this->numbertowords->convert_number(abs($total_gst));
@@ -2371,10 +2384,12 @@ class Sales extends CI_Controller
                 $amt =  $sales_invoice_lineitem->price * $sales_invoice_lineitem->item_qty;
                 $gst_amount = $amt * $sales_invoice_lineitem->gst / 100;
                 $total_gst += $gst_amount;
-                if ($key == 0) {
+                $data['site_name'] = '';
+                $data['site_address'] = '';
+                if ($key == 0 && $sales_invoice_lineitem->site_id != null) {
                     $site_data = $this->crud->get_row_by_id('sites', array('site_id' => $sales_invoice_lineitem->site_id));
-                    $data['site_name'] = $site_data[0]->site_name;
-                    $data['site_address'] = $site_data[0]->site_address;
+                    $data['site_name'] = (isset($site_data)) ? $site_data[0]->site_name : '';
+                    $data['site_address'] = (isset($site_data)) ? $site_data[0]->site_address : '';
                 }
             }
             $data['lineitems'] = $lineitem_arr;
