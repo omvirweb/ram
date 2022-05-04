@@ -1,6 +1,6 @@
 -- Parag : 2022_02_22 11:17 AM
 
-CREATE TABLE `sbio`.`quotation` ( `quotation_id` INT NOT NULL AUTO_INCREMENT , `quotation_no` INT NULL , `account_id` INT NULL COMMENT 'From Account Table' , `quotation_date` DATE NULL , `qty_total` DOUBLE NULL , `pure_amount_total` DOUBLE NULL , `discount_total` DOUBLE NULL , `cgst_amount_total` DOUBLE NULL , `sgst_amount_total` DOUBLE NULL , `igst_amount_total` DOUBLE NULL , `other_charges_total` DOUBLE NULL , `round_off_amount` DOUBLE NULL , `amount_total` DOUBLE NULL , `created_by` INT NULL , `created_at` DATETIME NULL , `updated_by` INT NULL , `updated_at` DATETIME NULL , `quotation_type` TINYINT NULL COMMENT '1=Sell,2=Purchase' , PRIMARY KEY (`quotation_id`), INDEX `account_id` (`account_id`)) ENGINE = InnoDB;
+CREATE TABLE `quotation` ( `quotation_id` INT NOT NULL AUTO_INCREMENT , `quotation_no` INT NULL , `account_id` INT NULL COMMENT 'From Account Table' , `quotation_date` DATE NULL , `qty_total` DOUBLE NULL , `pure_amount_total` DOUBLE NULL , `discount_total` DOUBLE NULL , `cgst_amount_total` DOUBLE NULL , `sgst_amount_total` DOUBLE NULL , `igst_amount_total` DOUBLE NULL , `other_charges_total` DOUBLE NULL , `round_off_amount` DOUBLE NULL , `amount_total` DOUBLE NULL , `created_by` INT NULL , `created_at` DATETIME NULL , `updated_by` INT NULL , `updated_at` DATETIME NULL , `quotation_type` TINYINT NULL COMMENT '1=Sell,2=Purchase' , PRIMARY KEY (`quotation_id`), INDEX `account_id` (`account_id`)) ENGINE = InnoDB;
 
 ALTER TABLE `quotation` CHANGE `quotation_type` `quotation_type` TINYINT(4) NULL DEFAULT NULL COMMENT '1=Sell,2=Purchase' AFTER `quotation_id`;
 
@@ -10,9 +10,9 @@ ALTER TABLE `lineitems` CHANGE `module` `module` INT(11) NULL DEFAULT NULL COMME
 
 -- Parag : 2022_02_22 02:51 PM
 
-CREATE TABLE `sbio`.`company` ( `id` INT NOT NULL AUTO_INCREMENT , `company_name` VARCHAR(255) NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;
+CREATE TABLE `company` ( `id` INT NOT NULL AUTO_INCREMENT , `company_name` VARCHAR(255) NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;
 
-CREATE TABLE `sbio`.`groups` ( `id` INT NOT NULL AUTO_INCREMENT , `group_name` VARCHAR(255) NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;
+CREATE TABLE `groups` ( `id` INT NOT NULL AUTO_INCREMENT , `group_name` VARCHAR(255) NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;
 
 -- Parag : 2022_02_22 03:23 PM
 

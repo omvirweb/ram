@@ -17,6 +17,7 @@ class Datatables
 	var $custom_where = array();
 	var $in_not_in_where = array();
 	var $group_by = 0;
+	var $havings = array();
 
 
 	/**
@@ -140,6 +141,18 @@ class Datatables
 
 		if(!empty($this->group_by)) {
 			$this->ci->db->group_by($this->group_by);
+		}
+
+		if(!empty($this->havings)) {
+			foreach($this->havings as $having){
+				if(isset($having['column_name']) &&  isset($having['column_value']) && $having['column_name'] != '' && $having['column_value'] != ''){
+					$column_name = $having['column_name'];
+					$column_value = $having['column_value'];
+					$this->ci->db->having($column_name,$column_value);
+				} elseif(isset($having['having_str'])){
+					$this->ci->db->having($having['having_str']);
+				}
+			}
 		}
 
 	}

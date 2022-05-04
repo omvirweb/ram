@@ -131,13 +131,15 @@ ob_start();
                 $dis_total_amt = 0;
                 $pure_total_amt = 0;
                 $gst_amt = 0;
-                $row_count = count($lineitems);
+                // $row_count = count($lineitems);
+                $row_count = 0;
                 foreach($lineitems as $lineitem){ 
+                    $row_count += (substr_count($lineitem->line_item_des, "<br>" ) + 1);
             ?>
             <tr>
                 <td valign="top" colspan="1" class="text_center"><?php echo $inc; ?></td>
                 <td valign="top" colspan="9" align="left"><?php echo $lineitem->line_item_des."&nbsp;".$site_name; ?><br><?php echo $lineitem->note;?></td>
-                <td valign="top" colspan="1" align="center"><?php echo $lineitem->hsn_code; ?></td>
+                <td valign="top" colspan="1" align="center"><?php echo $lineitem->hsn; ?></td>
                 <?php $unit = $this->crud->get_column_value_by_id('pack_unit', 'pack_unit_name', array('pack_unit_id' => $lineitem->unit_id)); ?>
                 <td valign="top" colspan="1" class="divRight"><?php echo $lineitem->item_qty; ?></td>
                 <td valign="top" colspan="2" class="divRight"><?php echo $lineitem->price; ?></td>
@@ -157,7 +159,7 @@ ob_start();
                     $pure_total_amt += $pure_amt;
                     $inc++; 
                 }
-                $row_inc = 12 - $row_count;
+                $row_inc = 14 - $row_count;
                 for($i = 1; $i <= $row_inc; $i++){
             ?>
                 <tr>
