@@ -171,7 +171,7 @@ ob_start();
                 
                 $inc++; 
                 }
-                $row_inc = 16 - $row_count;
+                $row_inc = 11 - $row_count;
                 for($i = 1; $i <= $row_inc; $i++){
             ?>
                     <tr>
