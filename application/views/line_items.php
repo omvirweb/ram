@@ -435,7 +435,15 @@
             var qty = ($('#item_qty').val()) ? $('#item_qty').val() : 0;
             var rate = ($('#price').val()) ? $('#price').val() : 0;
             var gst = ($('#gst_rate').val()) ? $('#gst_rate').val() : 0;
-            var amount = (qty * rate) + (qty * rate * gst / 100);
+            
+            <?php if($voucher_type == 'sales4') { ?>
+                var sales_rate_type = $("#sales_rate_type").val();
+                if(sales_rate_type !='' && sales_rate_type == 1)
+                {
+                    rate = (parseFloat(rate)*100)/(parseFloat(gst)+100);
+                }
+            <?php } ?>
+            var amount = (parseFloat(qty) * parseFloat(rate)) + (parseFloat(qty) * parseFloat(rate) * parseFloat(gst)/100);
             $('#amount').val(parseFloat(amount).toFixed(2));
         });
 
