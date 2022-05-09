@@ -1251,8 +1251,8 @@ class Sales extends CI_Controller
                 $amt =  $sales_invoice_lineitem->price * $sales_invoice_lineitem->item_qty;
                 $gst_amount = $amt * $sales_invoice_lineitem->gst / 100;
                 $total_gst += $gst_amount;
-                $data['site_name'] = '';
-                $data['site_address'] = '';
+                // $data['site_name'] = '';
+                // $data['site_address'] = '';
                 if ($key == 0 && $sales_invoice_lineitem->site_id != null) {
                     $site_data = $this->crud->get_row_by_id('sites', array('site_id' => $sales_invoice_lineitem->site_id));
                     $data['site_name'] = (isset($site_data)) ? $site_data[0]->site_name : '';
