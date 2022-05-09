@@ -1328,6 +1328,7 @@ class Transaction extends CI_Controller {
             $invoice_data['sales_subject'] = (isset($post_data['sales_subject'])) ? $post_data['sales_subject'] : '';
             $invoice_data['sales_note'] = (isset($post_data['sales_note'])) ? $post_data['sales_note'] : '';
             $invoice_data['sales_type'] = 4;
+            $invoice_data['sales_rate_type'] = (isset($post_data['sales_rate_type'])) ? $post_data['sales_rate_type'] : 0;
 
         }elseif($voucher_type == 'purchase') {
             $module = 1;
@@ -1557,7 +1558,22 @@ class Transaction extends CI_Controller {
                 $add_lineitem['sub_cat_id'] = isset($lineitem->sub_cat_id) ? $lineitem->sub_cat_id : NULL;
                 $add_lineitem['item_id'] = isset($lineitem->item_id) ? $lineitem->item_id : 0;
                 $add_lineitem['item_qty'] = $lineitem->item_qty;
-                $add_lineitem['price'] = isset($lineitem->price) ? $lineitem->price : NULL;
+                if(isset($voucher_type) && $voucher_type == 'sales4')
+                {
+                    if(isset($post_data['sales_rate_type']) && $post_data['sales_rate_type'] == 1)
+                    {
+                        $add_lineitem['price_including_gst'] = isset($lineitem->price) ? $lineitem->price : 0;
+                        $divid_by=($gst_per+100);
+                        $add_lineitem['price'] = $add_lineitem['price_including_gst']*100/$divid_by;
+                    }else
+                    {
+                        $add_lineitem['price_including_gst'] = 0;
+                        $add_lineitem['price'] = isset($lineitem->price) ? $lineitem->price : NULL;
+                    }
+
+                }else{
+                    $add_lineitem['price'] = isset($lineitem->price) ? $lineitem->price : NULL;
+                }
                 $add_lineitem['pure_amount'] = isset($lineitem->pure_amount)?$lineitem->pure_amount:NULL;
                 $add_lineitem['amount'] = isset($lineitem->amount)?$lineitem->amount:NULL;
                 $add_lineitem['unit_id'] = isset($lineitem->unit_id)?$lineitem->unit_id:NULL;
@@ -1711,11 +1727,21 @@ class Transaction extends CI_Controller {
 
                 $add_lineitem['item_id'] = isset($lineitem->item_id)?$lineitem->item_id:0;
                 $add_lineitem['item_qty'] = $lineitem->item_qty;
-                $add_lineitem['price'] = isset($lineitem->price) ? $lineitem->price : NULL;
+                $gst_per = isset($lineitem->gst_rate)?$lineitem->gst_rate:0;
+                if(isset($voucher_type) && $voucher_type == 'sales4' && $post_data['sales_rate_type'] == 1)
+                {
+                    $add_lineitem['price_including_gst'] = isset($lineitem->price) ? $lineitem->price : 0;
+                    $divid_by=($gst_per+100);
+
+                    $add_lineitem['price'] = $add_lineitem['price_including_gst']*100/$divid_by;
+                }else{
+                    $add_lineitem['price'] = isset($lineitem->price) ? $lineitem->price : NULL;
+                }
+
                 $add_lineitem['pure_amount'] = isset($lineitem->pure_amount)?$lineitem->pure_amount:NULL;
                 $add_lineitem['amount'] = isset($lineitem->amount)?$lineitem->amount:NULL;
                 $add_lineitem['unit_id'] = isset($lineitem->unit_id)?$lineitem->unit_id:NULL;
-                $add_lineitem['gst'] = isset($lineitem->gst_rate)?$lineitem->gst_rate:0;
+                $add_lineitem['gst'] =$gst_per;
                 $add_lineitem['site_id'] = isset($lineitem->site_id)?$lineitem->site_id:NULL;
                 // Add Comapany id
                 $add_lineitem['hsn'] = isset($lineitem->hsn) ? $lineitem->hsn:NULL;  

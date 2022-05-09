@@ -160,3 +160,8 @@ ALTER TABLE `sales_invoice` ADD `book_no` VARCHAR(255) NULL AFTER `aspergem_serv
 
 --Parag : 2022_04_12 05:27 PM
 ALTER TABLE `sales_invoice` ADD `prof_tax` FLOAT NULL DEFAULT NULL AFTER `user_updated_by`;
+
+--Parag : 2022_05_09 04:23 PM
+ALTER TABLE `lineitems` ADD `price_including_gst` DOUBLE NOT NULL DEFAULT '0' AFTER `price`;
+--Parag : 2022_05_09 04:23 PM
+ALTER TABLE `sales_invoice` ADD `sales_rate_type` ENUM("0","1") NULL DEFAULT NULL COMMENT '1=Excluding GST, 2=Including GST' AFTER `sales_type`;
