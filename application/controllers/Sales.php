@@ -458,6 +458,7 @@ class Sales extends CI_Controller
                     $action .= '&nbsp;<a href="' . base_url('sales/format_3_4_invoice_print/' . $invoice->sales_invoice_id) . '" target="_blank" title="Formamt 3 Invoice Print" class="detail_button btn-info btn-xs"><span class="fa fa-print"></span></a>';
                 }else{
                     $action .= '&nbsp;<a href="' . base_url('sales/format_3_invoice_print/' . $invoice->sales_invoice_id) . '" target="_blank" title="Formamt 3 Invoice Print" class="detail_button btn-info btn-xs"><span class="fa fa-print"></span></a>';
+                    $action .= '&nbsp;<a href="' . base_url('sales/format_3_invoice_q_print/' . $invoice->sales_invoice_id) . '" target="_blank" title="Formamt 3 Quote Print" class="detail_button btn-info btn-xs"><span class="fa fa-quote-left"></span></a>';
                 }
             }
             
@@ -1154,7 +1155,11 @@ class Sales extends CI_Controller
         }
     }
 
-    function format_3_invoice_print($sales_invoice_id, $is_multiple = '') {
+    function format_3_invoice_q_print($sales_invoice_id, $is_multiple = '') {
+        $this->format_3_invoice_print ($sales_invoice_id, $is_multiple, "quote");
+    }
+
+    function format_3_invoice_print($sales_invoice_id, $is_multiple = '', $useView = "") {
         if (!empty($sales_invoice_id) && isset($sales_invoice_id)) {
             $result = $this->crud->get_data_row_by_id('sales_invoice', 'sales_invoice_id', $sales_invoice_id);            
             $user_detail = $this->crud->get_data_row_by_id('user', 'user_id', $result->created_by);
@@ -1251,8 +1256,8 @@ class Sales extends CI_Controller
                 $amt =  $sales_invoice_lineitem->price * $sales_invoice_lineitem->item_qty;
                 $gst_amount = $amt * $sales_invoice_lineitem->gst / 100;
                 $total_gst += $gst_amount;
-                $data['site_name'] = '';
-                $data['site_address'] = '';
+                // $data['site_name'] = '';
+                // $data['site_address'] = '';
                 if ($key == 0 && $sales_invoice_lineitem->site_id != null) {
                     $site_data = $this->crud->get_row_by_id('sites', array('site_id' => $sales_invoice_lineitem->site_id));
                     $data['site_name'] = (isset($site_data)) ? $site_data[0]->site_name : '';
@@ -1302,7 +1307,10 @@ class Sales extends CI_Controller
         $data['bank_branch'] = isset($bank_details->bank_branch) ? $bank_details->bank_branch : '';
         $data['bank_ac_no'] = isset($bank_details->bank_ac_no) ? $bank_details->bank_ac_no : '';
         $data['rtgs_ifsc_code'] = isset($bank_details->rtgs_ifsc_code) ? $bank_details->rtgs_ifsc_code : '';
-        $html = $this->load->view('sales/invoice/invoice_somnath_print', $data, true);
+        if($useView == "quote")
+            $html = $this->load->view('sales/invoice/invoice_somnath_q_print', $data, true);
+        else
+            $html = $this->load->view('sales/invoice/invoice_somnath_print', $data, true);
 
         $pdfFilePath = "sales_invoice_miracle_print.pdf";
         $this->load->library('m_pdf');

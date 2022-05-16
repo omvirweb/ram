@@ -129,10 +129,9 @@ ob_start();
                 <td colspan="3" class=" text_left no-border-bottom no-border-left no-border-top"><b class="text_bold"> : </b><?=isset($account_state) ? $account_state : '';?></td>
             </tr>
             <tr class="">
-                <td colspan="2" class="text_bold text_left no-border-bottom no-border-right no-border-top" style="white-space: nowrap;">Site Name : </td>
+                <td colspan="2" class="text_bold text_left no-border-bottom no-border-right no-border-top" style="white-space: nowrap;">Site Name:</td>
                 <td colspan="8" class=" text_left no-border-bottom no-border-left no-border-top">
-                    <?=isset($site_name) ? $site_name : '';?><br/>
-                    <?=isset($site_address) ? $site_address : '';?>
+                    <?= (isset($site_name)) ? $site_name.'<br/>' : ''; ?>
                 </td>
                 <td colspan="6" class="text_bold text_left no-border-bottom no-border-top">&nbsp;</td>
             </tr>
@@ -159,12 +158,12 @@ ob_start();
             <tr>
                 <td valign="top" colspan="1" class="text_center"><?php echo $inc; ?></td>
                 <td valign="top" colspan="7" align="left"><?php echo $lineitem->item_name;?><br><?php echo $lineitem->note;?></td>
-                <td valign="top" colspan="2" align="center"><?php echo $lineitem->hsn_code; ?></td>
+                <td valign="top" colspan="2" align="center"><?php echo $lineitem->hsn; ?></td>
                 <?php 
                     $unit = $this->crud->get_column_value_by_id('pack_unit', 'pack_unit_name', array('pack_unit_id' => $lineitem->unit_id));
                 ?>
                 <td valign="top" colspan="1" class="divRight"><?php echo $lineitem->item_qty; ?></td>
-                <td valign="top" colspan="1" class="divRight"><?php echo $unit; ?></td>
+                <td valign="top" colspan="1" align="center"><?php echo $unit; ?></td>
                 <td valign="top" colspan="1" class="divRight"><?php echo $lineitem->price; ?></td>
                 <?php //$gst = $lineitem->cgst +  $lineitem->sgst + $lineitem->igst?>
                 <td valign="top" colspan="1" class="divRight"><?php echo $lineitem->gst . '%'; ?></td>
