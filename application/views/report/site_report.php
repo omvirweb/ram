@@ -135,6 +135,10 @@
             }
         });
 
+        <?php if (isset($site_id) && !empty($site_id)) { ?>
+            setSelect2Value($("#site_id"), "<?= base_url('app/sites_group_select2_val_by_id/' . $site_id) ?>");
+        <?php } ?>
+
         var title = 'Site Report (From Date : ' + $('#datepicker1').val() + ' To Date : ' + $('#datepicker2').val() +')';
         var buttonCommon = {
 			exportOptions: {
