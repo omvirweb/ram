@@ -3817,10 +3817,10 @@ class Report extends CI_Controller {
 
     public function site_wise_expenses_summary_datatable()
     {
-        $from_date = '';
-        $to_date = '';
-        $site_id = '';
-        $account_id = '';
+        $from_date = null;
+        $to_date = null;
+        $site_id = null;
+        $account_id = null;
         if(isset($_POST['from_date']) && isset($_POST['to_date'])){
             $from_date=date('Y-m-d', strtotime($_POST['from_date']));
             $to_date=date('Y-m-d', strtotime($_POST['to_date']));
@@ -3832,17 +3832,15 @@ class Report extends CI_Controller {
             $account_id=$_POST['account_id'];
         }
 
-        // START 4th Col purchase_invoice_data
-        $this->db->select('l.module,SUM(l.amount) as total,l.site_id');
+        $this->db->select('SUM(l.amount) as total');
         $this->db->from('lineitems l');
         $this->db->join('purchase_invoice pi','pi.purchase_invoice_id = l.parent_id');
-        if(isset($_POST['site_id']) && $_POST['site_id'] != ''){
+        if($site_id){
             $this->db->where('l.site_id',$site_id);
         }
         $where_condition="((`l`.`module`=1) OR (`l`.`module`=8))";
         $this->db->where($where_condition,false,false);
-
-        if(isset($_POST['account_id']) && $_POST['account_id'] != ''){
+        if($account_id){
             $this->db->where('pi.account_id',$account_id);
         }
         if (!empty($from_date) && !empty($to_date)) {
@@ -3851,14 +3849,13 @@ class Report extends CI_Controller {
         }
         $purchase_invoice_data = $this->db->get()->result();
 
-        // START 4th Col payment_data
-        $this->db->select('t.transaction_date,t.transaction_type,SUM(t.amount) as total,t.account_id,t.site_id');
+        $this->db->select('SUM(t.amount) as total');
         $this->db->from('transaction_entry t');
-        if(isset($_POST['site_id']) && $_POST['site_id'] != ''){
-        $this->db->where('t.site_id',$site_id);
+        if($site_id){
+            $this->db->where('t.site_id',$site_id);
         }
         $this->db->where('t.transaction_type',1);
-        if(isset($_POST['account_id']) && $_POST['account_id'] != ''){
+        if($account_id){
             $this->db->where('t.account_id',$account_id);
         }
         if (!empty($from_date) && !empty($to_date)) {
@@ -3867,14 +3864,13 @@ class Report extends CI_Controller {
         }
         $payment_data = $this->db->get()->result();
 
-        // START 4th Col receipt_data
-        $this->db->select('t.transaction_date,t.transaction_type,SUM(t.amount) as total,t.account_id,t.site_id');
+        $this->db->select('SUM(t.amount) as total');
         $this->db->from('transaction_entry t');
-        if(isset($_POST['site_id']) && $_POST['site_id'] != ''){
-        $this->db->where('t.site_id',$site_id);
+        if($site_id){
+            $this->db->where('t.site_id',$site_id);
         }
         $this->db->where('t.transaction_type',2);
-        if(isset($_POST['account_id']) && $_POST['account_id'] != ''){
+        if($account_id){
             $this->db->where('t.account_id',$account_id);
         }
         if (!empty($from_date) && !empty($to_date)) {
@@ -3883,29 +3879,27 @@ class Report extends CI_Controller {
         }
         $receipt_data = $this->db->get()->result();
 
-
-        // START 4th Col sales_invoice_data
-        $this->db->select('l.module,SUM(l.amount) as total,l.site_id');
+        $this->db->select('SUM(l.amount) as total');
         $this->db->from('lineitems l');
         $this->db->join('sales_invoice si','si.sales_invoice_id = l.parent_id');
-        if(isset($_POST['site_id']) && $_POST['site_id'] != ''){
-        $this->db->where('l.site_id',$site_id);
+        if($site_id){
+            $this->db->where('l.site_id',$site_id);
         }
         $this->db->where('l.module',2);
-        if(isset($_POST['account_id']) && $_POST['account_id'] != ''){
+        if($account_id) {
             $this->db->where('si.account_id',$account_id);
         }
-        if (!empty($from_date) && !empty($to_date)) {
+        if(!empty($from_date) && !empty($to_date)) {
             $this->db->where('si.sales_invoice_date >=',$from_date);
             $this->db->where('si.sales_invoice_date <=',$to_date);
         }
         $sales_invoice_data = $this->db->get()->result();
 
         $data[]=[
-            isset($purchase_invoice_data[0]->total) ? '<span class="go_to" data-clicked="purchase_invoice" data-site_id="'.$site_id.'">'.$purchase_invoice_data[0]->total.'</span>' : '<span class="go_to" data-clicked="purchase_invoice" data-site_id="'.$site_id.'">0</span>',
-            isset($payment_data[0]->total) ?'<span class="go_to" data-clicked="payment" data-site_id="'.$site_id.'">'.$payment_data[0]->total.'</span>' :  '<span class="go_to" data-clicked="payment" data-site_id="'.$site_id.'">0</span>',
-            isset($receipt_data[0]->total) ?'<span class="go_to" data-clicked="receipt" data-site_id="'.$site_id.'">'.$receipt_data[0]->total.'</span>' :  '<span class="go_to" data-clicked="receipt" data-site_id="'.$site_id.'">0</span>',
-            isset($sales_invoice_data[0]->total) ?'<span class="go_to" data-clicked="sales_invoice" data-site_id="'.$site_id.'">'.$sales_invoice_data[0]->total.'</span>' :  '<span class="go_to" data-clicked="sales_invoice" data-site_id="'.$site_id.'">0</span>'
+            isset($purchase_invoice_data) ? '<span class="go_to" data-clicked="purchase_invoice" data-site_id="'.$site_id.'">'.$purchase_invoice_data.'</span>' : '<span class="go_to" data-clicked="purchase_invoice" data-site_id="'.$site_id.'">0</span>',
+            isset($payment_data) ?'<span class="go_to" data-clicked="payment" data-site_id="'.$site_id.'">'.$payment_data.'</span>' :  '<span class="go_to" data-clicked="payment" data-site_id="'.$site_id.'">0</span>',
+            isset($receipt_data) ?'<span class="go_to" data-clicked="receipt" data-site_id="'.$site_id.'">'.$receipt_data.'</span>' :  '<span class="go_to" data-clicked="receipt" data-site_id="'.$site_id.'">0</span>',
+            isset($sales_invoice_data) ?'<span class="go_to" data-clicked="sales_invoice" data-site_id="'.$site_id.'">'.$sales_invoice_data.'</span>' :  '<span class="go_to" data-clicked="sales_invoice" data-site_id="'.$site_id.'">0</span>'
         ];
 
         $output = array(
