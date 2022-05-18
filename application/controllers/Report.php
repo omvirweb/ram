@@ -3817,7 +3817,6 @@ class Report extends CI_Controller {
 
     public function site_wise_expenses_summary_datatable()
     {
-
         $from_date = '';
         $to_date = '';
         $site_id = '';
@@ -3832,19 +3831,14 @@ class Report extends CI_Controller {
         if(isset($_POST['account_id']) && $_POST['account_id'] != ''){
             $account_id=$_POST['account_id'];
         }
-        //lineitems    <<--Table
-        // module == 1 or 8
-        // amount
-        // parent_id
-        // site_id
-        // purchase_invoice    <<---Table
-        // purchase_invoice_date
-        // account_id
 
+        // START 4th Col purchase_invoice_data
         $this->db->select('l.module,SUM(l.amount) as total,l.site_id');
         $this->db->from('lineitems l');
         $this->db->join('purchase_invoice pi','pi.purchase_invoice_id = l.parent_id');
-        $this->db->where('l.site_id',$site_id);
+        if(isset($_POST['site_id']) && $_POST['site_id'] != ''){
+            $this->db->where('l.site_id',$site_id);
+        }
         $where_condition="((`l`.`module`=1) OR (`l`.`module`=8))";
         $this->db->where($where_condition,false,false);
 
@@ -3857,19 +3851,12 @@ class Report extends CI_Controller {
         }
         $purchase_invoice_data = $this->db->get()->result();
 
-
-
-
-
-        // transaction_entry  <--Table
-        // transaction_date
-        // transaction_type == 1 Payment
-        // amount
-        // account_id
-
+        // START 4th Col payment_data
         $this->db->select('t.transaction_date,t.transaction_type,SUM(t.amount) as total,t.account_id,t.site_id');
         $this->db->from('transaction_entry t');
+        if(isset($_POST['site_id']) && $_POST['site_id'] != ''){
         $this->db->where('t.site_id',$site_id);
+        }
         $this->db->where('t.transaction_type',1);
         if(isset($_POST['account_id']) && $_POST['account_id'] != ''){
             $this->db->where('t.account_id',$account_id);
@@ -3880,19 +3867,12 @@ class Report extends CI_Controller {
         }
         $payment_data = $this->db->get()->result();
 
-
-
-
-
-        // transaction_entry  <--Table
-        // transaction_date
-        // transaction_type == 2 Receipt
-        // amount
-        // account_id
-
+        // START 4th Col receipt_data
         $this->db->select('t.transaction_date,t.transaction_type,SUM(t.amount) as total,t.account_id,t.site_id');
         $this->db->from('transaction_entry t');
+        if(isset($_POST['site_id']) && $_POST['site_id'] != ''){
         $this->db->where('t.site_id',$site_id);
+        }
         $this->db->where('t.transaction_type',2);
         if(isset($_POST['account_id']) && $_POST['account_id'] != ''){
             $this->db->where('t.account_id',$account_id);
@@ -3903,19 +3883,14 @@ class Report extends CI_Controller {
         }
         $receipt_data = $this->db->get()->result();
 
-        //lineitems    <<--Table
-        // module == 2
-        // amount
-        // parent_id
-        // site_id
-        // sales_invoice    <<---Table
-        // sales_invoice_date
-        // account_id
 
+        // START 4th Col sales_invoice_data
         $this->db->select('l.module,SUM(l.amount) as total,l.site_id');
         $this->db->from('lineitems l');
         $this->db->join('sales_invoice si','si.sales_invoice_id = l.parent_id');
+        if(isset($_POST['site_id']) && $_POST['site_id'] != ''){
         $this->db->where('l.site_id',$site_id);
+        }
         $this->db->where('l.module',2);
         if(isset($_POST['account_id']) && $_POST['account_id'] != ''){
             $this->db->where('si.account_id',$account_id);
@@ -3926,111 +3901,12 @@ class Report extends CI_Controller {
         }
         $sales_invoice_data = $this->db->get()->result();
 
-
-        // $config['table'] = 'lineitems li';
-        // $config['select'] = 'li.*, (CASE WHEN module =1 OR module =8 THEN pi.purchase_invoice_date WHEN module =2 THEN si.sales_invoice_date WHEN module =3 THEN cn.invoice_date WHEN module =4 THEN dn.invoice_date WHEN module =5 OR module =6 THEN qu.quotation_date ELSE di.dispatch_invoice_date END) as tbl_date, li.item_id as l_item_id, it.item_id as i_item_id,it.item_name,li.item_qty,parent_id,pi.purchase_invoice_id,si.sales_invoice_id,cn.credit_note_id,dn.debit_note_id,qu.quotation_id,qu.quotation_type,di.dispatch_invoice_id,pi.invoice_type,si.sales_type,si.sales_invoice_desc';
-        // $config['column_order'] = array('li.module');
-		// $config['column_search'] = array('li.module');
-        // $config['joins'][] = array('join_table' => 'purchase_invoice pi', 'join_by' => 'pi.purchase_invoice_id = li.parent_id', 'join_type' => 'left');
-        // $config['joins'][] = array('join_table' => 'sales_invoice si', 'join_by' => 'si.sales_invoice_id = li.parent_id', 'join_type' => 'left');
-        // $config['joins'][] = array('join_table' => 'credit_note cn', 'join_by' => 'cn.credit_note_id = li.parent_id', 'join_type' => 'left');
-        // $config['joins'][] = array('join_table' => 'debit_note dn', 'join_by' => 'dn.debit_note_id = li.parent_id', 'join_type' => 'left');
-        // $config['joins'][] = array('join_table' => 'quotation qu', 'join_by' => 'qu.quotation_id = li.parent_id', 'join_type' => 'left');
-        // $config['joins'][] = array('join_table' => 'dispatch_invoice di', 'join_by' => 'di.dispatch_invoice_id = li.parent_id', 'join_type' => 'left');
-        // $config['joins'][] = array('join_table' => 'item it', 'join_by' => 'it.item_id = li.item_id', 'join_type' => 'left');
-        // // $config['wheres'][] = array('column_name' => 'dn.created_by', 'column_value' => $this->logged_in_id);
-        // if (!empty($site_id)) {
-        //     $config['wheres'][] = array('column_name' => 'li.site_id', 'column_value' => $site_id);
-        // }
-        // if (!empty($module)) {
-        //     $config['wheres'][] = array('column_name' => 'li.module', 'column_value' => $module);
-        // }
-        // if (!empty($from_date) && !empty($to_date)) {
-        //     $config['havings'][] = array('column_name' => 'tbl_date >=', 'column_value' => $from_date);
-        //     $config['havings'][] = array('column_name' => 'tbl_date <=', 'column_value' => $to_date);
-        // }
-        // $config['order'] = array('li.created_at' => 'desc');
-        // $this->load->library('datatables', $config, 'datatable');
-        // $list = $this->datatable->get_datatables();
-        // // echo $this->db->last_query();exit;
-        // $data = array();
-        // foreach ($list as $iteam) {
-		// 	$row = array();
-        //     $no_effect_in = 0;
-        //     $no_effect_in_amt = 0;
-        //     $no_effect_out_amt = 0;
-        //     $effect_out_amt = 0;
-        //     $effect_in_amt = 0;
-        //     $no_effect_out = 0;
-        //     $effect_in = 0;
-        //     $effect_out = 0;
-        //     $item_name = $iteam->item_name;
-        //     // $module = $module_option[$iteam->module];
-        //     if($iteam->module == 1){
-        //         if($iteam->invoice_type == 1){
-        //             $no_effect_in=$iteam->item_qty;
-        //             $no_effect_in_amt=$iteam->item_qty*$iteam->price;
-        //             $module ="Purchase Order";
-        //         }elseif($iteam->invoice_type == 2){
-        //             $effect_in=$iteam->item_qty;
-        //             $effect_in_amt=$iteam->item_qty*$iteam->price;
-        //             $module ="Purchase Invoice";
-        //         }elseif($iteam->invoice_type == 4){
-        //             $no_effect_out=$iteam->item_qty;
-        //             $no_effect_out_amt=$iteam->item_qty*$iteam->price;
-        //             $module ="Sales Order";
-        //         }
-        //     }elseif($iteam->module == 2){
-        //         if($iteam->sales_type == 4){
-        //             $iteam->sales_type = 3;
-        //         }
-        //         if($iteam->sales_type != 1){
-        //             $item_name = $iteam->item_name;
-        //         }
-        //         $module = $module."Type ".$iteam->sales_type;
-        //         $effect_out = $iteam->item_qty;
-        //         $effect_out_amt = $iteam->item_qty*$iteam->price;
-        //     }elseif($iteam->module == 3){
-        //         $effect_in = $iteam->item_qty;
-        //         $effect_in_amt = $iteam->item_qty*$iteam->price;
-        //     }elseif($iteam->module == 4){
-        //         $effect_out = $iteam->item_qty;
-        //         $effect_out_amt = $iteam->item_qty*$iteam->price;
-        //     }elseif($iteam->module == 5){
-        //         $no_effect_out = $iteam->item_qty;
-        //         $no_effect_out_amt = $iteam->item_qty*$iteam->price;
-        //     }elseif($iteam->module == 6){
-        //         $no_effect_in = $iteam->item_qty;
-        //         $no_effect_in_amt = $iteam->item_qty*$iteam->price;
-        //     }elseif($iteam->module == 7){
-        //         $effect_out = $iteam->item_qty;
-        //         $effect_out_amt = $iteam->item_qty*$iteam->price;
-        //     }elseif($iteam->module == 8){
-        //         $effect_in = $iteam->item_qty;
-        //         $effect_in_amt = $iteam->item_qty*$iteam->price;
-        //     }
-		// 	$row[] = $iteam->tbl_date;
-        //     $row[] = $item_name;
-        //     $row[] = $module;
-        //     $row[] = $no_effect_in;
-        //     $row[] = $no_effect_in_amt;
-        //     $row[] = $no_effect_out;
-        //     $row[] = $no_effect_out_amt;
-        //     $row[] = $effect_in;
-        //     $row[] = $effect_in_amt;
-        //     $row[] = $effect_out;
-        //     $row[] = $effect_out_amt;
-		// 	$data[] = $row;
-		// }
-
         $data[]=[
             isset($purchase_invoice_data[0]->total) ? '<span class="go_to" data-clicked="purchase_invoice" data-site_id="'.$site_id.'">'.$purchase_invoice_data[0]->total.'</span>' : '<span class="go_to" data-clicked="purchase_invoice" data-site_id="'.$site_id.'">0</span>',
             isset($payment_data[0]->total) ?'<span class="go_to" data-clicked="payment" data-site_id="'.$site_id.'">'.$payment_data[0]->total.'</span>' :  '<span class="go_to" data-clicked="payment" data-site_id="'.$site_id.'">0</span>',
             isset($receipt_data[0]->total) ?'<span class="go_to" data-clicked="receipt" data-site_id="'.$site_id.'">'.$receipt_data[0]->total.'</span>' :  '<span class="go_to" data-clicked="receipt" data-site_id="'.$site_id.'">0</span>',
             isset($sales_invoice_data[0]->total) ?'<span class="go_to" data-clicked="sales_invoice" data-site_id="'.$site_id.'">'.$sales_invoice_data[0]->total.'</span>' :  '<span class="go_to" data-clicked="sales_invoice" data-site_id="'.$site_id.'">0</span>'
         ];
-        // print_r($data);
-        // exit;
 
         $output = array(
 			"draw" => $_POST['draw'],

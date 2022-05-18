@@ -247,7 +247,7 @@
             ],
             "serverSide": true,
             "ordering": true,
-            "searching": true,
+            "searching": false,
             "aaSorting": [[1, 'desc']],
             "ajax": {
                 "url": "<?php echo base_url('report/site_report_datatable')?>",

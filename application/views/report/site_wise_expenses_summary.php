@@ -14,7 +14,7 @@
                                     <div class="col-md-2">
                                         <div class="form-group" style="width:100%">
                                             <label for="site_id" class="control-label"  style="margin-bottom: 3px;">Site</label>
-                                            <select name="line_items_data[site_id]" id="site_id" value="13" class="form-control select2">
+                                            <select name="line_items_data[site_id]" id="site_id" value="" class="form-control select2">
                                             </select>
                                         </div>
                                     </div>
@@ -30,15 +30,13 @@
                                             <input type="text" name="to_date" id="datepicker2" class="form-control" value="<?php echo isset($to_date) ? date('d-m-Y',strtotime($to_date)) :  date('d-m-Y'); ?>">
                                         </div>
                                     </div>
-                                </div>
-                                <div class="row">
                                     <div class="col-md-4">
                                         <div class="form-group col-md-12">
                                             <label for="account_id">Account</label>
                                             <select name="account_id" id="account_id" class="account_id" required ></select>
                                         </div>
                                     </div>
-                                    <div class="col-md-2">
+                                    <div class="col-md-2" style="padding: 5px;">
                                         <input type="hidden" name="" id="table_draw" value="0">
                                         <br><button type="button" id="btn_search" class="btn btn-default pull-left">Submit</button>
                                     </div>
@@ -78,6 +76,7 @@
         <?php } ?>
 
         $("#site_id").select2({
+            placeholder:'--All--',
             allowClear: true,
             width:"100%",
             ajax: {
@@ -235,11 +234,13 @@
             }
         });
         $(document).on('click','.go_to',function(){
-            alert('111')
-            // var site_id = $(this).data('site_id');
-            // var url = "<?php echo base_url().'/report/site_wise_expenses_summary/'; ?>"+site_id;
-            // console.log(url)
-            // // window.location(url);
+            var site_id = $(this).data('site_id');
+            var url = "<?php echo base_url().'report/site_report/'; ?>"+site_id;
+            window.location.replace(url);
         })
     });
 </script>
+<style>
+    .dataTables_filter, .dataTables_info { display: none; }
+</style>
+
