@@ -3896,10 +3896,10 @@ class Report extends CI_Controller {
         $sales_invoice_data = $this->db->get()->result();
 
         $data[]=[
-            isset($purchase_invoice_data) ? '<span class="go_to" data-clicked="purchase_invoice" data-site_id="'.$site_id.'">'.$purchase_invoice_data.'</span>' : '<span class="go_to" data-clicked="purchase_invoice" data-site_id="'.$site_id.'">0</span>',
-            isset($payment_data) ?'<span class="go_to" data-clicked="payment" data-site_id="'.$site_id.'">'.$payment_data.'</span>' :  '<span class="go_to" data-clicked="payment" data-site_id="'.$site_id.'">0</span>',
-            isset($receipt_data) ?'<span class="go_to" data-clicked="receipt" data-site_id="'.$site_id.'">'.$receipt_data.'</span>' :  '<span class="go_to" data-clicked="receipt" data-site_id="'.$site_id.'">0</span>',
-            isset($sales_invoice_data) ?'<span class="go_to" data-clicked="sales_invoice" data-site_id="'.$site_id.'">'.$sales_invoice_data.'</span>' :  '<span class="go_to" data-clicked="sales_invoice" data-site_id="'.$site_id.'">0</span>'
+            isset($purchase_invoice_data[0]->total) ? '<span class="go_to" data-clicked="purchase_invoice" data-site_id="'.$site_id.'">'.$purchase_invoice_data[0]->total.'</span>' : '<span class="go_to" data-clicked="purchase_invoice" data-site_id="'.$site_id.'">0</span>',
+            isset($payment_data[0]->total) ?'<span class="go_to" data-clicked="payment" data-site_id="'.$site_id.'">'.$payment_data[0]->total.'</span>' :  '<span class="go_to" data-clicked="payment" data-site_id="'.$site_id.'">0</span>',
+            isset($receipt_data[0]->total) ?'<span class="go_to" data-clicked="receipt" data-site_id="'.$site_id.'">'.$receipt_data[0]->total.'</span>' :  '<span class="go_to" data-clicked="receipt" data-site_id="'.$site_id.'">0</span>',
+            isset($sales_invoice_data[0]->total) ?'<span class="go_to" data-clicked="sales_invoice" data-site_id="'.$site_id.'">'.$sales_invoice_data[0]->total.'</span>' :  '<span class="go_to" data-clicked="sales_invoice" data-site_id="'.$site_id.'">0</span>'
         ];
 
         $output = array(
