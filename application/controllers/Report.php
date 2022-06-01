@@ -3815,6 +3815,10 @@ class Report extends CI_Controller {
         set_page('report/site_wise_expenses_summary');
     }
 
+    function site_wise_expenses_summary_ac(){
+        set_page('report/site_wise_expenses_summary_ac');
+    }
+
     public function site_wise_expenses_summary_datatable()
     {
         $from_date = null;
@@ -3911,4 +3915,124 @@ class Report extends CI_Controller {
         echo json_encode($output);
         exit;
     }
+
+    public function site_wise_expenses_summary_ac_datatable()
+    {
+        $from_date = null;
+        $to_date = null;
+        $site_id = null;
+        $account_id = null;
+        $data_array = array();
+        if(isset($_POST['from_date']) && isset($_POST['to_date'])){
+            $from_date=date('Y-m-d', strtotime($_POST['from_date']));
+            $to_date=date('Y-m-d', strtotime($_POST['to_date']));
+        }
+        if(isset($_POST['site_id']) && $_POST['site_id'] != ''){
+            $site_id=$_POST['site_id'];
+        }
+        if(isset($_POST['account_id']) && $_POST['account_id'] != ''){
+            $account_id=$_POST['account_id'];
+        }
+
+        
+        $this->db->from('lineitems l');
+        $this->db->join('purchase_invoice pi','pi.purchase_invoice_id = l.parent_id');
+        if($site_id){
+            $this->db->where('l.site_id',$site_id);
+        }
+        $where_condition="((`l`.`module`=1) OR (`l`.`module`=8))";
+        $this->db->where($where_condition,false,false);
+        if($account_id){
+            $this->db->where('pi.account_id',$account_id);
+        }
+        if (!empty($from_date) && !empty($to_date)) {
+            $this->db->where('pi.purchase_invoice_date >=',$from_date);
+            $this->db->where('pi.purchase_invoice_date <=',$to_date);
+        }
+        //$this->db->group_by('pi.account_id');
+        $purchase_invoice_data = $this->db->get()->result();
+        $ac_wise_purches_rate=array();
+        echo "<pre>";
+        // print_r($purchase_invoice_data);
+        foreach($purchase_invoice_data as $key=>$value)
+        {
+
+            // $data_array['account_id'] = $purchase_invoice_data[$key]->account_id;
+                if (array_key_exists($value->account_id,$ac_wise_purches_rate)){
+                    $ac_wise_purches_rate[$value->account_id]['purchase_amount'] = $ac_wise_purches_rate[$value->account_id]['purchase_amount'] + $value->amount;
+                }else{
+                    $ac_wise_purches_rate[$value->account_id]['purchase_amount'] = $value->amount;
+                }
+
+            $data[]=[
+                 '<span class="go_to" data-clicked="purchase_invoice" data-site_id="'.$site_id.'">het'.$data_array['account_id'].'</span>' ,
+                '<span class="go_to" data-clicked="payment" data-site_id="'.$site_id.'">0</span>',
+                '<span class="go_to" data-clicked="receipt" data-site_id="'.$site_id.'">0</span>',
+                '<span class="go_to" data-clicked="sales_invoice" data-site_id="'.$site_id.'">0</span>'
+            ];
+        }
+
+        $this->db->select('SUM(t.amount) as total');
+        $this->db->from('transaction_entry t');
+        if($site_id){
+            $this->db->where('t.site_id',$site_id);
+        }
+        $this->db->where('t.transaction_type',1);
+        if($account_id){
+            $this->db->where('t.account_id',$account_id);
+        }
+        if (!empty($from_date) && !empty($to_date)) {
+            $this->db->where('t.transaction_date >=',$from_date);
+            $this->db->where('t.transaction_date <=',$to_date);
+        }
+        $payment_data = $this->db->get()->result();
+
+        $this->db->select('SUM(t.amount) as total');
+        $this->db->from('transaction_entry t');
+        if($site_id){
+            $this->db->where('t.site_id',$site_id);
+        }
+        $this->db->where('t.transaction_type',2);
+        if($account_id){
+            $this->db->where('t.account_id',$account_id);
+        }
+        if (!empty($from_date) && !empty($to_date)) {
+            $this->db->where('t.transaction_date >=',$from_date);
+            $this->db->where('t.transaction_date <=',$to_date);
+        }
+        $receipt_data = $this->db->get()->result();
+
+        $this->db->select('SUM(l.amount) as total');
+        $this->db->from('lineitems l');
+        $this->db->join('sales_invoice si','si.sales_invoice_id = l.parent_id');
+        if($site_id){
+            $this->db->where('l.site_id',$site_id);
+        }
+        $this->db->where('l.module',2);
+        if($account_id) {
+            $this->db->where('si.account_id',$account_id);
+        }
+        if(!empty($from_date) && !empty($to_date)) {
+            $this->db->where('si.sales_invoice_date >=',$from_date);
+            $this->db->where('si.sales_invoice_date <=',$to_date);
+        }
+        $sales_invoice_data = $this->db->get()->result();
+
+        $data[]=[
+            isset($purchase_invoice_data[0]->total) ? '<span class="go_to" data-clicked="purchase_invoice" data-site_id="'.$site_id.'">'.$purchase_invoice_data[0]->total.'</span>' : '<span class="go_to" data-clicked="purchase_invoice" data-site_id="'.$site_id.'">0</span>',
+            isset($payment_data[0]->total) ?'<span class="go_to" data-clicked="payment" data-site_id="'.$site_id.'">'.$payment_data[0]->total.'</span>' :  '<span class="go_to" data-clicked="payment" data-site_id="'.$site_id.'">0</span>',
+            isset($receipt_data[0]->total) ?'<span class="go_to" data-clicked="receipt" data-site_id="'.$site_id.'">'.$receipt_data[0]->total.'</span>' :  '<span class="go_to" data-clicked="receipt" data-site_id="'.$site_id.'">0</span>',
+            isset($sales_invoice_data[0]->total) ?'<span class="go_to" data-clicked="sales_invoice" data-site_id="'.$site_id.'">'.$sales_invoice_data[0]->total.'</span>' :  '<span class="go_to" data-clicked="sales_invoice" data-site_id="'.$site_id.'">0</span>'
+        ];
+
+        $output = array(
+			"draw" => $_POST['draw'],
+			"recordsTotal" => 1,
+			"recordsFiltered" => 1,
+			"data" => $data,
+		);
+        echo json_encode($output);
+        exit;
+    }
 }
+
