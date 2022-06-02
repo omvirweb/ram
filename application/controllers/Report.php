@@ -3923,6 +3923,7 @@ class Report extends CI_Controller {
         $site_id = null;
         $account_id = null;
         $data_array = array();
+        $ac_wise_rate=array();
         if(isset($_POST['from_date']) && isset($_POST['to_date'])){
             $from_date=date('Y-m-d', strtotime($_POST['from_date']));
             $to_date=date('Y-m-d', strtotime($_POST['to_date']));
@@ -3934,9 +3935,10 @@ class Report extends CI_Controller {
             $account_id=$_POST['account_id'];
         }
 
-        
+        // Purchase Amount Total
         $this->db->from('lineitems l');
         $this->db->join('purchase_invoice pi','pi.purchase_invoice_id = l.parent_id');
+        $this->db->join('account a','a.account_id = pi.account_id');
         if($site_id){
             $this->db->where('l.site_id',$site_id);
         }
@@ -3949,31 +3951,22 @@ class Report extends CI_Controller {
             $this->db->where('pi.purchase_invoice_date >=',$from_date);
             $this->db->where('pi.purchase_invoice_date <=',$to_date);
         }
-        //$this->db->group_by('pi.account_id');
         $purchase_invoice_data = $this->db->get()->result();
-        $ac_wise_purches_rate=array();
-        echo "<pre>";
-        // print_r($purchase_invoice_data);
-        foreach($purchase_invoice_data as $key=>$value)
-        {
-
-            // $data_array['account_id'] = $purchase_invoice_data[$key]->account_id;
-                if (array_key_exists($value->account_id,$ac_wise_purches_rate)){
-                    $ac_wise_purches_rate[$value->account_id]['purchase_amount'] = $ac_wise_purches_rate[$value->account_id]['purchase_amount'] + $value->amount;
-                }else{
-                    $ac_wise_purches_rate[$value->account_id]['purchase_amount'] = $value->amount;
-                }
-
-            $data[]=[
-                 '<span class="go_to" data-clicked="purchase_invoice" data-site_id="'.$site_id.'">het'.$data_array['account_id'].'</span>' ,
-                '<span class="go_to" data-clicked="payment" data-site_id="'.$site_id.'">0</span>',
-                '<span class="go_to" data-clicked="receipt" data-site_id="'.$site_id.'">0</span>',
-                '<span class="go_to" data-clicked="sales_invoice" data-site_id="'.$site_id.'">0</span>'
-            ];
+        foreach($purchase_invoice_data as $key=>$value){
+            if (array_key_exists($value->account_id,$ac_wise_rate)){
+                $ac_wise_rate[$value->account_id]['purchase_amount'] = $ac_wise_rate[$value->account_id]['purchase_amount'] + $value->amount;
+            }else{
+                $ac_wise_rate[$value->account_id]['purchase_amount'] = $value->amount;
+                $ac_wise_rate[$value->account_id]['payment_amount'] = 0;
+                $ac_wise_rate[$value->account_id]['receipt_amount'] = 0;
+                $ac_wise_rate[$value->account_id]['sales_invoice_amount'] = 0;
+                $ac_wise_rate[$value->account_id]['account_name'] = $value->account_name;
+            }
         }
 
-        $this->db->select('SUM(t.amount) as total');
+        // Payment Amount Total
         $this->db->from('transaction_entry t');
+        $this->db->join('account a','a.account_id = t.account_id');
         if($site_id){
             $this->db->where('t.site_id',$site_id);
         }
@@ -3986,9 +3979,23 @@ class Report extends CI_Controller {
             $this->db->where('t.transaction_date <=',$to_date);
         }
         $payment_data = $this->db->get()->result();
+        foreach($payment_data as $key=>$value){
+            if (array_key_exists($value->account_id,$ac_wise_rate)){
+                $ac_wise_rate[$value->account_id]['payment_amount'] = $ac_wise_rate[$value->account_id]['payment_amount'] + $value->amount;
+            }else{
+                $ac_wise_rate[$value->account_id]['payment_amount'] = $value->amount;
+                $ac_wise_rate[$value->account_id]['purchase_amount'] = 0;
+                $ac_wise_rate[$value->account_id]['receipt_amount'] = 0;
+                $ac_wise_rate[$value->account_id]['sales_invoice_amount'] = 0;
+                $ac_wise_rate[$value->account_id]['account_name'] = $value->account_name;
+            }
+        }
 
-        $this->db->select('SUM(t.amount) as total');
+
+        // Receipt Amount
+        // $this->db->select('SUM(t.amount) as total');
         $this->db->from('transaction_entry t');
+        $this->db->join('account a','a.account_id = t.account_id');
         if($site_id){
             $this->db->where('t.site_id',$site_id);
         }
@@ -4001,10 +4008,23 @@ class Report extends CI_Controller {
             $this->db->where('t.transaction_date <=',$to_date);
         }
         $receipt_data = $this->db->get()->result();
+        foreach($receipt_data as $key=>$value){
+            if (array_key_exists($value->account_id,$ac_wise_rate)){
+                $ac_wise_rate[$value->account_id]['receipt_amount'] = $ac_wise_rate[$value->account_id]['receipt_amount'] + $value->amount;
+            }else{
+                $ac_wise_rate[$value->account_id]['receipt_amount'] = $value->amount;
+                $ac_wise_rate[$value->account_id]['purchase_amount'] = 0;
+                $ac_wise_rate[$value->account_id]['payment_amount'] = 0;
+                $ac_wise_rate[$value->account_id]['sales_invoice_amount'] = 0;
+                $ac_wise_rate[$value->account_id]['account_name'] = $value->account_name;
+            }
+        }
 
-        $this->db->select('SUM(l.amount) as total');
+        // Sales Invoice Amount
+        // $this->db->select('SUM(l.amount) as total');
         $this->db->from('lineitems l');
         $this->db->join('sales_invoice si','si.sales_invoice_id = l.parent_id');
+        $this->db->join('account a','a.account_id = si.account_id');
         if($site_id){
             $this->db->where('l.site_id',$site_id);
         }
@@ -4017,19 +4037,33 @@ class Report extends CI_Controller {
             $this->db->where('si.sales_invoice_date <=',$to_date);
         }
         $sales_invoice_data = $this->db->get()->result();
+        foreach($sales_invoice_data as $key=>$value){
+            if (array_key_exists($value->account_id,$ac_wise_rate)){
+                $ac_wise_rate[$value->account_id]['sales_invoice_amount'] = $ac_wise_rate[$value->account_id]['sales_invoice_amount'] + $value->amount;
+            }else{
+                $ac_wise_rate[$value->account_id]['sales_invoice_amount'] = $value->amount;
+                $ac_wise_rate[$value->account_id]['purchase_amount'] = 0;
+                $ac_wise_rate[$value->account_id]['payment_amount'] = 0;
+                $ac_wise_rate[$value->account_id]['receipt_amount'] = 0;
+                $ac_wise_rate[$value->account_id]['account_name'] = $value->account_name;
+            }
+        }
 
-        $data[]=[
-            isset($purchase_invoice_data[0]->total) ? '<span class="go_to" data-clicked="purchase_invoice" data-site_id="'.$site_id.'">'.$purchase_invoice_data[0]->total.'</span>' : '<span class="go_to" data-clicked="purchase_invoice" data-site_id="'.$site_id.'">0</span>',
-            isset($payment_data[0]->total) ?'<span class="go_to" data-clicked="payment" data-site_id="'.$site_id.'">'.$payment_data[0]->total.'</span>' :  '<span class="go_to" data-clicked="payment" data-site_id="'.$site_id.'">0</span>',
-            isset($receipt_data[0]->total) ?'<span class="go_to" data-clicked="receipt" data-site_id="'.$site_id.'">'.$receipt_data[0]->total.'</span>' :  '<span class="go_to" data-clicked="receipt" data-site_id="'.$site_id.'">0</span>',
-            isset($sales_invoice_data[0]->total) ?'<span class="go_to" data-clicked="sales_invoice" data-site_id="'.$site_id.'">'.$sales_invoice_data[0]->total.'</span>' :  '<span class="go_to" data-clicked="sales_invoice" data-site_id="'.$site_id.'">0</span>'
-        ];
-
+        foreach($ac_wise_rate as $key=>$value){
+            $row = array();
+            $row[]=$value['account_name'];
+            $row[]=number_format($value['purchase_amount'],2);
+            $row[]=number_format($value['payment_amount'],2);
+            $row[]=number_format($value['receipt_amount'],2);
+            $row[]=number_format($value['sales_invoice_amount'],2);
+            $data_array[]=$row;
+        }
+        
         $output = array(
 			"draw" => $_POST['draw'],
 			"recordsTotal" => 1,
 			"recordsFiltered" => 1,
-			"data" => $data,
+			"data" => $data_array,
 		);
         echo json_encode($output);
         exit;

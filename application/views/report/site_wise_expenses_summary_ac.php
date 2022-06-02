@@ -52,6 +52,7 @@
                         <table class="table table-striped table-bordered sales-table" id="sales-table">
 							<thead>
 								<tr>
+									<th>Account Name</th>
 									<th>Purchase Invoice</th>
                                     <th>Payment</th>
                                     <th>Receipt</th>
@@ -122,14 +123,15 @@
 						objLayout['hLineWidth'] = function(i) { return .5; };
 						objLayout['vLineWidth'] = function(i) { return .5; };
 						doc.content[1].layout = objLayout;
-						doc.content[1].table.widths = ["25%","25%","25%", "25%"]; //costringe le colonne ad occupare un dato spazio per gestire il baco del 100% width che non si concretizza mai
+						doc.content[1].table.widths = ["25%","25%","25%", "25%","25%"]; //costringe le colonne ad occupare un dato spazio per gestire il baco del 100% width che non si concretizza mai
 						var rowCount = document.getElementById("stock-table").rows.length;
 
 						for (i = 1; i < rowCount; i++) {
-								doc.content[1].table.body[i][0].alignment = 'center';
-								doc.content[1].table.body[i][1].alignment = 'center';
-								doc.content[1].table.body[i][2].alignment = 'center';
-								doc.content[1].table.body[i][3].alignment = 'center';
+								doc.content[1].table.body[i][0].alignment = 'left';
+								doc.content[1].table.body[i][1].alignment = 'right';
+								doc.content[1].table.body[i][2].alignment = 'right';
+								doc.content[1].table.body[i][3].alignment = 'right';
+								doc.content[1].table.body[i][4].alignment = 'right';
 						};
 					}
                 } ),
@@ -138,7 +140,7 @@
 
                         var sheet = xlsx.xl.worksheets['sheet1.xml'];
 
-                        var downrows = 4;
+                        var downrows = 5;
                         var clRow = $('row', sheet);
                         //update Row
                         clRow.each(function () {
@@ -180,17 +182,20 @@
                 }),
                 $.extend( true, {}, buttonCommon, { extend: 'print',  title: function () { return (title)},
                     customize : function(win){
-                        $(win.document.body).find('table thead th:nth-child(0)').css('text-align', 'center');
-                        $(win.document.body).find('table tbody td:nth-child(0)').css('text-align', 'center');
+                        $(win.document.body).find('table thead th:nth-child(0)').css('text-align', 'left');
+                        $(win.document.body).find('table tbody td:nth-child(0)').css('text-align', 'left');
 
-                        $(win.document.body).find('table thead th:nth-child(1)').css('text-align', 'center');
-                        $(win.document.body).find('table tbody td:nth-child(1)').css('text-align', 'center');
+                        $(win.document.body).find('table thead th:nth-child(1)').css('text-align', 'right');
+                        $(win.document.body).find('table tbody td:nth-child(1)').css('text-align', 'right');
                         
-                        $(win.document.body).find('table thead th:nth-child(2)').css('text-align', 'center');
-                        $(win.document.body).find('table tbody td:nth-child(2)').css('text-align', 'center');
+                        $(win.document.body).find('table thead th:nth-child(2)').css('text-align', 'right');
+                        $(win.document.body).find('table tbody td:nth-child(2)').css('text-align', 'right');
                         
-                        $(win.document.body).find('table thead th:nth-child(3)').css('text-align', 'center');
-                        $(win.document.body).find('table tbody td:nth-child(3)').css('text-align', 'center');
+                        $(win.document.body).find('table thead th:nth-child(3)').css('text-align', 'right');
+                        $(win.document.body).find('table tbody td:nth-child(3)').css('text-align', 'right');
+
+                        $(win.document.body).find('table thead th:nth-child(4)').css('text-align', 'right');
+                        $(win.document.body).find('table tbody td:nth-child(4)').css('text-align', 'right');
                         
                     }, action: newExportAction } ),
             ],
@@ -213,11 +218,12 @@
                 "loadingIndicator": true
             },
             "columnDefs": [
-                {"targets": 0, "orderable": false },
-                {"className": "text-center", "targets": [0] },
-                {"className": "text-center", "targets": [1] },
-                {"className": "text-center", "targets": [2] },
-                {"className": "text-center", "targets": [3] },
+                // {"targets": 0, "orderable": false },
+                {"className": "text-left", "targets": [0] },
+                {"className": "text-right", "targets": [1] },
+                {"className": "text-right", "targets": [2] },
+                {"className": "text-right", "targets": [3] },
+                {"className": "text-right", "targets": [4] },
             ],
         });
 
