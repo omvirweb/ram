@@ -700,6 +700,9 @@ $is_single_line_item = 1;
                                         <li class="<?= ($segment2 == 'site_report') ? 'active' : '' ?>">
                                             <a href="<?php echo base_url() ?>report/site_report/"><i class="fa fa-circle-o"></i> Site Report </a>
                                         </li>
+                                        <li class="<?= ($segment2 == 'site_wise_expenses_summary_ac') ? 'active' : '' ?>">
+                                            <a href="<?php echo base_url() ?>report/site_wise_expenses_summary_ac/"><i class="fa fa-circle-o"></i>Site Wise Expenses Summary AC </a>
+                                        </li>
                                         <li class="<?= ($segment2 == 'site_wise_expenses_summary') ? 'active' : '' ?>">
                                             <a href="<?php echo base_url() ?>report/site_wise_expenses_summary/"><i class="fa fa-circle-o"></i>Site Wise Expenses Summary </a>
                                         </li>
