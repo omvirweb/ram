@@ -156,7 +156,7 @@ ob_start();
                     $pure_total_amt += $pure_amt;
                     $inc++; 
                 }
-                $row_inc = 16 - $row_count;
+                $row_inc = 13 - $row_count;
                 for($i = 1; $i <= $row_inc; $i++){
             ?>
                 <tr>
