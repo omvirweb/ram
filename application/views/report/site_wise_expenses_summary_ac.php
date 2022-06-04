@@ -55,8 +55,12 @@
 									<th>Account Name</th>
 									<th>Purchase Invoice</th>
                                     <th>Payment</th>
-                                    <th>Receipt</th>
+									<th>Payment Diff</th>
                                     <th>Sales Invoice</th>
+                                    <th>Receipt</th>
+									<th>Sales Diff</th>
+									<th>Sales Quotation</th>
+									<th>Quote Diff</th>
                                 </tr>
 							</thead>
 							<tbody>

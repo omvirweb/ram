@@ -4052,10 +4052,15 @@ class Report extends CI_Controller {
         foreach($ac_wise_rate as $key=>$value){
             $row = array();
             $row[]=$value['account_name'];
-            $row[]=number_format($value['purchase_amount'],2);
-            $row[]=number_format($value['payment_amount'],2);
-            $row[]=number_format($value['receipt_amount'],2);
-            $row[]=number_format($value['sales_invoice_amount'],2);
+            $row[]=number_format($value['purchase_amount'],2,'.','');
+            $row[]=number_format($value['payment_amount'],2,'.','');
+            $row[]=$value['payment_amount'] - $value['purchase_amount'];
+            $row[]=number_format($value['sales_invoice_amount'],2,'.','');
+            $row[]=number_format($value['receipt_amount'],2,'.','');
+            $row[]=$value['receipt_amount'] - $value['sales_invoice_amount'];
+            $row[]=0;
+            $row[]=0;
+            
             $data_array[]=$row;
         }
         
