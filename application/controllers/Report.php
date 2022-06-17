@@ -3937,8 +3937,8 @@ class Report extends CI_Controller {
 
         // Purchase Amount Total
         $this->db->from('lineitems l');
-        $this->db->join('purchase_invoice pi','pi.purchase_invoice_id = l.parent_id');
-        $this->db->join('account a','a.account_id = pi.account_id');
+        $this->db->join('purchase_invoice pi','pi.purchase_invoice_id = l.parent_id' ,'left');
+        $this->db->join('account a','a.account_id = pi.account_id','left');
         if($site_id){
             $this->db->where('l.site_id',$site_id);
         }
@@ -3952,6 +3952,7 @@ class Report extends CI_Controller {
             $this->db->where('pi.purchase_invoice_date <=',$to_date);
         }
         $purchase_invoice_data = $this->db->get()->result();
+ 
         foreach($purchase_invoice_data as $key=>$value){
             if (array_key_exists($value->account_id,$ac_wise_rate)){
                 $ac_wise_rate[$value->account_id]['purchase_amount'] = $ac_wise_rate[$value->account_id]['purchase_amount'] + $value->amount;
@@ -3960,13 +3961,15 @@ class Report extends CI_Controller {
                 $ac_wise_rate[$value->account_id]['payment_amount'] = 0;
                 $ac_wise_rate[$value->account_id]['receipt_amount'] = 0;
                 $ac_wise_rate[$value->account_id]['sales_invoice_amount'] = 0;
+                $ac_wise_rate[$value->account_id]['sales_quotation_amount'] = 0;
                 $ac_wise_rate[$value->account_id]['account_name'] = $value->account_name;
             }
         }
 
+
         // Payment Amount Total
         $this->db->from('transaction_entry t');
-        $this->db->join('account a','a.account_id = t.account_id');
+        $this->db->join('account a','a.account_id = t.to_account_id ','left');
         if($site_id){
             $this->db->where('t.site_id',$site_id);
         }
@@ -3979,6 +3982,9 @@ class Report extends CI_Controller {
             $this->db->where('t.transaction_date <=',$to_date);
         }
         $payment_data = $this->db->get()->result();
+
+
+
         foreach($payment_data as $key=>$value){
             if (array_key_exists($value->account_id,$ac_wise_rate)){
                 $ac_wise_rate[$value->account_id]['payment_amount'] = $ac_wise_rate[$value->account_id]['payment_amount'] + $value->amount;
@@ -3987,15 +3993,16 @@ class Report extends CI_Controller {
                 $ac_wise_rate[$value->account_id]['purchase_amount'] = 0;
                 $ac_wise_rate[$value->account_id]['receipt_amount'] = 0;
                 $ac_wise_rate[$value->account_id]['sales_invoice_amount'] = 0;
+                $ac_wise_rate[$value->account_id]['sales_quotation_amount'] = 0;
                 $ac_wise_rate[$value->account_id]['account_name'] = $value->account_name;
             }
         }
 
-
         // Receipt Amount
         // $this->db->select('SUM(t.amount) as total');
         $this->db->from('transaction_entry t');
-        $this->db->join('account a','a.account_id = t.account_id');
+        // $this->db->join('account a','a.account_id = t.account_id','left');
+        $this->db->join('account a','a.account_id = t.from_account_id','left');
         if($site_id){
             $this->db->where('t.site_id',$site_id);
         }
@@ -4008,6 +4015,7 @@ class Report extends CI_Controller {
             $this->db->where('t.transaction_date <=',$to_date);
         }
         $receipt_data = $this->db->get()->result();
+
         foreach($receipt_data as $key=>$value){
             if (array_key_exists($value->account_id,$ac_wise_rate)){
                 $ac_wise_rate[$value->account_id]['receipt_amount'] = $ac_wise_rate[$value->account_id]['receipt_amount'] + $value->amount;
@@ -4016,6 +4024,7 @@ class Report extends CI_Controller {
                 $ac_wise_rate[$value->account_id]['purchase_amount'] = 0;
                 $ac_wise_rate[$value->account_id]['payment_amount'] = 0;
                 $ac_wise_rate[$value->account_id]['sales_invoice_amount'] = 0;
+                $ac_wise_rate[$value->account_id]['sales_quotation_amount'] = 0;
                 $ac_wise_rate[$value->account_id]['account_name'] = $value->account_name;
             }
         }
@@ -4023,8 +4032,8 @@ class Report extends CI_Controller {
         // Sales Invoice Amount
         // $this->db->select('SUM(l.amount) as total');
         $this->db->from('lineitems l');
-        $this->db->join('sales_invoice si','si.sales_invoice_id = l.parent_id');
-        $this->db->join('account a','a.account_id = si.account_id');
+        $this->db->join('sales_invoice si','si.sales_invoice_id = l.parent_id','left');
+        $this->db->join('account a','a.account_id = si.account_id','left');
         if($site_id){
             $this->db->where('l.site_id',$site_id);
         }
@@ -4045,6 +4054,38 @@ class Report extends CI_Controller {
                 $ac_wise_rate[$value->account_id]['purchase_amount'] = 0;
                 $ac_wise_rate[$value->account_id]['payment_amount'] = 0;
                 $ac_wise_rate[$value->account_id]['receipt_amount'] = 0;
+                $ac_wise_rate[$value->account_id]['sales_quotation_amount'] = 0;
+                $ac_wise_rate[$value->account_id]['account_name'] = $value->account_name;
+            }
+        }
+
+        // Sales Quotation Amount
+        // $this->db->select('SUM(l.amount) as total');
+        $this->db->from('lineitems l');
+        $this->db->join('quotation q','q.quotation_id = l.parent_id','left');
+        $this->db->join('account a','a.account_id = q.account_id','left');
+        if($site_id){
+            $this->db->where('l.site_id',$site_id);
+        }
+        $this->db->where('l.module',5);
+        if($account_id) {
+            $this->db->where('q.account_id',$account_id);
+        }
+        if(!empty($from_date) && !empty($to_date)) {
+            $this->db->where('q.quotation_date >=',$from_date);
+            $this->db->where('q.quotation_date <=',$to_date);
+        }
+        $sales_quotation_data = $this->db->get()->result();
+
+        foreach($sales_quotation_data as $key=>$value){
+            if (array_key_exists($value->account_id,$ac_wise_rate)){
+                $ac_wise_rate[$value->account_id]['sales_quotation_amount'] = $ac_wise_rate[$value->account_id]['sales_quotation_amount'] + $value->amount;
+            }else{
+                $ac_wise_rate[$value->account_id]['sales_quotation_amount'] = $value->amount;
+                $ac_wise_rate[$value->account_id]['purchase_amount'] = 0;
+                $ac_wise_rate[$value->account_id]['payment_amount'] = 0;
+                $ac_wise_rate[$value->account_id]['sales_invoice_amount'] = 0;
+                $ac_wise_rate[$value->account_id]['receipt_amount'] = 0;
                 $ac_wise_rate[$value->account_id]['account_name'] = $value->account_name;
             }
         }
@@ -4054,13 +4095,12 @@ class Report extends CI_Controller {
             $row[]=$value['account_name'];
             $row[]=number_format($value['purchase_amount'],2,'.','');
             $row[]=number_format($value['payment_amount'],2,'.','');
-            $row[]=$value['payment_amount'] - $value['purchase_amount'];
+            $row[]=number_format($value['payment_amount'] - $value['purchase_amount'],2,'.','');
             $row[]=number_format($value['sales_invoice_amount'],2,'.','');
             $row[]=number_format($value['receipt_amount'],2,'.','');
-            $row[]=$value['receipt_amount'] - $value['sales_invoice_amount'];
-            $row[]=0;
-            $row[]=0;
-            
+            $row[]=number_format($value['receipt_amount'] - $value['sales_invoice_amount'],2,'.','');
+            $row[]=number_format($value['sales_quotation_amount'],2,'.','');
+            $row[]=number_format($value['sales_invoice_amount'] - $value['sales_quotation_amount'],2,'.','');
             $data_array[]=$row;
         }
         

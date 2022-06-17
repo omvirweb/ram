@@ -21,7 +21,7 @@
                                     <div class="col-md-2">
                                         <div class="form-group">
                                             <label>From Date : </label><br>
-                                            <input type="text" name="from_date" id="datepicker1" class="form-control" value="<?php echo isset($from_date) ? date('d-m-Y',strtotime($from_date)) : date('d-m-Y');  ?>">
+                                            <input type="text" name="from_date" id="datepicker1" class="form-control" value="<?php echo isset($from_date) ? date('d-m-Y',strtotime($from_date)) : date('d-m-Y',strtotime("-1 year"));  ?>">
                                         </div>
                                     </div>
                                     <div class="col-md-2">
