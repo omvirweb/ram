@@ -139,7 +139,7 @@ ob_start();
                 <?php $unit = $this->crud->get_column_value_by_id('pack_unit', 'pack_unit_name', array('pack_unit_id' => $lineitem->unit_id)); ?>
                 <td valign="top" colspan="1" class="divRight"><?php echo $lineitem->item_qty; ?></td>
                 <td valign="top" colspan="1" class="divRight"><?php echo $unit; ?></td>
-                <td valign="top" colspan="1" class="divRight"><?php echo $lineitem->price; ?></td>
+                <td valign="top" colspan="1" class="divRight"><?php echo round($lineitem->price,2); ?></td>
                 <?php $pure_amt =  $lineitem->price * $lineitem->item_qty; ?>
                 <td valign="top" colspan="2" class="divRight"><?php echo number_format((float)$pure_amt, 2, '.', ''); ?></td>
             </tr>
