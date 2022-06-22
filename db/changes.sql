@@ -165,3 +165,6 @@ ALTER TABLE `sales_invoice` ADD `prof_tax` FLOAT NULL DEFAULT NULL AFTER `user_u
 ALTER TABLE `lineitems` ADD `price_including_gst` DOUBLE NOT NULL DEFAULT '0' AFTER `price`;
 --Parag : 2022_05_09 04:23 PM
 ALTER TABLE `sales_invoice` ADD `sales_rate_type` ENUM("0","1") NULL DEFAULT NULL COMMENT '1=Excluding GST, 2=Including GST' AFTER `sales_type`;
+
+--Parag : 2022_06_22 04:54 PM
+CREATE TABLE `ram`.`quotation_docs` ( `quotation_docs_id` INT NOT NULL AUTO_INCREMENT ,`quotation_id` INT NULL , `doc_name` VARCHAR(255) NULL , `created_at` DATETIME NULL , `created_by` INT NULL , `user_created_by` INT NULL , `updated_at` DATETIME NULL , `updated_by` INT NULL , `user_updated_by` INT NULL , PRIMARY KEY (`quotation_docs_id`)) ENGINE = InnoDB;

@@ -79,6 +79,7 @@
 
         function sales_quotation_add()
         {
+
             $data = array();
             $line_item_fields = $this->crud->getFromSQL('SELECT setting_key FROM company_settings WHERE company_id = "'.$this->logged_in_id.'" AND module_name = 2 AND setting_value = 1');
             $invoice_line_item_fields = array();
@@ -136,23 +137,9 @@
 
         function save_quotation()
         {
+
             $return = array();
             $post_data = $this->input->post();
-
-                // if(is_array($_FILES)) {
-                //     foreach ($_FILES['docs']['name'] as $name => $value){
-                //             $ext = substr($name, strpos($name, ".") );
-                //             $newname='Quotation'.date("dmYGis", time()).$ext;
-                //             if(is_uploaded_file($_FILES['docs']['tmp_name'][$name])) {
-                //             $sourcePath = $_FILES['docs']['tmp_name'][$name];
-                //             $targetPath = "quotation/".$_FILES['docs']['name'][$name];
-                //             if(move_uploaded_file($sourcePath,$targetPath)) {
-
-                //             }
-                //         }
-                //     }
-                // }
-                // die();
             
             $line_items_data = json_decode('['.$post_data['line_items_data'].']');
             $quotation_data = array();
@@ -210,7 +197,7 @@
                     $add_lineitem['no1'] = isset($lineitem->no1)?$lineitem->no1:NULL;
                     $add_lineitem['no2'] = isset($lineitem->no2)?$lineitem->no2:NULL;
                     $add_lineitem['net_rate'] = isset($lineitem->net_rate)?$lineitem->net_rate:NULL;
-                    $add_lineitem['pure_amount'] = $lineitem->pure_amount;
+                    $add_lineitem['pure_amount'] = isset($lineitem->pure_amount) ? $lineitem->pure_amount : NULL;
                     $add_lineitem['discount_type'] = isset($lineitem->discount_type)?$lineitem->discount_type:1;
                     $add_lineitem['discount'] = isset($lineitem->discount)?$lineitem->discount:NULL;
                     $add_lineitem['discounted_price'] = isset($lineitem->discounted_price)?$lineitem->discounted_price:$lineitem->pure_amount;
@@ -245,7 +232,37 @@
                         $this->crud->insert('lineitems',$add_lineitem);
                     }
                 }
+
+                // save Docs I think This Update Here I put save Code 
+                if($parent_id != '' && $module == 5){
+                    if(is_array($_FILES)) {
+                        foreach ($_FILES['docs']['name'] as $name => $value){
+                                $docs_data = [];
+                                $ext = substr($value, strpos($value, ".") );
+                                $newname='Quotation'.date("dmYGis", time()).$ext;
+                                if(is_uploaded_file($_FILES['docs']['tmp_name'][$name])) {
+                                $sourcePath = $_FILES['docs']['tmp_name'][$name];
+                                $dir="assets/uploads/quotation_docs";
+                                if (!is_dir('assets/uploads/quotation_docs')) {
+                                    mkdir('./'.$dir, 0777, TRUE);
+                                }
+                                $targetPath = $dir.'/'.$newname;
+                                move_uploaded_file($sourcePath,$targetPath);
+                                $docs_data['quotation_id'] =  $parent_id;
+                                $docs_data['name'] = $newname;
+                                $docs_data['created_at'] = $this->now_time;
+                                $docs_data['created_by'] = $this->logged_in_id;
+                                $docs_data['user_created_by'] = $this->session->userdata()['login_user_id'];
+                                $docs_data['updated_at'] = $this->now_time;
+                                $docs_data['updated_by'] = $this->logged_in_id;
+                                $docs_data['user_updated_by'] = $this->session->userdata()['login_user_id'];
+                                $this->crud->insert('quotation_docs',$docs_data);
+                            }
+                        }
+                    }
+                }
             } else { 
+
                 $qno = $this->crud->getFromSQL("SELECT `quotation_no` FROM `quotation` WHERE `quotation_type`='".$post_data['quotation_type']."' ORDER BY `quotation_no` DESC");
                 $quotation_no = ($qno) ? $qno[0]->quotation_no+1 : 1;
 
@@ -302,6 +319,34 @@
                     $add_lineitem['created_by'] = $this->logged_in_id;
                     $add_lineitem['user_created_by'] = $this->session->userdata()['login_user_id'];
                     $this->crud->insert('lineitems',$add_lineitem);
+                }
+                // save Docs
+                if($parent_id != '' && $module == 5){
+                    if(is_array($_FILES)) {
+                        foreach ($_FILES['docs']['name'] as $name => $value){
+                                $docs_data = [];
+                                $ext = substr($value, strpos($value, ".") );
+                                $newname='Quotation'.date("dmYGis", time()).$name.$ext;
+                                if(is_uploaded_file($_FILES['docs']['tmp_name'][$name])) {
+                                $sourcePath = $_FILES['docs']['tmp_name'][$name];
+                                $dir="assets/uploads/quotation_docs";
+                                if (!is_dir('assets/uploads/quotation_docs')) {
+                                    mkdir('./'.$dir, 0777, TRUE);
+                                }
+                                $targetPath = $dir.'/'.$newname;
+                                move_uploaded_file($sourcePath,$targetPath);
+                                $docs_data['quotation_id'] =  $parent_id;
+                                $docs_data['doc_name'] = $newname;
+                                $docs_data['created_at'] = $this->now_time;
+                                $docs_data['created_by'] = $this->logged_in_id;
+                                $docs_data['user_created_by'] = $this->session->userdata()['login_user_id'];
+                                $docs_data['updated_at'] = $this->now_time;
+                                $docs_data['updated_by'] = $this->logged_in_id;
+                                $docs_data['user_updated_by'] = $this->session->userdata()['login_user_id'];
+                                $this->crud->insert('quotation_docs',$docs_data);
+                            }
+                        }
+                    }
                 }
             }
             

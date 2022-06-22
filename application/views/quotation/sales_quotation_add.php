@@ -411,6 +411,7 @@
             discounted_price = parseFloat(pure_amount) - parseFloat(discount_amt);
 
             lineitem['discount_amt'] = parseF(discount_amt);
+            lineitem['pure_amount'] = parseF(pure_amount);
             lineitem['discounted_price'] = parseF(discounted_price);
 
             var new_lineitem = JSON.parse(JSON.stringify(lineitem));
@@ -621,8 +622,7 @@
         decimal = 2;
         return value ? parseFloat(value).toFixed(decimal) : 0;
     }
-</script>
-<script type="text/javascript">
+
     var table;
     $(document).ready(function(){
         var jsonObj = [];
