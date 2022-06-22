@@ -138,6 +138,22 @@
         {
             $return = array();
             $post_data = $this->input->post();
+
+                // if(is_array($_FILES)) {
+                //     foreach ($_FILES['docs']['name'] as $name => $value){
+                //             $ext = substr($name, strpos($name, ".") );
+                //             $newname='Quotation'.date("dmYGis", time()).$ext;
+                //             if(is_uploaded_file($_FILES['docs']['tmp_name'][$name])) {
+                //             $sourcePath = $_FILES['docs']['tmp_name'][$name];
+                //             $targetPath = "quotation/".$_FILES['docs']['name'][$name];
+                //             if(move_uploaded_file($sourcePath,$targetPath)) {
+
+                //             }
+                //         }
+                //     }
+                // }
+                // die();
+            
             $line_items_data = json_decode('['.$post_data['line_items_data'].']');
             $quotation_data = array();
             if(!isset($post_data['prefix'])) {

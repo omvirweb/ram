@@ -25,17 +25,23 @@
                         <div class="box-body">
                             <div class="overlay" style="display: none" ><i class="fa fa-refresh fa-spin"></i></div>
                             <div class="row">
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="account_id" class="control-label">Account<span class="required-sign">*</span></label>
                                         <a class="btn btn-primary btn-xs pull-right add_account_link" href="javascript:;" data-url= "<?=base_url('account/account/')?>"><i class="fa fa-plus"></i> Add Account</a>
                                         <select name="account_id" id="account_id" class="account_id" required data-index="1" ></select>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="quotation_date" class="control-label">Order Date<span class="required-sign">*</span></label>
                                         <input type="text" name="quotation_date" id="datepicker2" class="form-control" required data-index="2" value="<?=isset($quotation_data->quotation_date) ? date('d-m-Y', strtotime($quotation_data->quotation_date)) : date('d-m-Y'); ?>">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="quotation_files" class="control-label">Doc</label>
+                                        <input type="file" multiple name="docs[]" class="multi with-preview"/>
                                     </div>
                                 </div>
 
@@ -196,6 +202,8 @@
     <!-- /.content -->
 </div>
 <!-- /.content-wrapper -->
+<!-- <script src="<?php echo base_url('assets/plugins/multifile-master/jquery.MultiFile.min.js');?>" type="text/javascript" language="javascript"></script> -->
+
 <script type="text/javascript">
     var lineitem_objectdata = [];
     var edit_lineitem_inc = 0;
@@ -638,6 +646,10 @@
             $("#item_qty").focus();
         });
 
+        // $(document).on('change','.multi',function(){
+        //     console.log($('.multi')[0].files);
+        // })
+
         $(document).on('submit', '#form_sales_quotation', function () {
             if(lineitem_objectdata == ''){
                 show_notify("Please select any one Product.", false);
@@ -646,7 +658,9 @@
             $('.overlay').show();
             var postData = new FormData(this);
             var lineitem_objectdata_var = JSON.stringify(lineitem_objectdata);
+            // var docs = $('.multi')[0].files;
                 postData.append('line_items_data', lineitem_objectdata_var);
+                // postData.append('docs', docs); 
             $.ajax({
                 url: "<?=base_url('quotation/save_quotation') ?>",
                 type: "POST",
@@ -674,5 +688,25 @@
             return false;
         });
         
+    });
+
+    // wait for document to load
+    $(function(){
+    
+    // use a different language
+    // $file prints the file name
+    // $ext prints the file extension
+
+    // invoke plugin
+    // $('.multi').MultiFile({ 
+    //     max: 3, 
+    //     accept: 'gif|jpg|png',
+    //     STRING: { 
+    //     remove:'Remover', 
+    //     selected:'Selecionado: $file', 
+    //     denied:'Invalido arquivo de tipo $ext!' 
+    //     } 
+    // });
+
     });
 </script>
