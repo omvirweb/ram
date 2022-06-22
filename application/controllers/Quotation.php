@@ -238,8 +238,8 @@
                     if(is_array($_FILES)) {
                         foreach ($_FILES['docs']['name'] as $name => $value){
                                 $docs_data = [];
-                                $ext = substr($value, strpos($value, ".") );
-                                $newname='Quotation'.date("dmYGis", time()).$ext;
+                                $ext = end((explode(".", $value)));
+                                $newname='Quotation'.date("dmYGis", time()).$name.'.'.$ext;
                                 if(is_uploaded_file($_FILES['docs']['tmp_name'][$name])) {
                                 $sourcePath = $_FILES['docs']['tmp_name'][$name];
                                 $dir="assets/uploads/quotation_docs";
@@ -249,7 +249,7 @@
                                 $targetPath = $dir.'/'.$newname;
                                 move_uploaded_file($sourcePath,$targetPath);
                                 $docs_data['quotation_id'] =  $parent_id;
-                                $docs_data['name'] = $newname;
+                                $docs_data['doc_name'] = $newname;
                                 $docs_data['created_at'] = $this->now_time;
                                 $docs_data['created_by'] = $this->logged_in_id;
                                 $docs_data['user_created_by'] = $this->session->userdata()['login_user_id'];
@@ -325,8 +325,8 @@
                     if(is_array($_FILES)) {
                         foreach ($_FILES['docs']['name'] as $name => $value){
                                 $docs_data = [];
-                                $ext = substr($value, strpos($value, ".") );
-                                $newname='Quotation'.date("dmYGis", time()).$name.$ext;
+                                $ext = end((explode(".", $value)));
+                                $newname='Quotation'.date("dmYGis", time()).$name.'.'.$ext;
                                 if(is_uploaded_file($_FILES['docs']['tmp_name'][$name])) {
                                 $sourcePath = $_FILES['docs']['tmp_name'][$name];
                                 $dir="assets/uploads/quotation_docs";
