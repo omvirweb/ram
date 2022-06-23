@@ -1,4 +1,6 @@
 <?php $this->load->view('success_false_notify'); ?>
+<link href="https://www.jqueryscript.net/css/jquerysctipttop.css" rel="stylesheet" type="text/css">
+
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
@@ -41,7 +43,8 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="quotation_files" class="control-label">Doc</label>
-                                        <input type="file" multiple name="docs[]" class="multi with-preview"/>
+                                        <!-- <input type="file" name="docs[]" class="multi"/> -->
+                                        <div id="uploader"></div>
                                     </div>
                                 </div>
 
@@ -203,6 +206,7 @@
 </div>
 <!-- /.content-wrapper -->
 <!-- <script src="<?php echo base_url('assets/plugins/multifile-master/jquery.MultiFile.min.js');?>" type="text/javascript" language="javascript"></script> -->
+<script src="<?php echo base_url('assets/plugins/5x5jqpi.min.js');?>" type="text/javascript" language="javascript"></script>
 
 <script type="text/javascript">
     var lineitem_objectdata = [];
@@ -699,8 +703,6 @@
 
     // invoke plugin
     // $('.multi').MultiFile({ 
-    //     max: 3, 
-    //     accept: 'gif|jpg|png',
     //     STRING: { 
     //     remove:'Remover', 
     //     selected:'Selecionado: $file', 
@@ -708,5 +710,20 @@
     //     } 
     // });
 
+//     $(".multi").initUploader({
+//   destination:'/path/to/server/',
+//   destinationParams: {
+//     // uploader parameters here
+//   }
+
+
+// });
+
+    });
+    $(function(){
+        $("#uploader").initUploader({
+            selectOpts:{one:'jquery',two:'script',three:'net'},
+            showDescription: true,
+        });
     });
 </script>
