@@ -43,8 +43,8 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="quotation_files" class="control-label">Doc</label>
-                                        <!-- <input type="file" name="docs[]" class="multi"/> -->
-                                        <div id="uploader"></div>
+                                        <input type="file" name="docs[]" class="multi"/>
+                                        <!-- <div id="uploader"></div> -->
                                     </div>
                                 </div>
 
@@ -206,7 +206,9 @@
 </div>
 <!-- /.content-wrapper -->
 <!-- <script src="<?php echo base_url('assets/plugins/multifile-master/jquery.MultiFile.min.js');?>" type="text/javascript" language="javascript"></script> -->
-<script src="<?php echo base_url('assets/plugins/5x5jqpi.min.js');?>" type="text/javascript" language="javascript"></script>
+<script src="<?php echo base_url('assets/plugins/multifile-master/jquery.MultiFile.js');?>" type="text/javascript" language="javascript"></script>
+<!-- <script src="<?php echo base_url('assets/plugins/5x5jqpi.min.js');?>" type="text/javascript" language="javascript"></script> -->
+<!-- <script src="<?php echo base_url('assets/plugins/test.js');?>" type="text/javascript" language="javascript"></script> -->
 
 <script type="text/javascript">
     var lineitem_objectdata = [];
@@ -696,34 +698,26 @@
 
     // wait for document to load
     $(function(){
-    
-    // use a different language
-    // $file prints the file name
-    // $ext prints the file extension
+        // use a different language
+        // $file prints the file name
+        // $ext prints the file extension
 
-    // invoke plugin
-    // $('.multi').MultiFile({ 
-    //     STRING: { 
-    //     remove:'Remover', 
-    //     selected:'Selecionado: $file', 
-    //     denied:'Invalido arquivo de tipo $ext!' 
-    //     } 
-    // });
-
-//     $(".multi").initUploader({
-//   destination:'/path/to/server/',
-//   destinationParams: {
-//     // uploader parameters here
-//   }
-
-
-// });
-
-    });
-    $(function(){
-        $("#uploader").initUploader({
-            selectOpts:{one:'jquery',two:'script',three:'net'},
-            showDescription: true,
+        // invoke plugin
+        $('.multi').MultiFile({ 
+            STRING: { 
+            remove:'Remover', 
+            selected:'Selecionado: $file', 
+            denied:'Invalido arquivo de tipo $ext!' 
+            } 
         });
+
     });
+    // $(function(){
+    //     $("#uploader").initUploader({
+    //         destination:"<?=base_url('quotation/image_ss') ?>",
+    //         selectOpts:{one:'jquery',two:'script',three:'net'},
+    //         fileLimit:10,
+    //         showDescription: true,
+    //     });
+    // });
 </script>

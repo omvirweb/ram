@@ -463,6 +463,7 @@ if (window.jQuery)(function ($) {
 										(
 											'<span class="MultiFile-label" title="' + t + '">'+
 												'<span class="MultiFile-title">'+ n +'</span>'+
+												'<input type="text" class="docs_type" name="docs_type[]">'+
 												(MultiFile.preview || $(slave).is('.with-preview') ? p : '' )+
 											'</span>'
 										)

@@ -140,7 +140,9 @@
 
             $return = array();
             $post_data = $this->input->post();
-            
+            echo '<pre>';
+            print_r($post_data);
+            die();
             $line_items_data = json_decode('['.$post_data['line_items_data'].']');
             $quotation_data = array();
             if(!isset($post_data['prefix'])) {
@@ -424,6 +426,38 @@
         {
             $this->crud->delete('quotation', array('quotation_id' => $quotation_id));
             $this->crud->delete('lineitems', array('module' => $quotation_type, 'parent_id' => $quotation_id));
+        }
+
+        function image_ss(){
+
+            print_r($_POST);
+            if(is_array($_FILES)) {
+                print_r($_FILES);
+                foreach ($_FILES as $name => $value){
+                        print_r($value);
+                        // $docs_data = [];
+                        // $ext = end((explode(".", $value)));
+                        // $newname='Quotation'.date("dmYGis", time()).$name.'.'.$ext;
+                        // if(is_uploaded_file($_FILES['docs']['tmp_name'][$name])) {
+                        // $sourcePath = $_FILES['docs']['tmp_name'][$name];
+                        // $dir="assets/uploads/quotation_docs";
+                        // if (!is_dir('assets/uploads/quotation_docs')) {
+                        //     mkdir('./'.$dir, 0777, TRUE);
+                        // }
+                        // $targetPath = $dir.'/'.$newname;
+                        // move_uploaded_file($sourcePath,$targetPath);
+                        // $docs_data['quotation_id'] =  $parent_id;
+                        // $docs_data['doc_name'] = $newname;
+                        // $docs_data['created_at'] = $this->now_time;
+                        // $docs_data['created_by'] = $this->logged_in_id;
+                        // $docs_data['user_created_by'] = $this->session->userdata()['login_user_id'];
+                        // $docs_data['updated_at'] = $this->now_time;
+                        // $docs_data['updated_by'] = $this->logged_in_id;
+                        // $docs_data['user_updated_by'] = $this->session->userdata()['login_user_id'];
+                        // $this->crud->insert('quotation_docs',$docs_data);
+                    }
+                }
+            exit;
         }
     }
 ?>
