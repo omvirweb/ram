@@ -39,6 +39,10 @@
     margin-bottom: 10px;
 }
 
+.mr10 {
+    margin-right: 10px;
+}
+
 span.required-sign {
     font-size: 14px;
     color: #a94442;

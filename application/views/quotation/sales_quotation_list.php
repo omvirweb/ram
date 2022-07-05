@@ -1,4 +1,22 @@
 <?php $this->load->view('success_false_notify'); ?>
+<style>
+    .doc-modal-details .modal-header{
+        display: flex;
+        align-items: center;
+        width: 100%;
+        padding: 5px 15px;
+    }
+    .doc-modal-details .modal-header .close{
+        position: absolute;
+        right: 21px;
+        font-size: 33px;
+    }
+    .doc-modal-details .modal-title{
+        font-size: 30px;
+        font-weight: 600;
+    }
+
+</style>
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
@@ -92,6 +110,34 @@
     <!-- /.content -->
 </div>
 <!-- /.content-wrapper -->
+<!-- Model For Docs -->
+<div class="modal fade doc-modal-details" id="docModel" tabindex="-1" role="dialog" aria-labelledby="docModelTitle" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Docs</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+      <table class="table">
+        <thead>
+            <tr>
+            <th scope="col">#</th>
+            <th scope="col">Doc Name</th>
+            <th scope="col">Doc Desc</th>
+            <th scope="col">Link</th>
+            </tr>
+        </thead>
+        <tbody id="doc_table"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="<?php echo base_url('assets/plugins/jquery.fileDownload.js ');?>" type="text/javascript" language="javascript"></script>
+
 <script type="text/javascript">
     var table;
     var datepicker1 = '';
@@ -277,5 +323,45 @@
                 });
             }
         });
+
+        $(document).on('click','.open_doc_model',function(){
+            var id = $(this).data('id');
+            if(id != ''){
+            $.ajax({
+                url:"<?php echo base_url('quotation/getQuotationDocs') ?>",
+                type: "POST",
+                dataType: 'json',
+                data: {
+                    id:id
+                },
+                success: function (data) {
+                    var doc_data = '';
+                    $('#doc_table').html('');
+
+                    if(data.status){
+                        console.log(data.data)
+                        var i = 1;
+                        var link = "<?php echo base_url('assets/uploads/quotation_docs') ?>";
+                        $.each(data.data , function(key,val){
+                            doc_data +='<tr>';
+                            doc_data +='<td>'+i+'</td>';
+                            doc_data +='<td>'+val.doc_name+'</td>';
+                            doc_data +='<td>'+val.doc_desc+'</td>';
+                            doc_data +='<td><a href="'+ link +'/'+val.doc_name+'" class="doc_download" download>Download</a>';
+                            doc_data +='</tr>';
+                            i++;
+                        });
+
+                        $('#docModel').modal('show');
+                    }else{
+                        doc_data += '<tr><th colspan="4" style="text-align:center;">Data Not Found</th></tr>';
+                        $('#docModel').modal('show');
+                    }
+                    $('#doc_table').append(doc_data);
+                }
+            });
+            }
+        })
+
     });
 </script>

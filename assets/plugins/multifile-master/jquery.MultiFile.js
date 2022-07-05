@@ -23,9 +23,27 @@ if (window.jQuery)(function ($) {
 			type: ((x.value || '').match(/[^\.]+$/i) || [''])[0]
 		}];
 	};
+	var doc_label = false;
+	var labelName = '';
+	var inputClass = 'form-control';
+	var labelClass = 'control-label mr10';
 
 	// plugin initialization
 	$.fn.MultiFile = function (options) {
+		if(typeof(options) !== 'undefined' && typeof(options.doc_label) !== 'undefined'){
+			doc_label = options.doc_label;
+		}
+		if(typeof(options) !== 'undefined' && typeof(options.labelName) !== 'undefined'){
+			labelName = options.labelName;
+		}
+		if(typeof(options) !== 'undefined' && typeof(options.inputClass) !== 'undefined'){
+			inputClass = options.inputClass;
+		}
+		if(typeof(options) !== 'undefined' && typeof(options.labelClass) !== 'undefined'){
+			labelClass = options.labelClass;
+		}
+
+
 		if (this.length == 0) return this; // quick fail
 
 		// Handle API methods
@@ -454,6 +472,7 @@ if (window.jQuery)(function ($) {
 
 					var names = $('<span/>');
 					$.each(files, function (i, file) {
+						var input_label = '<label class="'+labelClass+'">'+(labelName != '' ? labelName : "Document Type" )+'</label><input type="text" class="docs_type '+inputClass+'" name="docs_type[]">';
 						var v = String(file.name || '' ).replace(/[&<>'"]/g, function(c) { return '&#'+c.charCodeAt()+';'; }),
 								S = MultiFile.STRING,
 								n = S.label || S.file || S.name,
@@ -462,8 +481,8 @@ if (window.jQuery)(function ($) {
 								label =	$(
 										(
 											'<span class="MultiFile-label" title="' + t + '">'+
+												(doc_label ? input_label : '' )+
 												'<span class="MultiFile-title">'+ n +'</span>'+
-												'<input type="text" class="docs_type" name="docs_type[]">'+
 												(MultiFile.preview || $(slave).is('.with-preview') ? p : '' )+
 											'</span>'
 										)

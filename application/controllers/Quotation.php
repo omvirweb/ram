@@ -140,9 +140,6 @@
 
             $return = array();
             $post_data = $this->input->post();
-            echo '<pre>';
-            print_r($post_data);
-            die();
             $line_items_data = json_decode('['.$post_data['line_items_data'].']');
             $quotation_data = array();
             if(!isset($post_data['prefix'])) {
@@ -238,6 +235,7 @@
                 // save Docs I think This Update Here I put save Code 
                 if($parent_id != '' && $module == 5){
                     if(is_array($_FILES)) {
+                        $i = 0;
                         foreach ($_FILES['docs']['name'] as $name => $value){
                                 $docs_data = [];
                                 $ext = end((explode(".", $value)));
@@ -252,6 +250,7 @@
                                 move_uploaded_file($sourcePath,$targetPath);
                                 $docs_data['quotation_id'] =  $parent_id;
                                 $docs_data['doc_name'] = $newname;
+                                $docs_data['doc_desc'] = (isset($post_data['docs_type'][$i]) && $post_data['docs_type'][$i] != '') ? $post_data['docs_type'][$i] : $newname;
                                 $docs_data['created_at'] = $this->now_time;
                                 $docs_data['created_by'] = $this->logged_in_id;
                                 $docs_data['user_created_by'] = $this->session->userdata()['login_user_id'];
@@ -260,7 +259,10 @@
                                 $docs_data['user_updated_by'] = $this->session->userdata()['login_user_id'];
                                 $this->crud->insert('quotation_docs',$docs_data);
                             }
+                            $i++;
+
                         }
+
                     }
                 }
             } else { 
@@ -325,6 +327,7 @@
                 // save Docs
                 if($parent_id != '' && $module == 5){
                     if(is_array($_FILES)) {
+                        $i = 0;
                         foreach ($_FILES['docs']['name'] as $name => $value){
                                 $docs_data = [];
                                 $ext = end((explode(".", $value)));
@@ -339,6 +342,7 @@
                                 move_uploaded_file($sourcePath,$targetPath);
                                 $docs_data['quotation_id'] =  $parent_id;
                                 $docs_data['doc_name'] = $newname;
+                                $docs_data['doc_desc'] = (isset($post_data['docs_type'][$i]) && $post_data['docs_type'][$i] != '') ? $post_data['docs_type'][$i] : $newname;
                                 $docs_data['created_at'] = $this->now_time;
                                 $docs_data['created_by'] = $this->logged_in_id;
                                 $docs_data['user_created_by'] = $this->session->userdata()['login_user_id'];
@@ -347,6 +351,7 @@
                                 $docs_data['user_updated_by'] = $this->session->userdata()['login_user_id'];
                                 $this->crud->insert('quotation_docs',$docs_data);
                             }
+                            $i++;
                         }
                     }
                 }
@@ -405,9 +410,10 @@
                 if($isDelete) {
                     $action .= ' &nbsp; <a href="javascript:void(0);" class="delete_button btn-danger btn-xs" data-href="' . base_url('quotation/quotation_delete/' . $quotation_type . '/' . $order->quotation_id) . '"><i class="fa fa-trash"></i></a>';    
                 }
+                $link='<a href="javascript:void(0);" data-id="'.$order->quotation_id.'" class="open_doc_model">'.$order->account_name.'</a>';
                 $row[] = $action;
                 $row[] = $order->quotation_no;
-                $row[] = $order->account_name;
+                $row[] = $link;
                 $row[] = $order->account_gst_no;
                 $row[] = date('d-m-Y', strtotime($order->quotation_date));
                 $row[] = number_format($order->amount_total, 2, '.', '');
@@ -428,36 +434,28 @@
             $this->crud->delete('lineitems', array('module' => $quotation_type, 'parent_id' => $quotation_id));
         }
 
-        function image_ss(){
-
-            print_r($_POST);
-            if(is_array($_FILES)) {
-                print_r($_FILES);
-                foreach ($_FILES as $name => $value){
-                        print_r($value);
-                        // $docs_data = [];
-                        // $ext = end((explode(".", $value)));
-                        // $newname='Quotation'.date("dmYGis", time()).$name.'.'.$ext;
-                        // if(is_uploaded_file($_FILES['docs']['tmp_name'][$name])) {
-                        // $sourcePath = $_FILES['docs']['tmp_name'][$name];
-                        // $dir="assets/uploads/quotation_docs";
-                        // if (!is_dir('assets/uploads/quotation_docs')) {
-                        //     mkdir('./'.$dir, 0777, TRUE);
-                        // }
-                        // $targetPath = $dir.'/'.$newname;
-                        // move_uploaded_file($sourcePath,$targetPath);
-                        // $docs_data['quotation_id'] =  $parent_id;
-                        // $docs_data['doc_name'] = $newname;
-                        // $docs_data['created_at'] = $this->now_time;
-                        // $docs_data['created_by'] = $this->logged_in_id;
-                        // $docs_data['user_created_by'] = $this->session->userdata()['login_user_id'];
-                        // $docs_data['updated_at'] = $this->now_time;
-                        // $docs_data['updated_by'] = $this->logged_in_id;
-                        // $docs_data['user_updated_by'] = $this->session->userdata()['login_user_id'];
-                        // $this->crud->insert('quotation_docs',$docs_data);
-                    }
+        function getQuotationDocs(){
+            $return = array(
+                'status'=>false,
+                'message'=>'Data Not Found'
+            );
+            $post_data = $this->input->post();
+            if(isset($post_data) && $post_data['id'] != ''){
+                $table_name = 'quotation_docs';
+                $order_by_column = 'quotation_docs_id';
+                $order_by_value = 'desc';
+                $where_array =[
+                    'quotation_id'=>$post_data['id']
+                ];
+                $data=$this->crud->get_all_with_where($table_name,$order_by_column,$order_by_value,$where_array);
+                if(!empty($data)){
+                    $return = array(
+                        'status'=>true,
+                        'data'=>$data
+                    );
                 }
-            exit;
+            }
+            echo json_encode($return);
         }
     }
 ?>

@@ -40,6 +40,7 @@
                                         <input type="text" name="quotation_date" id="datepicker2" class="form-control" required data-index="2" value="<?=isset($quotation_data->quotation_date) ? date('d-m-Y', strtotime($quotation_data->quotation_date)) : date('d-m-Y'); ?>">
                                     </div>
                                 </div>
+                                <div class="clearfix"></div>                                
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="quotation_files" class="control-label">Doc</label>
@@ -48,7 +49,6 @@
                                     </div>
                                 </div>
 
-                                <div class="clearfix"></div>                                
                                 
                                 <div class="col-md-12">
                                     <div class="box-header with-border">
@@ -705,10 +705,12 @@
         // invoke plugin
         $('.multi').MultiFile({ 
             STRING: { 
-            remove:'Remover', 
-            selected:'Selecionado: $file', 
-            denied:'Invalido arquivo de tipo $ext!' 
-            } 
+                remove:'Remover', 
+                selected:'Selecionado: $file', 
+                denied:'Invalido arquivo de tipo $ext!' 
+            } ,
+            doc_label:true,
+            labelName:'Doc Type'
         });
 
     });
