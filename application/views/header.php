@@ -287,18 +287,13 @@ $is_single_line_item = 1;
 					                        </li>
 					                    <?php } ?>
 					                    <?php } ?>
-					                    <?php if($this->applib->have_access_role(MODULE_STOCK_STATUS_CHANGE_ID,"view")) { ?>
-					                    <li class="<?= ($segment1 == 'master' && $segment2 == 'stock_status_change') ? 'active' : '' ?>">
-					                        <a href="<?php echo base_url() ?>master/stock_status_change/"><i class="fa fa-circle-o"></i> Stock Status Change</a>
-					                    </li>
-					                    <?php } ?>
-                                                            <?php if($this->applib->have_access_role(MODULE_SALES_DISCOUNT_ID,"view")) { ?>
-                                                                <li class="dropdown-submenu">
-                                                                    <a tabindex="-1" href="<?php echo base_url() ?>sales/discount_list/"><i class="fa fa-circle-o"></i> Discount</a>
-                                                                    <ul class="dropdown-menu">
-                                                                        <?php if($this->applib->have_access_role(MODULE_SALES_DISCOUNT_ID,"add")) { ?>
-                                                                            <li><a tabindex="-1" href="<?php echo base_url() ?>sales/discount_new/"><i class="fa fa-circle-o"></i> Add Discount</a></li>
-                                                                        <?php } ?>
+                                        <?php if($this->applib->have_access_role(MODULE_SALES_DISCOUNT_ID,"view")) { ?>
+                                            <li class="dropdown-submenu">
+                                                <a tabindex="-1" href="<?php echo base_url() ?>sales/discount_list/"><i class="fa fa-circle-o"></i> Discount</a>
+                                                <ul class="dropdown-menu">
+                                                    <?php if($this->applib->have_access_role(MODULE_SALES_DISCOUNT_ID,"add")) { ?>
+                                                        <li><a tabindex="-1" href="<?php echo base_url() ?>sales/discount_new/"><i class="fa fa-circle-o"></i> Add Discount</a></li>
+                                                        <?php } ?>
                                                                         <li><a tabindex="-1" href="<?php echo base_url() ?>sales/discount_list/"><i class="fa fa-circle-o"></i> Discount List</a></li>
                                                                     </ul>
                                                                 </li>
@@ -372,8 +367,8 @@ $is_single_line_item = 1;
                                             <li class="dropdown-submenu">
                                                 <a tabindex="-1" href="<?php echo base_url() ?>sales/discount_list/"><i class="fa fa-circle-o"></i> Discount</a>
                                                 <ul class="dropdown-menu">
-                                                    <?php if($this->applib->have_access_role(MODULE_SALES_DISCOUNT_ID,"add")) { ?>
-                                                        <li><a tabindex="-1" href="<?php echo base_url() ?>sales/discount/"><i class="fa fa-circle-o"></i> Add Discount</a></li>
+                                                <?php if($this->applib->have_access_role(MODULE_SALES_DISCOUNT_ID,"add")) { ?>
+                                                    <li><a tabindex="-1" href="<?php echo base_url() ?>sales/discount/"><i class="fa fa-circle-o"></i> Add Discount</a></li>
                                                     <?php } ?>
                                                     <li><a tabindex="-1" href="<?php echo base_url() ?>sales/discount_list/"><i class="fa fa-circle-o"></i> Discount List</a></li>
                                                 </ul>
@@ -412,7 +407,7 @@ $is_single_line_item = 1;
                                 <li tabindex="0" class="dropdown <?= ($segment1 == 'gstr1_excel' || $segment1 == 'gstr2_excel' || $segment1 == 'gstr_3b_excel')? 'active' : '' ?>">
                                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Sales <span class="caret"></span></a>
                                     <ul class="dropdown-menu">
-                                    <?php if($this->applib->have_access_role(MODULE_ORDER_TYPE_2_ID,"view")) { ?>
+                                        <?php if($this->applib->have_access_role(MODULE_ORDER_TYPE_2_ID,"view")) { ?>
                                             <li class="dropdown-submenu">
                                                 <a tabindex="-1" href="<?php echo base_url() ?>quotation/sales_quotation_list/"><i class="fa fa-circle-o"></i> Quotation</a>
                                                 <ul class="dropdown-menu">
@@ -421,12 +416,12 @@ $is_single_line_item = 1;
                                                             <li><a tabindex="-1" href="<?php echo base_url() ?>quotation/sales_quotation_add/"><i class="fa fa-circle-o"></i> Add Quotation</a></li>
                                                         <?php } else { ?>
                                                             <li><a tabindex="-1" href="<?php echo base_url() ?>quotation/sales_quotation_add/"><i class="fa fa-circle-o"></i> Add Quotation</a></li>
-                                                        <?php } ?>
+                                                            <?php } ?>
                                                     <?php } ?>
                                                     <li><a tabindex="-1" href="<?php echo base_url() ?>quotation/sales_quotation_list/"><i class="fa fa-circle-o"></i> Quotation List</a></li>
                                                 </ul>
                                             </li>
-                                        <?php } ?>
+                                            <?php } ?>
                                         <?php if($this->applib->have_access_role(MODULE_ORDER_ID,"view")) { ?>
                                             <li class="dropdown-submenu">
                                                 <a tabindex="-1" href="<?php echo base_url() ?>sales/order_invoice_list/"><i class="fa fa-circle-o"></i> Order</a>
@@ -437,9 +432,9 @@ $is_single_line_item = 1;
                                                         <?php } else { ?>
                                                             <li><a tabindex="-1" href="<?php echo base_url() ?>purchase/sales_order/"><i class="fa fa-circle-o"></i> Add Order</a></li>
                                                         <?php } ?>
-                                                    <?php } ?>
-                                                    <li><a tabindex="-1" href="<?php echo base_url() ?>sales/order_invoice_list/"><i class="fa fa-circle-o"></i> Order List</a></li>
-                                                </ul>
+                                                        <?php } ?>
+                                                        <li><a tabindex="-1" href="<?php echo base_url() ?>sales/order_invoice_list/"><i class="fa fa-circle-o"></i> Order List</a></li>
+                                                    </ul>
                                             </li>
                                         <?php } ?>
                                         <?php if($this->applib->have_access_role(MODULE_SALES_INVOICE_ID,"view")) { ?>
@@ -471,8 +466,8 @@ $is_single_line_item = 1;
                                                     <li><a tabindex="-1" href="<?php echo base_url() ?>sales/invoice_list"><i class="fa fa-circle-o"></i> Sales Invoice List</a></li>
                                                 </ul>
                                             </li>
-                                        <?php } ?>
-                                        <?php if($this->applib->have_access_role(MODULE_SALES_INVOICE_ID,"view")) { ?>
+                                            <?php } ?>
+                                            <?php if($this->applib->have_access_role(MODULE_SALES_INVOICE_ID,"view")) { ?>
                                             <li class="dropdown-submenu">
                                                 <a tabindex="-1" href="<?php echo base_url() ?>sales/invoice_list/2"><i class="fa fa-circle-o"></i> Sales Invoice Type2</a>
                                                 <ul class="dropdown-menu">
@@ -499,17 +494,9 @@ $is_single_line_item = 1;
                                                             <li><a tabindex="-1" href="<?php echo base_url() ?>sales/invoice/"><i class="fa fa-circle-o"></i> Add Invoice</a></li>
                                                         <?php } ?>
                                                     <?php } ?>
-                                                    <li><a tabindex="-1" href="<?php echo base_url() ?>sales/invoice_list/4"><i class="fa fa-circle-o"></i> Sales Invoice4 List</a></li>
+                                                    <li><a tabindex="-1" href="<?php echo base_url() ?>sales/invoice_list/4"><i class="fa fa-circle-o"></i> Sales Invoice3 List</a></li>
 
-                                                    <?php if($this->applib->have_access_role(MODULE_SALES_INVOICE_ID,"add")) { ?>
-                                                        <?php if($is_single_line_item == 1){?>
-                                                            <li><a tabindex="-1" href="<?php echo base_url() ?>transaction/sales_purchase_transaction/sales3"><i class="fa fa-circle-o"></i>Add Invoice Old</a></li>
-                                                        <?php } else { ?>
-                                                            <li><a tabindex="-1" href="<?php echo base_url() ?>sales/invoice/"><i class="fa fa-circle-o"></i>Add Invoice Old</a></li>
-                                                        <?php } ?>
-                                                    <?php } ?>
-                                                    <li><a tabindex="-1" href="<?php echo base_url() ?>sales/invoice_list/3"><i class="fa fa-circle-o"></i>Sales Invoice List Old</a></li>
-
+                                                    
                                                 </ul>
                                             </li>
                                         <?php } ?>
@@ -535,7 +522,7 @@ $is_single_line_item = 1;
                                 <li tabindex="0" class="dropdown <?= ($segment1 == 'gstr1_excel' || $segment1 == 'gstr2_excel' || $segment1 == 'gstr_3b_excel')? 'active' : '' ?>">
                                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">₹ Amount <span class="caret"></span></a>
                                     <ul class="dropdown-menu">
-                                    <?php if($this->applib->have_access_role(MODULE_PAYMENT_ID,"view")) { ?>
+                                        <?php if($this->applib->have_access_role(MODULE_PAYMENT_ID,"view")) { ?>
                                             <li class="dropdown-submenu">
                                                 <a tabindex="-1" href="<?php echo base_url() ?>transaction/payment_list"><i class="fa fa-circle-o"></i> Payment</a>
                                                 <ul class="dropdown-menu">
@@ -565,51 +552,51 @@ $is_single_line_item = 1;
                                                 <a tabindex="-1" href="<?php echo base_url() ?>contra/contra_list"><i class="fa fa-circle-o"></i> Contra</a>
                                                 <ul class="dropdown-menu">
                                                     <?php if($this->applib->have_access_role(MODULE_CONTRA_ID,"add")) { ?>
-                                                    <li><a tabindex="-1" href="<?php echo base_url() ?>contra/contra/"><i class="fa fa-circle-o"></i> Add Contra</a></li>
-                                                    <?php } ?>
-                                                    <li><a tabindex="-1" href="<?php echo base_url() ?>contra/contra_list/"><i class="fa fa-circle-o"></i> Contra List</a></li>
-                                                </ul>
-                                            </li>
-                                        <?php } ?>
-                                        <?php if($this->applib->have_access_role(MODULE_JOURNAL_ID,"view")) { ?>
-                                            <li class="dropdown-submenu">
-                                                <a tabindex="-1" href="<?php echo base_url() ?>journal/journal_list/"><i class="fa fa-circle-o"></i> Journal</a>
-                                                <ul class="dropdown-menu">
-                                                    <?php if($this->applib->have_access_role(MODULE_JOURNAL_ID,"add")) { ?>
-                                                    <li><a tabindex="-1" href="<?php echo base_url() ?>journal/journal"><i class="fa fa-circle-o"></i> Add Journal</a></li>
-                                                    <?php } ?>
-                                                    <?php if($this->applib->have_access_role(MODULE_JOURNAL_ID,"journal type 2")) { ?>
-                                                    <li><a tabindex="-1" href="<?php echo base_url() ?>journal/journal_type2"><i class="fa fa-circle-o"></i> Journal Type 2</a></li>
-                                                    <?php } ?>
-                                                    <li><a tabindex="-1" href="<?php echo base_url() ?>journal/journal_list/"><i class="fa fa-circle-o"></i> Journal List</a></li>
-                                                </ul>
-                                            </li>
-                                        <?php } ?>
-                                        <li class="dropdown">
-                                            <a tabindex="-1" href="<?php echo base_url() ?>transaction/day_book/"><i class="fa fa-circle-o"></i> Day Book</a>
-                                        </li>
-                                    </ul>
-                                </li>
-
-
-
-                                
-
-
-
-
-
-
-
-
-
-
+                                                        <li><a tabindex="-1" href="<?php echo base_url() ?>contra/contra/"><i class="fa fa-circle-o"></i> Add Contra</a></li>
+                                                        <?php } ?>
+                                                        <li><a tabindex="-1" href="<?php echo base_url() ?>contra/contra_list/"><i class="fa fa-circle-o"></i> Contra List</a></li>
+                                                    </ul>
+                                                </li>
+                                                <?php } ?>
+                                                <?php if($this->applib->have_access_role(MODULE_JOURNAL_ID,"view")) { ?>
+                                                    <li class="dropdown-submenu">
+                                                        <a tabindex="-1" href="<?php echo base_url() ?>journal/journal_list/"><i class="fa fa-circle-o"></i> Journal</a>
+                                                        <ul class="dropdown-menu">
+                                                            <?php if($this->applib->have_access_role(MODULE_JOURNAL_ID,"add")) { ?>
+                                                                <li><a tabindex="-1" href="<?php echo base_url() ?>journal/journal"><i class="fa fa-circle-o"></i> Add Journal</a></li>
+                                                                <?php } ?>
+                                                                <?php if($this->applib->have_access_role(MODULE_JOURNAL_ID,"journal type 2")) { ?>
+                                                                    <li><a tabindex="-1" href="<?php echo base_url() ?>journal/journal_type2"><i class="fa fa-circle-o"></i> Journal Type 2</a></li>
+                                                                    <?php } ?>
+                                                                    <li><a tabindex="-1" href="<?php echo base_url() ?>journal/journal_list/"><i class="fa fa-circle-o"></i> Journal List</a></li>
+                                                                </ul>
+                                                            </li>
+                                                            <?php } ?>
+                                                            <li class="dropdown">
+                                                                <a tabindex="-1" href="<?php echo base_url() ?>transaction/day_book/"><i class="fa fa-circle-o"></i> Day Book</a>
+                                                            </li>
+                                                        </ul>
+                                                    </li>
+                                                    
+                                                    
+                                                    
+                                                    
+                                                    
+                                                    
+                                                    
+                                                    
+                                                    
+                                                    
+                                                    
+                                                    
+                                                    
+                                                    
                                 <?php if($this->applib->have_access_role(MODULE_REPORT_ID,"view")) { ?>
                                 <li tabindex="0" class="dropdown <?= ($segment1 == 'report')? 'active' : '' ?>">
                                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Report <span class="caret"></span></a>
                                     <ul class="dropdown-menu">
-                                            <li class="dropdown-submenu">
-                                                <a tabindex="-1" href=""><i class="fa fa-circle-o"></i> Register</a>
+                                        <li class="dropdown-submenu">
+                                            <a tabindex="-1" href=""><i class="fa fa-circle-o"></i> Register</a>
                                                 <ul class="dropdown-menu">
                                                     <li class="dropdown-submenu">
                                                         <a tabindex="-1" href=""><i class="fa fa-circle-o"></i> Sales</a>
@@ -645,7 +632,7 @@ $is_single_line_item = 1;
                                                         <li class="<?= ($segment2 == 'debit_note') ? 'active' : '' ?>">
                                                             <a href="<?php echo base_url() ?>report/debit_note/"><i class="fa fa-circle-o"></i> Debit Note Register</a>
                                                         </li>
-                                                    <?php } ?>
+                                                        <?php } ?>
                                                 </ul>
                                             </li>
 					                    
@@ -714,21 +701,34 @@ $is_single_line_item = 1;
                                 <li tabindex="0" class="dropdown <?= ($segment1 == 'gstr1_excel' || $segment1 == 'gstr2_excel' || $segment1 == 'gstr_3b_excel')? 'active' : '' ?>">
                                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">GST <span class="caret"></span></a>
                                     <ul class="dropdown-menu">
-                                    	<?php if($this->applib->have_access_role(MODULE_GSTR1_EXCEL_EXPORT_ID,"view")) { ?>
-							            <li class="<?= ($segment1 == 'gstr1_excel') ? 'active' : '' ?>">
-							                <a href="<?= base_url() ?>gstr1_excel/"><i class="fa fa-circle-o"></i>  GSTR1 Excel Export</a>
-							            </li>
-							            <?php } ?>
-							            <?php if($this->applib->have_access_role(MODULE_GSTR2_EXCEL_EXPORT_ID,"view")) { ?>
-							            <li class="<?= ($segment1 == 'gstr2_excel') ? 'active' : '' ?>">
-							                <a href="<?= base_url() ?>gstr2_excel/"><i class="fa fa-circle-o"></i>  GSTR2 Excel Export</a>
-							            </li>
-							            <?php } ?>
-							            <?php if($this->applib->have_access_role(MODULE_GSTR_3B_EXCEL_EXPORT_ID,"view")) { ?>
-							            <li class="<?= ($segment1 == 'gstr_3b_excel') ? 'active' : '' ?>">
-							                <a href="<?= base_url() ?>gstr_3b_excel/"><i class="fa fa-circle-o"></i>  GSTR-3B Excel Export</a>
-							            </li>
-							            <?php } ?>
+                                        <?php if($this->applib->have_access_role(MODULE_GSTR1_EXCEL_EXPORT_ID,"view")) { ?>
+                                            <li class="<?= ($segment1 == 'gstr1_excel') ? 'active' : '' ?>">
+                                                <a href="<?= base_url() ?>gstr1_excel/"><i class="fa fa-circle-o"></i>  GSTR1 Excel Export</a>
+                                            </li>
+                                            <?php } ?>
+                                            <?php if($this->applib->have_access_role(MODULE_GSTR2_EXCEL_EXPORT_ID,"view")) { ?>
+                                                <li class="<?= ($segment1 == 'gstr2_excel') ? 'active' : '' ?>">
+                                                    <a href="<?= base_url() ?>gstr2_excel/"><i class="fa fa-circle-o"></i>  GSTR2 Excel Export</a>
+                                                </li>
+                                                <?php } ?>
+                                                <?php if($this->applib->have_access_role(MODULE_GSTR_3B_EXCEL_EXPORT_ID,"view")) { ?>
+                                                    <li class="<?= ($segment1 == 'gstr_3b_excel') ? 'active' : '' ?>">
+                                                        <a href="<?= base_url() ?>gstr_3b_excel/"><i class="fa fa-circle-o"></i>  GSTR-3B Excel Export</a>
+                                                    </li>
+                                                    <?php } ?>
+                                                    <?php if($this->applib->have_access_role(MODULE_STOCK_STATUS_CHANGE_ID,"view")) { ?>
+                                                        <li class="<?= ($segment1 == 'master' && $segment2 == 'stock_status_change') ? 'active' : '' ?>">
+                                                            <a href="<?php echo base_url() ?>master/stock_status_change/"><i class="fa fa-circle-o"></i> Stock Status Change</a>
+                                                        </li>
+                                                        <?php } ?>
+                                                        <?php if($this->applib->have_access_role(MODULE_SALES_INVOICE_ID,"add")) { ?>
+                                                            <?php if($is_single_line_item == 1){?>
+                                                                <li><a tabindex="-1" href="<?php echo base_url() ?>transaction/sales_purchase_transaction/sales3"><i class="fa fa-circle-o"></i>Add Invoice 3 Old</a></li>
+                                                            <?php } else { ?>
+                                                                <li><a tabindex="-1" href="<?php echo base_url() ?>sales/invoice/"><i class="fa fa-circle-o"></i>Add Invoice 3 Old</a></li>
+                                                            <?php } ?>
+                                                        <?php } ?>
+                                                        <li><a tabindex="-1" href="<?php echo base_url() ?>sales/invoice_list/3"><i class="fa fa-circle-o"></i>Sales Invoice 3 List Old</a></li>
                                     </ul>
                                 </li>
                                 <?php } ?>
@@ -746,7 +746,7 @@ $is_single_line_item = 1;
                         	<ul class="nav navbar-nav">
                         		<!-- <?php
                                     // if($userType == 'Admin') {
-                                ?> -->
+                                        ?> -->
                                     <li class="dropdown staff-menu">
                                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                                             <i class="fa fa-users"></i>
@@ -772,7 +772,7 @@ $is_single_line_item = 1;
                                     </li>
 								<!-- <?php
                                     // }
-                                ?> -->
+                                    ?> -->
 
 								<!-- User Account: style can be found in dropdown.less -->
 								<li class="dropdown user user-menu">
