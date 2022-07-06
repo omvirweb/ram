@@ -211,6 +211,15 @@
 <!-- <script src="<?php echo base_url('assets/plugins/test.js');?>" type="text/javascript" language="javascript"></script> -->
 
 <script type="text/javascript">
+$(document).on('keydown', function(event) {
+       if (event.key == "Escape") {
+            if (confirm('Are You Sure To Leave This Page Without Save Data')) {
+                    return true;                
+            } else {
+                $( ".module_save_btn" ).click();
+            }
+       }
+   });
     var lineitem_objectdata = [];
     var edit_lineitem_inc = 0;
 
@@ -642,6 +651,7 @@
         shortcut.add("ctrl+s", function() {  
             $( ".module_save_btn" ).click();
         });
+    
 
         $('#account_id').select2('open');
         $('#account_id').on("select2:close", function(e) { 

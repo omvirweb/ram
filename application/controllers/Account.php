@@ -47,7 +47,6 @@ class Account extends CI_Controller {
                     'credit_debit' => $result->credit_debit,
                     'consider_in_pl' => $result->consider_in_pl,
                     'is_bill_wise' => $result->is_bill_wise,
-
                     'bank_name' => $result->bank_name,
                     'bank_acc_name' => $result->bank_acc_name,
                     'bank_branch' => $result->bank_branch,
@@ -228,7 +227,7 @@ class Account extends CI_Controller {
         $config['select'] = 'a.account_id, a.account_name, a.account_email_ids, a.account_phone, ag.account_group_name as ag_name,a.opening_balance,a.credit_debit';
         $config['column_order'] = array(null, 'a.account_name', 'a.account_email_ids', 'a.account_phone', 'ag.account_group_name');
         $config['column_search'] = array('a.account_name', 'a.account_email_ids', 'a.account_phone', 'ag.account_group_name');
-        $config['wheres'][] = array('column_name' => 'a.created_by', 'column_value' => $this->logged_in_id);
+        // $config['wheres'][] = array('column_name' => 'a.created_by', 'column_value' => $this->logged_in_id);
         $config['joins'][] = array('join_table' => 'account_group ag', 'join_by' => 'ag.account_group_id = a.account_group_id', 'join_type' => 'left');
         $config['order'] = array('a.account_name' => 'desc');
         $this->load->library('datatables', $config, 'datatable');
