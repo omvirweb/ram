@@ -84,7 +84,12 @@ ob_start();
             </tr>
             <?php } ?>
             <tr class="border1">
-                <td colspan="16" class="text_bold no-border-right text_center">TAX INVOICE</td>
+                <td colspan="16" class="text_bold no-border-right text_center">
+                    <?php
+                        $invoice_type = $this->crud->get_id_by_val('invoice_type','invoice_type','invoice_type_id',$sales_invoice_data->invoice_type);
+                        echo strtoupper($invoice_type);
+                    ?>
+                </td>
             </tr>
             <tr class="border1">
                 <td colspan="6" class="text_bold no-border-right" style="text-align: left;">Book No.: <?=isset($book_no) ?$book_no : '' ?></td>
