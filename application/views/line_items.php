@@ -430,20 +430,23 @@
             $(this).next().focus();
         });
 
-		$('#item_qty,#price,#gst_rate').on('keyup', function() {
+		$('#item_qty,#price,#gst_rate,#sales_rate_type').on('keyup change', function() {
             var amount = 0;
             var qty = ($('#item_qty').val()) ? $('#item_qty').val() : 0;
             var rate = ($('#price').val()) ? $('#price').val() : 0;
             var gst = ($('#gst_rate').val()) ? $('#gst_rate').val() : 0;
             
+            var sales_rate_type = $("#sales_rate_type").val();
             <?php if($voucher_type == 'sales4') { ?>
-                var sales_rate_type = $("#sales_rate_type").val();
                 if(sales_rate_type !='' && sales_rate_type == 1)
                 {
                     rate = (parseFloat(rate)*100)/(parseFloat(gst)+100);
                 }
             <?php } ?>
             var amount = (parseFloat(qty) * parseFloat(rate)) + (parseFloat(qty) * parseFloat(rate) * parseFloat(gst)/100);
+            if(sales_rate_type !='' && sales_rate_type == 1){
+                    var amount = parseFloat(qty) * parseFloat(rate);
+                }
             $('#amount').val(parseFloat(amount).toFixed(2));
         });
 
@@ -1055,11 +1058,10 @@
 		var igst = $("#igst").val() || 0;
 		var igst_amt = (discounted_price * igst)/100;
 		$("#igst_amt").val(parseF(igst_amt));
-		
-		var amount = parseFloat(discounted_price) + parseFloat(cgst_amt) + parseFloat(sgst_amt) + parseFloat(igst_amt);
+
+        var amount = parseFloat(discounted_price) + parseFloat(cgst_amt) + parseFloat(sgst_amt) + parseFloat(igst_amt);
 		var other_charges = $("#other_charges").val() || 0;
 		var amount = parseFloat(amount) + parseFloat(other_charges);
-//                alert(other_charges);
 		// $("#amount").val(parseF(amount));
 	}
 	

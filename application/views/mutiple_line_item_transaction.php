@@ -358,7 +358,7 @@
                                                 <input type="text" name="sales_subject" id="sales_subject" class="form-control" data-index="7" value="<?=isset($invoice_data->sales_subject) ? $invoice_data->sales_subject : 'Material Supply'; ?>">
                                             </div>
                                         </div>
-                                        <div class="col-md-3">
+                                        <!-- <div class="col-md-3">
                                             <div class="form-group">
                                                 <label for="sales_rate_type" class="control-label">Rate :</label>
                                                 <select name="sales_rate_type" id="sales_rate_type" class="select2">
@@ -366,8 +366,8 @@
                                                     <option <?=(isset($invoice_data->sales_rate_type) && $invoice_data->sales_rate_type == 1) ?'selected' : ''; ?> value="1">Including GST</option>
                                                 </select>
                                             </div>
-                                        </div>
-                                        <div class="clearfix"></div>
+                                        </div> -->
+                                        <!-- <div class="clearfix"></div> -->
                                         
                                         <!-- <div class="col-md-12">
                                             <label class="control-label">Ship to party details.</label>
@@ -403,8 +403,22 @@
                                             </div>
                                         </div> -->
                                     <?php } ?>
+                                    <?php if($voucher_type == "sales" || $voucher_type == "sales2" || $voucher_type == "sales3" || $voucher_type == "sales4") {?>
+                                        
+                                        <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="sales_rate_type" class="control-label">Rate :</label>
+                                            <select name="sales_rate_type" id="sales_rate_type" class="select2">
+                                                <option <?=(isset($invoice_data->sales_rate_type) && $invoice_data->sales_rate_type == 0) ?'selected' : ''; ?> value="0">Excluding GST</option>
+                                                <option <?=(isset($invoice_data->sales_rate_type) && $invoice_data->sales_rate_type == 1) ?'selected' : ''; ?> value="1">Including GST</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="clearfix"></div>
+                                    <?php } ?>
 
                                     <?php if($voucher_type == "sales" || $voucher_type == "sales2" || $voucher_type == "sales3" || $voucher_type == "sales4") { ?>
+
                                         <?php if($invoice_id>0) { ?>
                                         <div class="clearfix"></div>
                             <div class="col-md-12 row">
