@@ -1309,11 +1309,18 @@
 			$("#note").val(value.note);
 		} else {
 			$("#item_qty").val(value.item_qty);
-            $('#sales_rate_type').val(value.rate_type).trigger('change');
-            var rate = value.price;
-            if(value.rate_type == 2){
+            if(value.rate_type != undefined){
+                $('#sales_rate_type').val(value.rate_type).trigger('change');
+                var rate = value.price;
+                if(value.rate_type == 2){
                 rate = parseFloat(value.price) + parseFloat(value.price*value.gst/100);
+                }
+            }else{
+                $('#sales_rate_type').val(value.sales_rate_type).trigger('change');
+                var rate = value.rate;
             }
+            
+
             $("#rate").val(rate).trigger('change');
 			// $("#price").val(value.price);
 			$("#pure_amount").val(value.pure_amount);
