@@ -171,3 +171,6 @@ CREATE TABLE `ram`.`quotation_docs` ( `quotation_docs_id` INT NOT NULL AUTO_INCR
 
 --Parag : 2022_07_05 04:09 PM
 ALTER TABLE `quotation_docs` ADD `doc_desc` VARCHAR(255) NULL DEFAULT NULL AFTER `doc_name`;
+
+--Parag : 2022_07_15 12:46 PM
+ALTER TABLE `lineitems` ADD `rate_type` INT NULL DEFAULT '1' COMMENT '1=Excluding GST, 2=Including GST' AFTER `price`;

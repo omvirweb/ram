@@ -409,8 +409,8 @@
                                         <div class="form-group">
                                             <label for="sales_rate_type" class="control-label">Rate :</label>
                                             <select name="sales_rate_type" id="sales_rate_type" class="select2">
-                                                <option <?=(isset($invoice_data->sales_rate_type) && $invoice_data->sales_rate_type == 0) ?'selected' : ''; ?> value="0">Excluding GST</option>
-                                                <option <?=(isset($invoice_data->sales_rate_type) && $invoice_data->sales_rate_type == 1) ?'selected' : ''; ?> value="1">Including GST</option>
+                                                <option <?=(isset($invoice_data->sales_rate) && $invoice_data->sales_rate == 1) ?'selected' : ''; ?> value="1">Excluding GST</option>
+                                                <option <?=(isset($invoice_data->sales_rate) && $invoice_data->sales_rate == 2) ?'selected' : ''; ?> value="2">Including GST</option>
                                             </select>
                                         </div>
                                     </div>

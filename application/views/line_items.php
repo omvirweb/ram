@@ -4,6 +4,9 @@
     }
 </style>
 <?php
+// echo '<pre>';
+// print_r($sales_invoice_lineitems);
+// die();
 	$is_view_item_history = $this->session->userdata(PACKAGE_FOLDER_NAME.'is_logged_in')['is_view_item_history'];
 
 	$segment1 = $this->uri->segment(1);
@@ -113,7 +116,9 @@
 	<div class="col-md-1 pr0 <?php echo isset($line_item_fields['Rate']) ? $line_item_fields['Rate'] : ''; ?>">
 		<div class="form-group">
 			<label for="price" class="control-label">Rate</label>
-			<input type="text" name="line_items_data[price]" id="price" class="price form-control item_detail num_only" data-index="32">
+			<input type="text" name="line_items_data[rate]" id="rate" class="price form-control item_detail num_only" data-index="32">
+			<input type="hidden" name="line_items_data[price]" id="price" class="price form-control item_detail num_only">
+			<input type="hidden" name="line_items_data[sales_rate_type]" id="sales_rate_type_hidden" class="sales_rate_type_hidden form-control item_detail num_only">
 			<input type="hidden" name="line_items_data[price_for_itax]" id="price_for_itax" class="price_for_itax form-control item_detail" >
 		</div>
 	</div>
@@ -369,11 +374,11 @@
 			value = JSON.parse(value);
 			lineitem_objectdata.push(value);
 		});
-	<?php } else if(isset($sales_invoice_lineitems)){ ?>
+	<?php } else if(isset($sales_invoice_lineitems)){  ?>
 		var li_lineitem_objectdata = [<?php echo $sales_invoice_lineitems; ?>];
 		var lineitem_objectdata = [];
 		$.each(li_lineitem_objectdata, function (index, value) {
-			value = JSON.parse(value);
+            value = JSON.parse(value);
 			lineitem_objectdata.push(value);
 		});
 	<?php } else if(isset($credit_note_lineitems)){ ?>
@@ -430,23 +435,21 @@
             $(this).next().focus();
         });
 
-		$('#item_qty,#price,#gst_rate,#sales_rate_type').on('keyup change', function() {
+		$('#item_qty,#rate,#gst_rate,#sales_rate_type').on('keyup change', function() {
             var amount = 0;
-            var qty = ($('#item_qty').val()) ? $('#item_qty').val() : 0;
-            var rate = ($('#price').val()) ? $('#price').val() : 0;
+            var rate = ($('#rate').val()) ? $('#rate').val() : 0;
             var gst = ($('#gst_rate').val()) ? $('#gst_rate').val() : 0;
-            
+            var qty = ($('#item_qty').val()) ? $('#item_qty').val() : 0;
             var sales_rate_type = $("#sales_rate_type").val();
-            <?php if($voucher_type == 'sales4') { ?>
-                if(sales_rate_type !='' && sales_rate_type == 1)
-                {
-                    rate = (parseFloat(rate)*100)/(parseFloat(gst)+100);
-                }
-            <?php } ?>
-            var amount = (parseFloat(qty) * parseFloat(rate)) + (parseFloat(qty) * parseFloat(rate) * parseFloat(gst)/100);
-            if(sales_rate_type !='' && sales_rate_type == 1){
-                    var amount = parseFloat(qty) * parseFloat(rate);
-                }
+            $('#sales_rate_type_hidden').val(sales_rate_type);
+            if(sales_rate_type !='' && sales_rate_type == 2){
+                price = (parseFloat(rate)*100)/(parseFloat(gst)+100);
+            }else{
+                price = parseFloat(rate);
+            }
+            $('#price').val(price);
+            var price = ($('#price').val()) ? $('#price').val() : 0;
+            var amount = (parseFloat(qty) * parseFloat(price)) + (parseFloat(qty) * parseFloat(price) * parseFloat(gst)/100);
             $('#amount').val(parseFloat(amount).toFixed(2));
         });
 
@@ -600,7 +603,8 @@
 //                    if(discount_type == '1'){
 //                        $('#discount').val(response.sales_dis);
 //                    }
-                    $('#price').val(response.rate);
+
+                    $('#rate').val(response.rate).trigger('change');
                     $('#account_state').val(response.account_state);
                     $('#user_state').val(response.user_state);
                     if(response.rate_for_itax == 1){
@@ -654,7 +658,7 @@
                     dataType: 'json',
                     data: {item_id: item_id},
                     success: function (response) {
-                        $('#gst_rate').val(response.gst_per);
+                        $('#gst_rate').val(response.gst_per).trigger('change');
                         $('#hsn').val(response.hsn);
                     },
                 });
@@ -1183,7 +1187,7 @@
             '<td style="border-color:#2b3984;">' + item_name + '</td>' +
             '<td class="text-right" style="border-color:#2b3984;">' + value.item_qty + '</td>' +
 			'<td class="<?php echo isset($line_item_fields['unit']) ? $line_item_fields['unit'] : ''; ?>" style="border-color:#2b3984;">' + value_unit_name + '</td>' +
-			'<td class="text-right <?php echo isset($line_item_fields['Rate']) ? $line_item_fields['Rate'] : ''; ?>" style="border-color:#2b3984;">' + value.price + '</td>' +
+			'<td class="text-right <?php echo isset($line_item_fields['Rate']) ? $line_item_fields['Rate'] : ''; ?>" style="border-color:#2b3984;">' + parseF(value.price) + '</td>' +
 			'<td class="fix_lcolumn text-right <?php echo isset($line_item_fields['amount']) ? $line_item_fields['amount'] : ''; ?>" style="border-color:#2b3984;">' + parseF(value.amount) + '</td></tr>';
 			new_lineitem_html += row_html;
 			qty_total += parseInt(value.item_qty);
@@ -1305,7 +1309,13 @@
 			$("#note").val(value.note);
 		} else {
 			$("#item_qty").val(value.item_qty);
-			$("#price").val(value.price);
+            $('#sales_rate_type').val(value.rate_type).trigger('change');
+            var rate = value.price;
+            if(value.rate_type == 2){
+                rate = parseFloat(value.price) + parseFloat(value.price*value.gst/100);
+            }
+            $("#rate").val(rate).trigger('change');
+			// $("#price").val(value.price);
 			$("#pure_amount").val(value.pure_amount);
 			$("#discount_type").val(value.discount_type);
 			$("#discount").val(value.discount);

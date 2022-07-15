@@ -1069,6 +1069,7 @@ class Transaction extends CI_Controller {
                     $lineitems = '';
                     $where = array('module' => '2', 'parent_id' => $_POST['sales_invoice_id']);
                     $sales_invoice_lineitems = $this->crud->get_row_by_id('lineitems', $where);
+
                     foreach($sales_invoice_lineitems as $sales_invoice_lineitem){
                         $sales_invoice_lineitem->pure_amount = $sales_invoice_lineitem->pure_amount;
                         $sales_invoice_lineitem->cgst_amt = $sales_invoice_lineitem->cgst_amount;
@@ -1076,9 +1077,6 @@ class Transaction extends CI_Controller {
                         $sales_invoice_lineitem->igst_amt = $sales_invoice_lineitem->igst_amount;
                         $lineitems .= "'".json_encode($sales_invoice_lineitem)."',";
                     }
-                    /*echo "<pre>";
-                    print_r( $lineitems);
-                    die();*/
                     $data['sales_invoice_lineitems'] = $lineitems;
                 } else {
                     $data['prefix'] = $this->crud->get_id_by_val('user', 'prefix', 'user_id', $this->logged_in_id);
@@ -1274,6 +1272,7 @@ class Transaction extends CI_Controller {
             $invoice_data['cash_customer'] = (isset($post_data['cash_customer'])?$post_data['cash_customer']:'');
             $invoice_data['tax_type'] = (isset($post_data['tax_type'])?$post_data['tax_type']:'');
             $invoice_data['our_bank_id'] = $post_data['our_bank_label'];
+            $invoice_data['sales_rate'] = (isset($post_data['sales_rate_type'])) ? $post_data['sales_rate_type'] : 1;
             $invoice_data['sales_type'] = 1;
 
         }elseif($voucher_type == 'sales2') {
@@ -1290,6 +1289,7 @@ class Transaction extends CI_Controller {
             $invoice_data['sales_subject'] = (isset($post_data['sales_subject'])) ? $post_data['sales_subject'] : '';
             $invoice_data['sales_note'] = (isset($post_data['sales_note'])) ? $post_data['sales_note'] : '';
             $invoice_data['prof_tax'] = (isset($post_data['prof_tax'])) ? $post_data['prof_tax'] : '';
+            $invoice_data['sales_rate'] = (isset($post_data['sales_rate_type'])) ? $post_data['sales_rate_type'] : 1;
             $invoice_data['sales_type'] = 2;
 
         }elseif($voucher_type == 'sales3') {
@@ -1308,6 +1308,7 @@ class Transaction extends CI_Controller {
             $invoice_data['ship_party_state'] = (isset($post_data['ship_party_state'])) ? $post_data['ship_party_state'] : '';
             $invoice_data['ship_party_code'] = (isset($post_data['ship_party_code'])) ? $post_data['ship_party_code'] : '';
             $invoice_data['sales_note'] = (isset($post_data['sales_note'])) ? $post_data['sales_note'] : '';
+            $invoice_data['sales_rate'] = (isset($post_data['sales_rate_type'])) ? $post_data['sales_rate_type'] : 1;
             $invoice_data['sales_type'] = 3;
 
         }elseif($voucher_type == 'sales4') {
@@ -1328,7 +1329,7 @@ class Transaction extends CI_Controller {
             $invoice_data['sales_subject'] = (isset($post_data['sales_subject'])) ? $post_data['sales_subject'] : '';
             $invoice_data['sales_note'] = (isset($post_data['sales_note'])) ? $post_data['sales_note'] : '';
             $invoice_data['sales_type'] = 4;
-            $invoice_data['sales_rate_type'] = (isset($post_data['sales_rate_type'])) ? $post_data['sales_rate_type'] : 0;
+            $invoice_data['sales_rate'] = (isset($post_data['sales_rate_type'])) ? $post_data['sales_rate_type'] : 1;
 
         }elseif($voucher_type == 'purchase') {
             $module = 1;
@@ -1558,22 +1559,24 @@ class Transaction extends CI_Controller {
                 $add_lineitem['sub_cat_id'] = isset($lineitem->sub_cat_id) ? $lineitem->sub_cat_id : NULL;
                 $add_lineitem['item_id'] = isset($lineitem->item_id) ? $lineitem->item_id : 0;
                 $add_lineitem['item_qty'] = $lineitem->item_qty;
-                if(isset($voucher_type) && $voucher_type == 'sales4')
+                if(isset($voucher_type) && $voucher_type == 'sales' || $voucher_type == 'sales2' || $voucher_type == 'sales3' || $voucher_type == 'sales4')
                 {
-                    if(isset($post_data['sales_rate_type']) && $post_data['sales_rate_type'] == 1)
+                    if(isset($post_data['sales_rate_type']) && $post_data['sales_rate_type'] != '')
                     {
-                        $add_lineitem['price_including_gst'] = isset($lineitem->price) ? $lineitem->price : 0;
-                        $divid_by=($gst_per+100);
-                        $add_lineitem['price'] = $add_lineitem['price_including_gst']*100/$divid_by;
+                        $add_lineitem['rate_type'] = $post_data['sales_rate_type'];
+                        // $add_lineitem['price_including_gst'] = isset($lineitem->price) ? $lineitem->price : 0;
+                        // $divid_by=($gst_per+100);
+                        // $add_lineitem['price'] = $add_lineitem['price_including_gst']*100/$divid_by;
                     }else
                     {
-                        $add_lineitem['price_including_gst'] = 0;
-                        $add_lineitem['price'] = isset($lineitem->price) ? $lineitem->price : NULL;
+                        // $add_lineitem['price_including_gst'] = 0;
+                        // $add_lineitem['price'] = isset($lineitem->price) ? $lineitem->price : NULL;
+                        $add_lineitem['rate_type'] = 1;
+
                     }
 
-                }else{
-                    $add_lineitem['price'] = isset($lineitem->price) ? $lineitem->price : NULL;
                 }
+                $add_lineitem['price'] = isset($lineitem->price) ? $lineitem->price : NULL;
                 $add_lineitem['pure_amount'] = isset($lineitem->pure_amount)?$lineitem->pure_amount:NULL;
                 $add_lineitem['amount'] = isset($lineitem->amount)?$lineitem->amount:NULL;
                 $add_lineitem['unit_id'] = isset($lineitem->unit_id)?$lineitem->unit_id:NULL;
@@ -1728,16 +1731,23 @@ class Transaction extends CI_Controller {
                 $add_lineitem['item_id'] = isset($lineitem->item_id)?$lineitem->item_id:0;
                 $add_lineitem['item_qty'] = $lineitem->item_qty;
                 $gst_per = isset($lineitem->gst_rate)?$lineitem->gst_rate:0;
-                if(isset($voucher_type) && $voucher_type == 'sales4' && $post_data['sales_rate_type'] == 1)
-                {
-                    $add_lineitem['price_including_gst'] = isset($lineitem->price) ? $lineitem->price : 0;
-                    $divid_by=($gst_per+100);
+                // if(isset($voucher_type) && $voucher_type == 'sales4' && $post_data['sales_rate_type'] == 1)
+                // {
+                //     $add_lineitem['price_including_gst'] = isset($lineitem->price) ? $lineitem->price : 0;
+                //     $divid_by=($gst_per+100);
 
-                    $add_lineitem['price'] = $add_lineitem['price_including_gst']*100/$divid_by;
-                }else{
-                    $add_lineitem['price'] = isset($lineitem->price) ? $lineitem->price : NULL;
+                //     $add_lineitem['price'] = $add_lineitem['price_including_gst']*100/$divid_by;
+                // }else{
+                //     $add_lineitem['price'] = isset($lineitem->price) ? $lineitem->price : NULL;
+                // }
+                if(isset($voucher_type) && $voucher_type == 'sales' || $voucher_type == 'sales2' || $voucher_type == 'sales3' || $voucher_type == 'sales4'){
+                    if(isset($post_data['sales_rate_type']) && $post_data['sales_rate_type'] != ''){
+                        $add_lineitem['rate_type'] = $post_data['sales_rate_type'];
+                    }else{
+                        $add_lineitem['rate_type'] = 1;
+                    }
                 }
-
+                $add_lineitem['price'] = isset($lineitem->price) ? $lineitem->price : NULL;
                 $add_lineitem['pure_amount'] = isset($lineitem->pure_amount)?$lineitem->pure_amount:NULL;
                 $add_lineitem['amount'] = isset($lineitem->amount)?$lineitem->amount:NULL;
                 $add_lineitem['unit_id'] = isset($lineitem->unit_id)?$lineitem->unit_id:NULL;
