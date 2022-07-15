@@ -106,7 +106,7 @@
         var buttonCommon = {
             exportOptions: {
                 format: { body: function ( data, row, column, node ) { return data.toString().replace(/(&nbsp;|<([^>]+)>)/ig, ""); } },
-                columns: [1, 2, 3, 4, 5, 6, 7],
+                columns: [1, 2, 3, 4, 5, 6, 7, 8, 9],
             }
         };
         $(document).on('click', '#btn_datepicker', function () {
@@ -142,7 +142,10 @@
 //                                objLayout['hLineWidth'] = function(i) { return .5; };
 //                                objLayout['vLineWidth'] = function(i) { return .5; };
                                 doc.content[1].layout = objLayout;
-                                doc.content[1].table.widths = ["15%", "20%", "20%", "15%", "15%", "15%"]; //costringe le colonne ad occupare un dato spazio per gestire il baco del 100% width che non si concretizza mai
+
+                                // @ VIPUL BHAI (Width set Karvani Pan Jetali Column Hoy Etali Value Apavani Hati Like Apane 10 col batavi to 9 time "9%" avyu)
+                                
+                                doc.content[1].table.widths = ["9%","9%","9%","9%","9%","9%","9%","9%","9%","9%"]; //costringe le colonne ad occupare un dato spazio per gestire il baco del 100% width che non si concretizza mai
                                 var rowCount = document.getElementById("ledger_table").rows.length;
 
                                 for (i = 1; i < rowCount; i++) {
