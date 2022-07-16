@@ -106,7 +106,7 @@
         var buttonCommon = {
             exportOptions: {
                 format: { body: function ( data, row, column, node ) { return data.toString().replace(/(&nbsp;|<([^>]+)>)/ig, ""); } },
-                columns: [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                columns: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
             }
         };
         $(document).on('click', '#btn_datepicker', function () {

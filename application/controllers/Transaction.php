@@ -1272,7 +1272,7 @@ class Transaction extends CI_Controller {
             $invoice_data['cash_customer'] = (isset($post_data['cash_customer'])?$post_data['cash_customer']:'');
             $invoice_data['tax_type'] = (isset($post_data['tax_type'])?$post_data['tax_type']:'');
             $invoice_data['our_bank_id'] = $post_data['our_bank_label'];
-            $invoice_data['sales_rate'] = (isset($post_data['sales_rate_type'])) ? $post_data['sales_rate_type'] : 1;
+            $invoice_data['sales_rate_type'] = (isset($post_data['sales_rate_type'])) ? $post_data['sales_rate_type'] : 1;
             $invoice_data['sales_type'] = 1;
 
         }elseif($voucher_type == 'sales2') {
@@ -1289,7 +1289,7 @@ class Transaction extends CI_Controller {
             $invoice_data['sales_subject'] = (isset($post_data['sales_subject'])) ? $post_data['sales_subject'] : '';
             $invoice_data['sales_note'] = (isset($post_data['sales_note'])) ? $post_data['sales_note'] : '';
             $invoice_data['prof_tax'] = (isset($post_data['prof_tax'])) ? $post_data['prof_tax'] : '';
-            $invoice_data['sales_rate'] = (isset($post_data['sales_rate_type'])) ? $post_data['sales_rate_type'] : 1;
+            $invoice_data['sales_rate_type'] = (isset($post_data['sales_rate_type'])) ? $post_data['sales_rate_type'] : 1;
             $invoice_data['sales_type'] = 2;
 
         }elseif($voucher_type == 'sales3') {
@@ -1308,7 +1308,7 @@ class Transaction extends CI_Controller {
             $invoice_data['ship_party_state'] = (isset($post_data['ship_party_state'])) ? $post_data['ship_party_state'] : '';
             $invoice_data['ship_party_code'] = (isset($post_data['ship_party_code'])) ? $post_data['ship_party_code'] : '';
             $invoice_data['sales_note'] = (isset($post_data['sales_note'])) ? $post_data['sales_note'] : '';
-            $invoice_data['sales_rate'] = (isset($post_data['sales_rate_type'])) ? $post_data['sales_rate_type'] : 1;
+            $invoice_data['sales_rate_type'] = (isset($post_data['sales_rate_type'])) ? $post_data['sales_rate_type'] : 1;
             $invoice_data['sales_type'] = 3;
 
         }elseif($voucher_type == 'sales4') {
@@ -1329,7 +1329,7 @@ class Transaction extends CI_Controller {
             $invoice_data['sales_subject'] = (isset($post_data['sales_subject'])) ? $post_data['sales_subject'] : '';
             $invoice_data['sales_note'] = (isset($post_data['sales_note'])) ? $post_data['sales_note'] : '';
             $invoice_data['sales_type'] = 4;
-            $invoice_data['sales_rate'] = (isset($post_data['sales_rate_type'])) ? $post_data['sales_rate_type'] : 1;
+            $invoice_data['sales_rate_type'] = (isset($post_data['sales_rate_type'])) ? $post_data['sales_rate_type'] : 1;
 
         }elseif($voucher_type == 'purchase') {
             $module = 1;
