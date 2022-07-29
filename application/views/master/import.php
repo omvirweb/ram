@@ -94,6 +94,15 @@
                                                     <div class="col-md-4">
                                                         <a href="<?= base_url();?>uploads/import_items.XLS">Download Item Sample</a>
                                                     </div>
+                                                    <div class="clearfix"></div>
+                                                    <div class="col-md-4">
+                                                        <label for="import_radio10" class="col-sm-12" style="font-size: 14px;">
+                                                            <input type="radio" name="import_radio" id="import_radio10" value="10">  &nbsp; Import Miracle Purchase Data (xls/xlsx) &nbsp;
+                                                        </label>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <a href="<?= base_url();?>uploads/miracle_purchase_sample.xlsx">Download Miracle Purchase Data Sample</a>
+                                                    </div>
                                                 </div>
                                                 <div class="col-md-6">
                                                     <?php if(isset($duplicate_parties) && !empty($duplicate_parties)){ ?>
