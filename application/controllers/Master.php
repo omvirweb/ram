@@ -3023,147 +3023,100 @@ class Master extends CI_Controller
                 }
 				if($radio_type == 11) {
                     require_once('application/third_party/PHPExcel/PHPExcel.php');
-                    // Cash account id = CASH_ACCOUNT_ID 227  //
+                    // Cash account id = CASH_ACCOUNT_ID 7  //
                     $objPHPExcel = PHPExcel_IOFactory::load($_FILES['userfile']['tmp_name']);
                     $allDataInSheet = $objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
-					echo '<pre>';
-					print_r($allDataInSheet);
-					die();
+					// echo '<pre>';
+					// print_r($allDataInSheet);
+					// die();
                     $import_client_ledger_data = array();
                     if(!empty($allDataInSheet)){
                         unset($allDataInSheet[1]);
                         unset($allDataInSheet[2]);
                         unset($allDataInSheet[3]);
-                        $acc_name = substr($allDataInSheet[4]['A'], strpos($allDataInSheet[4]['A'], 'For') + 4);
+						unset($allDataInSheet[4]);
+						unset($allDataInSheet[5]);
+						unset($allDataInSheet[6]);
+						unset($allDataInSheet[7]);
+						unset($allDataInSheet[8]);
+						unset($allDataInSheet[9]);
 
-                        $acc_id = $this->crud->getFromSQL("SELECT account_id FROM account WHERE account_name = '".$acc_name."' AND created_by = ".$this->logged_in_id." ");
-                        if(empty($acc_id)){
-                            $this->session->set_flashdata('success', false);
-                            $this->session->set_flashdata('message', '<b>'.$acc_name.'</b> : This Account not Exists !');
-                            redirect('master/import');
-                        } else {
-                            $acc_id = $acc_id[0]->account_id;
-                            unset($allDataInSheet[4]);
-                            unset($allDataInSheet[5]);
-                            unset($allDataInSheet[6]);
+						if (!empty($allDataInSheet)) {
+							foreach ($allDataInSheet as $sheet_entry) {
+								if (empty($sheet_entry['F'])) {
+									break;
+								} else {
+									if (!empty($sheet_entry['A']) && !empty($sheet_entry['B'])) {
+										$rec_dat = str_replace('/', '-', substr($sheet_entry['A'], 0, 10));
+										$rec_date = date('Y-m-d', strtotime($rec_dat));
 
-                            if(!empty($allDataInSheet)){
-                                foreach ($allDataInSheet as $sheet_entry){
-                                    if($sheet_entry['B'] == 'DB Closing Balance' || $sheet_entry['D'] == 'DB Closing Balance'){
-                                        break;
-                                    } else {
-                                        if(!empty($sheet_entry['A']) && !empty($sheet_entry['B'])){
-                                            $rec_dat = str_replace('/', '-', substr($sheet_entry['B'], 0, 10));
-                                            $rec_date = date('Y-m-d', strtotime($rec_dat));
-                                            $opposite_data = substr($sheet_entry['B'], 11);
-                                            $exd = explode(' ', $opposite_data);
-                                            $opposite_acc = $exd[0];
-                                            $note = substr($opposite_data, strpos($opposite_data, $opposite_acc));
-
-                                            if($opposite_acc == 'CRct' || $opposite_acc == 'Jrnl' || $opposite_acc == 'SRet'){ } else {
-                                                if(!empty($sheet_entry['B'])){
-                                                    $import_client_ledger_data[] = array('0' => 'Credit', '1' => $sheet_entry['A'], '2' => $sheet_entry['B']);
-                                                }
-                                            }
-                                            if($opposite_acc == 'CRct' || $opposite_acc == 'Jrnl'){
-                                                $op_acc_id = CASH_ACCOUNT_ID;
-                                                $entry_arr = array();
-                                                $entry_arr['transaction_type'] = '2';
-                                                $entry_arr['transaction_date'] = $rec_date;
-                                                $entry_arr['amount'] = $sheet_entry['A'];
-                                                $entry_arr['to_account_id'] = $op_acc_id;
-                                                $entry_arr['from_account_id'] = $acc_id;
-                                                $tr_note = 'Import from Excel : '.$note;
-                                                $entry_arr['note'] = $tr_note;
-                                                $entry_arr['created_at'] = $this->now_time;
-                                                $entry_arr['created_by'] = $this->logged_in_id;
-                                                $entry_arr['user_created_by'] = $this->session->userdata()['login_user_id'];
-                                                $this->crud->insert('transaction_entry', $entry_arr);
-                                            }
-                                            if($opposite_acc == 'SRet'){
-                                                $credit_note_no = $this->crud->get_max_number('credit_note', 'credit_note_no', $this->logged_in_id);
-                                                if(!empty($credit_note_no->credit_note_no)){
-                                                    $new_credit_note_no = $credit_note_no->credit_note_no + 1;
-                                                } else {
-                                                    $new_credit_note_no = 1;
-                                                }
-                                                $entry_arr = array();
-                                                $entry_arr['credit_note_no'] = $new_credit_note_no;
-                                                $entry_arr['bill_no'] = $new_credit_note_no;
-                                                $entry_arr['invoice_date'] = $rec_date;
-                                                $entry_arr['account_id'] = $acc_id;
-                                                $entry_arr['against_account_id'] = '152';
-                                                $entry_arr['credit_note_date'] = $rec_date;
-                                                $entry_arr['qty_total'] = '1';
-                                                $entry_arr['pure_amount_total'] = $sheet_entry['A'];
-                                                $entry_arr['amount_total'] = $sheet_entry['A'];
-                                                $entry_arr['credit_note_desc'] = 'Import from Excel : '.$note;
-                                                $entry_arr['created_at'] = $this->now_time;
-                                                $entry_arr['created_by'] = $this->logged_in_id;
-                                                $entry_arr['user_created_by'] = $this->session->userdata()['login_user_id'];
-                                                $this->crud->insert('credit_note', $entry_arr);
-                                            }
-                                        }
-                                        
-                                        if(empty($sheet_entry['F'])){
-											break;
-										}else{
-                                            $pay_dat = str_replace('/', '-', substr($sheet_entry['D'], 0, 10));
-                                            $rec_date = date('Y-m-d', strtotime($pay_dat));
-                                            $opposite_data = substr($sheet_entry['D'], 11);
-                                            $exd = explode(' ', $opposite_data);
-                                            $opposite_acc = $exd[0];
-                                            $note = substr($opposite_data, strpos($opposite_data, $opposite_acc));
-                                            if($opposite_acc == 'CPmt' || $opposite_acc == 'Jrnl' || $opposite_acc == 'Sale'){ } else {
-                                                if(!empty($sheet_entry['D'])){
-                                                    $import_client_ledger_data[] = array('0' => 'Debit', '1' => $sheet_entry['C'], '2' => $sheet_entry['D']);
-                                                }
-                                            }
-                                            if($opposite_acc == 'CPmt' || $opposite_acc == 'Jrnl'){
-                                                $op_acc_id = CASH_ACCOUNT_ID;
-                                                $entry_arr = array();
-                                                $entry_arr['transaction_type'] = '1';
-                                                $entry_arr['transaction_date'] = $rec_date;
-                                                $entry_arr['amount'] = $sheet_entry['C'];
-                                                $entry_arr['to_account_id'] = $acc_id;
-                                                $entry_arr['from_account_id'] = $op_acc_id;
-                                                $tr_note = 'Import from Excel : '.$note;
-                                                $entry_arr['note'] = $tr_note;
-                                                $entry_arr['created_at'] = $this->now_time;
-                                                $entry_arr['created_by'] = $this->logged_in_id;
-                                                $entry_arr['user_created_by'] = $this->session->userdata()['login_user_id'];
-                                                $this->crud->insert('transaction_entry', $entry_arr);
-                                            }
-                                            if($opposite_acc == 'Sale'){
-                                                $sales_invoice_no = $this->crud->get_max_number_where('sales_invoice', 'sales_invoice_no', array('created_by' => $this->logged_in_id));
-                                                if(empty($sales_invoice_no->sales_invoice_no)){
-                                                    $new_sales_invoice_no = 1;
-                                                } else {
-                                                    $new_sales_invoice_no = $sales_invoice_no->sales_invoice_no + 1;    
-                                                }
-                                                $entry_arr = array();
-                                                $entry_arr['sales_invoice_no'] = $new_sales_invoice_no;
-                                                $entry_arr['account_id'] = $acc_id;
-                                                $entry_arr['against_account_id'] = '152';
-                                                $entry_arr['sales_invoice_date'] = $rec_date;
-                                                $entry_arr['sales_invoice_desc'] = 'Import from Excel : '.$note;
-                                                $entry_arr['qty_total'] = '1';
-                                                $entry_arr['pure_amount_total'] = $sheet_entry['C'];
-                                                $entry_arr['amount_total'] = $sheet_entry['C'];
-                                                $entry_arr['created_at'] = $this->now_time;
-                                                $entry_arr['created_by'] = $this->logged_in_id;
-                                                $entry_arr['user_created_by'] = $this->session->userdata()['login_user_id'];
-                                                $this->crud->insert('sales_invoice', $entry_arr);
-                                            }
-                                        }
-                                    }
-                                }
-                                $data['import_client_ledger_data'] = $import_client_ledger_data;
-                            }
-                        // }
-                        
-                    }
-                }
+										echo $opposite_data = trim($sheet_entry['B'], " ");
+										$opposite_acc = $opposite_data;
+										$note = "This is note";
+										$account_row = $this->crud->get_data_row_by_where('account', array('account_name' => $opposite_acc));
+										if (!empty($account_row)) {
+											$account_id = $account_row->account_id;
+										}
+										else
+										{
+											$account_data['account_name'] = $opposite_acc;
+											$account_data['account_group_id'] = SUNDRY_DEBTORS_ACC_GROUP_ID;
+											$account_data['opening_balance'] = 0;
+											$account_data['credit_debit'] = "1";
+											$account_data['account_city'] = "Rajkot";
+											$account_data['account_postal_code'] = "";
+											$account_data['account_state'] = "Gujarat";
+											$account_data['account_pan'] = "";
+											$account_data['account_aadhaar'] = "";
+											$account_data['account_gst_no'] = "";
+											$account_data['account_contect_person_name'] = "";
+											$account_data['account_address'] = "";
+											$account_data['account_mobile_numbers'] = "";
+											$account_data['account_phone'] = "";
+											$account_data['account_email_ids'] = "";
+											$account_data['consider_in_pl'] = 1;
+											$account_data['created_by'] = $this->logged_in_id;
+											$account_data['user_created_by'] = $this->session->userdata()['login_user_id'];
+											$account_data['created_at'] = $this->now_time;
+											
+											echo " : ".$account_id = $this->crud->insert('account',$account_data);
+											echo " : <br> ";
+										}
+										
+										$credit_value = trim($sheet_entry['D'], " ");
+										$debit_value  = trim($sheet_entry['E'], " ");
+										if (empty($credit_value) && !empty($debit_value)) {
+											$transaction_entry_data['transaction_type'] = 1; // 1 = Payment, 2 = Receipt
+											$transaction_entry_data['transaction_date'] = $rec_date;
+											$transaction_entry_data['from_account_id']  = CASH_ACCOUNT_ID;
+											$transaction_entry_data['to_account_id']    = $account_id;
+											$transaction_entry_data['receipt_no']       = "";//there is No column for this in excel
+											$transaction_entry_data['amount']           = $debit_value;
+											$transaction_entry_data['created_at'] = $this->now_time;
+											$transaction_entry_data['created_by'] = $this->logged_in_id;
+											$transaction_entry_data['user_created_by'] = $this->session->userdata()['login_user_id'];
+											$result = $this->crud->insert('transaction_entry', $transaction_entry_data);
+											$last_tr_id = $this->db->insert_id();
+										} else if (!empty($credit_value) && empty($debit_value)) {
+											$transaction_entry_data['transaction_type'] = 2; // 1 = Payment, 2 = Receipt
+											$transaction_entry_data['transaction_date'] = $rec_date;
+											$transaction_entry_data['from_account_id']  = $account_id;
+											$transaction_entry_data['to_account_id']    = CASH_ACCOUNT_ID;
+											$transaction_entry_data['receipt_no']       = "";//there is No column for this in excel
+											$transaction_entry_data['amount']           = $credit_value;
+											$transaction_entry_data['created_at'] = $this->now_time;
+											$transaction_entry_data['created_by'] = $this->logged_in_id;
+											$transaction_entry_data['user_created_by'] = $this->session->userdata()['login_user_id'];
+											$result = $this->crud->insert('transaction_entry', $transaction_entry_data);
+											$last_tr_id = $this->db->insert_id();
+										}
+									}
+								}
+							}
+							$data['import_client_ledger_data'] = $import_client_ledger_data;
+						}
+					}
+				}
 
                 
                 //if($result) {

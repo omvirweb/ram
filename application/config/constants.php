@@ -117,7 +117,7 @@ define('SEND_SMS_FOR_INVOICE', 'Your Invoice generated of Amount {{amount}}.');
 
 //Cash  Account Constant
 define('CASH_IN_HAND_ACC_GROUP_ID', 26);
-define('CASH_ACCOUNT_ID', 227);
+define('CASH_ACCOUNT_ID', 7);
 //Bank  Account Constant
 define('BANK_ACC_GROUP_ID', 21);
 //Customer Account Constant
