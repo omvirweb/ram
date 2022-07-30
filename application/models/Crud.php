@@ -19,13 +19,14 @@ class Crud extends CI_Model
 	function insert($table_name,$data_array){
 		if($this->db->insert($table_name,$data_array))
 		{
-			echo "here";
 			return $this->db->insert_id();
 		}
 		else 
 		{
-		  echo $table_name." : ";
-		  print_r($data_array);
+		  //echo $table_name." : ";;
+		  echo "<br>";;
+		  print_r($this->db->error());
+		  //print_r($data_array);
 		}
 		return false;
 	}

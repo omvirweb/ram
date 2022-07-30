@@ -3050,7 +3050,7 @@ class Master extends CI_Controller
 										$rec_dat = str_replace('/', '-', substr($sheet_entry['A'], 0, 10));
 										$rec_date = date('Y-m-d', strtotime($rec_dat));
 
-										echo $opposite_data = trim($sheet_entry['B'], " ");
+										$opposite_data = trim($sheet_entry['B'], " ");
 										$opposite_acc = $opposite_data;
 										$note = "This is note";
 										$account_row = $this->crud->get_data_row_by_where('account', array('account_name' => $opposite_acc));
@@ -3063,9 +3063,9 @@ class Master extends CI_Controller
 											$account_data['account_group_id'] = SUNDRY_DEBTORS_ACC_GROUP_ID;
 											$account_data['opening_balance'] = 0;
 											$account_data['credit_debit'] = "1";
-											$account_data['account_city'] = "Rajkot";
+											$account_data['account_city'] = 2;
 											$account_data['account_postal_code'] = "";
-											$account_data['account_state'] = "Gujarat";
+											$account_data['account_state'] = 7;
 											$account_data['account_pan'] = "";
 											$account_data['account_aadhaar'] = "";
 											$account_data['account_gst_no'] = "";
@@ -3079,8 +3079,7 @@ class Master extends CI_Controller
 											$account_data['user_created_by'] = $this->session->userdata()['login_user_id'];
 											$account_data['created_at'] = $this->now_time;
 											
-											echo " : ".$account_id = $this->crud->insert('account',$account_data);
-											echo " : <br> ";
+											$account_id = $this->crud->insert('account',$account_data);
 										}
 										
 										$credit_value = trim($sheet_entry['D'], " ");
