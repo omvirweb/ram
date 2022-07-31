@@ -121,6 +121,15 @@
                                                     <div class="col-md-4">
                                                         <a href="<?= base_url();?>uploads/miracle_bankbook_sample.xlsx">Download Miracle Bankbook Data Sample</a>
                                                     </div>
+                                                    <div class="clearfix"></div>
+                                                    <div class="col-md-4">
+                                                        <label for="import_radio13" class="col-sm-13" style="font-size: 14px;">
+                                                            <input type="radio" name="import_radio" id="import_radio13" value="13">  &nbsp; Import Miracle Journal Data (xls/xlsx) &nbsp;
+                                                        </label>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <a href="<?= base_url();?>uploads/miracle_bankbook_sample.xlsx">Download Miracle Journal Data Sample</a>
+                                                    </div>
                                                 </div>
                                                 <div class="col-md-6">
                                                     <?php if(isset($duplicate_parties) && !empty($duplicate_parties)){ ?>

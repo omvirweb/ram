@@ -2792,15 +2792,16 @@ class Master extends CI_Controller
                     	print_r($excel_row);
                     	exit();*/
 
-                    	$purchase_invoice_row = $this->crud->get_data_row_by_where('purchase_invoice',array('purchase_invoice_no' => $purchase_invoice_no, 'created_by' => $this->logged_in_id));
+                    	// $purchase_invoice_row = $this->crud->get_data_row_by_where('purchase_invoice',array('purchase_invoice_no' => $purchase_invoice_no, 'created_by' => $this->logged_in_id));
 
-                    	if(!empty($purchase_invoice_row)) {
-                    		$import_purchase_data[] = array(
-                    			'invoice_no' => $excel_row['B'],
-                    			'message' => '<span class="text-red">Invoice Already Added</span>',
-                    		);
-                    		continue;
-                    	}
+                    	// TODO : Actually this conditon should be use more properly, but for now, removed to make data import work faster.
+						// if(!empty($purchase_invoice_row)) {
+                    	// 	$import_purchase_data[] = array(
+                    	// 		'invoice_no' => $excel_row['B'],
+                    	// 		'message' => '<span class="text-red">Invoice Already Added</span>',
+                    	// 	);
+                    	// 	continue;
+                    	// }
                     	
                     	$account_row = $this->crud->get_data_row_by_where('account',array('account_name' => $excel_row['D'], 'created_by' => $this->logged_in_id));
                     	if(!empty($account_row)) {
@@ -3167,7 +3168,8 @@ class Master extends CI_Controller
 						unset($allDataInSheet[6]);
 						unset($allDataInSheet[7]);
 						unset($allDataInSheet[8]);
-						unset($allDataInSheet[9]);
+						if(strpos($allDataInSheet[9]['A'], 'Opening') !== false)
+							unset($allDataInSheet[9]);//When htere is No opening, Miracle does Not give Opening row and starts data
 
 						if (!empty($allDataInSheet)) {
 							foreach ($allDataInSheet as $sheet_entry) {
@@ -3228,6 +3230,99 @@ class Master extends CI_Controller
 											$transaction_entry_data['transaction_type'] = 1; // 1 = Payment, 2 = Receipt
 											$transaction_entry_data['transaction_date'] = $rec_date;
 											$transaction_entry_data['from_account_id']  = $bank_account_id;
+											$transaction_entry_data['to_account_id']    = $account_id;
+											$transaction_entry_data['receipt_no']       = "";//there is No column for this in excel
+											$transaction_entry_data['amount']           = $credit_value;
+											$transaction_entry_data['created_at'] = $this->now_time;
+											$transaction_entry_data['created_by'] = $this->logged_in_id;
+											$transaction_entry_data['user_created_by'] = $this->session->userdata()['login_user_id'];
+											$result = $this->crud->insert('transaction_entry', $transaction_entry_data);
+											$last_tr_id = $this->db->insert_id();
+										}
+									}
+								}
+							}
+							$data['import_client_ledger_data'] = $import_client_ledger_data;
+						}
+					}
+				}
+				if($radio_type == 13) {
+                    require_once('application/third_party/PHPExcel/PHPExcel.php');
+                    // Cash account id = CASH_ACCOUNT_ID 7  //
+                    $objPHPExcel = PHPExcel_IOFactory::load($_FILES['userfile']['tmp_name']);
+                    $allDataInSheet = $objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
+					// echo '<pre>';
+					// print_r($allDataInSheet);
+					// die();
+                    $import_client_ledger_data = array();
+                    if(!empty($allDataInSheet)){
+                        unset($allDataInSheet[1]);
+                        unset($allDataInSheet[2]);
+                        unset($allDataInSheet[3]);
+						unset($allDataInSheet[4]);
+						unset($allDataInSheet[5]);
+						unset($allDataInSheet[6]);
+						unset($allDataInSheet[7]);
+
+						if (!empty($allDataInSheet)) {
+							foreach ($allDataInSheet as $sheet_entry) {
+								if (strpos($sheet_entry['A'], 'Total') > 0) {
+									break;
+								} else {
+									if(strpos($sheet_entry['A'], 'Date') !== false)
+									{
+										$date_need_format     = str_replace('/', '-', substr($sheet_entry['A'], strpos($sheet_entry['A'], 'Date') + 7));
+										$current_journal_date = date('Y-m-d', strtotime($date_need_format));
+										continue;//date row contains date only, nothing else, this date will be used in next rows.
+									}
+									if (!empty($sheet_entry['B'])) {
+										$opposite_data = trim($sheet_entry['B'], " ");
+										$opposite_acc = $opposite_data;
+										$account_row = $this->crud->get_data_row_by_where('account', array('account_name' => $opposite_acc));
+										if (!empty($account_row)) {
+											$account_id = $account_row->account_id;
+										}
+										else
+										{
+											$account_data['account_name'] = $opposite_acc;
+											$account_data['account_group_id'] = SUNDRY_DEBTORS_ACC_GROUP_ID;
+											$account_data['opening_balance'] = 0;
+											$account_data['credit_debit'] = "1";
+											$account_data['account_city'] = 2;
+											$account_data['account_postal_code'] = "";
+											$account_data['account_state'] = 7;
+											$account_data['account_pan'] = "";
+											$account_data['account_aadhaar'] = "";
+											$account_data['account_gst_no'] = "";
+											$account_data['account_contect_person_name'] = "";
+											$account_data['account_address'] = "";
+											$account_data['account_mobile_numbers'] = "";
+											$account_data['account_phone'] = "";
+											$account_data['account_email_ids'] = "";
+											$account_data['consider_in_pl'] = 1;
+											$account_data['created_by'] = $this->logged_in_id;
+											$account_data['user_created_by'] = $this->session->userdata()['login_user_id'];
+											$account_data['created_at'] = $this->now_time;
+											
+											$account_id = $this->crud->insert('account',$account_data);
+										}
+										
+										$credit_value = trim($sheet_entry['D'], " ");
+										$debit_value  = trim($sheet_entry['E'], " ");
+										if (empty($credit_value) && !empty($debit_value)) {
+											$transaction_entry_data['transaction_type'] = 4; // 1 = Payment, 2 = Receipt, 4 = Havala (Journal)
+											$transaction_entry_data['transaction_date'] = $current_journal_date;
+											$transaction_entry_data['from_account_id']  = $account_id;
+											$transaction_entry_data['receipt_no']       = "";//there is No column for this in excel
+											$transaction_entry_data['amount']           = $debit_value;
+											$transaction_entry_data['created_at'] = $this->now_time;
+											$transaction_entry_data['created_by'] = $this->logged_in_id;
+											$transaction_entry_data['user_created_by'] = $this->session->userdata()['login_user_id'];
+											$result = $this->crud->insert('transaction_entry', $transaction_entry_data);
+											$last_tr_id = $this->db->insert_id();
+										} else if (!empty($credit_value) && empty($debit_value)) {
+											$transaction_entry_data['transaction_type'] = 4; // 1 = Payment, 2 = Receipt, 4 = Havala (Journal)
+											$transaction_entry_data['transaction_date'] = $current_journal_date;
 											$transaction_entry_data['to_account_id']    = $account_id;
 											$transaction_entry_data['receipt_no']       = "";//there is No column for this in excel
 											$transaction_entry_data['amount']           = $credit_value;
