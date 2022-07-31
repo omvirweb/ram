@@ -128,7 +128,7 @@
                                                         </label>
                                                     </div>
                                                     <div class="col-md-4">
-                                                        <a href="<?= base_url();?>uploads/miracle_bankbook_sample.xlsx">Download Miracle Journal Data Sample</a>
+                                                        <a href="<?= base_url();?>uploads/miracle_journal_sample.xlsx">Download Miracle Journal Data Sample</a>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6">
