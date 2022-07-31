@@ -3085,10 +3085,10 @@ class Master extends CI_Controller
 										$credit_value = trim($sheet_entry['D'], " ");
 										$debit_value  = trim($sheet_entry['E'], " ");
 										if (empty($credit_value) && !empty($debit_value)) {
-											$transaction_entry_data['transaction_type'] = 1; // 1 = Payment, 2 = Receipt
+											$transaction_entry_data['transaction_type'] = 2; // 1 = Payment, 2 = Receipt
 											$transaction_entry_data['transaction_date'] = $rec_date;
-											$transaction_entry_data['from_account_id']  = CASH_ACCOUNT_ID;
-											$transaction_entry_data['to_account_id']    = $account_id;
+											$transaction_entry_data['from_account_id']  = $account_id;
+											$transaction_entry_data['to_account_id']    = CASH_ACCOUNT_ID;
 											$transaction_entry_data['receipt_no']       = "";//there is No column for this in excel
 											$transaction_entry_data['amount']           = $debit_value;
 											$transaction_entry_data['created_at'] = $this->now_time;
@@ -3097,10 +3097,10 @@ class Master extends CI_Controller
 											$result = $this->crud->insert('transaction_entry', $transaction_entry_data);
 											$last_tr_id = $this->db->insert_id();
 										} else if (!empty($credit_value) && empty($debit_value)) {
-											$transaction_entry_data['transaction_type'] = 2; // 1 = Payment, 2 = Receipt
+											$transaction_entry_data['transaction_type'] = 1; // 1 = Payment, 2 = Receipt
 											$transaction_entry_data['transaction_date'] = $rec_date;
-											$transaction_entry_data['from_account_id']  = $account_id;
-											$transaction_entry_data['to_account_id']    = CASH_ACCOUNT_ID;
+											$transaction_entry_data['from_account_id']  = CASH_ACCOUNT_ID;
+											$transaction_entry_data['to_account_id']    = $account_id;
 											$transaction_entry_data['receipt_no']       = "";//there is No column for this in excel
 											$transaction_entry_data['amount']           = $credit_value;
 											$transaction_entry_data['created_at'] = $this->now_time;
