@@ -123,7 +123,7 @@
                                                     </div>
                                                     <div class="clearfix"></div>
                                                     <div class="col-md-4">
-                                                        <label for="import_radio13" class="col-sm-13" style="font-size: 14px;">
+                                                        <label for="import_radio13" class="col-sm-12" style="font-size: 14px;">
                                                             <input type="radio" name="import_radio" id="import_radio13" value="13">  &nbsp; Import Miracle Journal Data (xls/xlsx) &nbsp;
                                                         </label>
                                                     </div>

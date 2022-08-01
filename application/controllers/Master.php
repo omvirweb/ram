@@ -3307,12 +3307,22 @@ class Master extends CI_Controller
 											$account_id = $this->crud->insert('account',$account_data);
 										}
 										
+										$contra = $this->crud->get_max_number_from_table('transaction_entry','contra_no');
+										if($contra->contra_no > 0){
+											$contra_no = $contra->contra_no + 1;
+										}
+										else
+											$contra_no = 1;
+							
 										$credit_value = trim($sheet_entry['D'], " ");
 										$debit_value  = trim($sheet_entry['E'], " ");
 										if (empty($credit_value) && !empty($debit_value)) {
 											$transaction_entry_data['transaction_type'] = 4; // 1 = Payment, 2 = Receipt, 4 = Havala (Journal)
+											$transaction_entry_data['is_credit_debit']  = 2; // 1 = Credit, 2 = Debit
 											$transaction_entry_data['transaction_date'] = $current_journal_date;
+											$transaction_entry_data['account_id']       = $account_id;
 											$transaction_entry_data['from_account_id']  = $account_id;
+											$transaction_entry_data['to_account_id']    = NULL;
 											$transaction_entry_data['receipt_no']       = "";//there is No column for this in excel
 											$transaction_entry_data['amount']           = $debit_value;
 											$transaction_entry_data['created_at'] = $this->now_time;
@@ -3322,7 +3332,10 @@ class Master extends CI_Controller
 											$last_tr_id = $this->db->insert_id();
 										} else if (!empty($credit_value) && empty($debit_value)) {
 											$transaction_entry_data['transaction_type'] = 4; // 1 = Payment, 2 = Receipt, 4 = Havala (Journal)
+											$transaction_entry_data['is_credit_debit']  = 1; // 1 = Credit, 2 = Debit
 											$transaction_entry_data['transaction_date'] = $current_journal_date;
+											$transaction_entry_data['account_id']       = $account_id;
+											$transaction_entry_data['from_account_id']  = NULL;
 											$transaction_entry_data['to_account_id']    = $account_id;
 											$transaction_entry_data['receipt_no']       = "";//there is No column for this in excel
 											$transaction_entry_data['amount']           = $credit_value;
