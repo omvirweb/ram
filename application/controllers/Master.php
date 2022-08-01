@@ -2273,7 +2273,7 @@ class Master extends CI_Controller
                                     $entry_arr = array();
                                     $entry_arr['transaction_type'] = '2';
                                     $entry_arr['transaction_date'] = $rec_date;
-                                    $entry_arr['amount'] = $sheet_entry['A'];
+                                    $entry_arr['amount'] = str_replace(",","",$sheet_entry['A']);
                                     $entry_arr['to_account_id'] = $op_acc_id;
                                     $entry_arr['from_account_id'] = $acc_id;
                                     $entry_arr['note'] = 'Import from Excel : '.$note;
@@ -2293,7 +2293,7 @@ class Master extends CI_Controller
                                     $entry_arr = array();
                                     $entry_arr['transaction_type'] = '1';
                                     $entry_arr['transaction_date'] = $pay_date;
-                                    $entry_arr['amount'] = $sheet_entry['C'];
+                                    $entry_arr['amount'] = str_replace(",","",$sheet_entry['C']);
                                     $entry_arr['to_account_id'] = $acc_id;
                                     $entry_arr['from_account_id'] = $op_acc_id;
                                     $entry_arr['note'] = 'Import from Excel : '.$note;
@@ -2352,7 +2352,7 @@ class Master extends CI_Controller
                                                 $entry_arr = array();
                                                 $entry_arr['transaction_type'] = '2';
                                                 $entry_arr['transaction_date'] = $rec_date;
-                                                $entry_arr['amount'] = $sheet_entry['A'];
+                                                $entry_arr['amount'] = str_replace(",","",$sheet_entry['A']);
                                                 $entry_arr['to_account_id'] = $op_acc_id;
                                                 $entry_arr['from_account_id'] = $acc_id;
                                                 $tr_note = 'Import from Excel : '.$note;
@@ -2404,7 +2404,7 @@ class Master extends CI_Controller
                                                 $entry_arr = array();
                                                 $entry_arr['transaction_type'] = '1';
                                                 $entry_arr['transaction_date'] = $rec_date;
-                                                $entry_arr['amount'] = $sheet_entry['C'];
+                                                $entry_arr['amount'] = str_replace(",","",$sheet_entry['C']);
                                                 $entry_arr['to_account_id'] = $acc_id;
                                                 $entry_arr['from_account_id'] = $op_acc_id;
                                                 $tr_note = 'Import from Excel : '.$note;
@@ -3083,8 +3083,8 @@ class Master extends CI_Controller
 											$account_id = $this->crud->insert('account',$account_data);
 										}
 										
-										$credit_value = trim($sheet_entry['D'], " ");
-										$debit_value  = trim($sheet_entry['E'], " ");
+										$credit_value = str_replace(",","",$sheet_entry['D']);
+										$debit_value  = str_replace(",","",$sheet_entry['E']);
 										if (empty($credit_value) && !empty($debit_value)) {
 											$transaction_entry_data['transaction_type'] = 2; // 1 = Payment, 2 = Receipt
 											$transaction_entry_data['transaction_date'] = $rec_date;
@@ -3212,8 +3212,8 @@ class Master extends CI_Controller
 											$account_id = $this->crud->insert('account',$account_data);
 										}
 										
-										$credit_value = trim($sheet_entry['D'], " ");
-										$debit_value  = trim($sheet_entry['E'], " ");
+										$credit_value = str_replace(",","",$sheet_entry['D']);
+										$debit_value  = str_replace(",","",$sheet_entry['E']);
 										if (empty($credit_value) && !empty($debit_value)) {
 											$transaction_entry_data['transaction_type'] = 2; // 1 = Payment, 2 = Receipt
 											$transaction_entry_data['transaction_date'] = $rec_date;
@@ -3273,8 +3273,20 @@ class Master extends CI_Controller
 									{
 										$date_need_format     = str_replace('/', '-', substr($sheet_entry['A'], strpos($sheet_entry['A'], 'Date') + 7));
 										$current_journal_date = date('Y-m-d', strtotime($date_need_format));
+
 										continue;//date row contains date only, nothing else, this date will be used in next rows.
 									}
+									
+									if(strpos($sheet_entry['A'], 'Jrnl') !== false)
+									{//1 journal_id multiple record started here
+										$journal_data = array();
+										$journal_data['journal_date'] = $current_journal_date;
+										$journal_data['created_at'] = $this->now_time;
+										$journal_data['created_by'] = $this->logged_in_id;
+										$journal_data['user_created_by'] = $this->session->userdata()['login_user_id'];
+										$journal_id = $this->crud->insert('journal', $journal_data);
+									}
+
 									if (!empty($sheet_entry['B'])) {
 										$opposite_data = trim($sheet_entry['B'], " ");
 										$opposite_acc = $opposite_data;
@@ -3314,37 +3326,31 @@ class Master extends CI_Controller
 										else
 											$contra_no = 1;
 							
-										$credit_value = trim($sheet_entry['D'], " ");
-										$debit_value  = trim($sheet_entry['E'], " ");
+										$transaction_entry_data['transaction_type'] = 4; // 1 = Payment, 2 = Receipt, 4 = Havala (Journal)
+										$transaction_entry_data['journal_id']       = $journal_id;
+										$transaction_entry_data['transaction_date'] = $current_journal_date;
+										$transaction_entry_data['account_id']       = $account_id;
+										$transaction_entry_data['receipt_no']       = "";//there is No column for this in excel
+										$transaction_entry_data['contra_no']        = $contra_no;
+										$transaction_entry_data['created_at']       = $this->now_time;
+										$transaction_entry_data['created_by']       = $this->logged_in_id;
+										$transaction_entry_data['user_created_by']  = $this->session->userdata()['login_user_id'];
+									
+										$credit_value = str_replace(",","",$sheet_entry['D']);
+										$debit_value  = str_replace(",","",$sheet_entry['E']);
 										if (empty($credit_value) && !empty($debit_value)) {
-											$transaction_entry_data['transaction_type'] = 4; // 1 = Payment, 2 = Receipt, 4 = Havala (Journal)
 											$transaction_entry_data['is_credit_debit']  = 2; // 1 = Credit, 2 = Debit
-											$transaction_entry_data['transaction_date'] = $current_journal_date;
-											$transaction_entry_data['account_id']       = $account_id;
 											$transaction_entry_data['from_account_id']  = $account_id;
 											$transaction_entry_data['to_account_id']    = NULL;
-											$transaction_entry_data['receipt_no']       = "";//there is No column for this in excel
 											$transaction_entry_data['amount']           = $debit_value;
-											$transaction_entry_data['created_at'] = $this->now_time;
-											$transaction_entry_data['created_by'] = $this->logged_in_id;
-											$transaction_entry_data['user_created_by'] = $this->session->userdata()['login_user_id'];
-											$result = $this->crud->insert('transaction_entry', $transaction_entry_data);
-											$last_tr_id = $this->db->insert_id();
 										} else if (!empty($credit_value) && empty($debit_value)) {
-											$transaction_entry_data['transaction_type'] = 4; // 1 = Payment, 2 = Receipt, 4 = Havala (Journal)
 											$transaction_entry_data['is_credit_debit']  = 1; // 1 = Credit, 2 = Debit
-											$transaction_entry_data['transaction_date'] = $current_journal_date;
-											$transaction_entry_data['account_id']       = $account_id;
 											$transaction_entry_data['from_account_id']  = NULL;
 											$transaction_entry_data['to_account_id']    = $account_id;
-											$transaction_entry_data['receipt_no']       = "";//there is No column for this in excel
 											$transaction_entry_data['amount']           = $credit_value;
-											$transaction_entry_data['created_at'] = $this->now_time;
-											$transaction_entry_data['created_by'] = $this->logged_in_id;
-											$transaction_entry_data['user_created_by'] = $this->session->userdata()['login_user_id'];
-											$result = $this->crud->insert('transaction_entry', $transaction_entry_data);
-											$last_tr_id = $this->db->insert_id();
 										}
+										$result = $this->crud->insert('transaction_entry', $transaction_entry_data);
+										$last_tr_id = $this->db->insert_id();
 									}
 								}
 							}
