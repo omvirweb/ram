@@ -3266,6 +3266,7 @@ class Master extends CI_Controller
 
 						if (!empty($allDataInSheet)) {
 							foreach ($allDataInSheet as $sheet_entry) {
+								// print_r($sheet_entry);
 								if (strpos($sheet_entry['A'], 'Total') > 0) {
 									break;
 								} else {
@@ -3343,14 +3344,16 @@ class Master extends CI_Controller
 											$transaction_entry_data['from_account_id']  = $account_id;
 											$transaction_entry_data['to_account_id']    = NULL;
 											$transaction_entry_data['amount']           = $debit_value;
+											$result = $this->crud->insert('transaction_entry', $transaction_entry_data);
+											$last_tr_id = $this->db->insert_id();
 										} else if (!empty($credit_value) && empty($debit_value)) {
 											$transaction_entry_data['is_credit_debit']  = 1; // 1 = Credit, 2 = Debit
 											$transaction_entry_data['from_account_id']  = NULL;
 											$transaction_entry_data['to_account_id']    = $account_id;
 											$transaction_entry_data['amount']           = $credit_value;
+											$result = $this->crud->insert('transaction_entry', $transaction_entry_data);
+											$last_tr_id = $this->db->insert_id();
 										}
-										$result = $this->crud->insert('transaction_entry', $transaction_entry_data);
-										$last_tr_id = $this->db->insert_id();
 									}
 								}
 							}
