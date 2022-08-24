@@ -304,25 +304,25 @@
         $(document).on('submit', '#account_form_account', function () {
             var reggst = /^([0-9]){2}([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}([0-9]){1}([a-zA-Z]){1}([a-zA-Z0-9]){1}?$/;
             var gstinVal = $('#account_gst_no').val();            
-            if(gstinVal != '') {
-                if (gstinVal.length != '15') {
-                    show_notify("Please Enter 15 Digit GSTIN!", false);
-                    return false;
-                }
-                var statecode = $('#account_gst_no').val().substring(0, 2);
-                var truestatecode = $('#state_code').val();
-                if(parseInt(statecode) != parseInt(truestatecode)) {
-                    show_notify('Your state code should be '+truestatecode + ' !', false);
-                    $("#account_gst_no").focus();
-                    return false;
-                }
+            // if(gstinVal != '') {
+            //     if (gstinVal.length != '15') {
+            //         show_notify("Please Enter 15 Digit GSTIN!", false);
+            //         return false;
+            //     }
+            //     var statecode = $('#account_gst_no').val().substring(0, 2);
+            //     var truestatecode = $('#state_code').val();
+            //     if(parseInt(statecode) != parseInt(truestatecode)) {
+            //         show_notify('Your state code should be '+truestatecode + ' !', false);
+            //         $("#account_gst_no").focus();
+            //         return false;
+            //     }
                 
-                if(!reggst.test(gstinVal)) {
-                    show_notify('GST Identification Number is not valid. It should be in this "11AAAAA1111Z1A1" format !', false);
-                    $("#account_gst_no").focus();
-                    return false;
-                }
-            }
+            //     if(!reggst.test(gstinVal)) {
+            //         show_notify('GST Identification Number is not valid. It should be in this "11AAAAA1111Z1A1" format !', false);
+            //         $("#account_gst_no").focus();
+            //         return false;
+            //     }
+            // }
             
             //alert('hear');return false;
             var email_ids = $('#account_email_ids').val();
