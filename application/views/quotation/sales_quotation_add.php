@@ -43,7 +43,8 @@
                                 <div class="col-md-4">
                                 <div class="form-group">
                                                 <label for="site_id" class="control-label">Site</label>
-                                                <select name="line_items_data[site_id]" id="site_id" class="form-control select2"></select>
+                                                <!-- <select name="line_items_data[site_id]" id="site_id" class="form-control select2"></select> -->
+                                                <select name="site_id" id="site_id" class="form-control select2"></select>
                                             </div>
                                 </div>
                                 <div class="clearfix"></div>                                
@@ -153,11 +154,12 @@
                                                     <?php } ?>
                                                     <th></th>
                                                     <th class="text-right"><span class="qty_total"></span><input type="hidden" name="qty_total" id="qty_total" /></th>
-                                                    <th class="mrp"></th>
+                                                    <!-- <th class="mrp"></th> -->
                                                     <th class="rate"></th>
                                                     <th class="text-right"><span class="pure_amount_total"></span><input type="hidden" name="pure_amount_total" id="pure_amount_total" /></th>
-                                                    <th class="text-right"></th>
-                                                    <th class="text-right"><span class="discounted_price_total"></span><input type="hidden" name="discounted_price_total" id="discounted_price_total" /></th>
+                                                    <!-- <th class="text-right"></th> -->
+                                                    <!-- <th class="text-right"><span class="discounted_price_total"></span><input type="hidden" name="discounted_price_total" id="discounted_price_total" /></th> -->
+                                                    <input type="hidden" name="discounted_price_total" id="discounted_price_total" />
                                                 </tr>
                                                 <tr>
                                                     <th class="fix_fcolumn" width="100px">Action</th>
@@ -247,7 +249,7 @@ $(document).on('keydown', function(event) {
     $(document).ready(function(){
         initAjaxSelect2($("#site_id"), "<?= base_url('app/sites_select2_source') ?>");
         initAjaxSelect2($("#account_id"),"<?=base_url('app/account_select2_source/')?>");
-        initAjaxSelect2($("#unit_id"),"<?=base_url('app/unit_select2_source_by_item_id/')?>");
+        initAjaxSelect2($("#unit_id"),"<?=base_url('app/unit_select2_source/')?>");
         <?php if(isset($quotation_data->account_id)){ ?>
             setSelect2Value($("#account_id"),"<?=base_url('app/set_account_select2_val_by_id/')?>" + <?=$quotation_data->account_id; ?>);
         <?php } ?>
@@ -300,8 +302,12 @@ $(document).on('keydown', function(event) {
                     dataType: 'json',
                     data: 'item_id='+ item_id + '&account_id='+ account_id + '&item_group_id='+ item_group_id,
                     success: function (response) {
+                        console.log(response);
                         $('#item_mrp').val(response.mrp);
                         $('#price').val(response.rate);
+                        if(response.alternate_unit_id != ''){
+                            setSelect2Value($("#unit_id"),"<?=base_url('app/set_unit_select2_val_by_id/')?>"+ response.alternate_unit_id); 
+                        }
                     },
                 });
             }
@@ -543,11 +549,12 @@ $(document).on('keydown', function(event) {
 
             '<td>' + item_name + '</td>' +
             '<td class="text-right">' + value.item_qty + '</td>' +
-            '<td class="text-right">' + (value.item_mrp != null && value.item_mrp != 0?value.item_mrp:'') + '</td>' +
+            // '<td class="text-right">' + (value.item_mrp != null && value.item_mrp != 0?value.item_mrp:'') + '</td>' +
             '<td class="text-right">' + value.price + '</td>' +
             '<td class="text-right">' + value.pure_amount + '</td>' +
-            '<td class="text-right ">' + discount_data + '</td>' + 
-            '<td class="text-right ">' + value.discounted_price + '</td></tr>';
+            // '<td class="text-right ">' + discount_data + '</td>' + 
+            // '<td class="text-right ">' + value.discounted_price + '</td>'+
+            '</tr>';
 
             new_lineitem_html += row_html;
             qty_total += parseInt(value.item_qty);

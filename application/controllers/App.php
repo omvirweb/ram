@@ -1758,4 +1758,8 @@ class App extends CI_Controller{
 		echo json_encode($results);
 		exit();
 	}
+
+	function set_unit_select2_val_by_id($id){
+		$this->get_select2_text_by_id('pack_unit', 'pack_unit_id', 'pack_unit_name', $id);
+	}
 }

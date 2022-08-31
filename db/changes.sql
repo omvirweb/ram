@@ -174,3 +174,6 @@ ALTER TABLE `quotation_docs` ADD `doc_desc` VARCHAR(255) NULL DEFAULT NULL AFTER
 
 --Parag : 2022_07_15 12:46 PM
 ALTER TABLE `lineitems` ADD `rate_type` INT NULL DEFAULT '1' COMMENT '1=Excluding GST, 2=Including GST' AFTER `price`;
+
+--Parag : 2022_08_31 05:58 PM
+ALTER TABLE `quotation` ADD `site_id` INT NULL AFTER `account_id`;
