@@ -237,25 +237,33 @@
                                                 $transport_name_display = '';
                                             }
                                         ?>
-                                        <div class="col-md-3 <?=$transport_name_display;?>">
+                                        <!-- <div class="col-md-3 <?=$transport_name_display;?>">
                                             <div class="form-group">
                                                 <label for="transport_name" class="control-label">Transport Name</label>
                                                 <input type="text" name="transport_name" id="transport_name" class="form-control" data-index="6" value="<?=isset($invoice_data->transport_name) ? $invoice_data->transport_name : ''; ?>">
                                             </div>
-                                        </div>
+                                        </div> -->
                                         <?php 
                                             $lr_no_display = 'hidden';
                                             if($this->applib->have_access_role($module_id,"LR No")) {
                                                 $lr_no_display = '';
                                             }
                                         ?>
-                                        <div class="col-md-3 <?=$lr_no_display;?>">
+
+                                         <div class="col-md-2">
+                                            <div class="form-group">
+                                                <label for="site_id" class="control-label">Site</label>
+                                                <select name="line_items_data[site_id]" id="site_id" class="form-control select2"></select>
+                                            </div>
+                                        </div>
+                                        <!-- <div class="col-md-3 <?=$lr_no_display;?>">
                                             <div class="form-group">
                                                 <label for="lr_no" class="control-label">LR No.</label>
                                                 <input type="text" name="lr_no" id="lr_no" class="form-control" data-index="7" value="<?=isset($invoice_data->lr_no) ? $invoice_data->lr_no : ''; ?>">
                                             </div>
-                                        </div>
-                                    <?php } ?>                                    
+                                        </div> -->
+                                    <?php } ?>              
+                                                          
                                     <?php if($voucher_type == "sales2") { ?>
                                         <div class="col-md-3">
                                             <div class="form-group">
