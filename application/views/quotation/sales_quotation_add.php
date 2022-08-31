@@ -36,9 +36,15 @@
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label for="quotation_date" class="control-label">Order Date<span class="required-sign">*</span></label>
-                                        <input type="text" name="quotation_date" id="datepicker2" class="form-control" required data-index="2" value="<?=isset($quotation_data->quotation_date) ? date('d-m-Y', strtotime($quotation_data->quotation_date)) : date('d-m-Y'); ?>">
+                                        <label for="quotation_date" class="control-label">Date<span class="required-sign">*</span></label>
+                                        <input type="text" style="width:200px;" name="quotation_date" id="datepicker2" class="form-control" required data-index="2" value="<?=isset($quotation_data->quotation_date) ? date('d-m-Y', strtotime($quotation_data->quotation_date)) : date('d-m-Y'); ?>">
                                     </div>
+                                </div>
+                                <div class="col-md-4">
+                                <div class="form-group">
+                                                <label for="site_id" class="control-label">Site</label>
+                                                <select name="line_items_data[site_id]" id="site_id" class="form-control select2"></select>
+                                            </div>
                                 </div>
                                 <div class="clearfix"></div>                                
                                 <div class="col-md-4">
@@ -75,12 +81,12 @@
                                                 <select name="line_items_data[item_id]" id="item_id" class="item_id" data-index="29"></select>
                                             </div>
                                         </div>
-                                        <div class="col-md-1 pr0">
+                                        <!-- <div class="col-md-1 pr0">
                                             <div class="form-group">
                                                 <label for="hsn" class="control-label">HSN </label>
                                                 <input type="text" name="line_items_data[hsn]" id="hsn" class="hsn form-control">
                                             </div>
-                                        </div>
+                                        </div> -->
                                         <div class="col-md-1 pr0">
                                             <div class="form-group">
                                                 <label for="item_qty" class="control-label">Quantity </label>
@@ -101,18 +107,18 @@
                                                 <input type="hidden" name="line_items_data[price_for_itax]" id="price_for_itax" class="price_for_itax form-control item_detail" >
                                             </div>
                                         </div>
-                                        <div class="col-md-1 pr0">
+                                        <!-- <div class="col-md-1 pr0">
                                             <div class="form-group">
                                                 <label for="gst_rate" class="control-label">GST %</label>
                                                 <input type="text" name="line_items_data[gst_rate]" id="gst_rate" class="gst_rate form-control item_detail num_only" data-index="37">
                                             </div>
-                                        </div>
-                                        <div class="col-md-2">
+                                        </div> -->
+                                        <!-- <div class="col-md-2">
                                             <div class="form-group">
                                                 <label for="site_id" class="control-label">Site</label>
                                                 <select name="line_items_data[site_id]" id="site_id" class="form-control select2"></select>
                                             </div>
-                                        </div>
+                                        </div> -->
                                         <div class="col-md-2 <?php echo isset($line_item_fields['amount']) ? $line_item_fields['amount'] : ''; ?>">
                                             <div class="form-group">
                                                 <label for="amount" class="control-label">Amount</label>
@@ -160,10 +166,10 @@
                                                     <?php } ?>
                                                     <th>Item</th>
                                                     <th class="text-right">Qty</th>
-                                                    <th class="text-right">MRP</th>
+                                                    <!-- <th class="text-right">MRP</th> -->
                                                     <th class="text-right">Rate</th>
-                                                    <th class="text-right">Pure Amount</th>
-                                                    <th class="text-right">Discount</th>
+                                                    <!-- <th class="text-right">Pure Amount</th>
+                                                    <th class="text-right">Discount</th> -->
                                                     <th class="text-right">Amount</th>
                                                 </tr>
                                             </thead>
