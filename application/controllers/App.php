@@ -1762,4 +1762,18 @@ class App extends CI_Controller{
 	function set_unit_select2_val_by_id($id){
 		$this->get_select2_text_by_id('pack_unit', 'pack_unit_id', 'pack_unit_name', $id);
 	}
+
+	function item_select2_source_from_account_and_site_and_quatation($account_id = '',$site_id = ''){
+		$results = [];
+		if(isset($account_id) && isset($site_id) && $account_id != '' && $site_id != ''){
+			$get_quotation_id = $this->crud->getFromSQL('SELECT quotation_id FROM `quotation` WHERE `account_id` = '.$account_id.' AND `site_id` = '.$site_id.' AND `quotation_type` = 1');
+			if(isset($get_quotation_id[0]) && $get_quotation_id[0]->quotation_id != ''){
+				$get_item_ids = $this->crud->getFromSQL('SELECT `item_id` FROM `lineitems` WHERE `module`=5 AND `parent_id` ='.$get_quotation_id[0]->quotation_id);
+				print_r($get_item_ids);
+			}
+			exit;
+		}
+		echo json_encode($results);
+		exit();
+	}
 }

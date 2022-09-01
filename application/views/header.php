@@ -421,7 +421,22 @@ $is_single_line_item = 1;
                                                     <li><a tabindex="-1" href="<?php echo base_url() ?>quotation/sales_quotation_list/"><i class="fa fa-circle-o"></i> Quotation List</a></li>
                                                 </ul>
                                             </li>
-                                            <?php } ?>
+                                        <?php } ?>
+                                        <?php if($this->applib->have_access_role(MODULE_ORDER_TYPE_2_ID,"view")) { ?>
+                                        <li class="dropdown-submenu">
+                                            <a tabindex="-1" href="<?php echo base_url() ?>quotation/sales_quotation_list/"><i class="fa fa-circle-o"></i> Sales Invoice From Quote</a>
+                                            <ul class="dropdown-menu">
+                                                <?php if($this->applib->have_access_role(MODULE_ORDER_TYPE_2_ID,"add")) { ?>
+                                                    <?php if($is_single_line_item == 1){?>
+                                                        <li><a tabindex="-1" href="<?php echo base_url() ?>sales_invoice_from_quotation/sales_invoice_frmquot_add/"><i class="fa fa-circle-o"></i> Add Quotation</a></li>
+                                                    <?php } else { ?>
+                                                        <li><a tabindex="-1" href="<?php echo base_url() ?>sales_invoice_from_quotation/sales_invoice_frmquot_add/"><i class="fa fa-circle-o"></i> Add Quotation</a></li>
+                                                        <?php } ?>
+                                                <?php } ?>
+                                                <li><a tabindex="-1" href="<?php echo base_url() ?>sales_invoice_from_quotation/sales_invoice_frmquot_list/"><i class="fa fa-circle-o"></i> Quotation List</a></li>
+                                            </ul>
+                                        </li>
+                                        <?php } ?>
                                         <?php if($this->applib->have_access_role(MODULE_ORDER_ID,"view")) { ?>
                                             <li class="dropdown-submenu">
                                                 <a tabindex="-1" href="<?php echo base_url() ?>sales/order_invoice_list/"><i class="fa fa-circle-o"></i> Order</a>
