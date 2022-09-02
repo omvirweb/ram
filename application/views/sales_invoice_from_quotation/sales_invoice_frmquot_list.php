@@ -23,9 +23,9 @@
     <section class="content-header">
         <h1>
             <?php
-                echo 'Sales Quotation List';
+                echo 'Sales Invoice From Quote List';
                 if($this->applib->have_access_role(MODULE_ORDER_TYPE_2_ID,"add")) {
-                    echo '<a href="'.base_url('quotation/sales_quotation_add').'" class="btn btn-primary pull-right">Add Quotation</a>';
+                    echo '<a href="'.base_url('sales_invoice_from_quotation/sales_invoice_frmquot_add/').'" class="btn btn-primary pull-right">Add Sales Invoice From Quote</a>';
                 }
             ?>
         </h1>

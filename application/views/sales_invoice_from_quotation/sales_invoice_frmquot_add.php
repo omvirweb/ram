@@ -215,12 +215,11 @@
                                                     <?php if(isset($quotation_line_item_fields) && in_array('item_group', $quotation_line_item_fields)){ ?>
                                                         <th>Item Group</th>
                                                     <?php } ?>
+                                                    <th>Sr.No</th>
                                                     <th>Item</th>
                                                     <th class="text-right">Qty</th>
-                                                    <!-- <th class="text-right">MRP</th> -->
+                                                    <th class="text-left">Unit</th>
                                                     <th class="text-right">Rate</th>
-                                                    <!-- <th class="text-right">Pure Amount</th>
-                                                    <th class="text-right">Discount</th> -->
                                                     <th class="text-right">Amount</th>
                                                 </tr>
                                             </thead>
@@ -277,6 +276,7 @@
 <!-- <script src="<?php echo base_url('assets/plugins/test.js');?>" type="text/javascript" language="javascript"></script> -->
 
 <script type="text/javascript">
+
 $(document).on('keydown', function(event) {
        if (event.key == "Escape") {
             if (confirm('Are You Sure To Leave This Page Without Save Data')) {
@@ -368,7 +368,6 @@ $(document).on('keydown', function(event) {
                     dataType: 'json',
                     data: 'item_id='+ item_id + '&account_id='+ account_id + '&item_group_id='+ item_group_id,
                     success: function (response) {
-                        console.log(response);
                         $('#item_mrp').val(response.mrp);
                         $('#price').val(response.rate);
                         if(response.alternate_unit_id != ''){
@@ -579,6 +578,7 @@ $(document).on('keydown', function(event) {
         var pure_amount_total = 0;
         var discounted_price_total = 0;
         var amount_total = 0;
+        var unit_name = '-';
 
         $.each(lineitem_objectdata, function (index, value) {    
             var value_item_group_name = '';
@@ -608,6 +608,23 @@ $(document).on('keydown', function(event) {
                 },
             });
 
+            $.ajax({
+                url:"<?=base_url('app/set_unit_select2_val_by_id/')?>"+value.unit_id,
+                type:'get',
+                dataType:'json',
+                async: false,
+                cache: false,
+                data : {
+                },
+                success:function(response){
+                    if(response.success){
+                        unit_name=response.text;
+                    }else{
+                        unit_name='-';
+                    }
+                }
+            });
+
             item_name = value_item_name;
 
             var value_discount_type = '';
@@ -628,14 +645,12 @@ $(document).on('keydown', function(event) {
             <?php if(isset($quotation_line_item_fields) && in_array('item_group', $quotation_line_item_fields)){ ?>
             '<td>' + value_item_group_name + '</td>' + 
             <?php } ?>
-
+            '<td>' + (index+1) + '</td>'+
             '<td>' + item_name + '</td>' +
             '<td class="text-right">' + value.item_qty + '</td>' +
-            // '<td class="text-right">' + (value.item_mrp != null && value.item_mrp != 0?value.item_mrp:'') + '</td>' +
+            '<td>' + unit_name + '</td>' +
             '<td class="text-right">' + value.price + '</td>' +
             '<td class="text-right">' + value.pure_amount + '</td>' +
-            // '<td class="text-right ">' + discount_data + '</td>' + 
-            // '<td class="text-right ">' + value.discounted_price + '</td>'+
             '</tr>';
 
             new_lineitem_html += row_html;
@@ -727,7 +742,7 @@ $(document).on('keydown', function(event) {
             display_lineitem_html(lineitem_objectdata);
         }
     }
-    
+
     function parseF(value, decimal) {
         decimal = 2;
         return value ? parseFloat(value).toFixed(decimal) : 0;
