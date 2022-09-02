@@ -177,3 +177,6 @@ ALTER TABLE `lineitems` ADD `rate_type` INT NULL DEFAULT '1' COMMENT '1=Excludin
 
 --Parag : 2022_08_31 05:58 PM
 ALTER TABLE `quotation` ADD `site_id` INT NULL AFTER `account_id`;
+
+--Parag : 2022_09_02 06:20 PM
+ALTER TABLE `sales_invoice` ADD `site_id` INT NULL AFTER `account_id`;

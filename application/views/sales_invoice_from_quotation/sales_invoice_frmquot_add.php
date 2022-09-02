@@ -8,7 +8,7 @@
         <h1>
         Sales Invoice From Quote <?php if(isset($quotation_id) && !empty($quotation_id)){ echo 'Edit'; }else{ echo 'Add'; }  ?>
             <?php if($this->applib->have_access_role(MODULE_ORDER_TYPE_2_ID,"view")) { ?>
-            <a href="<?=base_url('sales_invoice_from_quotation/sales_invoice_frmquot_list');?>" class="btn btn-primary pull-right">Sales Invoice From Quote List</a>
+            <a href="<?=base_url('sales/sales_invoice_frmquot_list');?>" class="btn btn-primary pull-right">Sales Invoice From Quote List</a>
             <?php } ?>
         </h1>
     </section>
@@ -21,7 +21,7 @@
                     <?php if(isset($quotation_id) && !empty($quotation_id)){ ?>
                     <input type="hidden" id="quotation_id" name="quotation_id" value="<?=$quotation_id;?>">
                     <?php } ?>
-                    <input type="hidden" id="quotation_type" name="quotation_type" value="1">
+                    <!-- <input type="hidden" id="quotation_type" name="quotation_type" value="1"> -->
 
                     <div class="box box-primary">
                         <div class="box-body">
@@ -36,14 +36,14 @@
                                 </div>
                                 <div class="col-md-2">
                                     <div class="form-group">
-                                        <label for="quotation_date" class="control-label">Sales Invoice Date<span class="required-sign">*</span></label>
-                                        <input type="text" style="width:200px;" name="quotation_date" id="datepicker2" class="form-control" required data-index="2" value="<?=isset($quotation_data->quotation_date) ? date('d-m-Y', strtotime($quotation_data->quotation_date)) : date('d-m-Y'); ?>">
+                                        <label for="sales_invoice_date" class="control-label">Sales Invoice Date<span class="required-sign">*</span></label>
+                                        <input type="text" style="width:200px;" name="sales_invoice_date" id="datepicker2" class="form-control" required data-index="2" value="<?=isset($quotation_data->sales_invoice_date) ? date('d-m-Y', strtotime($quotation_data->sales_invoice_date)) : date('d-m-Y'); ?>">
                                     </div>
                                 </div>
                                 <div class="col-md-2">
                                     <div class="form-group">
                                         <label for="our_bank_label" class="control-label">Our Bank Label</label>
-                                        <select name="our_bank_label" id="our_bank_label" class="form-control select2 our_bank_label" required data-index="1"></select>
+                                        <select name="our_bank_label" id="our_bank_label" class="form-control select2 our_bank_label" data-index="1"></select>
                                     </div>
                                 </div>
                                 <div class="col-md-2">
@@ -58,13 +58,13 @@
                                 <div class="col-md-2">
                                     <div class="form-group">
                                         <label for="invoice_type" class="control-label">Invoice Type<span class="required-sign">*</span></label>
-                                        <select name="invoice_type" id="invoice_type" class="form-control select2" data-index="4" required=""></select>
+                                        <select name="invoice_type" id="invoice_type" class="form-control select2" data-index="4" ></select>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
-                                        <label for="invoice_no" class="control-label">Invoice No</label>
-                                        <input type="text" name="invoice_no" id="invoice_no" class="form-control num_only" data-index="4" value="">
+                                        <label for="sales_invoice_no" class="control-label">Invoice No</label>
+                                        <input type="text" name="sales_invoice_no" id="sales_invoice_no" class="form-control num_only" data-index="4" value="">
                                     </div>
                                 </div>
                                 <div class="col-md-2">
@@ -250,8 +250,8 @@
                         <div class="col-md-6">
                             <br/>
                             <div class="form-group">
-                                <label for="invoice_desc" class="control-label">Description</label>
-                                <textarea name="invoice_desc" id="invoice_desc" class="form-control" data-index="5" placeholder=""><?=isset($invoice_data->invoice_desc) ? $invoice_data->invoice_desc : '' ?></textarea>
+                                <label for="sales_invoice_desc" class="control-label">Description</label>
+                                <textarea name="sales_invoice_desc" id="sales_invoice_desc" class="form-control" data-index="5" placeholder=""><?=isset($invoice_data->sales_invoice_desc) ? $invoice_data->sales_invoice_desc : '' ?></textarea>
                             </div>
                         </div>
                         <div class="clearfix"></div>
@@ -784,7 +784,7 @@ $(document).on('keydown', function(event) {
                 postData.append('line_items_data', lineitem_objectdata_var);
                 // postData.append('docs', docs); 
             $.ajax({
-                url: "<?=base_url('quotation/save_quotation') ?>",
+                url: "<?=base_url('sales/save_sales_invoice') ?>",
                 type: "POST",
                 processData: false,
                 contentType: false,
@@ -798,10 +798,10 @@ $(document).on('keydown', function(event) {
                         return false;
                     }
                     if (json['success'] == 'Added'){
-                        window.location.href = "<?php echo base_url('quotation/sales_quotation_add'); ?>";
+                        window.location.href = "<?php echo base_url('sales/sales_invoice_frmquot_add/'); ?>";
                     }
                     if (json['success'] == 'Updated'){
-                        window.location.href = "<?php echo base_url('quotation/sales_quotation_list'); ?>";
+                        window.location.href = "<?php echo base_url('sales/sales_invoice_frmquot_list/'); ?>";
                     }
                     $('.overlay').hide();
                     return false;
@@ -810,5 +810,21 @@ $(document).on('keydown', function(event) {
             return false;
         });
         
+        function get_max_prefix(prefix) {
+        $.ajax({
+            url: "<?=base_url('sales/get_max_prefix') ?>/" + prefix, 
+            type: "GET",
+            processData: false,
+            contentType: false,
+            cache: false,
+            data: '',
+            success: function (response) {
+                var json = $.parseJSON(response);
+                $('#sales_invoice_no').val(json);
+                return false;
+            },
+        });
+    }
+    get_max_prefix('');
     });
 </script>
