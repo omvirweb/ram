@@ -6,9 +6,9 @@
     <!-- Content Header (Page header) -->
     <section class="content-header">
         <h1>
-            Sales Quotation <?php if(isset($quotation_id) && !empty($quotation_id)){ echo 'Edit'; }else{ echo 'Add'; }  ?>
+        Sales Invoice From Quote <?php if(isset($quotation_id) && !empty($quotation_id)){ echo 'Edit'; }else{ echo 'Add'; }  ?>
             <?php if($this->applib->have_access_role(MODULE_ORDER_TYPE_2_ID,"view")) { ?>
-            <a href="<?=base_url('quotation/sales_quotation_list');?>" class="btn btn-primary pull-right">Quotation List</a>
+            <a href="<?=base_url('sales/sales_invoice_frmquot_list');?>" class="btn btn-primary pull-right">Sales Invoice From Quote List</a>
             <?php } ?>
         </h1>
     </section>
@@ -21,41 +21,69 @@
                     <?php if(isset($quotation_id) && !empty($quotation_id)){ ?>
                     <input type="hidden" id="quotation_id" name="quotation_id" value="<?=$quotation_id;?>">
                     <?php } ?>
-                    <input type="hidden" id="quotation_type" name="quotation_type" value="1">
+                    <!-- <input type="hidden" id="quotation_type" name="quotation_type" value="1"> -->
 
                     <div class="box box-primary">
                         <div class="box-body">
                             <div class="overlay" style="display: none" ><i class="fa fa-refresh fa-spin"></i></div>
                             <div class="row">
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <div class="form-group">
                                         <label for="account_id" class="control-label">Account<span class="required-sign">*</span></label>
                                         <a class="btn btn-primary btn-xs pull-right add_account_link" href="javascript:;" data-url= "<?=base_url('account/account/')?>"><i class="fa fa-plus"></i> Add Account</a>
                                         <select name="account_id" id="account_id" class="account_id" required data-index="1" ></select>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-2">
                                     <div class="form-group">
-                                        <label for="quotation_date" class="control-label">Date<span class="required-sign">*</span></label>
-                                        <input type="text" style="width:200px;" name="quotation_date" id="datepicker2" class="form-control" required data-index="2" value="<?=isset($quotation_data->quotation_date) ? date('d-m-Y', strtotime($quotation_data->quotation_date)) : date('d-m-Y'); ?>">
+                                        <label for="sales_invoice_date" class="control-label">Sales Invoice Date<span class="required-sign">*</span></label>
+                                        <input type="text" style="width:200px;" name="sales_invoice_date" id="datepicker2" class="form-control" required data-index="2" value="<?=isset($quotation_data->sales_invoice_date) ? date('d-m-Y', strtotime($quotation_data->sales_invoice_date)) : date('d-m-Y'); ?>">
                                     </div>
                                 </div>
-                                <div class="col-md-4">
-                                <div class="form-group">
-                                                <label for="site_id" class="control-label">Site</label>
-                                                <!-- <select name="line_items_data[site_id]" id="site_id" class="form-control select2"></select> -->
-                                                <select name="site_id" id="site_id" class="form-control select2"></select>
-                                            </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label for="our_bank_label" class="control-label">Our Bank Label</label>
+                                        <select name="our_bank_label" id="our_bank_label" class="form-control select2 our_bank_label" data-index="1"></select>
+                                    </div>
                                 </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label for="tax_type" class="control-label">Tax Type<span class="required-sign">*</span></label>
+                                        <select  name="tax_type" id="tax_type" class="form-control" data-index="3" required="">
+                                            <option value="1" <?php echo isset($invoice_data->tax_type) && $invoice_data->tax_type == 1 ? 'selected' : ''?>>GST</option>
+                                            <option value="2" <?php echo isset($invoice_data->tax_type) && $invoice_data->tax_type == 2 ? 'selected' : ''?>>IGST</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label for="invoice_type" class="control-label">Invoice Type<span class="required-sign">*</span></label>
+                                        <select name="invoice_type" id="invoice_type" class="form-control select2" data-index="4" ></select>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="sales_invoice_no" class="control-label">Invoice No</label>
+                                        <input type="text" name="sales_invoice_no" id="sales_invoice_no" class="form-control num_only" data-index="4" value="">
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label for="site_id" class="control-label">Site</label>
+                                        <!-- <select name="line_items_data[site_id]" id="site_id" class="form-control select2"></select> -->
+                                        <select name="site_id" id="site_id" class="form-control select2"></select>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="sales_rate_type" class="control-label">Rate :</label>
+                                            <select name="sales_rate_type" id="sales_rate_type" class="select2">
+                                                <option <?=(isset($invoice_data->sales_rate) && $invoice_data->sales_rate == 1) ?'selected' : ''; ?> value="1">Excluding GST</option>
+                                                <option <?=(isset($invoice_data->sales_rate) && $invoice_data->sales_rate == 2) ?'selected' : ''; ?> value="2">Including GST</option>
+                                            </select>
+                                        </div>
+                                    </div>
                                 <div class="clearfix"></div>                                
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label for="quotation_files" class="control-label">Doc</label>
-                                        <input type="file" name="docs[]" class="multi"/>
-                                        <!-- <div id="uploader"></div> -->
-                                    </div>
-                                </div>
-
                                 
                                 <div class="col-md-12">
                                     <div class="box-header with-border">
@@ -88,6 +116,27 @@
                                                 <input type="text" name="line_items_data[hsn]" id="hsn" class="hsn form-control">
                                             </div>
                                         </div> -->
+                                        <div class="col-md-2">
+                                            <div class="col-md-4 pr0">
+                                                <div class="form-group">
+                                                    <label for="l" class="control-label">L </label>
+                                                    <input type="text" name="line_items_data[l]" id="l" class="l form-control item_detail num_only" data-index="30">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 pr0">
+                                                <div class="form-group">
+                                                    <label for="b" class="control-label">B </label>
+                                                    <input type="text" name="line_items_data[b]" id="b" class="b form-control item_detail num_only" data-index="30">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 pr0">
+                                                <div class="form-group">
+                                                    <label for="d" class="control-label">D </label>
+                                                    <input type="text" name="line_items_data[d]" id="d" class="d form-control item_detail num_only" data-index="30">
+                                                </div>
+                                            </div>
+
+                                        </div>
                                         <div class="col-md-1 pr0">
                                             <div class="form-group">
                                                 <label for="item_qty" class="control-label">Quantity </label>
@@ -166,12 +215,11 @@
                                                     <?php if(isset($quotation_line_item_fields) && in_array('item_group', $quotation_line_item_fields)){ ?>
                                                         <th>Item Group</th>
                                                     <?php } ?>
+                                                    <th>Sr.No</th>
                                                     <th>Item</th>
                                                     <th class="text-right">Qty</th>
-                                                    <!-- <th class="text-right">MRP</th> -->
+                                                    <th class="text-left">Unit</th>
                                                     <th class="text-right">Rate</th>
-                                                    <!-- <th class="text-right">Pure Amount</th>
-                                                    <th class="text-right">Discount</th> -->
                                                     <th class="text-right">Amount</th>
                                                 </tr>
                                             </thead>
@@ -198,6 +246,15 @@
                             </div>
                         </div>
                         <!-- /.box-body -->
+                        <div class="clearfix"></div>
+                        <div class="col-md-6">
+                            <br/>
+                            <div class="form-group">
+                                <label for="sales_invoice_desc" class="control-label">Description</label>
+                                <textarea name="sales_invoice_desc" id="sales_invoice_desc" class="form-control" data-index="5" placeholder=""><?=isset($invoice_data->sales_invoice_desc) ? $invoice_data->sales_invoice_desc : '' ?></textarea>
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
                         <div class="box-footer">
                             <button type="submit" class="btn btn-primary form_btn module_save_btn"><?=isset($quotation_id) ? 'Update' : 'Save' ?></button>
                                                         <b style="color: #0974a7">Ctrl + S</b>
@@ -219,6 +276,7 @@
 <!-- <script src="<?php echo base_url('assets/plugins/test.js');?>" type="text/javascript" language="javascript"></script> -->
 
 <script type="text/javascript">
+
 $(document).on('keydown', function(event) {
        if (event.key == "Escape") {
             if (confirm('Are You Sure To Leave This Page Without Save Data')) {
@@ -254,7 +312,8 @@ $(document).on('keydown', function(event) {
             setSelect2Value($("#account_id"),"<?=base_url('app/set_account_select2_val_by_id/')?>" + <?=$quotation_data->account_id; ?>);
         <?php } ?>
 
-        initAjaxSelect2($("#item_id"),"<?=base_url('app/item_select2_source/')?>");
+        // initAjaxSelect2($("#item_id"),"<?=base_url('app/item_select2_source/')?>");
+        initAjaxSelect2($("#item_id"),"<?=base_url('app/item_select2_source_from_account_and_site_and_quatation/')?>" );  
         initAjaxSelect2($("#item_group_id"),"<?=base_url('app/item_group_select2_source')?>");
 
         $('#item_qty,#price,#gst_rate').on('keyup', function() {
@@ -266,27 +325,34 @@ $(document).on('keydown', function(event) {
             $('#amount').val(parseFloat(amount).toFixed(2));
         });
 
-        $('#item_group_id').on('change', function() {
-            var item_group_id = $(this).val();
-            $('#item_id').val(null).trigger('change');
-            if(item_group_id != '' || item_group_id != null){
-                initAjaxSelect2($("#item_id"),"<?=base_url('app/item_select2_source_from_item_group/')?>" + item_group_id);
-            }
-            if(item_group_id == '' || item_group_id == null){
-                initAjaxSelect2($("#item_id"),"<?=base_url('app/item_select2_source/')?>");
-            }
-        });
+        // $('#item_group_id').on('change', function() {
+        //     var item_group_id = $(this).val();
+        //     $('#item_id').val(null).trigger('change');
+        //     if(item_group_id != '' || item_group_id != null){
+        //         initAjaxSelect2($("#item_id"),"<?=base_url('app/item_select2_source_from_item_group/')?>" + item_group_id);
+        //     }
+        //     if(item_group_id == '' || item_group_id == null){
+        //         initAjaxSelect2($("#item_id"),"<?=base_url('app/item_select2_source/')?>");
+        //     }
+        // });
 
         $('#item_id').on('change', function() {
             var item_id = $('#item_id').val();
 
             if(edit_lineitem_inc == 0 && item_id != null){
                 var account_id = $('#account_id').val();
+                var site_id = $('#site_id').val();
                 var item_group_id = $('#item_group_id').val();
 
                 if(account_id == null){
                     $("#item_id").val(null).trigger("change");
                     show_notify("Please select Account.", false);
+                    return false;
+                }
+
+                if(site_id == null){
+                    $("#item_id").val(null).trigger("change");
+                    show_notify("Please select Site.", false);
                     return false;
                 }
 
@@ -302,7 +368,6 @@ $(document).on('keydown', function(event) {
                     dataType: 'json',
                     data: 'item_id='+ item_id + '&account_id='+ account_id + '&item_group_id='+ item_group_id,
                     success: function (response) {
-                        console.log(response);
                         $('#item_mrp').val(response.mrp);
                         $('#price').val(response.rate);
                         if(response.alternate_unit_id != ''){
@@ -311,6 +376,22 @@ $(document).on('keydown', function(event) {
                     },
                 });
             }
+        });
+
+        $('#site_id').on('change', function() {
+            var account_id = $('#account_id').val();
+            var site_id = $('#site_id').val();
+            if(account_id == null){
+                    $("#item_id").val(null).trigger("change");
+                    show_notify("Please select Account.", false);
+                    return false;
+            }
+            if(site_id == null){
+                    $("#item_id").val(null).trigger("change");
+                    show_notify("Please select Site.", false);
+                    return false;
+            }
+            initAjaxSelect2($("#item_id"),"<?=base_url('app/item_select2_source_from_account_and_site_and_quatation/')?>" + account_id + "/" + site_id );   
         });
 
         $('#item_id').on('change', function() {
@@ -497,6 +578,7 @@ $(document).on('keydown', function(event) {
         var pure_amount_total = 0;
         var discounted_price_total = 0;
         var amount_total = 0;
+        var unit_name = '-';
 
         $.each(lineitem_objectdata, function (index, value) {    
             var value_item_group_name = '';
@@ -526,6 +608,23 @@ $(document).on('keydown', function(event) {
                 },
             });
 
+            $.ajax({
+                url:"<?=base_url('app/set_unit_select2_val_by_id/')?>"+value.unit_id,
+                type:'get',
+                dataType:'json',
+                async: false,
+                cache: false,
+                data : {
+                },
+                success:function(response){
+                    if(response.success){
+                        unit_name=response.text;
+                    }else{
+                        unit_name='-';
+                    }
+                }
+            });
+
             item_name = value_item_name;
 
             var value_discount_type = '';
@@ -546,14 +645,12 @@ $(document).on('keydown', function(event) {
             <?php if(isset($quotation_line_item_fields) && in_array('item_group', $quotation_line_item_fields)){ ?>
             '<td>' + value_item_group_name + '</td>' + 
             <?php } ?>
-
+            '<td>' + (index+1) + '</td>'+
             '<td>' + item_name + '</td>' +
             '<td class="text-right">' + value.item_qty + '</td>' +
-            // '<td class="text-right">' + (value.item_mrp != null && value.item_mrp != 0?value.item_mrp:'') + '</td>' +
+            '<td>' + unit_name + '</td>' +
             '<td class="text-right">' + value.price + '</td>' +
             '<td class="text-right">' + value.pure_amount + '</td>' +
-            // '<td class="text-right ">' + discount_data + '</td>' + 
-            // '<td class="text-right ">' + value.discounted_price + '</td>'+
             '</tr>';
 
             new_lineitem_html += row_html;
@@ -594,7 +691,7 @@ $(document).on('keydown', function(event) {
 
         if(typeof(value.item_group_id) !== "undefined") {
             setSelect2Value($("#item_group_id"),"<?=base_url('app/set_item_group_select2_val_by_id/')?>"+ value.item_group_id); 
-            initAjaxSelect2($("#item_id"),"<?=base_url('app/item_select2_source_from_item_group/')?>"+ value.item_group_id);
+            // initAjaxSelect2($("#item_id"),"<?=base_url('app/item_select2_source_from_item_group/')?>"+ value.item_group_id);
         }
         if(typeof(value.item_id) !== "undefined") {
             setSelect2Value($("#item_id"),"<?=base_url('app/set_li_item_select2_val_by_rafrence/?id=')?>" + value.item_id);
@@ -645,7 +742,7 @@ $(document).on('keydown', function(event) {
             display_lineitem_html(lineitem_objectdata);
         }
     }
-    
+
     function parseF(value, decimal) {
         decimal = 2;
         return value ? parseFloat(value).toFixed(decimal) : 0;
@@ -675,10 +772,6 @@ $(document).on('keydown', function(event) {
             $("#item_qty").focus();
         });
 
-        // $(document).on('change','.multi',function(){
-        //     console.log($('.multi')[0].files);
-        // })
-
         $(document).on('submit', '#form_sales_quotation', function () {
             if(lineitem_objectdata == ''){
                 show_notify("Please select any one Product.", false);
@@ -691,7 +784,7 @@ $(document).on('keydown', function(event) {
                 postData.append('line_items_data', lineitem_objectdata_var);
                 // postData.append('docs', docs); 
             $.ajax({
-                url: "<?=base_url('quotation/save_quotation') ?>",
+                url: "<?=base_url('sales/save_sales_invoice') ?>",
                 type: "POST",
                 processData: false,
                 contentType: false,
@@ -705,10 +798,10 @@ $(document).on('keydown', function(event) {
                         return false;
                     }
                     if (json['success'] == 'Added'){
-                        window.location.href = "<?php echo base_url('quotation/sales_quotation_add'); ?>";
+                        window.location.href = "<?php echo base_url('sales/sales_invoice_frmquot_add/'); ?>";
                     }
                     if (json['success'] == 'Updated'){
-                        window.location.href = "<?php echo base_url('quotation/sales_quotation_list'); ?>";
+                        window.location.href = "<?php echo base_url('sales/sales_invoice_frmquot_list/'); ?>";
                     }
                     $('.overlay').hide();
                     return false;
@@ -717,32 +810,21 @@ $(document).on('keydown', function(event) {
             return false;
         });
         
-    });
-
-    // wait for document to load
-    $(function(){
-        // use a different language
-        // $file prints the file name
-        // $ext prints the file extension
-
-        // invoke plugin
-        $('.multi').MultiFile({ 
-            STRING: { 
-                remove:'Remover', 
-                selected:'Selecionado: $file', 
-                denied:'Invalido arquivo de tipo $ext!' 
-            } ,
-            doc_label:true,
-            labelName:'Doc Type'
+        function get_max_prefix(prefix) {
+        $.ajax({
+            url: "<?=base_url('sales/get_max_prefix') ?>/" + prefix, 
+            type: "GET",
+            processData: false,
+            contentType: false,
+            cache: false,
+            data: '',
+            success: function (response) {
+                var json = $.parseJSON(response);
+                $('#sales_invoice_no').val(json);
+                return false;
+            },
         });
-
+    }
+    get_max_prefix('');
     });
-    // $(function(){
-    //     $("#uploader").initUploader({
-    //         destination:"<?=base_url('quotation/image_ss') ?>",
-    //         selectOpts:{one:'jquery',two:'script',three:'net'},
-    //         fileLimit:10,
-    //         showDescription: true,
-    //     });
-    // });
 </script>

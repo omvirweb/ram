@@ -150,6 +150,7 @@
             $quotation_data['quotation_type'] = $post_data['quotation_type']; 
             $quotation_data['quotation_date'] = date('Y-m-d', strtotime($post_data['quotation_date']));
             $quotation_data['account_id'] = $post_data['account_id'];
+            $quotation_data['site_id'] = (isset($post_data['site_id']) && $post_data['site_id'] != '') ? $post_data['site_id'] : '';
             $quotation_data['qty_total'] = $post_data['qty_total'];
             $quotation_data['pure_amount_total'] = $post_data['pure_amount_total'];
             $quotation_data['discount_total'] = ($post_data['pure_amount_total'] - $post_data['discounted_price_total']);

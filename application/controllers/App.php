@@ -30,7 +30,7 @@ class App extends CI_Controller{
      * @param array $where
      * @return array
      */
-	function get_select2_data($table_name, $id_column, $text_column, $search, $page = 1, $where = array()){
+	function get_select2_data($table_name, $id_column, $text_column, $search, $page = 1, $where = array() , $where_in = array()){
 		$party_select2_data = array();
 		$resultCount = 10;
 		$offset = ($page - 1) * $resultCount;
@@ -38,6 +38,9 @@ class App extends CI_Controller{
 		$this->db->from("$table_name");
 		if (!empty($where)) {
 			$this->db->where($where);
+		}
+		if(!empty($where_in)){
+			$this->db->where_in($where_in['col'], $where_in['values']);
 		}
 		if ($table_name == 'user') {
 			$this->db->where("isActive !=", 0);
@@ -115,14 +118,17 @@ class App extends CI_Controller{
      * @param array $where
      * @return mixed
      */
-	function count_select2_data($table_name, $id_column, $text_column, $search, $where = array(), $where1 = array()){
+	function count_select2_data($table_name, $id_column, $text_column, $search, $where = array(), $where1 = array(), $where_in = array()){
 		$this->db->select("$id_column");
 		$this->db->from("$table_name");
 		if (!empty($where)) {
 			$this->db->where($where);
 		}
-                if (!empty($where1)) {
+		if (!empty($where1)) {
 			$this->db->or_where($where1);
+		}
+		if(!empty($where_in)){
+			$this->db->where_in($where_in['col'], $where_in['values']);
 		}
 		$this->db->like("$text_column", $search, 'after');
 		$query = $this->db->get();
@@ -1755,6 +1761,37 @@ class App extends CI_Controller{
 			"results" => $this->get_select2_data('pack_unit', 'pack_unit_id', 'pack_unit_name', $search, $page, $where),
 			"total_count" => $this->count_select2_data('pack_unit', 'pack_unit_id', 'pack_unit_name', $search, $where),
 		);
+		echo json_encode($results);
+		exit();
+	}
+
+	function set_unit_select2_val_by_id($id){
+		$this->get_select2_text_by_id('pack_unit', 'pack_unit_id', 'pack_unit_name', $id);
+	}
+
+	function item_select2_source_from_account_and_site_and_quatation($account_id = '',$site_id = ''){
+		$search = isset($_GET['q']) ? $_GET['q'] : '';
+		$page = isset($_GET['page']) ? $_GET['page'] : 1;
+		$where = '';
+		$where_in = [];
+
+		$results = [];
+		if(isset($account_id) && isset($site_id) && $account_id != '' && $site_id != ''){
+			$get_quotation_id = $this->crud->getFromSQL('SELECT quotation_id FROM `quotation` WHERE `account_id` = '.$account_id.' AND `site_id` = '.$site_id.' AND `quotation_type` = 1');
+			if(isset($get_quotation_id[0]) && $get_quotation_id[0]->quotation_id != ''){
+				$get_item_ids = $this->crud->getFromSQL('SELECT `item_id` FROM `lineitems` WHERE `module`=5 AND `parent_id` ='.$get_quotation_id[0]->quotation_id);
+				$get_item_ids = json_decode(json_encode ( $get_item_ids ) , true);
+				$get_item_ids = array_column($get_item_ids, 'item_id');
+				if(isset($get_item_ids) && !empty($get_item_ids)){
+					$where_in['col'] = 'item_id';
+					$where_in['values'] = $get_item_ids;	
+					$results = array(
+						"results" => $this->get_select2_data('item', 'item_id', 'item_name', $search, $page, $where ,$where_in),
+						"total_count" => $this->count_select2_data('item', 'item_id', 'item_name', $search, $where , array(), $where_in),
+					);
+				}
+			}
+		}
 		echo json_encode($results);
 		exit();
 	}

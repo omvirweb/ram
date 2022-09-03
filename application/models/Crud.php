@@ -24,7 +24,7 @@ class Crud extends CI_Model
 		else 
 		{
 		  //echo $table_name." : ";;
-		  echo "<br>";;
+		  echo "<br>";
 		  print_r($this->db->error());
 		  //print_r($data_array);
 		}
