@@ -6,7 +6,7 @@
     <!-- Content Header (Page header) -->
     <section class="content-header">
         <h1>
-        Sales Invoice From Quote <?php if(isset($quotation_id) && !empty($quotation_id)){ echo 'Edit'; }else{ echo 'Add'; }  ?>
+        Sales Invoice From Quote <?php if(isset($sales_invoice_data->sales_invoice_id) && !empty($sales_invoice_data->sales_invoice_id)){ echo 'Edit'; }else{ echo 'Add'; }  ?>
             <?php if($this->applib->have_access_role(MODULE_ORDER_TYPE_2_ID,"view")) { ?>
             <a href="<?=base_url('sales/sales_invoice_frmquot_list');?>" class="btn btn-primary pull-right">Sales Invoice From Quote List</a>
             <?php } ?>
@@ -18,8 +18,8 @@
         <div class="row">
             <div class="col-md-12">
                 <form id="form_sales_quotation" class="" action="" enctype="multipart/form-data" data-parsley-trigger="keyup" data-parsley-validate autocomplete="off">
-                    <?php if(isset($quotation_id) && !empty($quotation_id)){ ?>
-                    <input type="hidden" id="quotation_id" name="quotation_id" value="<?=$quotation_id;?>">
+                    <?php if(isset($sales_invoice_data->sales_invoice_id) && !empty($sales_invoice_data->sales_invoice_id)){ ?>
+                    <input type="hidden" id="sales_invoice_id" name="sales_invoice_id" value="<?=$sales_invoice_data->sales_invoice_id;?>">
                     <?php } ?>
                     <!-- <input type="hidden" id="quotation_type" name="quotation_type" value="1"> -->
 
@@ -37,7 +37,7 @@
                                 <div class="col-md-2">
                                     <div class="form-group">
                                         <label for="sales_invoice_date" class="control-label">Sales Invoice Date<span class="required-sign">*</span></label>
-                                        <input type="text" style="width:200px;" name="sales_invoice_date" id="datepicker2" class="form-control" required data-index="2" value="<?=isset($quotation_data->sales_invoice_date) ? date('d-m-Y', strtotime($quotation_data->sales_invoice_date)) : date('d-m-Y'); ?>">
+                                        <input type="text" style="width:200px;" name="sales_invoice_date" id="datepicker2" class="form-control" required data-index="2" value="<?=isset($sales_invoice_data->sales_invoice_date) ? date('d-m-Y', strtotime($sales_invoice_data->sales_invoice_date)) : date('d-m-Y'); ?>">
                                     </div>
                                 </div>
                                 <div class="col-md-2">
@@ -50,21 +50,21 @@
                                     <div class="form-group">
                                         <label for="tax_type" class="control-label">Tax Type<span class="required-sign">*</span></label>
                                         <select  name="tax_type" id="tax_type" class="form-control" data-index="3" required="">
-                                            <option value="1" <?php echo isset($invoice_data->tax_type) && $invoice_data->tax_type == 1 ? 'selected' : ''?>>GST</option>
-                                            <option value="2" <?php echo isset($invoice_data->tax_type) && $invoice_data->tax_type == 2 ? 'selected' : ''?>>IGST</option>
+                                            <option value="1" <?php echo isset($sales_invoice_data->tax_type) && $sales_invoice_data->tax_type == 1 ? 'selected' : ''?>>GST</option>
+                                            <option value="2" <?php echo isset($sales_invoice_data->tax_type) && $sales_invoice_data->tax_type == 2 ? 'selected' : ''?>>IGST</option>
                                         </select>
                                     </div>
                                 </div>
                                 <div class="col-md-2">
                                     <div class="form-group">
                                         <label for="invoice_type" class="control-label">Invoice Type<span class="required-sign">*</span></label>
-                                        <select name="invoice_type" id="invoice_type" class="form-control select2" data-index="4" ></select>
+                                        <select name="invoice_type" id="invoice_type" class="form-control select2" data-index="4"  ></select>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label for="sales_invoice_no" class="control-label">Invoice No</label>
-                                        <input type="text" name="sales_invoice_no" id="sales_invoice_no" class="form-control num_only" data-index="4" value="">
+                                        <input type="text" name="sales_invoice_no" id="sales_invoice_no" class="form-control num_only" data-index="4" value="<?php echo isset($sales_invoice_data->sales_invoice_no) && $sales_invoice_data->sales_invoice_no != '' ? $sales_invoice_data->sales_invoice_no : '' ?>">
                                     </div>
                                 </div>
                                 <div class="col-md-2">
@@ -78,8 +78,8 @@
                                         <div class="form-group">
                                             <label for="sales_rate_type" class="control-label">Rate :</label>
                                             <select name="sales_rate_type" id="sales_rate_type" class="select2">
-                                                <option <?=(isset($invoice_data->sales_rate) && $invoice_data->sales_rate == 1) ?'selected' : ''; ?> value="1">Excluding GST</option>
-                                                <option <?=(isset($invoice_data->sales_rate) && $invoice_data->sales_rate == 2) ?'selected' : ''; ?> value="2">Including GST</option>
+                                                <option <?=(isset($sales_invoice_data->sales_rate_type) && $sales_invoice_data->sales_rate_type == 1) ?'selected' : ''; ?> value="1">Excluding GST</option>
+                                                <option <?=(isset($sales_invoice_data->sales_rate_type) && $sales_invoice_data->sales_rate_type == 2) ?'selected' : ''; ?> value="2">Including GST</option>
                                             </select>
                                         </div>
                                     </div>
@@ -251,12 +251,12 @@
                             <br/>
                             <div class="form-group">
                                 <label for="sales_invoice_desc" class="control-label">Description</label>
-                                <textarea name="sales_invoice_desc" id="sales_invoice_desc" class="form-control" data-index="5" placeholder=""><?=isset($invoice_data->sales_invoice_desc) ? $invoice_data->sales_invoice_desc : '' ?></textarea>
+                                <textarea name="sales_invoice_desc" id="sales_invoice_desc" class="form-control" data-index="5" placeholder=""><?=isset($sales_invoice_data->sales_invoice_desc) ? $sales_invoice_data->sales_invoice_desc : '' ?></textarea>
                             </div>
                         </div>
                         <div class="clearfix"></div>
                         <div class="box-footer">
-                            <button type="submit" class="btn btn-primary form_btn module_save_btn"><?=isset($quotation_id) ? 'Update' : 'Save' ?></button>
+                            <button type="submit" class="btn btn-primary form_btn module_save_btn"><?=isset($sales_invoice_data->sales_invoice_id) ? 'Update' : 'Save' ?></button>
                                                         <b style="color: #0974a7">Ctrl + S</b>
                         </div>
                     </div>
@@ -289,8 +289,8 @@ $(document).on('keydown', function(event) {
     var lineitem_objectdata = [];
     var edit_lineitem_inc = 0;
 
-    <?php if(isset($quotation_lineitems)) { ?>
-        var li_lineitem_objectdata = [<?php echo $quotation_lineitems; ?>];
+    <?php if(isset($sales_invoice_lineitems)) { ?>
+        var li_lineitem_objectdata = [<?php echo $sales_invoice_lineitems; ?>];
         var lineitem_objectdata = [];
         $.each(li_lineitem_objectdata, function (index, value) {
             value = JSON.parse(value);
@@ -298,18 +298,37 @@ $(document).on('keydown', function(event) {
         });
     <?php } ?>
 
-    <?php if(isset($quotation_data->round_off_amount)){ ?>
+    <?php if(isset($sales_invoice_data->round_off_amount)){ ?>
     display_lineitem_html(lineitem_objectdata,true);
     <?php } else { ?>
     display_lineitem_html(lineitem_objectdata);
     <?php } ?>
+    $('#site_id').on('change', function() {
+            var account_id = $('#account_id').val();
+            var site_id = $('#site_id').val();
+            if(account_id == null){
+                    $("#item_id").val(null).trigger("change");
+                    show_notify("Please select Account.", false);
+                    return false;
+            }
+            if(site_id == null){
+                    $("#item_id").val(null).trigger("change");
+                    show_notify("Please select Site.", false);
+                    return false;
+            }
+            initAjaxSelect2($("#item_id"),"<?=base_url('app/item_select2_source_from_account_and_site_and_quatation/')?>" + account_id + "/" + site_id );   
+        });
 
     $(document).ready(function(){
         initAjaxSelect2($("#site_id"), "<?= base_url('app/sites_select2_source') ?>");
         initAjaxSelect2($("#account_id"),"<?=base_url('app/account_select2_source/')?>");
         initAjaxSelect2($("#unit_id"),"<?=base_url('app/unit_select2_source/')?>");
-        <?php if(isset($quotation_data->account_id)){ ?>
-            setSelect2Value($("#account_id"),"<?=base_url('app/set_account_select2_val_by_id/')?>" + <?=$quotation_data->account_id; ?>);
+        <?php if(isset($sales_invoice_data->account_id)){ ?>
+            setSelect2Value($("#account_id"),"<?=base_url('app/set_account_select2_val_by_id/')?>" + <?=$sales_invoice_data->account_id; ?>);
+        <?php } ?>
+        <?php if(isset($sales_invoice_data->site_id)){ ?>
+            setSelect2Value($("#site_id"),"<?=base_url('app/sites_group_select2_val_by_id/')?>" + <?=$sales_invoice_data->site_id; ?>);
+            $('#site_id').trigger('change');
         <?php } ?>
 
         // initAjaxSelect2($("#item_id"),"<?=base_url('app/item_select2_source/')?>");
@@ -376,22 +395,6 @@ $(document).on('keydown', function(event) {
                     },
                 });
             }
-        });
-
-        $('#site_id').on('change', function() {
-            var account_id = $('#account_id').val();
-            var site_id = $('#site_id').val();
-            if(account_id == null){
-                    $("#item_id").val(null).trigger("change");
-                    show_notify("Please select Account.", false);
-                    return false;
-            }
-            if(site_id == null){
-                    $("#item_id").val(null).trigger("change");
-                    show_notify("Please select Site.", false);
-                    return false;
-            }
-            initAjaxSelect2($("#item_id"),"<?=base_url('app/item_select2_source_from_account_and_site_and_quatation/')?>" + account_id + "/" + site_id );   
         });
 
         $('#item_id').on('change', function() {
@@ -669,8 +672,8 @@ $(document).on('keydown', function(event) {
 
         var amount_total_after_round_off =  Math.round(amount_total);
         if(use_db_round_off_amount == true) {
-            <?php if(isset($quotation_data->round_off_amount)){ ?>
-                var round_off_amount = parseFloat(<?=$quotation_data->round_off_amount;?>);
+            <?php if(isset($sales_invoice_data->round_off_amount)){ ?>
+                var round_off_amount = parseFloat(<?=$sales_invoice_data->round_off_amount;?>);
                 var amount_total_after_round_off = parseFloat(amount_total) + parseFloat(round_off_amount);
             <?php } ?>
         } else {
