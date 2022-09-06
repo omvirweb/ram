@@ -490,7 +490,7 @@ class Sales extends CI_Controller
                     }
                 }
                 $row[] = $invoice->account_name;
-                $row[] = $invoice->account_gst_no;
+                // $row[] = $invoice->account_gst_no;
                 $row[] = date('d-m-Y', strtotime($invoice->sales_invoice_date));
                 $row[] = number_format($invoice->amount_total, 2, '.', '');
                 $data[] = $row;
