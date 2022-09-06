@@ -2667,7 +2667,7 @@ class Sales extends CI_Controller
         }
     }
 
-    function sales_invoice_frmquot_add($id)
+    function sales_invoice_frmquot_add($id = '')
     {
         $data = array();
         $line_item_fields = $this->crud->getFromSQL('SELECT setting_key FROM company_settings WHERE company_id = "'.$this->logged_in_id.'" AND module_name = 2 AND setting_value = 1');
@@ -2681,7 +2681,7 @@ class Sales extends CI_Controller
         $data['type'] = 'Quatation';
         $data['page_title'] = 'Sales Invoice From Quote Add/Edit';
 
-        if($id){
+        if($id != ''){
             if(!($this->applib->have_access_role(MODULE_ORDER_TYPE_2_ID,"edit"))) {
                 $this->session->set_flashdata('success', false);
                 $this->session->set_flashdata('message', 'You have not permission to access this page.');
