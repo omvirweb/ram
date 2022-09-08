@@ -180,3 +180,6 @@ ALTER TABLE `quotation` ADD `site_id` INT NULL AFTER `account_id`;
 
 --Parag : 2022_09_02 06:20 PM
 ALTER TABLE `sales_invoice` ADD `site_id` INT NULL AFTER `account_id`;
+
+--Parag : 2022_09_05 06:20 PM
+ALTER TABLE `lineitems` ADD `l` DOUBLE NULL AFTER `gst`, ADD `b` DOUBLE NULL AFTER `l`, ADD `d` DOUBLE NULL AFTER `b`;
