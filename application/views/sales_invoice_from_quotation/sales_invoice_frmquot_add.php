@@ -58,7 +58,12 @@
                                 <div class="col-md-2">
                                     <div class="form-group">
                                         <label for="invoice_type" class="control-label">Invoice Type<span class="required-sign">*</span></label>
-                                        <select name="invoice_type" id="invoice_type" class="form-control select2" data-index="4"  ></select>
+                                        <select name="invoice_type" id="invoice_type" class="form-control select2" data-index="4"  >
+                                            <option value='1' <?=(isset($sales_invoice_data->invoice_type) && $sales_invoice_data->invoice_type == 1)?'selected':''?>>Order</option>
+                                            <option value='2' <?=(isset($sales_invoice_data->invoice_type) && $sales_invoice_data->invoice_type == 2)?'selected':''?>>Purchase</option>
+                                            <option value='3' <?=(isset($sales_invoice_data->invoice_type) && $sales_invoice_data->invoice_type == 3)?'selected':''?>>Sales Order</option>
+                                            <option value='4' <?=(isset($sales_invoice_data->invoice_type) && $sales_invoice_data->invoice_type == 4)?'selected':''?>>Material In</option>
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
@@ -323,12 +328,18 @@ $(document).on('keydown', function(event) {
         initAjaxSelect2($("#site_id"), "<?= base_url('app/sites_select2_source') ?>");
         initAjaxSelect2($("#account_id"),"<?=base_url('app/account_select2_source/')?>");
         initAjaxSelect2($("#unit_id"),"<?=base_url('app/unit_select2_source/')?>");
+        initAjaxSelect2($("#our_bank_label"),"<?=base_url('app/our_bank_label_select2_source/')?>");
+
         <?php if(isset($sales_invoice_data->account_id)){ ?>
             setSelect2Value($("#account_id"),"<?=base_url('app/set_account_select2_val_by_id/')?>" + <?=$sales_invoice_data->account_id; ?>);
         <?php } ?>
         <?php if(isset($sales_invoice_data->site_id)){ ?>
             setSelect2Value($("#site_id"),"<?=base_url('app/sites_group_select2_val_by_id/')?>" + <?=$sales_invoice_data->site_id; ?>);
             $('#site_id').trigger('change');
+        <?php } ?>
+
+        <?php if(isset($sales_invoice_data->our_bank_id)){ ?>
+            setSelect2Value($("#our_bank_label"),"<?=base_url('app/set_our_bank_label_select2_val_by_id/')?>" + <?= $sales_invoice_data->our_bank_id; ?>);
         <?php } ?>
 
         // initAjaxSelect2($("#item_id"),"<?=base_url('app/item_select2_source/')?>");

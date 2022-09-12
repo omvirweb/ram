@@ -428,12 +428,12 @@ $is_single_line_item = 1;
                                             <ul class="dropdown-menu">
                                                 <?php if($this->applib->have_access_role(MODULE_ORDER_TYPE_2_ID,"add")) { ?>
                                                     <?php if($is_single_line_item == 1){?>
-                                                        <li><a tabindex="-1" href="<?php echo base_url() ?>sales/sales_invoice_frmquot_add/"><i class="fa fa-circle-o"></i> Add Quotation</a></li>
+                                                        <li><a tabindex="-1" href="<?php echo base_url() ?>sales/sales_invoice_frmquot_add/"><i class="fa fa-circle-o"></i> Add</a></li>
                                                     <?php } else { ?>
-                                                        <li><a tabindex="-1" href="<?php echo base_url() ?>sales/sales_invoice_frmquot_add/"><i class="fa fa-circle-o"></i> Add Quotation</a></li>
+                                                        <li><a tabindex="-1" href="<?php echo base_url() ?>sales/sales_invoice_frmquot_add/"><i class="fa fa-circle-o"></i> Add</a></li>
                                                         <?php } ?>
                                                 <?php } ?>
-                                                <li><a tabindex="-1" href="<?php echo base_url() ?>sales/sales_invoice_frmquot_list/"><i class="fa fa-circle-o"></i> Quotation List</a></li>
+                                                <li><a tabindex="-1" href="<?php echo base_url() ?>sales/sales_invoice_frmquot_list/"><i class="fa fa-circle-o"></i>List</a></li>
                                             </ul>
                                         </li>
                                         <?php } ?>
