@@ -102,7 +102,9 @@ class Sales extends CI_Controller
 	function save_sales_invoice(){
         $return = [];
 		$post_data = $this->input->post();
-
+        echo '<pre>';
+        print_r($post_data);
+        die();
         if(!isset($post_data['prefix'])) {
             $post_data['prefix'] = '';
         }
@@ -2710,6 +2712,48 @@ class Sales extends CI_Controller
         }
     }
 
+    function final_sales_invoice_add($id = '')
+    {
+        $data = array();
+        $line_item_fields = $this->crud->getFromSQL('SELECT setting_key FROM company_settings WHERE company_id = "'.$this->logged_in_id.'" AND module_name = 2 AND setting_value = 1');
+        $invoice_line_item_fields = array();
+        if(!empty($line_item_fields)) {
+            foreach ($line_item_fields as $value) {
+                $invoice_line_item_fields[] = $value->setting_key;
+            }
+        }
+        $data['invoice_line_item_fields'] = $invoice_line_item_fields;
+        $data['type'] = 'Quatation';
+        $data['page_title'] = 'Sales Invoice From Quote Add/Edit';
+
+        if($id != ''){
+            if(!($this->applib->have_access_role(MODULE_ORDER_TYPE_2_ID,"edit"))) {
+                $this->session->set_flashdata('success', false);
+                $this->session->set_flashdata('message', 'You have not permission to access this page.');
+                redirect('/');
+            }
+            $sales_invoice_id = $id;
+            $where = array('sales_invoice_id' => $sales_invoice_id);
+            $sales_invoice_data = $this->crud->get_row_by_id('sales_invoice', $where);
+            $data['sales_invoice_data'] = $sales_invoice_data[0];
+            $data['sales_invoice_id'] = $sales_invoice_id;
+            $lineitems = '';
+            $where = array('module' => '2', 'parent_id' => $sales_invoice_id);
+            $sales_invoice_lineitems = $this->crud->get_row_by_id('lineitems', $where);
+            foreach ($sales_invoice_lineitems as $sales_invoice_lineitem) {
+                $lineitems .= "'" . json_encode($sales_invoice_lineitem) . "',";
+            }
+            $data['sales_invoice_lineitems'] = $lineitems;
+        }
+        if($this->applib->have_access_role(MODULE_ORDER_TYPE_2_ID,"add")) {
+            set_page('final_sales_invoice/final_sales_invoice_add', $data);
+        } else {
+            $this->session->set_flashdata('success', false);
+            $this->session->set_flashdata('message', 'You have not permission to access this page.');
+            redirect('/');
+        }
+    }
+
     function sales_invoice_frmquot_list() 
     {
         if($this->applib->have_access_role(MODULE_ORDER_TYPE_2_ID,"view")) {
@@ -2717,6 +2761,20 @@ class Sales extends CI_Controller
             $data['page_title'] = 'Sales Invoice From Quote';
             $data['quotation_type'] = 1;
             set_page('sales_invoice_from_quotation/sales_invoice_frmquot_list', $data);
+        } else {
+            $this->session->set_flashdata('success', false);
+            $this->session->set_flashdata('message', 'You have not permission to access this page.');
+            redirect('/');
+        }
+    }
+
+    function final_sales_invoice_list() 
+    {
+        if($this->applib->have_access_role(MODULE_ORDER_TYPE_2_ID,"view")) {
+            $data = array();
+            $data['page_title'] = 'Final Sales Invoice';
+            $data['quotation_type'] = 1;
+            set_page('final_sales_invoice/final_sales_invoice_list', $data);
         } else {
             $this->session->set_flashdata('success', false);
             $this->session->set_flashdata('message', 'You have not permission to access this page.');
