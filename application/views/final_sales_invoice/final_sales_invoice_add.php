@@ -335,7 +335,19 @@ $(document).on('keydown', function(event) {
             // price_for_itax:""
             // pure_amount:"7500.00"
             // unit_id:"4"
-            // initAjaxSelect2($("#item_id"),"<?=base_url('app/item_select2_source_from_account_and_site_and_quatation/')?>" + account_id + "/" + site_id );   
+            // initAjaxSelect2($("#item_id"),"<?=base_url('app/item_select2_source_from_account_and_site_and_quatation/')?>" + account_id + "/" + site_id );
+            $.ajax({
+                url:"<?=base_url('app/getSalesInvoiceFromQuo')?>",
+                type:"POST",
+                dataType:'json',
+                data : {
+                    account_id:account_id,
+                    site_id:site_id
+                },
+                success:function(response){
+                    console.log(response);
+                }
+            });   
         });
 
     $(document).ready(function(){

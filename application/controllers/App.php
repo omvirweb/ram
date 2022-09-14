@@ -1795,4 +1795,37 @@ class App extends CI_Controller{
 		echo json_encode($results);
 		exit();
 	}
+
+	function getSalesInvoiceFromQuo(){
+		$where = '';
+		$where_in = [];
+		$post_data = $this->input->post();
+		$account_id = (isset($post_data['account_id']) && $post_data['account_id'] != '') ? $post_data['account_id'] : '';
+		$site_id = (isset($post_data['site_id']) && $post_data['site_id'] != '') ? $post_data['site_id'] : '';
+		$results = [];
+		if($account_id != '' && $site_id != ''){
+			$get_sales_invoice_id = $this->crud->getFromSQL('SELECT sales_invoice_id FROM `sales_invoice` WHERE `account_id` = '.$account_id.' AND `site_id` = '.$site_id);
+			if(isset($get_sales_invoice_id[0]) && $get_sales_invoice_id[0]->sales_invoice_id != ''){
+				$get_item_ids = $this->crud->getFromSQL('SELECT `item_id` FROM `lineitems` WHERE `module`=2 AND `parent_id` ='.$get_sales_invoice_id[0]->sales_invoice_id);
+				$get_item_ids = json_decode(json_encode ( $get_item_ids ) , true);
+				$get_item_ids = array_column($get_item_ids, 'item_id');
+				echo '<pre>';
+				print_r($this->db->last_query());
+				die();
+				echo '<pre>';
+				print_r($get_item_ids);
+				die();
+				// if(isset($get_item_ids) && !empty($get_item_ids)){
+				// 	$where_in['col'] = 'item_id';
+				// 	$where_in['values'] = $get_item_ids;	
+				// 	$results = array(
+				// 		"results" => $this->get_select2_data('item', 'item_id', 'item_name', $search, $page, $where ,$where_in),
+				// 		"total_count" => $this->count_select2_data('item', 'item_id', 'item_name', $search, $where , array(), $where_in),
+				// 	);
+				// }
+			}
+		}
+		echo json_encode($results);
+		exit();
+	}
 }
