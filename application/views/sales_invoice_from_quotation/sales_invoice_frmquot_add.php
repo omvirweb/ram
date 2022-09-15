@@ -798,7 +798,7 @@ $(document).on('keydown', function(event) {
                 postData.append('line_items_data', lineitem_objectdata_var);
                 // postData.append('docs', docs); 
             $.ajax({
-                url: "<?=base_url('sales/save_sales_invoice') ?>",
+                url: "<?=base_url('sales/save_sales_invoice1') ?>",
                 type: "POST",
                 processData: false,
                 contentType: false,

@@ -1802,27 +1802,22 @@ class App extends CI_Controller{
 		$post_data = $this->input->post();
 		$account_id = (isset($post_data['account_id']) && $post_data['account_id'] != '') ? $post_data['account_id'] : '';
 		$site_id = (isset($post_data['site_id']) && $post_data['site_id'] != '') ? $post_data['site_id'] : '';
-		$results = [];
+		$results = [
+			'status'=>false,
+			'message'=>'Data Not Found'
+		];
 		if($account_id != '' && $site_id != ''){
 			$get_sales_invoice_id = $this->crud->getFromSQL('SELECT sales_invoice_id FROM `sales_invoice` WHERE `account_id` = '.$account_id.' AND `site_id` = '.$site_id);
 			if(isset($get_sales_invoice_id[0]) && $get_sales_invoice_id[0]->sales_invoice_id != ''){
-				$get_item_ids = $this->crud->getFromSQL('SELECT `item_id` FROM `lineitems` WHERE `module`=2 AND `parent_id` ='.$get_sales_invoice_id[0]->sales_invoice_id);
-				$get_item_ids = json_decode(json_encode ( $get_item_ids ) , true);
-				$get_item_ids = array_column($get_item_ids, 'item_id');
-				echo '<pre>';
-				print_r($this->db->last_query());
-				die();
-				echo '<pre>';
-				print_r($get_item_ids);
-				die();
-				// if(isset($get_item_ids) && !empty($get_item_ids)){
-				// 	$where_in['col'] = 'item_id';
-				// 	$where_in['values'] = $get_item_ids;	
-				// 	$results = array(
-				// 		"results" => $this->get_select2_data('item', 'item_id', 'item_name', $search, $page, $where ,$where_in),
-				// 		"total_count" => $this->count_select2_data('item', 'item_id', 'item_name', $search, $where , array(), $where_in),
-				// 	);
-				// }
+				// SELECT SUM(`amount`) as `amount`,`b`,`d`,`discount`,SUM(`discounted_price`) as `discounted_price`,`item_id`,SUM(`item_qty`) as `item_qty`,`l`,`price`,`price_for_itax`,SUM(`pure_amount`) as `pure_amount`,`unit_id`FROM `lineitems` WHERE `module`=2 AND `parent_id` ='.$get_sales_invoice_id[0]->sales_invoice_id.' GROUP BY `item_id`
+				$get_lineitems = $this->crud->getFromSQL('SELECT SUM(`amount`) as `amount`,`b`,`d`,`discount`,SUM(`discounted_price`) as `discounted_price`,`item_id`,SUM(`item_qty`) as `item_qty`,`l`,`price`,`price_for_itax`,SUM(`pure_amount`) as `pure_amount`,`unit_id`FROM `lineitems` WHERE `module`=2 AND `parent_id` ='.$get_sales_invoice_id[0]->sales_invoice_id.' GROUP BY `item_id`');
+				if(isset($get_lineitems) && !empty($get_lineitems)){
+					$results = [
+						'status'=>true,
+						'message'=>'Data Found Successfullay',
+						'data'=>$get_lineitems
+					];
+				}
 			}
 		}
 		echo json_encode($results);

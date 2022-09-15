@@ -183,3 +183,6 @@ ALTER TABLE `sales_invoice` ADD `site_id` INT NULL AFTER `account_id`;
 
 --Parag : 2022_09_05 06:20 PM
 ALTER TABLE `lineitems` ADD `l` DOUBLE NULL AFTER `gst`, ADD `b` DOUBLE NULL AFTER `l`, ADD `d` DOUBLE NULL AFTER `b`;
+
+--Mayur : 2022_09_15 4:50 PM
+CREATE TABLE `ram`.`sales_invoice_from_quotation` ( `sales_invoice_id` INT NOT NULL AUTO_INCREMENT , `account_id` INT NULL , `sales_invoice_date` DATE NULL , `our_bank_label` INT NULL , `tax_type` TINYINT(1) NULL COMMENT '1=GST, 2=IGST' , `invoice_type` INT NULL , `sales_invoice_no` INT NULL , `site_id` INT NULL , `sales_rate_type` ENUM('0', '1') NULL COMMENT '1=Excluding GST, 2=Including GST' , `qty_total` DOUBLE NULL , `pure_amount_total` DOUBLE NULL , `discounted_price_total` DOUBLE NULL , `round_off_amount` DOUBLE NULL , `sales_invoice_desc` TEXT NULL , `created_by` INT NULL , `created_at` DATE NULL , `updated_by` INT NULL , `updated_at` DATE NULL , `user_created_by` INT NULL , `user_updated_by` INT NULL , PRIMARY KEY (`sales_invoice_id`)) ENGINE = InnoDB;

@@ -346,6 +346,10 @@ $(document).on('keydown', function(event) {
                 },
                 success:function(response){
                     console.log(response);
+                    if(response.status){
+                        lineitem_objectdata = response.data;
+                        display_lineitem_html(lineitem_objectdata);
+                    }
                 }
             });   
         });
