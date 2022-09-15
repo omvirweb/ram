@@ -253,7 +253,7 @@
             "searching": true,
             "aaSorting": [[1, 'desc']],
             "ajax": {
-                "url": "<?php echo base_url('sales/invoice_frm_quot_datatable') ?>",
+                "url": "<?php echo base_url('sales/invoice_datatable') ?>",
                 "type": "POST",
                 "data": function (d) {
                     d.daterange_1 = datepicker1;

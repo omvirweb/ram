@@ -321,7 +321,37 @@ $(document).on('keydown', function(event) {
                     show_notify("Please select Site.", false);
                     return false;
             }
-            initAjaxSelect2($("#item_id"),"<?=base_url('app/item_select2_source_from_account_and_site_and_quatation/')?>" + account_id + "/" + site_id );   
+            // add here to get Data
+            // amount:"7500.00"
+            // b:"10"
+            // d:"10"
+            // discount:0
+            // discount_amt:0
+            // discounted_price:"7500.00"
+            // item_id:"324"
+            // item_qty:"50"
+            // l:"10"
+            // price:"150"
+            // price_for_itax:""
+            // pure_amount:"7500.00"
+            // unit_id:"4"
+            // initAjaxSelect2($("#item_id"),"<?=base_url('app/item_select2_source_from_account_and_site_and_quatation/')?>" + account_id + "/" + site_id );
+            $.ajax({
+                url:"<?=base_url('app/getSalesInvoiceFromQuo')?>",
+                type:"POST",
+                dataType:'json',
+                data : {
+                    account_id:account_id,
+                    site_id:site_id
+                },
+                success:function(response){
+                    console.log(response);
+                    if(response.status){
+                        lineitem_objectdata = response.data;
+                        display_lineitem_html(lineitem_objectdata);
+                    }
+                }
+            });   
         });
 
     $(document).ready(function(){
@@ -342,8 +372,8 @@ $(document).on('keydown', function(event) {
             setSelect2Value($("#our_bank_label"),"<?=base_url('app/set_our_bank_label_select2_val_by_id/')?>" + <?= $sales_invoice_data->our_bank_id; ?>);
         <?php } ?>
 
-        // initAjaxSelect2($("#item_id"),"<?=base_url('app/item_select2_source/')?>");
-        initAjaxSelect2($("#item_id"),"<?=base_url('app/item_select2_source_from_account_and_site_and_quatation/')?>" );  
+        initAjaxSelect2($("#item_id"),"<?=base_url('app/item_select2_source/')?>");
+        // initAjaxSelect2($("#item_id"),"<?=base_url('app/item_select2_source_from_account_and_site_and_quatation/')?>" );  
         initAjaxSelect2($("#item_group_id"),"<?=base_url('app/item_group_select2_source')?>");
 
         $('#item_qty,#price,#gst_rate').on('keyup', function() {
@@ -798,7 +828,7 @@ $(document).on('keydown', function(event) {
                 postData.append('line_items_data', lineitem_objectdata_var);
                 // postData.append('docs', docs); 
             $.ajax({
-                url: "<?=base_url('sales/save_sales_invoice1') ?>",
+                url: "<?=base_url('sales/save_sales_invoice') ?>",
                 type: "POST",
                 processData: false,
                 contentType: false,
