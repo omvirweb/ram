@@ -536,23 +536,23 @@ class Sales extends CI_Controller
             $account_id = $_POST['account_id'];
         }
         
-		$config['table'] = 'sales_invoice si';
-		$config['select'] = 'pd.transaction_id,si.invoice_type, si.sales_invoice_id, si.sales_invoice_no, si.sales_invoice_date, si.amount_total, si.data_lock_unlock, a.account_name, a.account_group_id, a.account_gst_no, si.created_by, si.created_at, si.updated_by, si.updated_at, si.user_created_by, si.user_updated_by,';
-		$config['column_order'] = array(null, 'si.sales_invoice_no', 'a.account_name', 'si.sales_invoice_date', 'si.amount_total');
-		$config['column_search'] = array('si.sales_invoice_no', 'a.account_name', 'DATE_FORMAT(si.sales_invoice_date,"%d-%m-%Y")', 'si.amount_total');
+		$config['table'] = 'sales_invoice_from_quotation si';
+		$config['select'] = 'si.invoice_type, si.sales_invoice_id, si.sales_invoice_no, si.sales_invoice_date, si.pure_amount_total, a.account_name, a.account_group_id, a.account_gst_no, si.created_by, si.created_at, si.updated_by, si.updated_at, si.user_created_by, si.user_updated_by,';
+		$config['column_order'] = array(null, 'si.sales_invoice_no', 'a.account_name', 'si.sales_invoice_date', 'si.pure_amount_total');
+		$config['column_search'] = array('si.sales_invoice_no', 'a.account_name', 'DATE_FORMAT(si.sales_invoice_date,"%d-%m-%Y")', 'si.pure_amount_total');
 		$config['wheres'][] = array('column_name' => 'si.created_by', 'column_value' => $this->logged_in_id);
         if (!empty($account_id)) {
             $config['wheres'][] = array('column_name' => 'si.account_id', 'column_value' => $account_id);
         }
-        if(!empty($list_type)){
-            $config['wheres'][] = array('column_name' => 'si.sales_type', 'column_value' => $list_type);
-        }
+        // if(!empty($list_type)){
+        //     $config['wheres'][] = array('column_name' => 'si.sales_type', 'column_value' => $list_type);
+        // }
         if (!empty($from_date) && !empty($to_date)) {
             $config['wheres'][] = array('column_name' => 'si.sales_invoice_date >=', 'column_value' => $from_date);
             $config['wheres'][] = array('column_name' => 'si.sales_invoice_date <=', 'column_value' => $to_date);
         }
 		$config['joins'][] = array('join_table' => 'account a', 'join_by' => 'a.account_id = si.account_id', 'join_type' => 'left');
-		$config['joins'][] = array('join_table' => 'invoice_paid_details pd', 'join_by' => 'pd.invoice_id = si.sales_invoice_id', 'join_type' => 'left');
+		// $config['joins'][] = array('join_table' => 'invoice_paid_details pd', 'join_by' => 'pd.invoice_id = si.sales_invoice_id', 'join_type' => 'left');
 		$config['order'] = array('si.created_at' => 'desc');
 		
 		$this->load->library('datatables', $config, 'datatable');
@@ -565,7 +565,7 @@ class Sales extends CI_Controller
 			$row = array();
 			$action = '';
 
-			if($invoice->data_lock_unlock == 0){
+			// if($invoice->data_lock_unlock == 0){
 				if($isEdit) {
                     $tt="";
                     if($list_type==1){
@@ -601,7 +601,7 @@ class Sales extends CI_Controller
                             <input type="hidden" name="sales_invoice_id" id="sales_invoice_id" value="' . $invoice->sales_invoice_id . '">
                             <a class="detail_button btn-info btn-xs" href="javascript:{}" onclick="document.getElementById(\'detail_' . $invoice->sales_invoice_id . '\').submit();" title="Invoice Detail"><i class="fa fa-eye"></i></a>
                         </form>  &nbsp; ';
-            }
+            // }
 
             $action .= '&nbsp;<a href="' . base_url('sales/invoice_print_pdf/' . $invoice->sales_invoice_id) . '" target="_blank" title="Invoice Print" class="detail_button btn-info btn-xs"><span class="fa fa-print"></span></a>';
 
@@ -644,7 +644,7 @@ class Sales extends CI_Controller
                 $row[] = $invoice->account_name;
                 $row[] = $invoice->account_gst_no;
                 $row[] = date('d-m-Y', strtotime($invoice->sales_invoice_date));
-                $row[] = number_format($invoice->amount_total, 2, '.', '');
+                $row[] = number_format($invoice->pure_amount_total, 2, '.', '');
                 $data[] = $row;
 		}
 		$output = array(
@@ -1780,6 +1780,18 @@ class Sales extends CI_Controller
 
     function get_max_prefix($prefix = ''){
         $sales_invoice_no = $this->crud->get_max_number_where('sales_invoice', 'sales_invoice_no', array('created_by' => $this->logged_in_id, 'prefix' => $prefix));
+        if(empty($sales_invoice_no->sales_invoice_no)){
+            $sales_invoice_no = $this->crud->get_id_by_val('user', 'invoice_no_start_from', 'prefix', $this->prefix);
+        } else {
+            $sales_invoice_no = $sales_invoice_no->sales_invoice_no + 1;    
+        }
+        echo json_encode($sales_invoice_no);
+        exit;
+    }
+
+    function get_invoice_no($prefix = ''){
+        $sales_invoice_no = $this->crud->get_max_number_where('sales_invoice_from_quotation', 'sales_invoice_no', array('created_by' => $this->logged_in_id));
+
         if(empty($sales_invoice_no->sales_invoice_no)){
             $sales_invoice_no = $this->crud->get_id_by_val('user', 'invoice_no_start_from', 'prefix', $this->prefix);
         } else {
@@ -2985,7 +2997,7 @@ class Sales extends CI_Controller
             $sales_invoice_no = $post_data['sales_invoice_no'];
             $sales_invoice_prefix = isset($post_data['prefix']) ? $post_data['prefix'] : null;
             $where = array('prefix' => $sales_invoice_prefix, 'sales_invoice_no' => $sales_invoice_no, 'created_by' => $this->logged_in_id, 'sales_invoice_id !=' => $post_data['sales_invoice_id']);
-			$sales_invoice_result = $this->crud->get_row_by_id('sales_invoice', $where);
+			$sales_invoice_result = $this->crud->get_row_by_id('sales_invoice_from_quotation', $where);
 			if(!empty($sales_invoice_result) && $sales_invoice_result != $post_data['sales_invoice_id']){
 				echo json_encode(array("error" => 'Exist'));
 				exit;
