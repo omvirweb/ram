@@ -826,7 +826,7 @@ $(document).on('keydown', function(event) {
         
         function get_max_prefix(prefix) {
         $.ajax({
-            url: "<?=base_url('sales/get_max_prefix') ?>/" + prefix, 
+            url: "<?=base_url('sales/get_invoice_no') ?>/" + prefix, 
             type: "GET",
             processData: false,
             contentType: false,

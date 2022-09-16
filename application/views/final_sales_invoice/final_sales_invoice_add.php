@@ -321,20 +321,7 @@ $(document).on('keydown', function(event) {
                     show_notify("Please select Site.", false);
                     return false;
             }
-            // add here to get Data
-            // amount:"7500.00"
-            // b:"10"
-            // d:"10"
-            // discount:0
-            // discount_amt:0
-            // discounted_price:"7500.00"
-            // item_id:"324"
-            // item_qty:"50"
-            // l:"10"
-            // price:"150"
-            // price_for_itax:""
-            // pure_amount:"7500.00"
-            // unit_id:"4"
+
             // initAjaxSelect2($("#item_id"),"<?=base_url('app/item_select2_source_from_account_and_site_and_quatation/')?>" + account_id + "/" + site_id );
             $.ajax({
                 url:"<?=base_url('app/getSalesInvoiceFromQuo')?>",
@@ -345,7 +332,6 @@ $(document).on('keydown', function(event) {
                     site_id:site_id
                 },
                 success:function(response){
-                    console.log(response);
                     if(response.status){
                         lineitem_objectdata = response.data;
                         display_lineitem_html(lineitem_objectdata);
@@ -856,7 +842,7 @@ $(document).on('keydown', function(event) {
         
         function get_max_prefix(prefix) {
         $.ajax({
-            url: "<?=base_url('sales/get_max_prefix') ?>/" + prefix, 
+            url: "<?=base_url('sales/get_invoice_no') ?>/" + prefix, 
             type: "GET",
             processData: false,
             contentType: false,
