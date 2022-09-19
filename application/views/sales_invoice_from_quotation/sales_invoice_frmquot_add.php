@@ -711,7 +711,11 @@ $(document).on('keydown', function(event) {
         }
         if(typeof(value.item_id) !== "undefined") {
             setSelect2Value($("#item_id"),"<?=base_url('app/set_li_item_select2_val_by_rafrence/?id=')?>" + value.item_id);
-        }        
+        }
+        
+        if(typeof(value.unit_id) !== "undefined") {
+            setSelect2Value($("#unit_id"),"<?=base_url('app/set_unit_select2_val_by_id/')?>"+ value.unit_id); 
+        }
 
         if(typeof(value.id) != "undefined" && value.id !== null) {
             $("#lineitem_id").val(value.id);
@@ -745,6 +749,9 @@ $(document).on('keydown', function(event) {
         $("#discount_type").val(value.discount_type);
         $("#discount").val(value.discount);
         $("#discounted_price").val(value.discounted_price);
+        $('#l').val(value.l);
+        $('#b').val(value.b);
+        $('#d').val(value.d);
         $('#ajax-loader').hide();
     }
     
