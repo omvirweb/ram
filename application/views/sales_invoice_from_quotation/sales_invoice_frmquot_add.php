@@ -322,7 +322,9 @@ $(document).on('keydown', function(event) {
                     return false;
             }
             initAjaxSelect2($("#item_id"),"<?=base_url('app/item_select2_source_from_account_and_site_and_quatation/')?>" + account_id + "/" + site_id );   
-        });
+    });
+    
+ 
 
     $(document).ready(function(){
         initAjaxSelect2($("#site_id"), "<?= base_url('app/sites_select2_source') ?>");
@@ -780,6 +782,7 @@ $(document).on('keydown', function(event) {
         $('#account_id').select2('open');
         $('#account_id').on("select2:close", function(e) { 
             $("#datepicker2").focus();
+            $('#site_id').trigger('change');
         });
 
         $('#item_id').on("select2:close", function(e) { 

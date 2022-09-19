@@ -253,6 +253,9 @@ $(document).on('keydown', function(event) {
         <?php if(isset($quotation_data->account_id)){ ?>
             setSelect2Value($("#account_id"),"<?=base_url('app/set_account_select2_val_by_id/')?>" + <?=$quotation_data->account_id; ?>);
         <?php } ?>
+        <?php if(isset($quotation_data->site_id)){ ?>
+            setSelect2Value($("#site_id"),"<?=base_url('app/sites_group_select2_val_by_id/')?>" + <?=$quotation_data->site_id; ?>);
+        <?php } ?>
 
         initAjaxSelect2($("#item_id"),"<?=base_url('app/item_select2_source/')?>");
         initAjaxSelect2($("#item_group_id"),"<?=base_url('app/item_group_select2_source')?>");
