@@ -2853,7 +2853,7 @@ class Sales extends CI_Controller
             }
             $sales_invoice_id = $id;
             $where = array('sales_invoice_id' => $sales_invoice_id);
-            $sales_invoice_data = $this->crud->get_row_by_id('sales_invoice', $where);
+            $sales_invoice_data = $this->crud->get_row_by_id('sales_invoice_from_quotation', $where);
             $data['sales_invoice_data'] = $sales_invoice_data[0];
             $data['sales_invoice_id'] = $sales_invoice_id;
             $lineitems = '';
