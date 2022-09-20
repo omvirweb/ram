@@ -1807,10 +1807,9 @@ class App extends CI_Controller{
 			'message'=>'Data Not Found'
 		];
 		if($account_id != '' && $site_id != ''){
-			$get_sales_invoice_id = $this->crud->getFromSQL('SELECT sales_invoice_id FROM `sales_invoice` WHERE `account_id` = '.$account_id.' AND `site_id` = '.$site_id);
+			$get_sales_invoice_id = $this->crud->getFromSQL('SELECT sales_invoice_id FROM `sales_invoice_from_quotation` WHERE `account_id` = '.$account_id.' AND `site_id` = '.$site_id);
 			if(isset($get_sales_invoice_id[0]) && $get_sales_invoice_id[0]->sales_invoice_id != ''){
-				// SELECT SUM(`amount`) as `amount`,`b`,`d`,`discount`,SUM(`discounted_price`) as `discounted_price`,`item_id`,SUM(`item_qty`) as `item_qty`,`l`,`price`,`price_for_itax`,SUM(`pure_amount`) as `pure_amount`,`unit_id`FROM `lineitems` WHERE `module`=2 AND `parent_id` ='.$get_sales_invoice_id[0]->sales_invoice_id.' GROUP BY `item_id`
-				$get_lineitems = $this->crud->getFromSQL('SELECT SUM(`amount`) as `amount`,`b`,`d`,`discount`,SUM(`discounted_price`) as `discounted_price`,`item_id`,SUM(`item_qty`) as `item_qty`,`l`,`price`,`price_for_itax`,SUM(`pure_amount`) as `pure_amount`,`unit_id`FROM `lineitems` WHERE `module`=2 AND `parent_id` ='.$get_sales_invoice_id[0]->sales_invoice_id.' GROUP BY `item_id`');
+				$get_lineitems = $this->crud->getFromSQL('SELECT SUM(`amount`) as `amount`,`b`,`d`,`discount`,SUM(`discounted_price`) as `discounted_price`,`item_id`,SUM(`item_qty`) as `item_qty`,`l`,(SUM(`pure_amount`)/SUM(`item_qty`)) as `price`,`price_for_itax`,SUM(`pure_amount`) as `pure_amount`,`unit_id`FROM `lineitems` WHERE `module`=9 AND `parent_id` ='.$get_sales_invoice_id[0]->sales_invoice_id.' GROUP BY `item_id`');
 				if(isset($get_lineitems) && !empty($get_lineitems)){
 					$results = [
 						'status'=>true,

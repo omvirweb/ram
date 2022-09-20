@@ -23,9 +23,9 @@
     <section class="content-header">
         <h1>
             <?php
-                echo 'Sales Invoice From Quote List';
+                echo 'Final Sales Invoice List';
                 if($this->applib->have_access_role(MODULE_ORDER_TYPE_2_ID,"add")) {
-                    echo '<a href="'.base_url('sales/sales_invoice_frmquot_add/').'" class="btn btn-primary pull-right">Add Sales Invoice From Quote</a>';
+                    echo '<a href="'.base_url('sales/final_sales_invoice_add/').'" class="btn btn-primary pull-right">Add Final Sales Invoice</a>';
                 }
             ?>
         </h1>
@@ -253,7 +253,7 @@
             "searching": true,
             "aaSorting": [[1, 'desc']],
             "ajax": {
-                "url": "<?php echo base_url('sales/invoice_frm_quot_datatable') ?>",
+                "url": "<?php echo base_url('sales/final_invoice_datatable') ?>",
                 "type": "POST",
                 "data": function (d) {
                     d.daterange_1 = datepicker1;
