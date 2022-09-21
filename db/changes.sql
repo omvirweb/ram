@@ -189,7 +189,7 @@ CREATE TABLE `sales_invoice_from_quotation` ( `sales_invoice_id` INT NOT NULL AU
 
 --Mayur : 2022_09_20 12:08 AM
 CREATE TABLE `final_sales_invoice` (
-  `sales_invoice_id` int(11) NOT NULL,
+  `sales_invoice_id` INT NOT NULL AUTO_INCREMENT,
   `account_id` int(11) DEFAULT NULL,
   `sales_invoice_date` date DEFAULT NULL,
   `our_bank_label` int(11) DEFAULT NULL,
