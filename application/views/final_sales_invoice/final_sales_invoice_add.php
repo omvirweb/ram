@@ -325,6 +325,7 @@ $(document).on('keydown', function(event) {
             }
 
             // initAjaxSelect2($("#item_id"),"<?=base_url('app/item_select2_source_from_account_and_site_and_quatation/')?>" + account_id + "/" + site_id );
+            <?php if(!isset($sales_invoice_lineitems) || empty($sales_invoice_lineitems)){?>
             $.ajax({
                 url:"<?=base_url('app/getSalesInvoiceFromQuo')?>",
                 type:"POST",
@@ -339,7 +340,8 @@ $(document).on('keydown', function(event) {
                         display_lineitem_html(lineitem_objectdata);
                     }
                 }
-            });   
+            }); 
+            <?php } ?>  
         });
 
     $(document).ready(function(){
@@ -719,6 +721,7 @@ $(document).on('keydown', function(event) {
         $("html, body").animate({ scrollTop: $(".line_item_form").offset().top }, "slow");
         
         value = lineitem_objectdata[index];
+        console.log(value)
         $("#line_items_index").val(index);
 
         if(typeof(value.item_group_id) !== "undefined") {
@@ -727,7 +730,11 @@ $(document).on('keydown', function(event) {
         }
         if(typeof(value.item_id) !== "undefined") {
             setSelect2Value($("#item_id"),"<?=base_url('app/set_li_item_select2_val_by_rafrence/?id=')?>" + value.item_id);
-        }        
+        }
+        
+        if(typeof(value.unit_id) !== "undefined") {
+            setSelect2Value($("#unit_id"),"<?=base_url('app/set_unit_select2_val_by_id/')?>"+ value.unit_id); 
+        }
 
         if(typeof(value.id) != "undefined" && value.id !== null) {
             $("#lineitem_id").val(value.id);
@@ -761,6 +768,9 @@ $(document).on('keydown', function(event) {
         $("#discount_type").val(value.discount_type);
         $("#discount").val(value.discount);
         $("#discounted_price").val(value.discounted_price);
+        $('#l').val(value.l);
+        $('#b').val(value.b);
+        $('#d').val(value.d);
         $('#ajax-loader').hide();
     }
     
@@ -830,10 +840,10 @@ $(document).on('keydown', function(event) {
                         return false;
                     }
                     if (json['success'] == 'Added'){
-                        window.location.href = "<?php echo base_url('sales/sales_invoice_frmquot_add/'); ?>";
+                        window.location.href = "<?php echo base_url('sales/final_sales_invoice_add/'); ?>";
                     }
                     if (json['success'] == 'Updated'){
-                        window.location.href = "<?php echo base_url('sales/sales_invoice_frmquot_list/'); ?>";
+                        window.location.href = "<?php echo base_url('sales/final_sales_invoice_list/'); ?>";
                     }
                     $('.overlay').hide();
                     return false;
