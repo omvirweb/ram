@@ -6,9 +6,9 @@
     <!-- Content Header (Page header) -->
     <section class="content-header">
         <h1>
-        Sales Invoice From Quote <?php if(isset($sales_invoice_data->sales_invoice_id) && !empty($sales_invoice_data->sales_invoice_id)){ echo 'Edit'; }else{ echo 'Add'; }  ?>
+        Final Sales Invoice <?php if(isset($sales_invoice_data->sales_invoice_id) && !empty($sales_invoice_data->sales_invoice_id)){ echo 'Edit'; }else{ echo 'Add'; }  ?>
             <?php if($this->applib->have_access_role(MODULE_ORDER_TYPE_2_ID,"view")) { ?>
-            <a href="<?=base_url('sales/sales_invoice_frmquot_list');?>" class="btn btn-primary pull-right">Sales Invoice From Quote List</a>
+            <a href="<?=base_url('sales/sales_invoice_frmquot_list');?>" class="btn btn-primary pull-right">Final Sales Invoice List</a>
             <?php } ?>
         </h1>
     </section>
@@ -22,6 +22,8 @@
                     <input type="hidden" id="sales_invoice_id" name="sales_invoice_id" value="<?=$sales_invoice_data->sales_invoice_id;?>">
                     <?php } ?>
                     <!-- <input type="hidden" id="quotation_type" name="quotation_type" value="1"> -->
+                    <input type="hidden" name="module" value="10">
+                    <input type="hidden" name="table" value="final_sales_invoice">
 
                     <div class="box box-primary">
                         <div class="box-body">
@@ -95,7 +97,7 @@
                                     </div>  
                                     <div class="row line_item_form">
                                         <input type="hidden" name="line_items_index" id="line_items_index" />
-                                        <?php if(isset($quotation_lineitems)){ ?>
+                                        <?php if(isset($sales_invoice_lineitems)){ ?>
                                             <input type="hidden" name="line_items_data[id]" id="lineitem_id" />
                                         <?php } ?>
 
@@ -814,7 +816,7 @@ $(document).on('keydown', function(event) {
                 postData.append('line_items_data', lineitem_objectdata_var);
                 // postData.append('docs', docs); 
             $.ajax({
-                url: "<?=base_url('sales/save_sales_invoice') ?>",
+                url: "<?=base_url('sales/save_sales_invoice1') ?>",
                 type: "POST",
                 processData: false,
                 contentType: false,
@@ -840,9 +842,9 @@ $(document).on('keydown', function(event) {
             return false;
         });
         
-        function get_max_prefix(prefix) {
+        function get_max_prefix(table) {
         $.ajax({
-            url: "<?=base_url('sales/get_invoice_no') ?>/" + prefix, 
+            url: "<?=base_url('sales/get_invoice_no') ?>/" + table, 
             type: "GET",
             processData: false,
             contentType: false,
@@ -855,6 +857,8 @@ $(document).on('keydown', function(event) {
             },
         });
     }
-    get_max_prefix('');
+    <?php if(!isset($sales_invoice_lineitems) || empty($sales_invoice_lineitems)){?>
+    get_max_prefix('final_sales_invoice');
+    <?php } ?>
     });
 </script>

@@ -185,4 +185,30 @@ ALTER TABLE `sales_invoice` ADD `site_id` INT NULL AFTER `account_id`;
 ALTER TABLE `lineitems` ADD `l` DOUBLE NULL AFTER `gst`, ADD `b` DOUBLE NULL AFTER `l`, ADD `d` DOUBLE NULL AFTER `b`;
 
 --Mayur : 2022_09_15 4:50 PM
-CREATE TABLE `ram`.`sales_invoice_from_quotation` ( `sales_invoice_id` INT NOT NULL AUTO_INCREMENT , `account_id` INT NULL , `sales_invoice_date` DATE NULL , `our_bank_label` INT NULL , `tax_type` TINYINT(1) NULL COMMENT '1=GST, 2=IGST' , `invoice_type` INT NULL , `sales_invoice_no` INT NULL , `site_id` INT NULL , `sales_rate_type` ENUM('0', '1') NULL COMMENT '1=Excluding GST, 2=Including GST' , `qty_total` DOUBLE NULL , `pure_amount_total` DOUBLE NULL , `discounted_price_total` DOUBLE NULL , `round_off_amount` DOUBLE NULL , `sales_invoice_desc` TEXT NULL , `created_by` INT NULL , `created_at` DATE NULL , `updated_by` INT NULL , `updated_at` DATE NULL , `user_created_by` INT NULL , `user_updated_by` INT NULL , PRIMARY KEY (`sales_invoice_id`)) ENGINE = InnoDB;
+CREATE TABLE `sales_invoice_from_quotation` ( `sales_invoice_id` INT NOT NULL AUTO_INCREMENT , `account_id` INT NULL , `sales_invoice_date` DATE NULL , `our_bank_label` INT NULL , `tax_type` TINYINT(1) NULL COMMENT '1=GST, 2=IGST' , `invoice_type` INT NULL , `sales_invoice_no` INT NULL , `site_id` INT NULL , `sales_rate_type` ENUM('0', '1') NULL COMMENT '1=Excluding GST, 2=Including GST' , `qty_total` DOUBLE NULL , `pure_amount_total` DOUBLE NULL , `discounted_price_total` DOUBLE NULL , `round_off_amount` DOUBLE NULL , `sales_invoice_desc` TEXT NULL , `created_by` INT NULL , `created_at` DATE NULL , `updated_by` INT NULL , `updated_at` DATE NULL , `user_created_by` INT NULL , `user_updated_by` INT NULL , PRIMARY KEY (`sales_invoice_id`)) ENGINE = InnoDB;
+
+--Mayur : 2022_09_20 12:08 AM
+CREATE TABLE `final_sales_invoice` (
+  `sales_invoice_id` int(11) NOT NULL,
+  `account_id` int(11) DEFAULT NULL,
+  `sales_invoice_date` date DEFAULT NULL,
+  `our_bank_label` int(11) DEFAULT NULL,
+  `tax_type` tinyint(1) DEFAULT NULL COMMENT '1=GST, 2=IGST',
+  `invoice_type` int(11) DEFAULT NULL,
+  `sales_invoice_no` int(11) DEFAULT NULL,
+  `site_id` int(11) DEFAULT NULL,
+  `sales_rate_type` enum('0','1') DEFAULT NULL COMMENT '1=Excluding GST, 2=Including GST',
+  `qty_total` double DEFAULT NULL,
+  `pure_amount_total` double DEFAULT NULL,
+  `discounted_price_total` double DEFAULT NULL,
+  `round_off_amount` double DEFAULT NULL,
+  `sales_invoice_desc` text,
+  `created_by` int(11) DEFAULT NULL,
+  `created_at` date DEFAULT NULL,
+  `updated_by` int(11) DEFAULT NULL,
+  `updated_at` date DEFAULT NULL,
+  `user_created_by` int(11) DEFAULT NULL,
+  `user_updated_by` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+ALTER TABLE `lineitems` CHANGE `module` `module` INT(11) NULL DEFAULT NULL COMMENT 'purchase_invoice = 1, sales_invoice = 2, credit_note = 3, debit_note = 4, sales_quotation = 5, purchse_quotation = 6, 7=Dispatch, 8=Material In, 9=sales_invoice_from_quot, 10=final_sales_invoice';

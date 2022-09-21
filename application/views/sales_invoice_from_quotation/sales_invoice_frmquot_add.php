@@ -22,6 +22,9 @@
                     <input type="hidden" id="sales_invoice_id" name="sales_invoice_id" value="<?=$sales_invoice_data->sales_invoice_id;?>">
                     <?php } ?>
                     <!-- <input type="hidden" id="quotation_type" name="quotation_type" value="1"> -->
+                    <input type="hidden" name="module" value="9">
+                    <input type="hidden" name="table" value="sales_invoice_from_quotation">
+
 
                     <div class="box box-primary">
                         <div class="box-body">
@@ -95,7 +98,7 @@
                                     </div>  
                                     <div class="row line_item_form">
                                         <input type="hidden" name="line_items_index" id="line_items_index" />
-                                        <?php if(isset($quotation_lineitems)){ ?>
+                                        <?php if(isset($sales_invoice_lineitems)){ ?>
                                             <input type="hidden" name="line_items_data[id]" id="lineitem_id" />
                                         <?php } ?>
 
@@ -309,15 +312,14 @@ $(document).on('keydown', function(event) {
     display_lineitem_html(lineitem_objectdata);
     <?php } ?>
     $('#site_id').on('change', function() {
+        $("#item_id").val(null).trigger("change");
             var account_id = $('#account_id').val();
             var site_id = $('#site_id').val();
             if(account_id == null){
-                    $("#item_id").val(null).trigger("change");
                     show_notify("Please select Account.", false);
                     return false;
             }
             if(site_id == null){
-                    $("#item_id").val(null).trigger("change");
                     show_notify("Please select Site.", false);
                     return false;
             }
@@ -711,7 +713,11 @@ $(document).on('keydown', function(event) {
         }
         if(typeof(value.item_id) !== "undefined") {
             setSelect2Value($("#item_id"),"<?=base_url('app/set_li_item_select2_val_by_rafrence/?id=')?>" + value.item_id);
-        }        
+        }
+        
+        if(typeof(value.unit_id) !== "undefined") {
+            setSelect2Value($("#unit_id"),"<?=base_url('app/set_unit_select2_val_by_id/')?>"+ value.unit_id); 
+        }
 
         if(typeof(value.id) != "undefined" && value.id !== null) {
             $("#lineitem_id").val(value.id);
@@ -745,6 +751,9 @@ $(document).on('keydown', function(event) {
         $("#discount_type").val(value.discount_type);
         $("#discount").val(value.discount);
         $("#discounted_price").val(value.discounted_price);
+        $('#l').val(value.l);
+        $('#b').val(value.b);
+        $('#d').val(value.d);
         $('#ajax-loader').hide();
     }
     
@@ -827,9 +836,9 @@ $(document).on('keydown', function(event) {
             return false;
         });
         
-        function get_max_prefix(prefix) {
+        function get_max_prefix(table) {
         $.ajax({
-            url: "<?=base_url('sales/get_invoice_no') ?>/" + prefix, 
+            url: "<?=base_url('sales/get_invoice_no') ?>/" + table, 
             type: "GET",
             processData: false,
             contentType: false,
@@ -842,6 +851,8 @@ $(document).on('keydown', function(event) {
             },
         });
     }
-    get_max_prefix('');
+    <?php if(!isset($sales_invoice_lineitems) || empty($sales_invoice_lineitems)){?>
+    get_max_prefix('sales_invoice_from_quotation');
+    <?php } ?>
     });
 </script>

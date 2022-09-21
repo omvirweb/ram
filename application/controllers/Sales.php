@@ -656,6 +656,147 @@ class Sales extends CI_Controller
 		//output to json format
 		echo json_encode($output);
 	}
+
+    function final_invoice_datatable(){
+		/*echo "welcome";die();*/
+		$from_date = '';
+        $to_date = '';
+        $account_id = '';
+        $list_type = '';
+        if (isset($_POST['list_type']) && $_POST['list_type'] != '') {
+            $list_type = $_POST['list_type'];
+        }
+
+        if( isset($_POST['daterange_1']) && !empty($_POST['daterange_1']) && isset($_POST['daterange_2']) && !empty($_POST['daterange_2'])){
+            $from_date = trim($_POST['daterange_1']);
+            $from_date = substr($from_date, 6, 4).'-'.substr($from_date, 3, 2).'-'.substr($from_date, 0, 2);
+            $to_date = trim($_POST['daterange_2']);
+            $to_date = substr($to_date, 6, 4).'-'.substr($to_date, 3, 2).'-'.substr($to_date, 0, 2);
+        }
+        if(isset($_POST['account_id'])){
+            $account_id = $_POST['account_id'];
+        }
+        
+		$config['table'] = 'final_sales_invoice si';
+		$config['select'] = 'si.invoice_type, si.sales_invoice_id, si.sales_invoice_no, si.sales_invoice_date, si.pure_amount_total, a.account_name, a.account_group_id, a.account_gst_no, si.created_by, si.created_at, si.updated_by, si.updated_at, si.user_created_by, si.user_updated_by,';
+		$config['column_order'] = array(null, 'si.sales_invoice_no', 'a.account_name', 'si.sales_invoice_date', 'si.pure_amount_total');
+		$config['column_search'] = array('si.sales_invoice_no', 'a.account_name', 'DATE_FORMAT(si.sales_invoice_date,"%d-%m-%Y")', 'si.pure_amount_total');
+		$config['wheres'][] = array('column_name' => 'si.created_by', 'column_value' => $this->logged_in_id);
+        if (!empty($account_id)) {
+            $config['wheres'][] = array('column_name' => 'si.account_id', 'column_value' => $account_id);
+        }
+        // if(!empty($list_type)){
+        //     $config['wheres'][] = array('column_name' => 'si.sales_type', 'column_value' => $list_type);
+        // }
+        if (!empty($from_date) && !empty($to_date)) {
+            $config['wheres'][] = array('column_name' => 'si.sales_invoice_date >=', 'column_value' => $from_date);
+            $config['wheres'][] = array('column_name' => 'si.sales_invoice_date <=', 'column_value' => $to_date);
+        }
+		$config['joins'][] = array('join_table' => 'account a', 'join_by' => 'a.account_id = si.account_id', 'join_type' => 'left');
+		// $config['joins'][] = array('join_table' => 'invoice_paid_details pd', 'join_by' => 'pd.invoice_id = si.sales_invoice_id', 'join_type' => 'left');
+		$config['order'] = array('si.created_at' => 'desc');
+		
+		$this->load->library('datatables', $config, 'datatable');
+		$list = $this->datatable->get_datatables();
+		$isEdit = $this->applib->have_access_role(MODULE_SALES_INVOICE_ID, "edit");
+		$isDelete = $this->applib->have_access_role(MODULE_SALES_INVOICE_ID, "delete");
+
+		$data = array();
+		foreach ($list as $invoice) {
+			$row = array();
+			$action = '';
+
+			// if($invoice->data_lock_unlock == 0){
+				if($isEdit) {
+                    $tt="";
+                    if($list_type==1){
+                        $tt="sales";
+                    }elseif($list_type==2){
+                        $tt="sales2";
+                    }else if($list_type==3){
+                        $tt="sales3";
+                    }else if($list_type==4){
+                        $tt="sales4";
+                    }else{
+                        $tt="sales";
+                    }
+
+					if($this->is_single_line_item == 1) {
+						$action .= '<form id="edit_' . $invoice->sales_invoice_id . '" method="post" action="' . base_url() . 'sales/final_sales_invoice_add/'.$invoice->sales_invoice_id.'" style="width: 25px; display: initial;" >
+	                            <input type="hidden" name="sales_invoice_id" id="sales_invoice_id" value="' . $invoice->sales_invoice_id . '">
+	                            <a class="edit_button btn-primary btn-xs" href="javascript:{}" onclick="document.getElementById(\'edit_' . $invoice->sales_invoice_id . '\').submit();" title="Edit Invoice"><i class="fa fa-edit"></i></a>
+	                        </form> ';
+					} else {
+						$action .= '<form id="edit_' . $invoice->sales_invoice_id . '" method="post" action="' . base_url() . 'sales/final_sales_invoice_add/'.$invoice->sales_invoice_id.'" style="width: 25px; display: initial;" >
+	                            <input type="hidden" name="sales_invoice_id" id="sales_invoice_id" value="' . $invoice->sales_invoice_id . '">
+	                            <a class="edit_button btn-primary btn-xs" href="javascript:{}" onclick="document.getElementById(\'edit_' . $invoice->sales_invoice_id . '\').submit();" title="Edit Invoice"><i class="fa fa-edit"></i></a>
+	                        </form> ';
+					}
+                    
+				}
+				if($isDelete) {
+					$action .= ' &nbsp; <a href="javascript:void(0);" class="delete_button btn-danger btn-xs" data-href="' . base_url('sales/invoice_delete/' . $invoice->sales_invoice_id) . '"><i class="fa fa-trash"></i></a>';		
+				}
+
+				$action_detail = ' &nbsp; <form id="detail_' . $invoice->sales_invoice_id . '" method="post" action="' . base_url() . 'sales/invoice_detail" style="width: 25px; display: initial;" >
+                            <input type="hidden" name="sales_invoice_id" id="sales_invoice_id" value="' . $invoice->sales_invoice_id . '">
+                            <a class="detail_button btn-info btn-xs" href="javascript:{}" onclick="document.getElementById(\'detail_' . $invoice->sales_invoice_id . '\').submit();" title="Invoice Detail"><i class="fa fa-eye"></i></a>
+                        </form>  &nbsp; ';
+            // }
+
+            $action .= '&nbsp;<a href="' . base_url('sales/invoice_print_pdf/' . $invoice->sales_invoice_id) . '" target="_blank" title="Invoice Print" class="detail_button btn-info btn-xs"><span class="fa fa-print"></span></a>';
+
+            if($invoice->account_group_id != CASH_IN_HAND_ACC_GROUP_ID) {
+            	$action .= '&nbsp;<a href="' . base_url('sales/format_2_invoice_print/' . $invoice->sales_invoice_id) . '" target="_blank" title="Formamt 2 Invoice Print" class="detail_button btn-info btn-xs"><span class="fa fa-print"></span></a>';
+                if($list_type==2){
+                    $action .= '&nbsp;<a href="' . base_url('sales/format_3_2_invoice_print/' . $invoice->sales_invoice_id) . '" target="_blank" title="Formamt 3 Invoice Print" class="detail_button btn-info btn-xs"><span class="fa fa-print"></span></a>';
+                }else if($list_type==3){
+                    $action .= '&nbsp;<a href="' . base_url('sales/format_3_3_invoice_print/' . $invoice->sales_invoice_id) . '" target="_blank" title="Formamt 3 Invoice Print" class="detail_button btn-info btn-xs"><span class="fa fa-print"></span></a>';
+                }
+                else if($list_type==4){
+                    $action .= '&nbsp;<a href="' . base_url('sales/format_3_4_invoice_print/' . $invoice->sales_invoice_id) . '" target="_blank" title="Formamt 3 Invoice Print" class="detail_button btn-info btn-xs"><span class="fa fa-print"></span></a>';
+                }else{
+                    $action .= '&nbsp;<a href="' . base_url('sales/format_3_invoice_print/' . $invoice->sales_invoice_id) . '" target="_blank" title="Formamt 3 Invoice Print" class="detail_button btn-info btn-xs"><span class="fa fa-print"></span></a>';
+                }
+            }
+            
+            $action .= '&nbsp;<a href="' . base_url('sales/invoice_print_new_pdf/' . $invoice->sales_invoice_id) . '" target="_blank" title="Tally Invoice Print" class="detail_button btn-info btn-xs"><span class="fa fa-print"></span></a>';
+
+            if($invoice->account_group_id == CASH_IN_HAND_ACC_GROUP_ID) {
+            	$action .= '&nbsp;<a href="' . base_url('sales/invoice_miracle_print/' . $invoice->sales_invoice_id) . '" target="_blank" title="Miracle Invoice Print" class="detail_button btn-info btn-xs"><span class="fa fa-print"></span></a>';
+            }       
+            $action .= ' &nbsp; <input type="checkbox" name="invoice_ids[]" value="'.$invoice->sales_invoice_id.'" style="height:17px;width: 17px;">';
+            /*if(!empty($invoice->invoice_type)){
+                if($invoice->invoice_type == INVOICE_TYPE_FREIGHT_ID || $invoice->invoice_type == INVOICE_TYPE_INVOICE_ID || $invoice->invoice_type == INVOICE_TYPE_REIMBURSEMENT_ID){
+                    $action .= ' &nbsp; <a href="' . base_url('sales/invoice_pdf_new/' . $invoice->sales_invoice_id) . '" target="_blank" title="Invoice Print" class="detail_button btn-info btn-xs" style="background-color: #0f9abc;"><span class="fa fa-print"></span></a>';
+                }
+            }*/
+    		$row[] = $action;
+                $this->load->library('applib');
+                $sales_invoice_no = $this->applib->format_invoice_number($invoice->sales_invoice_id, $invoice->sales_invoice_date);
+                $row[] = $sales_invoice_no;
+                if($this->session->userdata(PACKAGE_FOLDER_NAME.'is_logged_in')['is_bill_wise'] == '1'){
+                    if(isset($invoice->transaction_id)){
+                        $row[] = 'Paid';
+                    } else {
+                        $row[] = 'Unpaid';
+                    }
+                }
+                $row[] = $invoice->account_name;
+                $row[] = $invoice->account_gst_no;
+                $row[] = date('d-m-Y', strtotime($invoice->sales_invoice_date));
+                $row[] = number_format($invoice->pure_amount_total, 2, '.', '');
+                $data[] = $row;
+		}
+		$output = array(
+			"draw" => $_POST['draw'],
+			"recordsTotal" => $this->datatable->count_all(),
+			"recordsFiltered" => $this->datatable->count_filtered(),
+			"data" => $data,
+		);
+		//output to json format
+		echo json_encode($output);
+	}
 	
     function invoice_delete($sales_invoice_id) {
         
@@ -1790,15 +1931,17 @@ class Sales extends CI_Controller
     }
 
     function get_invoice_no($prefix = ''){
-        $sales_invoice_no = $this->crud->get_max_number_where('sales_invoice_from_quotation', 'sales_invoice_no', array('created_by' => $this->logged_in_id));
+        if($prefix != ''){
+            $sales_invoice_no = $this->crud->get_max_number_where($prefix, 'sales_invoice_no', array('created_by' => $this->logged_in_id));
 
-        if(empty($sales_invoice_no->sales_invoice_no)){
-            $sales_invoice_no = $this->crud->get_id_by_val('user', 'invoice_no_start_from', 'prefix', $this->prefix);
-        } else {
-            $sales_invoice_no = $sales_invoice_no->sales_invoice_no + 1;    
+            if(empty($sales_invoice_no->sales_invoice_no)){
+                $sales_invoice_no = $this->crud->get_id_by_val('user', 'invoice_no_start_from', 'prefix', $this->prefix);
+            } else {
+                $sales_invoice_no = $sales_invoice_no->sales_invoice_no + 1;    
+            }
+            echo json_encode($sales_invoice_no);
+            exit;
         }
-        echo json_encode($sales_invoice_no);
-        exit;
     }
     
     function discount(){
@@ -2857,14 +3000,14 @@ class Sales extends CI_Controller
             $data['sales_invoice_data'] = $sales_invoice_data[0];
             $data['sales_invoice_id'] = $sales_invoice_id;
             $lineitems = '';
-            $where = array('module' => '2', 'parent_id' => $sales_invoice_id);
+            $where = array('module' => '9', 'parent_id' => $sales_invoice_id);
             $sales_invoice_lineitems = $this->crud->get_row_by_id('lineitems', $where);
             foreach ($sales_invoice_lineitems as $sales_invoice_lineitem) {
                 $lineitems .= "'" . json_encode($sales_invoice_lineitem) . "',";
             }
             $data['sales_invoice_lineitems'] = $lineitems;
         }
-        
+
         if($this->applib->have_access_role(MODULE_ORDER_TYPE_2_ID,"add")) {
             set_page('sales_invoice_from_quotation/sales_invoice_frmquot_add', $data);
         } else {
@@ -2885,8 +3028,8 @@ class Sales extends CI_Controller
             }
         }
         $data['invoice_line_item_fields'] = $invoice_line_item_fields;
-        $data['type'] = 'Quatation';
-        $data['page_title'] = 'Sales Invoice From Quote Add/Edit';
+        $data['type'] = 'Sales Invoice';
+        $data['page_title'] = 'Final Sales Invoice Add/Edit';
 
         if($id != ''){
             if(!($this->applib->have_access_role(MODULE_ORDER_TYPE_2_ID,"edit"))) {
@@ -2896,11 +3039,11 @@ class Sales extends CI_Controller
             }
             $sales_invoice_id = $id;
             $where = array('sales_invoice_id' => $sales_invoice_id);
-            $sales_invoice_data = $this->crud->get_row_by_id('sales_invoice', $where);
+            $sales_invoice_data = $this->crud->get_row_by_id('final_sales_invoice', $where);
             $data['sales_invoice_data'] = $sales_invoice_data[0];
             $data['sales_invoice_id'] = $sales_invoice_id;
             $lineitems = '';
-            $where = array('module' => '2', 'parent_id' => $sales_invoice_id);
+            $where = array('module' => '10', 'parent_id' => $sales_invoice_id);
             $sales_invoice_lineitems = $this->crud->get_row_by_id('lineitems', $where);
             foreach ($sales_invoice_lineitems as $sales_invoice_lineitem) {
                 $lineitems .= "'" . json_encode($sales_invoice_lineitem) . "',";
@@ -2946,7 +3089,7 @@ class Sales extends CI_Controller
 
     function save_sales_invoice1(){
         $post_data = $this->input->post();
-
+        $return =[];
         $line_items_data = json_decode('['.$post_data['line_items_data'].']'); 
         $sales_invoice_data = [
             'account_id'=>(isset($post_data['account_id']) && $post_data['account_id'] != '') ? $post_data['account_id'] : '',
@@ -2996,8 +3139,8 @@ class Sales extends CI_Controller
         if(isset($post_data['sales_invoice_id']) && !empty($post_data['sales_invoice_id'])){
             $sales_invoice_no = $post_data['sales_invoice_no'];
             $sales_invoice_prefix = isset($post_data['prefix']) ? $post_data['prefix'] : null;
-            $where = array('prefix' => $sales_invoice_prefix, 'sales_invoice_no' => $sales_invoice_no, 'created_by' => $this->logged_in_id, 'sales_invoice_id !=' => $post_data['sales_invoice_id']);
-			$sales_invoice_result = $this->crud->get_row_by_id('sales_invoice_from_quotation', $where);
+            $where = array('sales_invoice_no' => $sales_invoice_no, 'created_by' => $this->logged_in_id, 'sales_invoice_id !=' => $post_data['sales_invoice_id']);
+			$sales_invoice_result = $this->crud->get_row_by_id($post_data['table'], $where);
 			if(!empty($sales_invoice_result) && $sales_invoice_result != $post_data['sales_invoice_id']){
 				echo json_encode(array("error" => 'Exist'));
 				exit;
@@ -3006,10 +3149,9 @@ class Sales extends CI_Controller
             $sales_invoice_data['invoice_type'] = isset($post_data['invoice_type']) && !empty($post_data['invoice_type']) ? $post_data['invoice_type'] : null;
 			$sales_invoice_data['updated_at'] = $this->now_time;
             $sales_invoice_data['updated_by'] = $this->logged_in_id;
-            $sales_invoice_data['company_id'] = $this->logged_in_id;
             $sales_invoice_data['user_updated_by'] = $this->session->userdata()['login_user_id'];
             $where_array['sales_invoice_id'] = $post_data['sales_invoice_id'];
-            $result = $this->crud->update('sales_invoice_from_quotation', $sales_invoice_data, $where_array);
+            $result = $this->crud->update($post_data['table'], $sales_invoice_data, $where_array);
             if($result){
 				$return['success'] = "Updated";
 				$this->session->set_flashdata('success',true);
@@ -3048,8 +3190,11 @@ class Sales extends CI_Controller
 					$add_lineitem['igst_amount'] = (isset($lineitem->igst_amt) && $lineitem->igst_amt != '') ? $lineitem->igst_amt : '';
 					$add_lineitem['other_charges'] = (isset($lineitem->other_charges) && $lineitem->other_charges != '') ? $lineitem->other_charges : '';
 					$add_lineitem['amount'] = (isset($lineitem->amount) && $lineitem->amount != '') ? $lineitem->amount : '';
-					$add_lineitem['module'] = 9;
+					$add_lineitem['module'] = $post_data['module'];
 					$add_lineitem['parent_id'] = $parent_id;
+                    $add_lineitem['l'] = (isset($lineitem->l) && $lineitem->l != '') ? $lineitem->l : '';
+                    $add_lineitem['b'] = (isset($lineitem->b) && $lineitem->b != '') ? $lineitem->b : '';
+                    $add_lineitem['d'] = (isset($lineitem->d) && $lineitem->d != '') ? $lineitem->d : '';
 					$add_lineitem['rate_for_itax'] = (isset($lineitem->rate_for_itax) && $lineitem->rate_for_itax != '') ? $lineitem->rate_for_itax : '';
 					$add_lineitem['price_for_itax'] = (isset($lineitem->price_for_itax) && $lineitem->price_for_itax != '') ? $lineitem->price_for_itax : '';
 					$add_lineitem['igst_for_itax'] = (isset($lineitem->igst_for_itax) && $lineitem->igst_for_itax != '') ? $lineitem->igst_for_itax : '';
@@ -3086,72 +3231,70 @@ class Sales extends CI_Controller
             
 			$where = array('sales_invoice_no' => $sales_invoice_no, 'created_by' => $this->logged_in_id);
 			
-            $sales_invoice_result = $this->crud->get_row_by_id('sales_invoice_from_quotation', $where);
+            $sales_invoice_result = $this->crud->get_row_by_id($post_data['table'], $where);
                         //print_r($sales_invoice_result);die;
 			if(!empty($sales_invoice_result)){
                                 echo json_encode(array("error" => 'Exist'));
 				exit;
 			}
-            $result = $this->crud->insert('sales_invoice_from_quotation',$sales_invoice_data);
-			
-        $result = $this->crud->insert('sales_invoice_from_quotation',$sales_invoice_data);
-        if($result){
-            $return['success'] = "Added";
-            $this->session->set_flashdata('success',true);
-            $this->session->set_flashdata('message','Sales Invoice Added Successfully');
-            $parent_id = $this->db->insert_id();
+            $result = $this->crud->insert($post_data['table'],$sales_invoice_data);
+            if($result){
+                $return['success'] = "Added";
+                $this->session->set_flashdata('success',true);
+                $this->session->set_flashdata('message','Sales Invoice Added Successfully');
+                $parent_id = $this->db->insert_id();
 
 
-            $company_settings_id = $this->crud->get_column_value_by_id('company_settings','company_settings_id',array('company_id' => $this->logged_in_id,'setting_key' => 'sales_invoice_date'));
-            if(!empty($company_settings_id)) {
-                $this->crud->update('company_settings',array("setting_value" => $sales_invoice_data['sales_invoice_date'],'updated_at' => $this->now_time,'updated_by' => $this->logged_in_id),array('company_settings_id'=>$company_settings_id));
-            } else {
-                $this->crud->insert('company_settings',array('company_id' => $this->logged_in_id,'setting_key' => 'sales_invoice_date',"setting_value" => $sales_invoice_data['sales_invoice_date'],'created_at' => $this->now_time,'created_by' => $this->logged_in_id));
+                $company_settings_id = $this->crud->get_column_value_by_id('company_settings','company_settings_id',array('company_id' => $this->logged_in_id,'setting_key' => 'sales_invoice_date'));
+                if(!empty($company_settings_id)) {
+                    $this->crud->update('company_settings',array("setting_value" => $sales_invoice_data['sales_invoice_date'],'updated_at' => $this->now_time,'updated_by' => $this->logged_in_id),array('company_settings_id'=>$company_settings_id));
+                } else {
+                    $this->crud->insert('company_settings',array('company_id' => $this->logged_in_id,'setting_key' => 'sales_invoice_date',"setting_value" => $sales_invoice_data['sales_invoice_date'],'created_at' => $this->now_time,'created_by' => $this->logged_in_id));
+                }
+
+                foreach($line_items_data[0] as $lineitem){
+                    $add_lineitem = array();
+                    $add_lineitem['item_group_id'] = isset($lineitem->item_group_id) ? $lineitem->item_group_id : null;
+                    $add_lineitem['cat_id'] = isset($lineitem->cat_id) ? $lineitem->cat_id : NULL;
+                    $add_lineitem['sub_cat_id'] = isset($lineitem->sub_cat_id) ? $lineitem->sub_cat_id : NULL;
+                    $add_lineitem['item_id'] = $lineitem->item_id;
+                    $add_lineitem['item_qty'] = $lineitem->item_qty;
+                    $add_lineitem['unit_id'] = $lineitem->unit_id;
+                    $add_lineitem['price'] = $lineitem->price;
+                    $add_lineitem['pure_amount'] = $lineitem->pure_amount;
+                    $add_lineitem['discount_type'] = (isset($lineitem->discount_type) && $lineitem->discount_type != '') ? $lineitem->discount_type : '';
+                    $add_lineitem['discount'] = $lineitem->discount;
+                    $add_lineitem['discounted_price'] = $lineitem->discounted_price;
+                    $add_lineitem['cgst'] = (isset($lineitem->cgst) && $lineitem->cgst != '') ? $lineitem->cgst : '';
+                    $add_lineitem['cgst_amount'] = (isset($lineitem->cgst_amt) && $lineitem->cgst_amt != '') ? $lineitem->cgst_amt : '';
+                    $add_lineitem['sgst'] = (isset($lineitem->sgst) && $lineitem->sgst != '') ? $lineitem->sgst : '';
+                    $add_lineitem['sgst_amount'] = (isset($lineitem->sgst_amt) && $lineitem->sgst_amt != '') ? $lineitem->sgst_amt : '';
+                    $add_lineitem['igst'] = (isset($lineitem->igst) && $lineitem->igst != '') ? $lineitem->igst : '';
+                    $add_lineitem['igst_amount'] = (isset($lineitem->igst_amt) && $lineitem->igst_amt != '') ? $lineitem->igst_amt : '';
+                    $add_lineitem['other_charges'] = (isset($lineitem->other_charges) && $lineitem->other_charges != '') ? $lineitem->other_charges : '';
+                    $add_lineitem['amount'] = (isset($lineitem->amount) && $lineitem->amount != '') ? $lineitem->amount : '';
+                    $add_lineitem['module'] = $post_data['module'];
+                    $add_lineitem['parent_id'] = $parent_id;
+                    $add_lineitem['l'] = (isset($lineitem->l) && $lineitem->l != '') ? $lineitem->l : '';
+                    $add_lineitem['b'] = (isset($lineitem->b) && $lineitem->b != '') ? $lineitem->b : '';
+                    $add_lineitem['d'] = (isset($lineitem->d) && $lineitem->d != '') ? $lineitem->d : '';
+                    $add_lineitem['rate_for_itax'] = (isset($lineitem->rate_for_itax) && $lineitem->rate_for_itax != '') ? $lineitem->rate_for_itax : '';
+                    $add_lineitem['price_for_itax'] = (isset($lineitem->price_for_itax) && $lineitem->price_for_itax != '') ? $lineitem->price_for_itax : '';
+                    $add_lineitem['igst_for_itax'] = (isset($lineitem->igst_for_itax) && $lineitem->igst_for_itax != '') ? $lineitem->igst_for_itax : '';
+                    $add_lineitem['note'] = (isset($lineitem->note) && $lineitem->note != '') ? $lineitem->note : '';
+                    $add_lineitem['created_at'] = $this->now_time;
+                    $add_lineitem['updated_at'] = $this->now_time;
+                    $add_lineitem['updated_by'] = $this->logged_in_id;
+                    $add_lineitem['user_updated_by'] = $this->session->userdata()['login_user_id'];
+                    $add_lineitem['created_by'] = $this->logged_in_id;
+                    $add_lineitem['company_id'] = $this->logged_in_id;
+                    $add_lineitem['user_created_by'] = $this->session->userdata()['login_user_id'];
+                    $this->crud->insert('lineitems',$add_lineitem);
+
+                    $this->crud->update_item_current_stock_qty($lineitem->item_id,$parent_id,'sales',$lineitem->item_qty,'add');
+                }
             }
-
-            foreach($line_items_data[0] as $lineitem){
-                $add_lineitem = array();
-                                    $add_lineitem['item_group_id'] = isset($lineitem->item_group_id) ? $lineitem->item_group_id : null;
-                $add_lineitem['cat_id'] = isset($lineitem->cat_id) ? $lineitem->cat_id : NULL;
-                $add_lineitem['sub_cat_id'] = isset($lineitem->sub_cat_id) ? $lineitem->sub_cat_id : NULL;
-                $add_lineitem['item_id'] = $lineitem->item_id;
-                $add_lineitem['item_qty'] = $lineitem->item_qty;
-                $add_lineitem['unit_id'] = $lineitem->unit_id;
-                $add_lineitem['price'] = $lineitem->price;
-                $add_lineitem['pure_amount'] = $lineitem->pure_amount;
-                $add_lineitem['discount_type'] = (isset($lineitem->discount_type) && $lineitem->discount_type != '') ? $lineitem->discount_type : '';
-                $add_lineitem['discount'] = $lineitem->discount;
-                $add_lineitem['discounted_price'] = $lineitem->discounted_price;
-                $add_lineitem['cgst'] = (isset($lineitem->cgst) && $lineitem->cgst != '') ? $lineitem->cgst : '';
-                $add_lineitem['cgst_amount'] = (isset($lineitem->cgst_amt) && $lineitem->cgst_amt != '') ? $lineitem->cgst_amt : '';
-                $add_lineitem['sgst'] = (isset($lineitem->sgst) && $lineitem->sgst != '') ? $lineitem->sgst : '';
-                $add_lineitem['sgst_amount'] = (isset($lineitem->sgst_amt) && $lineitem->sgst_amt != '') ? $lineitem->sgst_amt : '';
-                $add_lineitem['igst'] = (isset($lineitem->igst) && $lineitem->igst != '') ? $lineitem->igst : '';
-                $add_lineitem['igst_amount'] = (isset($lineitem->igst_amt) && $lineitem->igst_amt != '') ? $lineitem->igst_amt : '';
-                $add_lineitem['other_charges'] = (isset($lineitem->other_charges) && $lineitem->other_charges != '') ? $lineitem->other_charges : '';
-                $add_lineitem['amount'] = (isset($lineitem->amount) && $lineitem->amount != '') ? $lineitem->amount : '';
-                $add_lineitem['module'] = 9;
-                $add_lineitem['parent_id'] = $parent_id;
-                $add_lineitem['l'] = (isset($lineitem->l) && $lineitem->l != '') ? $lineitem->l : '';
-                $add_lineitem['b'] = (isset($lineitem->b) && $lineitem->b != '') ? $lineitem->b : '';
-                $add_lineitem['d'] = (isset($lineitem->d) && $lineitem->d != '') ? $lineitem->d : '';
-                $add_lineitem['rate_for_itax'] = (isset($lineitem->rate_for_itax) && $lineitem->rate_for_itax != '') ? $lineitem->rate_for_itax : '';
-                $add_lineitem['price_for_itax'] = (isset($lineitem->price_for_itax) && $lineitem->price_for_itax != '') ? $lineitem->price_for_itax : '';
-                $add_lineitem['igst_for_itax'] = (isset($lineitem->igst_for_itax) && $lineitem->igst_for_itax != '') ? $lineitem->igst_for_itax : '';
-                $add_lineitem['note'] = (isset($lineitem->note) && $lineitem->note != '') ? $lineitem->note : '';
-                $add_lineitem['created_at'] = $this->now_time;
-                $add_lineitem['updated_at'] = $this->now_time;
-                $add_lineitem['updated_by'] = $this->logged_in_id;
-                $add_lineitem['user_updated_by'] = $this->session->userdata()['login_user_id'];
-                $add_lineitem['created_by'] = $this->logged_in_id;
-                $add_lineitem['company_id'] = $this->logged_in_id;
-                $add_lineitem['user_created_by'] = $this->session->userdata()['login_user_id'];
-                $this->crud->insert('lineitems',$add_lineitem);
-
-                $this->crud->update_item_current_stock_qty($lineitem->item_id,$parent_id,'sales',$lineitem->item_qty,'add');
-            }
-        }
-    }
+         }
         print json_encode($return);
 		exit;
     }
