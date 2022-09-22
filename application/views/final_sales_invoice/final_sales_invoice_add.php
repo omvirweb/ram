@@ -8,7 +8,7 @@
         <h1>
         Final Sales Invoice <?php if(isset($sales_invoice_data->sales_invoice_id) && !empty($sales_invoice_data->sales_invoice_id)){ echo 'Edit'; }else{ echo 'Add'; }  ?>
             <?php if($this->applib->have_access_role(MODULE_ORDER_TYPE_2_ID,"view")) { ?>
-            <a href="<?=base_url('sales/sales_invoice_frmquot_list');?>" class="btn btn-primary pull-right">Final Sales Invoice List</a>
+            <a href="<?=base_url('sales/final_sales_invoice_list');?>" class="btn btn-primary pull-right">Final Sales Invoice List</a>
             <?php } ?>
         </h1>
     </section>
@@ -721,7 +721,6 @@ $(document).on('keydown', function(event) {
         $("html, body").animate({ scrollTop: $(".line_item_form").offset().top }, "slow");
         
         value = lineitem_objectdata[index];
-        console.log(value)
         $("#line_items_index").val(index);
 
         if(typeof(value.item_group_id) !== "undefined") {
