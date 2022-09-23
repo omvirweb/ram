@@ -1724,6 +1724,7 @@ class Sales extends CI_Controller
             $print_type = (isset($result->print_type) && $result->print_type != '') ? $result->print_type : '';
             $this->load->library('applib');
             $sales_invoice_no = $this->applib->format_invoice_number($result->sales_invoice_id, $result->sales_invoice_date);
+            $sales_invoice_no = $result->sales_invoice_no;
             $data = array(
                 'sales_invoice_id' => (isset($result->sales_invoice_id) && $result->sales_invoice_id != '')? $result->sales_invoice_id : '',
                 'sales_invoice_no' => $sales_invoice_no,
@@ -1740,6 +1741,12 @@ class Sales extends CI_Controller
                 'amount_total_word' => $amount_total_word,
                 'gst_total_word' => $gst_total_word,
             );
+            if(isset($result->site_id) && $result->site_id != ''){
+                $site_data = $this->crud->get_row_by_id('sites', array('site_id' => $result->site_id));
+            }
+            $data['site_name'] = (isset($site_data)) ? $site_data[0]->site_name : '';
+            $data['site_address'] = (isset($site_data)) ? $site_data[0]->site_address : '';
+
             $data['sales_invoice_data'] = $result;
             $data['user_name'] = $user_detail->user_name;
             $data['user_address'] = $user_detail->address;
@@ -1753,10 +1760,10 @@ class Sales extends CI_Controller
             $data['user_phone'] = $user_detail->phone;
             $data['email_ids'] = $user_detail->email_ids;
             $data['logo_image'] = $user_detail->logo_image;
-            // $data['bank_name'] = $user_detail->bank_name;
-            // $data['bank_branch'] = $user_detail->bank_branch;
-            // $data['bank_ac_no'] = $user_detail->bank_ac_no;
-            // $data['rtgs_ifsc_code'] = $user_detail->rtgs_ifsc_code;
+            $data['bank_name'] = $user_detail->bank_name;
+            $data['bank_branch'] = $user_detail->bank_branch;
+            $data['bank_ac_no'] = $user_detail->bank_ac_no;
+            $data['rtgs_ifsc_code'] = $user_detail->rtgs_ifsc_code;
             $data['is_letter_pad'] = $this->session->userdata(PACKAGE_FOLDER_NAME . 'is_logged_in')['is_letter_pad'];
 
             $data['account_name'] = $account_detail->account_name;
@@ -1802,11 +1809,11 @@ class Sales extends CI_Controller
                 $total_gst += $gst_amount;
                 // $data['site_name'] = '';
                 // $data['site_address'] = '';
-                if ($key == 0 && $sales_invoice_lineitem->site_id != null) {
-                    $site_data = $this->crud->get_row_by_id('sites', array('site_id' => $sales_invoice_lineitem->site_id));
-                    $data['site_name'] = (isset($site_data)) ? $site_data[0]->site_name : '';
-                    $data['site_address'] = (isset($site_data)) ? $site_data[0]->site_address : '';
-                }
+                // if ($key == 0 && $sales_invoice_lineitem->site_id != null) {
+                //     $site_data = $this->crud->get_row_by_id('sites', array('site_id' => $sales_invoice_lineitem->site_id));
+                //     $data['site_name'] = (isset($site_data)) ? $site_data[0]->site_name : '';
+                //     $data['site_address'] = (isset($site_data)) ? $site_data[0]->site_address : '';
+                // }
             }
 //            $no_arr = count($lineitem_arr);
 //            if($no_arr < 10){
@@ -1843,16 +1850,17 @@ class Sales extends CI_Controller
         $data['terms_data'] = $termsdata;
         $data['letterpad_print'] = $letterpad_print;
         $data['printtype'] = 0;
-        $our_bank_label = $this->crud->get_column_value_by_id('account', 'account_name', array('account_id' => $data['sales_invoice_data']->our_bank_id));
+        $our_bank_label = $this->crud->get_column_value_by_id('account', 'account_name', array('account_id' => $data['sales_invoice_data']->our_bank_label));
         $data['our_bank_label'] = $our_bank_label;
 
-        $bank_details = $this->crud->get_data_row_by_where('account', array('account_id' => $data['sales_invoice_data']->our_bank_id));
+        $bank_details = $this->crud->get_data_row_by_where('account', array('account_id' => $data['sales_invoice_data']->our_bank_label));
         $data['bank_name'] = isset($bank_details->bank_name) ? $bank_details->bank_name : '';
         $data['bank_branch'] = isset($bank_details->bank_branch) ? $bank_details->bank_branch : '';
         $data['bank_ac_no'] = isset($bank_details->bank_ac_no) ? $bank_details->bank_ac_no : '';
         $data['rtgs_ifsc_code'] = isset($bank_details->rtgs_ifsc_code) ? $bank_details->rtgs_ifsc_code : '';
         $html = $this->load->view('sales/invoice/invoice_somnath_print', $data, true);
-
+        // $this->load->view('sales/invoice/invoice_somnath_print', $data);
+        // exit;
         $pdfFilePath = "sales_invoice_miracle_print.pdf";
         $this->load->library('m_pdf');
         $this->m_pdf->pdf->AddPage('', '', '', '', '', 5, // margin_left
