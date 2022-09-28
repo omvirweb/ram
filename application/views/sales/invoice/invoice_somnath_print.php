@@ -186,7 +186,7 @@ ob_start();
             <?php 
                 $discounted_price_total += $lineitem->discounted_price;
                 $other_charges += $lineitem->other_charges;
-                $dis_total_amt += $discount_amt;
+                $dis_total_amt += (isset($discount_amt) && $discount_amt != '') ? $discount_amt : 0;
                 $pure_total_amt += $pure_amt;
                 
                 $inc++; 

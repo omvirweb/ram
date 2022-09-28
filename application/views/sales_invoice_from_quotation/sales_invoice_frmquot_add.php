@@ -342,8 +342,8 @@ $(document).on('keydown', function(event) {
             $('#site_id').trigger('change');
         <?php } ?>
 
-        <?php if(isset($sales_invoice_data->our_bank_id)){ ?>
-            setSelect2Value($("#our_bank_label"),"<?=base_url('app/set_our_bank_label_select2_val_by_id/')?>" + <?= $sales_invoice_data->our_bank_id; ?>);
+        <?php if(isset($sales_invoice_data->our_bank_label)){ ?>
+            setSelect2Value($("#our_bank_label"),"<?=base_url('app/set_our_bank_label_select2_val_by_id/')?>" + <?= $sales_invoice_data->our_bank_label ?>);
         <?php } ?>
 
         // initAjaxSelect2($("#item_id"),"<?=base_url('app/item_select2_source/')?>");
