@@ -3883,6 +3883,24 @@ class Report extends CI_Controller {
         }
         $receipt_data = $this->db->get()->result();
 
+        $this->db->select('SUM(l.qty_total) as total');
+        $this->db->from('quotation l');
+        // $this->db->join('sales_invoice si','si.sales_invoice_id = l.parent_id');
+        if($site_id){
+            $this->db->where('l.site_id',$site_id);
+        }
+        // $this->db->where('l.module',2);
+        if($account_id) {
+            // $this->db->where('si.account_id',$account_id);
+        }
+        if(!empty($from_date) && !empty($to_date)) {
+            $this->db->where('l.quotation_date >=',$from_date);
+            $this->db->where('l.quotation_date <=',$to_date);
+        }
+        $sales_quotation_data = $this->db->get()->result();
+
+        // die($sales_quotation_data[0]->total);
+
         $this->db->select('SUM(l.amount) as total');
         $this->db->from('lineitems l');
         $this->db->join('sales_invoice si','si.sales_invoice_id = l.parent_id');
@@ -3903,6 +3921,7 @@ class Report extends CI_Controller {
             isset($purchase_invoice_data[0]->total) ? '<span class="go_to" data-clicked="purchase_invoice" data-site_id="'.$site_id.'">'.$purchase_invoice_data[0]->total.'</span>' : '<span class="go_to" data-clicked="purchase_invoice" data-site_id="'.$site_id.'">0</span>',
             isset($payment_data[0]->total) ?'<span class="go_to" data-clicked="payment" data-site_id="'.$site_id.'">'.$payment_data[0]->total.'</span>' :  '<span class="go_to" data-clicked="payment" data-site_id="'.$site_id.'">0</span>',
             isset($receipt_data[0]->total) ?'<span class="go_to" data-clicked="receipt" data-site_id="'.$site_id.'">'.$receipt_data[0]->total.'</span>' :  '<span class="go_to" data-clicked="receipt" data-site_id="'.$site_id.'">0</span>',
+            isset($sales_quotation_data[0]->total) ?'<span class="go_to" data-clicked="sales_quotation" data-site_id="'.$site_id.'">'.$sales_quotation_data[0]->total.'</span>' :  '<span class="go_to" data-clicked="sales_quotation" data-site_id="'.$site_id.'">0</span>',
             isset($sales_invoice_data[0]->total) ?'<span class="go_to" data-clicked="sales_invoice" data-site_id="'.$site_id.'">'.$sales_invoice_data[0]->total.'</span>' :  '<span class="go_to" data-clicked="sales_invoice" data-site_id="'.$site_id.'">0</span>'
         ];
 

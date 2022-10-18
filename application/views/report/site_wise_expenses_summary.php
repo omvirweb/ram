@@ -55,6 +55,7 @@
 									<th>Purchase Invoice</th>
                                     <th>Payment</th>
                                     <th>Receipt</th>
+                                    <th>Sales Quotation</th>
                                     <th>Sales Invoice</th>
                                 </tr>
 							</thead>
@@ -130,6 +131,7 @@
 								doc.content[1].table.body[i][1].alignment = 'center';
 								doc.content[1].table.body[i][2].alignment = 'center';
 								doc.content[1].table.body[i][3].alignment = 'center';
+								doc.content[1].table.body[i][4].alignment = 'center';
 						};
 					}
                 } ),
@@ -191,6 +193,9 @@
                         
                         $(win.document.body).find('table thead th:nth-child(3)').css('text-align', 'center');
                         $(win.document.body).find('table tbody td:nth-child(3)').css('text-align', 'center');
+
+                        $(win.document.body).find('table thead th:nth-child(4)').css('text-align', 'center');
+                        $(win.document.body).find('table tbody td:nth-child(4)').css('text-align', 'center');
                         
                     }, action: newExportAction } ),
             ],
@@ -218,6 +223,7 @@
                 {"className": "text-center", "targets": [1] },
                 {"className": "text-center", "targets": [2] },
                 {"className": "text-center", "targets": [3] },
+                {"className": "text-center", "targets": [4] },
             ],
         });
 
