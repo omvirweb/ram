@@ -1374,7 +1374,7 @@ class Transaction extends CI_Controller {
         if($voucher_type == 'sales' || $voucher_type == 'sales2' || $voucher_type == 'sales3' || $voucher_type == 'sales4' || $voucher_type == 'purchase' || $voucher_type == 'dispatch') {
 
             $invoice_data['transport_name'] = (isset($post_data['transport_name']) && $post_data['transport_name'] != '') ? $post_data['transport_name'] : '';
-            $invoice_data['lr_no'] = $post_data['lr_no'];
+            $invoice_data['lr_no'] = (isset($post_data['lr_no']) && $post_data['lr_no'] != '') ? $post_data['lr_no'] : '';
             $invoice_data['invoice_type'] = !empty($post_data['invoice_type']) ? $post_data['invoice_type'] : null;
 
             if(isset($post_data['triplicate']) && !empty($post_data['triplicate'])) {
