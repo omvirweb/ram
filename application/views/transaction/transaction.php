@@ -217,6 +217,9 @@
                 setSelect2Value($("#cas_bank_account_id"), "<?= base_url('app/set_account_select2_val_by_id/' . $transaction_data->to_account_id) ?>");
             <?php } ?>
         <?php } ?>
+        <?php if(isset($transaction_data->site_id) && $transaction_data->site_id != ''){ ?>
+            setSelect2Value($("#site_id"),"<?=base_url('app/sites_group_select2_val_by_id/'.$transaction_data->site_id)?>");
+        <?php } ?>
 
         setTimeout(function(){
             $('#cas_bank_account_id').select2('open');
