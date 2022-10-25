@@ -3883,7 +3883,7 @@ class Report extends CI_Controller {
         }
         $receipt_data = $this->db->get()->result();
 
-        $this->db->select('SUM(l.qty_total) as total');
+        $this->db->select('SUM(l.amount_total) as total');
         $this->db->from('quotation l');
         // $this->db->join('sales_invoice si','si.sales_invoice_id = l.parent_id');
         if($site_id){
