@@ -203,7 +203,7 @@
                                 <div class="col-md-12 container ">
                                     <div class="table-wrapper">
                                         <table class="table table-bordered table-striped table-hover" style="margin-bottom: 0px;">
-                                            <thead>
+                                            <thead class="tblhead">
                                                 <tr>
                                                     <th class="fix_fcolumn">Total</th>
                                                     <?php if(isset($quotation_line_item_fields) && in_array('item_group', $quotation_line_item_fields)){ ?>
@@ -245,7 +245,7 @@
                                             </tr>
                                             <tr>
                                                 <th class="text-right">Total Amount</th>
-                                                <th class="fix_lcolumn text-right"><span class="amount_total_after_round_off"></span></th>
+                                                <th class="fix_lcolumn text-right"><span class="amount_total_after_round_off" id="amount_total_after_round_off"></span></th>
                                             </tr>
                                         </thead>
                                     </table>
@@ -324,9 +324,31 @@ $(document).on('keydown', function(event) {
                     return false;
             }
             initAjaxSelect2($("#item_id"),"<?=base_url('app/item_select2_source_from_account_and_site_and_quatation/')?>" + account_id + "/" + site_id );   
+            get_quotation_data();
     });
     
- 
+    function get_quotation_data(){
+        var account_id = $('#account_id').val();
+        var site_id = $('#site_id').val();
+
+        var quotation_date = $('#datepicker2').val();
+
+        
+        $.ajax({
+                    url: "<?=base_url('app/get_quotation_data/') ?>" + account_id + "/" + site_id + "/" +quotation_date,
+                    type: "POST",
+                    dataType: 'json',
+                    async: false,
+                    cache: false,
+                    success: function (response) {
+                        $('tbody#lineitem_list').html(response.table_output);
+                        $("#round_off_amount").val(response.round_off_amount);
+                        $('#amount_total_after_round_off').html(response.amount_total);
+                    },
+                });
+
+
+    }
 
     $(document).ready(function(){
         initAjaxSelect2($("#site_id"), "<?= base_url('app/sites_select2_source') ?>");

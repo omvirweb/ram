@@ -1769,6 +1769,76 @@ class App extends CI_Controller{
 		$this->get_select2_text_by_id('pack_unit', 'pack_unit_id', 'pack_unit_name', $id);
 	}
 
+	function get_quotation_data($account_id = '',$site_id = '',$quotation_date='')
+	{
+		$where = '';
+		$where_in = [];
+
+		$results = [];
+
+		$new_lineitem_html = '';
+
+		$qut_date=date("Y-m-d", strtotime($quotation_date) );
+
+		
+
+		if(isset($account_id) && isset($site_id) && $account_id != '' && $site_id != ''){
+			// $get_quotation_id = $this->crud->getFromSQL('SELECT quotation_id,round_off_amount,amount_total FROM `quotation` WHERE `account_id` = '.$account_id.' AND `site_id` = '.$site_id.' AND `quotation_date` = '."'".$qut_date."'");
+			$get_quotation_id = $this->crud->getFromSQL('SELECT quotation_id,round_off_amount,amount_total FROM `quotation` WHERE `account_id` = '.$account_id.' AND `site_id` = '.$site_id.' AND `quotation_type` = 1');
+
+			if(isset($get_quotation_id[0]) && $get_quotation_id[0]->quotation_id != ''){
+				$get_item_ids = $this->crud->getFromSQL('SELECT * FROM `lineitems` WHERE `module`=5 AND `parent_id` ='.$get_quotation_id[0]->quotation_id);
+				$srno=1;
+				if(!empty($get_item_ids))
+				{
+					foreach ($get_item_ids as $key => $get_quotation_row) {
+						
+						//$lineitem_edit_btn = '';
+
+						
+						$lineitem_edit_btn = '<a class="btn btn-xs btn-primary btn-edit-item edit_lineitem_' . $key . '" href="javascript:void(0);" onclick="edit_lineitem("' . $key . ')"><i class="fa fa-edit"></i></a> ';
+
+						
+						$sr='<td class="fix_fcolumn">'.$srno.'</td>';
+
+						$qty='<td class="fix_fcolumn">'.$get_quotation_row->item_qty.'</td>';
+
+						$rate='<td class="fix_fcolumn">'.$get_quotation_row->price.'</td>';
+
+						$amount='<td class="fix_fcolumn">'.$get_quotation_row->pure_amount.'</td>';
+
+
+
+						$item_name = $this->crud->getFromSQL('SELECT item_name FROM `item` WHERE `item_id`='.$get_quotation_row->item_id);
+						
+						$item='<td class="fix_fcolumn">'.$item_name[0]->item_name.'</td>';
+
+						$unit='';
+
+						$unit_name = $this->crud->getFromSQL('SELECT pack_unit_name FROM `pack_unit` WHERE `pack_unit_id`='.$get_quotation_row->unit_id);
+
+						$unit='<td class="fix_fcolumn">'.$unit_name[0]->pack_unit_name.'</td>';
+
+						$row_html = '<tr class="lineitem_index_' . $key . '"><td class="fix_fcolumn">' .
+						$lineitem_edit_btn .
+						' <a class="btn btn-xs btn-danger btn-delete-item" href="javascript:void(0);" onclick="remove_lineitem(' . $key . ')"><i class="fa fa-remove"></i></a> ' .
+						'</td>'.$sr.$item.$qty.$unit.$rate.$amount.'</tr>' ;
+
+			
+						$srno++;
+
+						$new_lineitem_html =$new_lineitem_html. $row_html;
+					}
+				}
+			}
+		}
+
+		echo json_encode(['table_output'=>$new_lineitem_html,'round_off_amount'=>$get_quotation_id[0]->round_off_amount,'amount_total'=>$get_quotation_id[0]->amount_total]);
+		exit();
+
+		
+	}
+
 	function item_select2_source_from_account_and_site_and_quatation($account_id = '',$site_id = ''){
 		$search = isset($_GET['q']) ? $_GET['q'] : '';
 		$page = isset($_GET['page']) ? $_GET['page'] : 1;
