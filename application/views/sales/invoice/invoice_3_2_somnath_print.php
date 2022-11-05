@@ -202,7 +202,9 @@ ob_start();
                 <td colspan="7" class="no-border"> : <?=isset($bank_branch) ? $bank_branch : '' ?></td>
                 <td colspan="3" class="text_bold no-border-right">SUB TOTAL </td>
                 <?php 
-                    $pure_total_amt = $pure_total_amt + $total_pf_amount + $aspergem_service_charge;
+                    // On 14_09_2022 Issue
+                    // $pure_total_amt = $pure_total_amt + $total_pf_amount + $aspergem_service_charge;
+                    $pure_total_amt = $pure_total_amt + $total_pf_amount ;
                 ?>
                 <td colspan="2" align="right" class="text_bold no-border-left"><?php echo number_format((float)$pure_total_amt, 2, '.', ''); ?></td>
 
@@ -234,12 +236,18 @@ ob_start();
             <tr class="border1 no-border-top no-border-bottom text_bold">
                 <td colspan="16" class="no-border-right text_bold">&nbsp;</td>
             </tr>
-            
+            <?php 
+                $amount_totalToDisplay = $aspergem_service_charge + $pure_total_amt + $total_gst + $prof_tax + $round_off_amount;
+            ?>
             <tr class="border1" style="background-color: #EAEAEA;">
                 <td colspan="4" class="no-border-right text_bold">Bill Amount</td>
-                <td colspan="7" class="no-border-left no-border-right no-border-bottom"> : <?php echo $amount_total_word; ?></td>
+                <td colspan="7" class="no-border-left no-border-right no-border-bottom"> : <?php echo (isset($amount_totalToDisplay) && $amount_totalToDisplay != '' ) ? $this->numbertowords->convert_number($amount_totalToDisplay) : $amount_total_word; ?></td>
                 <td colspan="3" class="text_bold no-border-right ">Total Due</td>                
-                <td colspan="2" align="right" class="text_bold no-border-left"><?php echo number_format((float)$amount_total, 2, '.', ''); ?></td>
+                <td colspan="2" align="right" class="text_bold no-border-left">
+                    <?php 
+                      echo number_format((float)$amount_totalToDisplay, 2, '.', ''); 
+                    ?>
+                </td>
             </tr>
             <tr class="border1">
                 <td valign="top" colspan="11" class="no-border-right" style="font-size: 12px;"><span class="text_bold" >Note : </span><br/>

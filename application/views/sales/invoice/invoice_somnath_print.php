@@ -4,7 +4,7 @@ ob_start();
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Format 3 Sales Invoice Print</title>
+        <title>Format 2223 Sales Invoice Print</title>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <!-- Tell the browser to be responsive to screen width -->
