@@ -1813,6 +1813,7 @@ class App extends CI_Controller{
 						
 						$item='<td class="fix_fcolumn">'.$item_name[0]->item_name.'</td>';
 
+
 						$unit='';
 
 						$unit_name = $this->crud->getFromSQL('SELECT pack_unit_name FROM `pack_unit` WHERE `pack_unit_id`='.$get_quotation_row->unit_id);
@@ -1824,7 +1825,19 @@ class App extends CI_Controller{
 						' <a class="btn btn-xs btn-danger btn-delete-item" href="javascript:void(0);" onclick="remove_lineitem(' . $key . ')"><i class="fa fa-remove"></i></a> ' .
 						'</td>'.$sr.$item.$qty.$unit.$rate.$amount.'</tr>' ;
 
-			
+						$results[]=["item_id"=>$get_quotation_row->item_id,"unit_id"=>$get_quotation_row->unit_id,
+									"l"=>$get_quotation_row->l,"b"=>$get_quotation_row->b,"d"=>$get_quotation_row->d,
+									"item_qty"=>$get_quotation_row->item_qty,
+									"price"=>$get_quotation_row->price,
+									"price_for_itax"=>"",
+									"amount"=>$get_quotation_row->pure_amount,
+									"discount_amt"=>0,
+									"pure_amount"=>$get_quotation_row->pure_amount,
+									"discounted_price"=>$get_quotation_row->price*$get_quotation_row->item_qty,
+									"discount"=>0
+								];
+						
+
 						$srno++;
 
 						$new_lineitem_html =$new_lineitem_html. $row_html;
@@ -1833,7 +1846,7 @@ class App extends CI_Controller{
 			}
 		}
 
-		echo json_encode(['table_output'=>$new_lineitem_html,'round_off_amount'=>$get_quotation_id[0]->round_off_amount,'amount_total'=>$get_quotation_id[0]->amount_total]);
+		echo json_encode(['table_output'=>$new_lineitem_html,'round_off_amount'=>$get_quotation_id[0]->round_off_amount,'amount_total'=>$get_quotation_id[0]->amount_total,'results'=>$results]);
 		exit();
 
 		
@@ -1864,6 +1877,25 @@ class App extends CI_Controller{
 		}
 		echo json_encode($results);
 		exit();
+	}
+
+	function getSalesInvoiceFromQuo_data()
+	{
+		$where = '';
+		$where_in = [];
+		$post_data = $this->input->post();
+		$account_id = (isset($post_data['account_id']) && $post_data['account_id'] != '') ? $post_data['account_id'] : '';
+		$site_id = (isset($post_data['site_id']) && $post_data['site_id'] != '') ? $post_data['site_id'] : '';
+		$results = [
+			'status'=>false,
+			'message'=>'Data Not Found'
+		];
+
+		$results = [
+			'status'=>false,
+			'message'=>'Data Not Found'
+		];
+
 	}
 
 	function getSalesInvoiceFromQuo(){

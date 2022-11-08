@@ -3346,6 +3346,8 @@ class Sales extends CI_Controller
 
     function save_sales_invoice1(){
         $post_data = $this->input->post();
+
+        
         $return =[];
         $line_items_data = json_decode('['.$post_data['line_items_data'].']'); 
         $sales_invoice_data = [
@@ -3366,6 +3368,7 @@ class Sales extends CI_Controller
 			'updated_by' => $this->logged_in_id,
 			'user_updated_by' => $this->session->userdata()['login_user_id']
         ];
+
 
         $main_fields = $this->crud->getFromSQL('SELECT setting_key FROM company_settings WHERE setting_key != "display_dollar_sign" AND company_id = "'.$this->logged_in_id.'" AND module_name = 1 AND setting_value = 1');
                 $invoice_main_fields = array();

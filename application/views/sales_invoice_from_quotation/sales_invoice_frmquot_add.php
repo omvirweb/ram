@@ -128,19 +128,19 @@
                                             <div class="col-md-4 pr0">
                                                 <div class="form-group">
                                                     <label for="l" class="control-label">L </label>
-                                                    <input type="text" name="line_items_data[l]" id="l" class="l form-control item_detail num_only" data-index="30">
+                                                    <input type="text" name="line_items_data[l]" id="l" class="l item_lbd form-control item_detail num_only" data-index="30">
                                                 </div>
                                             </div>
                                             <div class="col-md-4 pr0">
                                                 <div class="form-group">
                                                     <label for="b" class="control-label">B </label>
-                                                    <input type="text" name="line_items_data[b]" id="b" class="b form-control item_detail num_only" data-index="30">
+                                                    <input type="text" name="line_items_data[b]" id="b" class="b item_lbd form-control item_detail num_only" data-index="30">
                                                 </div>
                                             </div>
                                             <div class="col-md-4 pr0">
                                                 <div class="form-group">
                                                     <label for="d" class="control-label">D </label>
-                                                    <input type="text" name="line_items_data[d]" id="d" class="d form-control item_detail num_only" data-index="30">
+                                                    <input type="text" name="line_items_data[d]" id="d" class="d  item_lbd form-control item_detail num_only" data-index="30">
                                                 </div>
                                             </div>
 
@@ -341,9 +341,14 @@ $(document).on('keydown', function(event) {
                     async: false,
                     cache: false,
                     success: function (response) {
-                        $('tbody#lineitem_list').html(response.table_output);
+                        // $('tbody#lineitem_list').html(response.table_output);
                         $("#round_off_amount").val(response.round_off_amount);
                         $('#amount_total_after_round_off').html(response.amount_total);
+                        response.results.forEach(function(item){
+                            lineitem_objectdata.push(item)
+                        })
+                       // lineitem_objectdata.push(response.results);
+                       display_lineitem_html(lineitem_objectdata);
                     },
                 });
 
@@ -391,6 +396,41 @@ $(document).on('keydown', function(event) {
         //         initAjaxSelect2($("#item_id"),"<?=base_url('app/item_select2_source/')?>");
         //     }
         // });
+
+        $('#l').on('change',function(){
+
+            var l=($('#l').val())?$('#l').val():1;
+
+            var b=($('#b').val())?$('#b').val():1;
+
+            var d=($('#d').val())?$('#d').val():1;
+
+            var qty=0;
+
+            
+
+
+        });
+
+        $(document).on("change", ".item_lbd", function() {
+            var sum = 0;
+            var qty=1;
+            $(".item_lbd").each(function(){
+                // sum += +$(this).val();
+                if($(this).val() !== "")
+                {
+                    qty=parseFloat(qty)*parseFloat($(this).val());
+
+                }
+
+                $("#item_qty").val(qty);
+
+                // alert(qty+' aty '+$(this).val());
+                // sum =sum +qty;
+
+            });
+            // $("#item_qty").val(qty);
+        });
 
         $('#item_id').on('change', function() {
             var item_id = $('#item_id').val();
@@ -569,6 +609,8 @@ $(document).on('keydown', function(event) {
             } else {
                 lineitem_objectdata.push(new_lineitem);
             }
+
+            
             
             display_lineitem_html(lineitem_objectdata);
             $('#lineitem_id').val('');
@@ -826,10 +868,14 @@ $(document).on('keydown', function(event) {
                 return false;
             }
             $('.overlay').show();
+
+            
             var postData = new FormData(this);
             var lineitem_objectdata_var = JSON.stringify(lineitem_objectdata);
             // var docs = $('.multi')[0].files;
                 postData.append('line_items_data', lineitem_objectdata_var);
+            // alert(JSON.stringify(postData));
+
                 // postData.append('docs', docs); 
             $.ajax({
                 url: "<?=base_url('sales/save_sales_invoice1') ?>",
