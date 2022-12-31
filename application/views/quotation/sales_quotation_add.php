@@ -32,7 +32,7 @@
                                         <select name="account_id" id="account_id" class="account_id" required data-index="1" ></select>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-2">
                                     <div class="form-group">
                                         <label for="quotation_date" class="control-label">Order Date<span class="required-sign">*</span></label>
                                         <input type="text" name="quotation_date" id="datepicker2" class="form-control" required data-index="2" value="<?=isset($quotation_data->quotation_date) ? date('d-m-Y', strtotime($quotation_data->quotation_date)) : date('d-m-Y'); ?>">
@@ -61,10 +61,21 @@
                                             <?php } ?>
                                         <?php } ?>
                                         <div class="col-md-3 ">
-                                            <div class="form-group">
-                                                <label for="item_id" class="control-label">Item.</label>         
-                                                <select name="line_items_data[item_id]" id="item_id" class="item_id" data-index="29"></select>
-                                            </div>
+                                            <?php if(SHOW_TEXTAREA==0) {?>
+                                                <div class="form-group">
+                                                    <label for="item_id" class="control-label">Item.</label>         
+                                                    <select name="line_items_data[item_id]" id="item_id" class="item_id" data-index="29"></select>
+                                                </div>
+                                            <?php } else{?>
+
+                                                
+                                                <div class="form-group">
+                                                    <label for="line_item_des" class="control-label">Item Description</label>
+                                                    <textarea name="line_items_data[line_item_des]" id="line_item_des" class="line_item_des form-control" data-index="29" placeholder=""></textarea>
+                                                </div>
+                                                
+
+                                            <?php } ?>
                                         </div>
                                         <div class="col-md-1 pr0">
                                             <div class="form-group">
@@ -218,7 +229,17 @@
     $(document).ready(function(){
         initAjaxSelect2($("#site_id"), "<?= base_url('app/sites_select2_source') ?>");
         initAjaxSelect2($("#account_id"),"<?=base_url('app/account_select2_source/')?>");
-        initAjaxSelect2($("#unit_id"),"<?=base_url('app/unit_select2_source_by_item_id/')?>");
+        // initAjaxSelect2($("#unit_id"),"<?=base_url('app/unit_select2_source_by_item_id/')?>");
+
+        <?php if(SHOW_TEXTAREA==0) { ?>
+		  initAjaxSelect2($("#unit_id"),"<?=base_url('app/unit_select2_source_by_item_id/')?>");
+        <?php } else {?>
+            initAjaxSelect2($("#unit_id"),"<?=base_url('app/unit_select2_source/')?>");
+        <?php }?>
+
+
+
+
         <?php if(isset($quotation_data->account_id)){ ?>
             setSelect2Value($("#account_id"),"<?=base_url('app/set_account_select2_val_by_id/')?>" + <?=$quotation_data->account_id; ?>);
         <?php } ?>
@@ -263,6 +284,8 @@
                     item_group_id = '';
                 }
 
+                $('#price').val('');
+
                 $.ajax({
                     url: "<?=base_url('app/get_item_detail') ?>",
                     type: "POST",
@@ -272,7 +295,9 @@
                     data: 'item_id='+ item_id + '&account_id='+ account_id + '&item_group_id='+ item_group_id,
                     success: function (response) {
                         $('#item_mrp').val(response.mrp);
+                        if(response.rate>0){
                         $('#price').val(response.rate);
+                        }
                     },
                 });
             }
@@ -357,12 +382,32 @@
             input_qty_or_price();
         });
 
+        function nl2br(str){
+            if(str != "undefined" && str !== null){
+                return str.replace(/(?:\r\n|\r|\n)/g, '<br>');
+            }
+        }
+
         $('#add_lineitem').on('click', function() {
+            
+            var line_item_des='';
+
+            <?php if(SHOW_TEXTAREA==0) { ?>
             var item_id = $("#item_id").val();
             if(item_id == '' || item_id == null){
                 show_notify("Please select Product.", false);
                 return false;
             }
+            <?php } else {?>
+            var item_id = nl2br($("#line_item_des").val());
+            line_item_des=nl2br($("#line_item_des").val());
+            if(item_id == '' || item_id == null){
+                show_notify("Please select Item Description.", false);
+                return false;
+            }
+
+            <?php }?>
+
             var item_qty = $("#item_qty").val();
             if(item_qty == '' || item_qty == null){
                 show_notify("Please enter Product Qty.", false);
@@ -388,6 +433,10 @@
                 lineitem[key] = value;
             });
 
+            lineitem['line_item_des'] =  line_item_des;
+
+            console.log("line ="+JSON.stringify(lineitem));
+
             var item_price = $('#price').val();
             var item_qty = $('#item_qty').val();
             var pure_amount =  item_qty * item_price;
@@ -404,6 +453,8 @@
 
             lineitem['discount_amt'] = parseF(discount_amt);
             lineitem['discounted_price'] = parseF(discounted_price);
+            lineitem['pure_amount'] = parseF(pure_amount);
+
 
             var new_lineitem = JSON.parse(JSON.stringify(lineitem));
             var line_items_index = $("#line_items_index").val();
@@ -412,6 +463,8 @@
             } else {
                 lineitem_objectdata.push(new_lineitem);
             }
+
+
             
             display_lineitem_html(lineitem_objectdata);
             $('#lineitem_id').val('');
@@ -462,6 +515,8 @@
         var discounted_price_total = 0;
         var amount_total = 0;
 
+        console.log("lineitem_objectdata ="+JSON.stringify(lineitem_objectdata));
+
         $.each(lineitem_objectdata, function (index, value) {    
             var value_item_group_name = '';
             if( value.item_group_id != ''){
@@ -511,7 +566,12 @@
             '<td>' + value_item_group_name + '</td>' + 
             <?php } ?>
 
+            <?php if(SHOW_TEXTAREA==0){ ?>
             '<td>' + item_name + '</td>' +
+            <?php }else{ ?>
+
+            '<td>' + value.line_item_des + '</td>' +
+            <?php } ?>
             '<td class="text-right">' + value.item_qty + '</td>' +
             '<td class="text-right">' + (value.item_mrp != null && value.item_mrp != 0?value.item_mrp:'') + '</td>' +
             '<td class="text-right">' + value.price + '</td>' +
@@ -566,6 +626,14 @@
         if(typeof(value.id) != "undefined" && value.id !== null) {
             $("#lineitem_id").val(value.id);
         }
+
+        <?php if(SHOW_TEXTAREA==0){ ?>
+            
+        <?php }else{ ?>
+
+            $("#line_item_des").val(value.line_item_des);
+        <?php } ?>
+
 
         $("#item_qty").val(value.item_qty);
         $("#price").val(value.price);

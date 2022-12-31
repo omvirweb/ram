@@ -139,6 +139,9 @@
             $return = array();
             $post_data = $this->input->post();
             $line_items_data = json_decode('['.$post_data['line_items_data'].']');
+            // echo "<pre>";
+            // print_r($line_items_data);
+            // exit;
             $quotation_data = array();
             if(!isset($post_data['prefix'])) {
                 $post_data['prefix'] = '';
@@ -182,7 +185,7 @@
                     $add_lineitem['item_group_id'] = isset($lineitem->item_group_id) ? $lineitem->item_group_id : null;
                     $add_lineitem['cat_id'] = isset($lineitem->cat_id) ? $lineitem->cat_id : NULL;
                     $add_lineitem['sub_cat_id'] = isset($lineitem->sub_cat_id) ? $lineitem->sub_cat_id : NULL;
-                    $add_lineitem['item_id'] = $lineitem->item_id;
+                    $add_lineitem['item_id'] = isset($lineitem->item_id)?$lineitem->item_id:0;
                     $add_lineitem['item_qty'] = $lineitem->item_qty;
                     $add_lineitem['unit_id'] = isset($lineitem->unit_id)?$lineitem->unit_id:NULL;
                     $add_lineitem['price'] = $lineitem->price;
@@ -212,7 +215,7 @@
                     $add_lineitem['price_for_itax'] = isset($lineitem->price_for_itax)?$lineitem->price_for_itax:0;
                     $add_lineitem['igst_for_itax'] = isset($lineitem->igst_for_itax)?$lineitem->igst_for_itax:0;
                     $add_lineitem['note'] = isset($lineitem->note)?$lineitem->note:'';
-
+                    $add_lineitem['line_item_des'] = isset($lineitem->line_item_des)?$lineitem->line_item_des:NULL;
                     if(isset($lineitem->id) && !empty($lineitem->id)){
                         $add_lineitem['updated_at'] = $this->now_time;
                         $add_lineitem['updated_by'] = $this->logged_in_id;
@@ -249,7 +252,7 @@
                     $add_lineitem['item_group_id'] = isset($lineitem->item_group_id) ? $lineitem->item_group_id : null;
                     $add_lineitem['cat_id'] = isset($lineitem->cat_id) ? $lineitem->cat_id : NULL;
                     $add_lineitem['sub_cat_id'] = isset($lineitem->sub_cat_id) ? $lineitem->sub_cat_id : NULL;
-                    $add_lineitem['item_id'] = $lineitem->item_id;
+                    $add_lineitem['item_id'] = isset($lineitem->item_id)?$lineitem->item_id:0;
                     $add_lineitem['item_qty'] = $lineitem->item_qty;
                     $add_lineitem['unit_id'] = isset($lineitem->unit_id)?$lineitem->unit_id:NULL;
                     $add_lineitem['price'] = $lineitem->price;
@@ -285,6 +288,7 @@
                     $add_lineitem['user_updated_by'] = $this->session->userdata()['login_user_id'];
                     $add_lineitem['created_by'] = $this->logged_in_id;
                     $add_lineitem['user_created_by'] = $this->session->userdata()['login_user_id'];
+                    $add_lineitem['line_item_des'] = isset($lineitem->line_item_des)?$lineitem->line_item_des:NULL;
                     $this->crud->insert('lineitems',$add_lineitem);
                 }
             }
