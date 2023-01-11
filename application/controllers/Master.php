@@ -3365,6 +3365,7 @@ class Master extends CI_Controller
 				require_once('application/third_party/PHPExcel/PHPExcel.php');
                 // Cash account id = CASH_ACCOUNT_ID 7  //
                 $objPHPExcel = PHPExcel_IOFactory::load($_FILES['userfile']['tmp_name']);
+				
 				echo '<pre>';
 				print_r($objPHPExcel);
 				die();
