@@ -1958,7 +1958,7 @@ class Master extends CI_Controller
                 			'message' => '<span class="text-red">Account Already Exist</span>',
                 		);
                 		continue;
-                	}
+                	}  
 
 
                 	if(!empty($excel_row['N'])) {
