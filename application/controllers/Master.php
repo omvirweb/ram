@@ -1911,1463 +1911,1555 @@ class Master extends CI_Controller
 		ini_set('max_execution_time',0);
 		set_time_limit(0);
 		
-            $data = array();
+        $data = array();
 
-            if ($this->input->post('submit')) {
-                $radio_type = $this->input->post('import_radio');
-                if($radio_type == 2) {
-                	require_once('application/third_party/PHPExcel/PHPExcel.php');
-                	$objPHPExcel = PHPExcel_IOFactory::load($_FILES['userfile']['tmp_name']);
-                    $allDataInSheet = $objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
-                    unset($allDataInSheet[1]);
-                    $import_acc_data = array();
-                    foreach ($allDataInSheet as $key => $excel_row) {
-                    	$excel_row = array_map('trim', $excel_row);
+        if ($this->input->post('submit')) {
+            $radio_type = $this->input->post('import_radio');
+            if($radio_type == 2) {
+            	require_once('application/third_party/PHPExcel/PHPExcel.php');
+            	$objPHPExcel = PHPExcel_IOFactory::load($_FILES['userfile']['tmp_name']);
+                $allDataInSheet = $objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
+                unset($allDataInSheet[1]);
+                $import_acc_data = array();
+                foreach ($allDataInSheet as $key => $excel_row) {
+                	$excel_row = array_map('trim', $excel_row);
 
-                    	if(empty($excel_row['A'])) {
-                    		continue;
-                    	}
+                	if(empty($excel_row['A'])) {
+                		continue;
+                	}
 
-                    	$acc_data = array(
-                    		'account_name' => $excel_row['A'],
-                    		'account_group_id' => $excel_row['B'],
-                    		'opening_balance' => $excel_row['C'],
-                    		'credit_debit' => ($excel_row['C'] >= 0?"1":"2"),
-                    		'account_city' => $excel_row['D'],
-                    		'account_postal_code' => $excel_row['E'],
-                    		'account_state' => $excel_row['F'],
-                    		'account_pan' => $excel_row['G'],
-                    		'account_aadhaar' => $excel_row['H'],
-                    		'account_gst_no' => $excel_row['I'],
-                    		'account_contect_person_name' => $excel_row['J'],
-                    		'account_address' => $excel_row['K'],
-                    		'account_mobile_numbers' => $excel_row['L'],
-                    		'account_phone' => $excel_row['M'],
-                    		'account_email_ids' => $excel_row['N'],
-                    		'consider_in_pl' => 1,
-                    		'created_by' => $this->logged_in_id,
-                    		'user_created_by' => $this->session->userdata()['login_user_id'],
-                    		'created_at' => $this->now_time,
-                    	);
+                	$acc_data = array(
+                		'account_name' => $excel_row['A'],
+                		'account_group_id' => $excel_row['B'],
+                		'opening_balance' => $excel_row['C'],
+                		'credit_debit' => ($excel_row['C'] >= 0?"1":"2"),
+                		'account_city' => $excel_row['D'],
+                		'account_postal_code' => $excel_row['E'],
+                		'account_state' => $excel_row['F'],
+                		'account_pan' => $excel_row['G'],
+                		'account_aadhaar' => $excel_row['H'],
+                		'account_gst_no' => $excel_row['I'],
+                		'account_contect_person_name' => $excel_row['J'],
+                		'account_address' => $excel_row['K'],
+                		'account_mobile_numbers' => $excel_row['L'],
+                		'account_phone' => $excel_row['M'],
+                		'account_email_ids' => $excel_row['N'],
+                		'consider_in_pl' => 1,
+                		'created_by' => $this->logged_in_id,
+                		'user_created_by' => $this->session->userdata()['login_user_id'],
+                		'created_at' => $this->now_time,
+                	);
 
-                    	$account_row = $this->crud->get_data_row_by_where('account',array('account_name' => $excel_row['A'], 'created_by' => $this->logged_in_id));
+                	$account_row = $this->crud->get_data_row_by_where('account',array('account_name' => $excel_row['A'], 'created_by' => $this->logged_in_id));
 
-                    	if(!empty($account_row)) {
-                    		$import_acc_data[] = array(
-                    			'account_name' => $excel_row['A'],
-                    			'message' => '<span class="text-red">Account Already Exist</span>',
-                    		);
-                    		continue;
-                    	}
-
-
-                    	if(!empty($excel_row['N'])) {
-                    		$this->db->select('*');
-		                    $this->db->from('account');
-		                    $this->db->where('created_by', $this->logged_in_id);
-		                    $this->db->like('account_email_ids',$excel_row['N']);
-		                    $res = $this->db->get();
-		                    if ($res->num_rows() > 0) {
-		                        $import_acc_data[] = array(
-	                    			'account_name' => $excel_row['A'],
-	                    			'message' => '<span class="text-red">Email Id Already Exist</span>',
-	                    		);
-	                    		continue;
-		                    }	
-                    	}
-                    	
-
-                    	$account_group_row = $this->crud->get_data_row_by_id('account_group','account_group_name',$excel_row['B']);
-                    	if(empty($account_group_row)) {
-                    		$import_acc_data[] = array(
-                    			'account_name' => $excel_row['A'],
-                    			'message' => '<span class="text-red">Account Group Not Exist</span>',
-                    		);
-                    		continue;
-                    	}
-                    	$acc_data['account_group_id'] = $account_group_row->account_group_id;
-
-                    	$account_state_row = $this->crud->get_data_row_by_id('state','state_name',$excel_row['F']);
-                    	if(empty($account_state_row)) {
-                    		$import_acc_data[] = array(
-                    			'account_name' => $excel_row['A'],
-                    			'message' => '<span class="text-red">Account State Not Exist</span>',
-                    		);
-                    		continue;
-                    		
-                    	}
-                    	$acc_data['account_state'] = $account_state_row->state_id;
-
-                    	$account_city_row = $this->crud->get_data_row_by_where('city',array('city_name'=>$excel_row['D'],'state_id' => $account_state_row->state_id));
-                    	if(!empty($account_city_row)) {
-                    		$acc_data['account_city'] = $account_city_row->city_id;
-                    	} else {
-                    		$data = array();
-                    		$data['state_id'] = $account_state_row->state_id;
-							$data['city_name'] = $excel_row['D'];
-							$data['created_at'] = $this->now_time;
-							$data['updated_at'] = $this->now_time;
-							$data['updated_by'] = $this->logged_in_id;
-							$data['user_updated_by'] = $this->session->userdata()['login_user_id'];
-							$data['created_by'] = $this->logged_in_id;
-							$data['user_created_by'] = $this->session->userdata()['login_user_id'];
-							$acc_data['account_city'] = $this->crud->insert('city',$data);
-                    	}
-
-                    	$this->crud->insert('account',$acc_data);
-                    	$import_acc_data[] = array(
+                	if(!empty($account_row)) {
+                		$import_acc_data[] = array(
                 			'account_name' => $excel_row['A'],
-                			'message' => '<span class="text-green">Account Inserted</span>',
+                			'message' => '<span class="text-red">Account Already Exist</span>',
                 		);
-                    }
+                		continue;
+                	}
 
-                    $data['import_acc_data'] = $import_acc_data;
+
+                	if(!empty($excel_row['N'])) {
+                		$this->db->select('*');
+	                    $this->db->from('account');
+	                    $this->db->where('created_by', $this->logged_in_id);
+	                    $this->db->like('account_email_ids',$excel_row['N']);
+	                    $res = $this->db->get();
+	                    if ($res->num_rows() > 0) {
+	                        $import_acc_data[] = array(
+                    			'account_name' => $excel_row['A'],
+                    			'message' => '<span class="text-red">Email Id Already Exist</span>',
+                    		);
+                    		continue;
+	                    }	
+                	}
+                	
+
+                	$account_group_row = $this->crud->get_data_row_by_id('account_group','account_group_name',$excel_row['B']);
+                	if(empty($account_group_row)) {
+                		$import_acc_data[] = array(
+                			'account_name' => $excel_row['A'],
+                			'message' => '<span class="text-red">Account Group Not Exist</span>',
+                		);
+                		continue;
+                	}
+                	$acc_data['account_group_id'] = $account_group_row->account_group_id;
+
+                	$account_state_row = $this->crud->get_data_row_by_id('state','state_name',$excel_row['F']);
+                	if(empty($account_state_row)) {
+                		$import_acc_data[] = array(
+                			'account_name' => $excel_row['A'],
+                			'message' => '<span class="text-red">Account State Not Exist</span>',
+                		);
+                		continue;
+                		
+                	}
+                	$acc_data['account_state'] = $account_state_row->state_id;
+
+                	$account_city_row = $this->crud->get_data_row_by_where('city',array('city_name'=>$excel_row['D'],'state_id' => $account_state_row->state_id));
+                	if(!empty($account_city_row)) {
+                		$acc_data['account_city'] = $account_city_row->city_id;
+                	} else {
+                		$data = array();
+                		$data['state_id'] = $account_state_row->state_id;
+						$data['city_name'] = $excel_row['D'];
+						$data['created_at'] = $this->now_time;
+						$data['updated_at'] = $this->now_time;
+						$data['updated_by'] = $this->logged_in_id;
+						$data['user_updated_by'] = $this->session->userdata()['login_user_id'];
+						$data['created_by'] = $this->logged_in_id;
+						$data['user_created_by'] = $this->session->userdata()['login_user_id'];
+						$acc_data['account_city'] = $this->crud->insert('city',$data);
+                	}
+
+                	$this->crud->insert('account',$acc_data);
+                	$import_acc_data[] = array(
+            			'account_name' => $excel_row['A'],
+            			'message' => '<span class="text-green">Account Inserted</span>',
+            		);
                 }
-                if($radio_type == 3) {
-                    $ob= simplexml_load_file($_FILES['userfile']['tmp_name']);
-                    $json  = json_encode($ob);
-                    $configData = json_decode($json, true);
-                    $xmlData = '';
-                    if(!empty($configData) && isset($configData['BODY']['IMPORTDATA']['REQUESTDATA']['TALLYMESSAGE'])) {
-                        $xmlData = $configData['BODY']['IMPORTDATA']['REQUESTDATA']['TALLYMESSAGE'];
-                    }
-                    if(!empty($xmlData)) {
-                        $duplicate_parties = array();
-                        $master_parties = array();
-                        foreach ($xmlData as $key => $value) {
-                            $voucher_remote_id = isset($value['VOUCHER']['@attributes']['REMOTEID']) ? $value['VOUCHER']['@attributes']['REMOTEID'] : '';
-                            $account_name = isset($value['VOUCHER']['PARTYLEDGERNAME']) ? $value['VOUCHER']['PARTYLEDGERNAME'] : '';
-                            $payment_date = isset($value['VOUCHER']['DATE']) && !empty($value['VOUCHER']['DATE']) ? date('Y-m-d', strtotime($value['VOUCHER']['DATE'])) : '';
-                            $amount = isset($value['VOUCHER']['ALLLEDGERENTRIES.LIST']['AMOUNT']) ? $value['VOUCHER']['ALLLEDGERENTRIES.LIST']['AMOUNT'] : '';
-                            $account_name_exist = $this->crud->getFromSQL("SELECT * FROM account WHERE TRIM(`account_name`) = '".trim($account_name)."' ");
-                            if($account_name_exist){
-                                $account_id = $account_name_exist[0]->account_id;
-                                //print_r($account_id);die;
-                                $remoteId_duplication = $this->crud->get_column_value_by_id('transaction_entry', 'voucher_remote_id', array('voucher_remote_id' => $voucher_remote_id));
-                                if($remoteId_duplication){
-                                    $duplicate_parties[] = $account_name;
-                                } else {
-                                    $payment_data = array();
-                                    $payment_data['to_account_id'] = $account_id;
-                                    $payment_data['transaction_date'] = $payment_date;
-                                    $payment_data['transaction_type'] = 1;
-                                    $payment_data['amount'] = $amount;
-                                    $payment_data['voucher_remote_id'] = $voucher_remote_id;
-                                    $payment_data['created_at'] = $this->now_time;
-                                    $payment_data['created_by'] = $this->logged_in_id;
-                                    $payment_data['user_created_by'] = $this->session->userdata()['login_user_id'];
-                                    $result = $this->crud->insert('transaction_entry', $payment_data);
-                                }
+
+                $data['import_acc_data'] = $import_acc_data;
+            }
+            if($radio_type == 3) {
+                $ob= simplexml_load_file($_FILES['userfile']['tmp_name']);
+                $json  = json_encode($ob);
+                $configData = json_decode($json, true);
+                $xmlData = '';
+                if(!empty($configData) && isset($configData['BODY']['IMPORTDATA']['REQUESTDATA']['TALLYMESSAGE'])) {
+                    $xmlData = $configData['BODY']['IMPORTDATA']['REQUESTDATA']['TALLYMESSAGE'];
+                }
+                if(!empty($xmlData)) {
+                    $duplicate_parties = array();
+                    $master_parties = array();
+                    foreach ($xmlData as $key => $value) {
+                        $voucher_remote_id = isset($value['VOUCHER']['@attributes']['REMOTEID']) ? $value['VOUCHER']['@attributes']['REMOTEID'] : '';
+                        $account_name = isset($value['VOUCHER']['PARTYLEDGERNAME']) ? $value['VOUCHER']['PARTYLEDGERNAME'] : '';
+                        $payment_date = isset($value['VOUCHER']['DATE']) && !empty($value['VOUCHER']['DATE']) ? date('Y-m-d', strtotime($value['VOUCHER']['DATE'])) : '';
+                        $amount = isset($value['VOUCHER']['ALLLEDGERENTRIES.LIST']['AMOUNT']) ? $value['VOUCHER']['ALLLEDGERENTRIES.LIST']['AMOUNT'] : '';
+                        $account_name_exist = $this->crud->getFromSQL("SELECT * FROM account WHERE TRIM(`account_name`) = '".trim($account_name)."' ");
+                        if($account_name_exist){
+                            $account_id = $account_name_exist[0]->account_id;
+                            //print_r($account_id);die;
+                            $remoteId_duplication = $this->crud->get_column_value_by_id('transaction_entry', 'voucher_remote_id', array('voucher_remote_id' => $voucher_remote_id));
+                            if($remoteId_duplication){
+                                $duplicate_parties[] = $account_name;
                             } else {
-                                $master_parties[] = $account_name;
+                                $payment_data = array();
+                                $payment_data['to_account_id'] = $account_id;
+                                $payment_data['transaction_date'] = $payment_date;
+                                $payment_data['transaction_type'] = 1;
+                                $payment_data['amount'] = $amount;
+                                $payment_data['voucher_remote_id'] = $voucher_remote_id;
+                                $payment_data['created_at'] = $this->now_time;
+                                $payment_data['created_by'] = $this->logged_in_id;
+                                $payment_data['user_created_by'] = $this->session->userdata()['login_user_id'];
+                                $result = $this->crud->insert('transaction_entry', $payment_data);
                             }
-                        }
-                        $data['master_parties'] = $master_parties;
-                        $data['duplicate_parties'] = $duplicate_parties;
-                    }
-                }
-                if($radio_type == 4) {
-                    $this->load->library('CSVReader');
-                    // Parse data from CSV file
-                    $csvData = $this->csvreader->parse_csv($_FILES['userfile']['tmp_name']);
-                    // Insert/update CSV data into database
-                    if(!empty($csvData)){
-                        foreach($csvData as $row){
-//                            echo "<pre>"; print_r($row); exit;
-                            $item_type_id = NULL;
-                            if(!empty($row['Item_Type'])){
-                                $item_type_id = $this->crud->get_column_value_by_id('item_type','item_type_id',array('item_type_name' => trim($row['Item_Type'])));
-                                if(empty($item_type_id)) {
-                                    $item_type_data = array();
-                                    $item_type_data['item_type_name'] = $row['Item_Type'];
-                                    $item_type_data['created_at'] = $this->now_time;
-                                    $item_type_data['created_by'] = $this->logged_in_id;
-                                    $item_type_data['user_created_by'] = $this->session->userdata()['login_user_id'];
-                                    $result = $this->crud->insert('item_type',$item_type_data);
-                                    $item_type_id = $this->db->insert_id();
-                                }
-                            }
-                            $item_group_id = NULL;
-                            if(!empty($row['Item_Group'])){
-                                $item_group_id = $this->crud->get_column_value_by_id('item_group','item_group_id',array('item_group_name' => trim($row['Item_Group']), 'created_by' => $this->logged_in_id));
-                                if(empty($item_group_id)) {
-                                    $item_group_data = array();
-                                    $item_group_data['item_group_name'] = $row['Item_Group'];
-                                    $item_group_data['created_at'] = $this->now_time;
-                                    $item_group_data['created_by'] = $this->logged_in_id;
-                                    $item_group_data['user_created_by'] = $this->session->userdata()['login_user_id'];
-                                    $result = $this->crud->insert('item_group',$item_group_data);
-                                    $item_group_id = $this->db->insert_id();
-                                }
-                            }
-                            $item_category_id = NULL;
-                            if(!empty($row['Item_Category'])){
-                                $item_category_id = $this->crud->get_column_value_by_id('category','cat_id',array('cat_name' => trim($row['Item_Category']), 'created_by' => $this->logged_in_id));
-                                if(empty($item_category_id)) {
-                                    $item_category_data = array();
-                                    $item_category_data['cat_name'] = $row['Item_Category'];
-                                    $item_category_data['created_at'] = $this->now_time;
-                                    $item_category_data['created_by'] = $this->logged_in_id;
-                                    $item_category_data['user_created_by'] = $this->session->userdata()['login_user_id'];
-                                    $result = $this->crud->insert('category',$item_category_data);
-                                    $item_category_id = $this->db->insert_id();
-                                }
-                            }
-                            $item_sub_category_id = NULL;
-                            if(!empty($item_category_id)){
-                                if(!empty($row['Item_Sub_Category'])){
-                                    $it_data = $this->crud->getFromSQL(" SELECT * FROM sub_category WHERE cat_id = ".$item_category_id." AND sub_cat_name = '".trim($row['Item_Sub_Category'])."' AND created_by = ".$this->logged_in_id." ");
-//                                    echo "<pre>"; print_r($it_data); exit;
-                                    if(isset($it_data[0])){
-                                        $item_sub_category_id = $it_data[0]->sub_cat_id;
-                                    } else {
-                                        $item_sub_category_data = array();
-                                        $item_sub_category_data['cat_id'] = $item_category_id;
-                                        $item_sub_category_data['sub_cat_name'] = $row['Item_Sub_Category'];
-                                        $item_sub_category_data['created_at'] = $this->now_time;
-                                        $item_sub_category_data['created_by'] = $this->logged_in_id;
-                                        $item_sub_category_data['user_created_by'] = $this->session->userdata()['login_user_id'];
-                                        $result = $this->crud->insert('sub_category',$item_sub_category_data);
-                                        $item_sub_category_id = $this->db->insert_id();
-                                    }
-                                }
-                            }
-                            $pack_unit_id = NULL;
-                            if(!empty($row['Unit'])){
-                                $pack_unit_id = $this->crud->get_column_value_by_id('pack_unit','pack_unit_id',array('pack_unit_name' => trim($row['Unit'])));
-                                if(empty($pack_unit_id)) {
-                                    $pack_unit_data = array();
-                                    $pack_unit_data['pack_unit_name'] = $row['Unit'];
-                                    $pack_unit_data['created_at'] = $this->now_time;
-                                    $pack_unit_data['created_by'] = $this->logged_in_id;
-                                    $pack_unit_data['user_created_by'] = $this->session->userdata()['login_user_id'];
-                                    $result = $this->crud->insert('pack_unit',$pack_unit_data);
-                                    $pack_unit_id = $this->db->insert_id();
-                                }
-                            }
-                            $alternate_unit_id = NULL;
-                            if(!empty($row['Alternate_Unit'])){
-                                $alternate_unit_id = $this->crud->get_column_value_by_id('pack_unit','pack_unit_id',array('pack_unit_name' => trim($row['Alternate_Unit'])));
-                                if(empty($alternate_unit_id)) {
-                                    $pack_unit_data = array();
-                                    $pack_unit_data['pack_unit_name'] = $row['Alternate_Unit'];
-                                    $pack_unit_data['created_at'] = $this->now_time;
-                                    $pack_unit_data['created_by'] = $this->logged_in_id;
-                                    $pack_unit_data['user_created_by'] = $this->session->userdata()['login_user_id'];
-                                    $result = $this->crud->insert('pack_unit',$pack_unit_data);
-                                    $alternate_unit_id = $this->db->insert_id();
-                                }
-                            }
-                            $hsn_code = NULL;
-                            if(!empty($row['HSN/SAC'])){
-                                $hsn_code = $this->crud->get_column_value_by_id('hsn','hsn_id',array('hsn' => trim($row['HSN/SAC'])));
-                                if(empty($hsn_code)) {
-                                    $hsn_data = array();
-                                    $hsn_data['hsn'] = $row['HSN/SAC'];
-                                    $hsn_data['created_at'] = $this->now_time;
-                                    $hsn_data['created_by'] = $this->logged_in_id;
-                                    $hsn_data['user_created_by'] = $this->session->userdata()['login_user_id'];
-                                    $result = $this->crud->insert('hsn',$hsn_data);
-                                    $hsn_code = $this->db->insert_id();
-                                }
-                            }
-                            $item_id = $this->crud->get_column_value_by_id('item','item_id',array('item_name' => trim($row['Item_Name']), 'created_by' => $this->logged_in_id));
-                            if(!empty($item_id)) {
-                                    $item_data = array();
-                                    $item_data['item_type_id'] = $item_type_id;
-                                    $item_data['item_group_id'] = $item_group_id;
-                                    $item_data['sub_category_id'] = $item_sub_category_id;
-                                    $item_data['category_id'] = $item_category_id;
-                                    $item_data['pack_unit_id'] = $pack_unit_id;
-                                    $item_data['alternate_unit_id'] = $alternate_unit_id;
-                                    $item_data['hsn_code'] = $hsn_code;
-                                    $item_data['list_price'] = $row['List_Price'] ? $row['List_Price'] : NULL;
-                                    $item_data['mrp'] = $row['MRP'] ? $row['MRP'] : NULL;
-                                    $item_data['opening_qty'] = $row['Opening_Qty'] ? $row['Opening_Qty'] : NULL;
-                                    $item_data['opening_amount'] = $row['Opening_Amount'] ? $row['Opening_Amount'] : NULL;
-                                    $item_data['igst_per'] = $row['IGST(%)'] ? $row['IGST(%)'] : NULL;
-                                    $item_data['cgst_per'] = $row['CGST(%)'] ? $row['CGST(%)'] : NULL;
-                                    $item_data['sgst_per'] = $row['SGST(%)'] ? $row['SGST(%)'] : NULL;
-                                    $item_data['cess'] = $row['Cess'] ? $row['Cess'] : NULL;
-                                    $item_data['item_desc'] = $row['Description'] ? $row['Description'] : NULL;
-                                    $item_data['purchase_rate'] = $row['Purchase_Rate'] == 'Including_Tax' ? 1 : 2;
-                                    $item_data['sales_rate'] = $row['Sales_Rate'] == 'Including_Tax' ? 1 : 2;
-                                    $item_data['purchase_rate_val'] = $row['Purchase_Rate_Value'] ? $row['Purchase_Rate_Value'] : NULL;
-                                    $item_data['sales_rate_val'] = $row['Sales_Rate_Value'] ? $row['Sales_Rate_Value'] : NULL;
-                                    $item_data['minimum'] = $row['Minimum'] ? $row['Minimum'] : NULL;
-                                    $item_data['maximum'] = $row['Maximum'] ? $row['Maximum'] : NULL;
-                                    $item_data['reorder_stock'] = $row['Reorder_Stock'] ? $row['Reorder_Stock'] : NULL;
-                                    $item_data['discount_on'] = '1';
-                                    $item_data['updated_at'] = $this->now_time;
-                                    $item_data['updated_by'] = $this->logged_in_id;
-                                    $item_data['user_updated_by'] = $this->session->userdata()['login_user_id'];
-                                    $result = $this->crud->update('item', $item_data, array('item_id' => $item_id));
-                            } else {
-                                    $item_data = array();
-                                    $item_data['item_name'] = $row['Item_Name'];
-                                    $item_data['item_type_id'] = $item_type_id;
-                                    $item_data['item_group_id'] = $item_group_id;
-                                    $item_data['category_id'] = $item_category_id;
-                                    $item_data['sub_category_id'] = $item_sub_category_id;
-                                    $item_data['pack_unit_id'] = $pack_unit_id;
-                                    $item_data['alternate_unit_id'] = $alternate_unit_id;
-                                    $item_data['hsn_code'] = $hsn_code;
-                                    $item_data['list_price'] = $row['List_Price'] ? $row['List_Price'] : NULL;
-                                    $item_data['mrp'] = $row['MRP'] ? $row['MRP'] : NULL;
-                                    $item_data['opening_qty'] = $row['Opening_Qty'] ? $row['Opening_Qty'] : NULL;
-                                    $item_data['opening_amount'] = $row['Opening_Amount'] ? $row['Opening_Amount'] : NULL;
-                                    $item_data['igst_per'] = $row['IGST(%)'] ? $row['IGST(%)'] : NULL;
-                                    $item_data['cgst_per'] = $row['CGST(%)'] ? $row['CGST(%)'] : NULL;
-                                    $item_data['sgst_per'] = $row['SGST(%)'] ? $row['SGST(%)'] : NULL;
-                                    $item_data['cess'] = $row['Cess'] ? $row['Cess'] : NULL;
-                                    $item_data['item_desc'] = $row['Description'] ? $row['Description'] : NULL;
-                                    $item_data['purchase_rate'] = $row['Purchase_Rate'] == 'Including_Tax' ? 1 : 2;
-                                    $item_data['sales_rate'] = $row['Sales_Rate'] == 'Including_Tax' ? 1 : 2;
-                                    $item_data['purchase_rate_val'] = $row['Purchase_Rate_Value'] ? $row['Purchase_Rate_Value'] : NULL;
-                                    $item_data['sales_rate_val'] = $row['Sales_Rate_Value'] ? $row['Sales_Rate_Value'] : NULL;
-                                    $item_data['minimum'] = $row['Minimum'] ? $row['Minimum'] : NULL;
-                                    $item_data['maximum'] = $row['Maximum'] ? $row['Maximum'] : NULL;
-                                    $item_data['reorder_stock'] = $row['Reorder_Stock'] ? $row['Reorder_Stock'] : NULL;
-                                    $item_data['discount_on'] = '1';
-                                    $item_data['created_at'] = $this->now_time;
-                                    $item_data['created_by'] = $this->logged_in_id;
-                                    $item_data['user_created_by'] = $this->session->userdata()['login_user_id'];
-                                    $result = $this->crud->insert('item',$item_data);
-                            }
-                        }
-                    }
-                }
-                if($radio_type == 6) {
-                    require_once('application/third_party/PHPExcel/PHPExcel.php');
-                    $objPHPExcel = PHPExcel_IOFactory::load($_FILES['userfile']['tmp_name']);
-                    $allDataInSheet = $objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
-                    if(!empty($allDataInSheet)){
-                        unset($allDataInSheet[1]);
-                        unset($allDataInSheet[2]);
-                        unset($allDataInSheet[3]);
-                        $acc_name = substr($allDataInSheet[4]['A'], strpos($allDataInSheet[4]['A'], 'For') + 4);
-                        $acc_id = $this->crud->getFromSQL("SELECT account_id FROM account WHERE account_name = '".$acc_name."' AND created_by = ".$this->logged_in_id." ");
-                        if(empty($acc_id)){
-                            $this->session->set_flashdata('success', false);
-                            $this->session->set_flashdata('message', '<b>'.$acc_name.'</b> : This Account not Exists !');
-                            redirect('master/import');
                         } else {
-                            $acc_id = $acc_id[0]->account_id;
+                            $master_parties[] = $account_name;
                         }
+                    }
+                    $data['master_parties'] = $master_parties;
+                    $data['duplicate_parties'] = $duplicate_parties;
+                }
+            }
+            if($radio_type == 4) {
+                $this->load->library('CSVReader');
+                // Parse data from CSV file
+                $csvData = $this->csvreader->parse_csv($_FILES['userfile']['tmp_name']);
+                // Insert/update CSV data into database
+                if(!empty($csvData)){
+                    foreach($csvData as $row){
+						// echo "<pre>"; print_r($row); exit;
+                        $item_type_id = NULL;
+                        if(!empty($row['Item_Type'])){
+                            $item_type_id = $this->crud->get_column_value_by_id('item_type','item_type_id',array('item_type_name' => trim($row['Item_Type'])));
+                            if(empty($item_type_id)) {
+                                $item_type_data = array();
+                                $item_type_data['item_type_name'] = $row['Item_Type'];
+                                $item_type_data['created_at'] = $this->now_time;
+                                $item_type_data['created_by'] = $this->logged_in_id;
+                                $item_type_data['user_created_by'] = $this->session->userdata()['login_user_id'];
+                                $result = $this->crud->insert('item_type',$item_type_data);
+                                $item_type_id = $this->db->insert_id();
+                            }
+                        }
+                        $item_group_id = NULL;
+                        if(!empty($row['Item_Group'])){
+                            $item_group_id = $this->crud->get_column_value_by_id('item_group','item_group_id',array('item_group_name' => trim($row['Item_Group']), 'created_by' => $this->logged_in_id));
+                            if(empty($item_group_id)) {
+                                $item_group_data = array();
+                                $item_group_data['item_group_name'] = $row['Item_Group'];
+                                $item_group_data['created_at'] = $this->now_time;
+                                $item_group_data['created_by'] = $this->logged_in_id;
+                                $item_group_data['user_created_by'] = $this->session->userdata()['login_user_id'];
+                                $result = $this->crud->insert('item_group',$item_group_data);
+                                $item_group_id = $this->db->insert_id();
+                            }
+                        }
+                        $item_category_id = NULL;
+                        if(!empty($row['Item_Category'])){
+                            $item_category_id = $this->crud->get_column_value_by_id('category','cat_id',array('cat_name' => trim($row['Item_Category']), 'created_by' => $this->logged_in_id));
+                            if(empty($item_category_id)) {
+                                $item_category_data = array();
+                                $item_category_data['cat_name'] = $row['Item_Category'];
+                                $item_category_data['created_at'] = $this->now_time;
+                                $item_category_data['created_by'] = $this->logged_in_id;
+                                $item_category_data['user_created_by'] = $this->session->userdata()['login_user_id'];
+                                $result = $this->crud->insert('category',$item_category_data);
+                                $item_category_id = $this->db->insert_id();
+                            }
+                        }
+                        $item_sub_category_id = NULL;
+                        if(!empty($item_category_id)){
+                            if(!empty($row['Item_Sub_Category'])){
+                                $it_data = $this->crud->getFromSQL(" SELECT * FROM sub_category WHERE cat_id = ".$item_category_id." AND sub_cat_name = '".trim($row['Item_Sub_Category'])."' AND created_by = ".$this->logged_in_id." ");
+								// echo "<pre>"; print_r($it_data); exit;
+                                if(isset($it_data[0])){
+                                    $item_sub_category_id = $it_data[0]->sub_cat_id;
+                                } else {
+                                    $item_sub_category_data = array();
+                                    $item_sub_category_data['cat_id'] = $item_category_id;
+                                    $item_sub_category_data['sub_cat_name'] = $row['Item_Sub_Category'];
+                                    $item_sub_category_data['created_at'] = $this->now_time;
+                                    $item_sub_category_data['created_by'] = $this->logged_in_id;
+                                    $item_sub_category_data['user_created_by'] = $this->session->userdata()['login_user_id'];
+                                    $result = $this->crud->insert('sub_category',$item_sub_category_data);
+                                    $item_sub_category_id = $this->db->insert_id();
+                                }
+                            }
+                        }
+                        $pack_unit_id = NULL;
+                        if(!empty($row['Unit'])){
+                            $pack_unit_id = $this->crud->get_column_value_by_id('pack_unit','pack_unit_id',array('pack_unit_name' => trim($row['Unit'])));
+                            if(empty($pack_unit_id)) {
+                                $pack_unit_data = array();
+                                $pack_unit_data['pack_unit_name'] = $row['Unit'];
+                                $pack_unit_data['created_at'] = $this->now_time;
+                                $pack_unit_data['created_by'] = $this->logged_in_id;
+                                $pack_unit_data['user_created_by'] = $this->session->userdata()['login_user_id'];
+                                $result = $this->crud->insert('pack_unit',$pack_unit_data);
+                                $pack_unit_id = $this->db->insert_id();
+                            }
+                        }
+                        $alternate_unit_id = NULL;
+                        if(!empty($row['Alternate_Unit'])){
+                            $alternate_unit_id = $this->crud->get_column_value_by_id('pack_unit','pack_unit_id',array('pack_unit_name' => trim($row['Alternate_Unit'])));
+                            if(empty($alternate_unit_id)) {
+                                $pack_unit_data = array();
+                                $pack_unit_data['pack_unit_name'] = $row['Alternate_Unit'];
+                                $pack_unit_data['created_at'] = $this->now_time;
+                                $pack_unit_data['created_by'] = $this->logged_in_id;
+                                $pack_unit_data['user_created_by'] = $this->session->userdata()['login_user_id'];
+                                $result = $this->crud->insert('pack_unit',$pack_unit_data);
+                                $alternate_unit_id = $this->db->insert_id();
+                            }
+                        }
+                        $hsn_code = NULL;
+                        if(!empty($row['HSN/SAC'])){
+                            $hsn_code = $this->crud->get_column_value_by_id('hsn','hsn_id',array('hsn' => trim($row['HSN/SAC'])));
+                            if(empty($hsn_code)) {
+                                $hsn_data = array();
+                                $hsn_data['hsn'] = $row['HSN/SAC'];
+                                $hsn_data['created_at'] = $this->now_time;
+                                $hsn_data['created_by'] = $this->logged_in_id;
+                                $hsn_data['user_created_by'] = $this->session->userdata()['login_user_id'];
+                                $result = $this->crud->insert('hsn',$hsn_data);
+                                $hsn_code = $this->db->insert_id();
+                            }
+                        }
+                        $item_id = $this->crud->get_column_value_by_id('item','item_id',array('item_name' => trim($row['Item_Name']), 'created_by' => $this->logged_in_id));
+                        if(!empty($item_id)) {
+                            $item_data = array();
+                            $item_data['item_type_id'] = $item_type_id;
+                            $item_data['item_group_id'] = $item_group_id;
+                            $item_data['sub_category_id'] = $item_sub_category_id;
+                            $item_data['category_id'] = $item_category_id;
+                            $item_data['pack_unit_id'] = $pack_unit_id;
+                            $item_data['alternate_unit_id'] = $alternate_unit_id;
+                            $item_data['hsn_code'] = $hsn_code;
+                            $item_data['list_price'] = $row['List_Price'] ? $row['List_Price'] : NULL;
+                            $item_data['mrp'] = $row['MRP'] ? $row['MRP'] : NULL;
+                            $item_data['opening_qty'] = $row['Opening_Qty'] ? $row['Opening_Qty'] : NULL;
+                            $item_data['opening_amount'] = $row['Opening_Amount'] ? $row['Opening_Amount'] : NULL;
+                            $item_data['igst_per'] = $row['IGST(%)'] ? $row['IGST(%)'] : NULL;
+                            $item_data['cgst_per'] = $row['CGST(%)'] ? $row['CGST(%)'] : NULL;
+                            $item_data['sgst_per'] = $row['SGST(%)'] ? $row['SGST(%)'] : NULL;
+                            $item_data['cess'] = $row['Cess'] ? $row['Cess'] : NULL;
+                            $item_data['item_desc'] = $row['Description'] ? $row['Description'] : NULL;
+                            $item_data['purchase_rate'] = $row['Purchase_Rate'] == 'Including_Tax' ? 1 : 2;
+                            $item_data['sales_rate'] = $row['Sales_Rate'] == 'Including_Tax' ? 1 : 2;
+                            $item_data['purchase_rate_val'] = $row['Purchase_Rate_Value'] ? $row['Purchase_Rate_Value'] : NULL;
+                            $item_data['sales_rate_val'] = $row['Sales_Rate_Value'] ? $row['Sales_Rate_Value'] : NULL;
+                            $item_data['minimum'] = $row['Minimum'] ? $row['Minimum'] : NULL;
+                            $item_data['maximum'] = $row['Maximum'] ? $row['Maximum'] : NULL;
+                            $item_data['reorder_stock'] = $row['Reorder_Stock'] ? $row['Reorder_Stock'] : NULL;
+                            $item_data['discount_on'] = '1';
+                            $item_data['updated_at'] = $this->now_time;
+                            $item_data['updated_by'] = $this->logged_in_id;
+                            $item_data['user_updated_by'] = $this->session->userdata()['login_user_id'];
+                            $result = $this->crud->update('item', $item_data, array('item_id' => $item_id));
+                        } else {
+                            $item_data = array();
+                            $item_data['item_name'] = $row['Item_Name'];
+                            $item_data['item_type_id'] = $item_type_id;
+                            $item_data['item_group_id'] = $item_group_id;
+                            $item_data['category_id'] = $item_category_id;
+                            $item_data['sub_category_id'] = $item_sub_category_id;
+                            $item_data['pack_unit_id'] = $pack_unit_id;
+                            $item_data['alternate_unit_id'] = $alternate_unit_id;
+                            $item_data['hsn_code'] = $hsn_code;
+                            $item_data['list_price'] = $row['List_Price'] ? $row['List_Price'] : NULL;
+                            $item_data['mrp'] = $row['MRP'] ? $row['MRP'] : NULL;
+                            $item_data['opening_qty'] = $row['Opening_Qty'] ? $row['Opening_Qty'] : NULL;
+                            $item_data['opening_amount'] = $row['Opening_Amount'] ? $row['Opening_Amount'] : NULL;
+                            $item_data['igst_per'] = $row['IGST(%)'] ? $row['IGST(%)'] : NULL;
+                            $item_data['cgst_per'] = $row['CGST(%)'] ? $row['CGST(%)'] : NULL;
+                            $item_data['sgst_per'] = $row['SGST(%)'] ? $row['SGST(%)'] : NULL;
+                            $item_data['cess'] = $row['Cess'] ? $row['Cess'] : NULL;
+                            $item_data['item_desc'] = $row['Description'] ? $row['Description'] : NULL;
+                            $item_data['purchase_rate'] = $row['Purchase_Rate'] == 'Including_Tax' ? 1 : 2;
+                            $item_data['sales_rate'] = $row['Sales_Rate'] == 'Including_Tax' ? 1 : 2;
+                            $item_data['purchase_rate_val'] = $row['Purchase_Rate_Value'] ? $row['Purchase_Rate_Value'] : NULL;
+                            $item_data['sales_rate_val'] = $row['Sales_Rate_Value'] ? $row['Sales_Rate_Value'] : NULL;
+                            $item_data['minimum'] = $row['Minimum'] ? $row['Minimum'] : NULL;
+                            $item_data['maximum'] = $row['Maximum'] ? $row['Maximum'] : NULL;
+                            $item_data['reorder_stock'] = $row['Reorder_Stock'] ? $row['Reorder_Stock'] : NULL;
+                            $item_data['discount_on'] = '1';
+                            $item_data['created_at'] = $this->now_time;
+                            $item_data['created_by'] = $this->logged_in_id;
+                            $item_data['user_created_by'] = $this->session->userdata()['login_user_id'];
+                            $result = $this->crud->insert('item',$item_data);
+                        }
+                    }
+                }
+            }
+            if($radio_type == 6) {
+                require_once('application/third_party/PHPExcel/PHPExcel.php');
+                $objPHPExcel = PHPExcel_IOFactory::load($_FILES['userfile']['tmp_name']);
+                $allDataInSheet = $objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
+                if(!empty($allDataInSheet)){
+                    unset($allDataInSheet[1]);
+                    unset($allDataInSheet[2]);
+                    unset($allDataInSheet[3]);
+                    $acc_name = substr($allDataInSheet[4]['A'], strpos($allDataInSheet[4]['A'], 'For') + 4);
+                    $acc_id = $this->crud->getFromSQL("SELECT account_id FROM account WHERE account_name = '".$acc_name."' AND created_by = ".$this->logged_in_id." ");
+                    if(empty($acc_id)){
+                        $this->session->set_flashdata('success', false);
+                        $this->session->set_flashdata('message', '<b>'.$acc_name.'</b> : This Account not Exists !');
+                        redirect('master/import');
+                    } else {
+                        $acc_id = $acc_id[0]->account_id;
+                    }
+                    unset($allDataInSheet[4]);
+                    unset($allDataInSheet[5]);
+                    unset($allDataInSheet[6]);
+
+                    foreach ($allDataInSheet as $sheet_entry){
+                        if($sheet_entry['B'] == 'DB Closing Balance' || $sheet_entry['D'] == 'DB Closing Balance'){
+                            break;
+                        } else {
+                            if(!empty($sheet_entry['A'])){
+                                $rec_dat = str_replace('/', '-', substr($sheet_entry['B'], 0, 10));
+                                $rec_date = date('Y-m-d', strtotime($rec_dat));
+                                $opposite_data = substr($sheet_entry['B'], 11);
+                                $exd = explode(' ', $opposite_data);
+                                $opposite_acc = $exd[0];
+                                $note = substr($opposite_data, strpos($opposite_data, $opposite_acc));
+                                $op_acc_id = CASH_ACCOUNT_ID;
+                                $entry_arr = array();
+                                $entry_arr['transaction_type'] = '2';
+                                $entry_arr['transaction_date'] = $rec_date;
+                                $entry_arr['amount'] = str_replace(",","",$sheet_entry['A']);
+                                $entry_arr['to_account_id'] = $op_acc_id;
+                                $entry_arr['from_account_id'] = $acc_id;
+                                $entry_arr['note'] = 'Import from Excel : '.$note;
+                                $entry_arr['created_at'] = $this->now_time;
+                                $entry_arr['created_by'] = $this->logged_in_id;
+                                $entry_arr['user_created_by'] = $this->session->userdata()['login_user_id'];
+                                $this->crud->insert('transaction_entry', $entry_arr);
+                            }
+                            if(!empty($sheet_entry['C'])){
+                                $pay_dat = str_replace('/', '-', substr($sheet_entry['D'], 0, 10));
+                                $pay_date = date('Y-m-d', strtotime($pay_dat));
+                                $opposite_data = substr($sheet_entry['D'], 11);
+                                $exd = explode(' ', $opposite_data);
+                                $opposite_acc = $exd[0];
+                                $note = substr($opposite_data, strpos($opposite_data, $opposite_acc));
+                                $op_acc_id = CASH_ACCOUNT_ID;
+                                $entry_arr = array();
+                                $entry_arr['transaction_type'] = '1';
+                                $entry_arr['transaction_date'] = $pay_date;
+                                $entry_arr['amount'] = str_replace(",","",$sheet_entry['C']);
+                                $entry_arr['to_account_id'] = $acc_id;
+                                $entry_arr['from_account_id'] = $op_acc_id;
+                                $entry_arr['note'] = 'Import from Excel : '.$note;
+                                $entry_arr['created_at'] = $this->now_time;
+                                $entry_arr['created_by'] = $this->logged_in_id;
+                                $entry_arr['user_created_by'] = $this->session->userdata()['login_user_id'];
+                                $this->crud->insert('transaction_entry', $entry_arr);
+                            }
+                        }
+                    }
+                }
+            }
+            if($radio_type == 7) {
+                require_once('application/third_party/PHPExcel/PHPExcel.php');
+                // Cash account id = CASH_ACCOUNT_ID 227  //
+                $objPHPExcel = PHPExcel_IOFactory::load($_FILES['userfile']['tmp_name']);
+                $allDataInSheet = $objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
+                $import_client_ledger_data = array();
+                if(!empty($allDataInSheet)){
+                    unset($allDataInSheet[1]);
+                    unset($allDataInSheet[2]);
+                    unset($allDataInSheet[3]);
+                    $acc_name = substr($allDataInSheet[4]['A'], strpos($allDataInSheet[4]['A'], 'For') + 4);
+
+                    $acc_id = $this->crud->getFromSQL("SELECT account_id FROM account WHERE account_name = '".$acc_name."' AND created_by = ".$this->logged_in_id." ");
+                    if(empty($acc_id)){
+                        $this->session->set_flashdata('success', false);
+                        $this->session->set_flashdata('message', '<b>'.$acc_name.'</b> : This Account not Exists !');
+                        redirect('master/import');
+                    } else {
+                        $acc_id = $acc_id[0]->account_id;
                         unset($allDataInSheet[4]);
                         unset($allDataInSheet[5]);
                         unset($allDataInSheet[6]);
 
-                        foreach ($allDataInSheet as $sheet_entry){
-                            if($sheet_entry['B'] == 'DB Closing Balance' || $sheet_entry['D'] == 'DB Closing Balance'){
-                                break;
-                            } else {
-                                if(!empty($sheet_entry['A'])){
-                                    $rec_dat = str_replace('/', '-', substr($sheet_entry['B'], 0, 10));
-                                    $rec_date = date('Y-m-d', strtotime($rec_dat));
-                                    $opposite_data = substr($sheet_entry['B'], 11);
-                                    $exd = explode(' ', $opposite_data);
-                                    $opposite_acc = $exd[0];
-                                    $note = substr($opposite_data, strpos($opposite_data, $opposite_acc));
-                                    $op_acc_id = CASH_ACCOUNT_ID;
-                                    $entry_arr = array();
-                                    $entry_arr['transaction_type'] = '2';
-                                    $entry_arr['transaction_date'] = $rec_date;
-                                    $entry_arr['amount'] = str_replace(",","",$sheet_entry['A']);
-                                    $entry_arr['to_account_id'] = $op_acc_id;
-                                    $entry_arr['from_account_id'] = $acc_id;
-                                    $entry_arr['note'] = 'Import from Excel : '.$note;
-                                    $entry_arr['created_at'] = $this->now_time;
-                                    $entry_arr['created_by'] = $this->logged_in_id;
-                                    $entry_arr['user_created_by'] = $this->session->userdata()['login_user_id'];
-                                    $this->crud->insert('transaction_entry', $entry_arr);
-                                }
-                                if(!empty($sheet_entry['C'])){
-                                    $pay_dat = str_replace('/', '-', substr($sheet_entry['D'], 0, 10));
-                                    $pay_date = date('Y-m-d', strtotime($pay_dat));
-                                    $opposite_data = substr($sheet_entry['D'], 11);
-                                    $exd = explode(' ', $opposite_data);
-                                    $opposite_acc = $exd[0];
-                                    $note = substr($opposite_data, strpos($opposite_data, $opposite_acc));
-                                    $op_acc_id = CASH_ACCOUNT_ID;
-                                    $entry_arr = array();
-                                    $entry_arr['transaction_type'] = '1';
-                                    $entry_arr['transaction_date'] = $pay_date;
-                                    $entry_arr['amount'] = str_replace(",","",$sheet_entry['C']);
-                                    $entry_arr['to_account_id'] = $acc_id;
-                                    $entry_arr['from_account_id'] = $op_acc_id;
-                                    $entry_arr['note'] = 'Import from Excel : '.$note;
-                                    $entry_arr['created_at'] = $this->now_time;
-                                    $entry_arr['created_by'] = $this->logged_in_id;
-                                    $entry_arr['user_created_by'] = $this->session->userdata()['login_user_id'];
-                                    $this->crud->insert('transaction_entry', $entry_arr);
-                                }
-                            }
-                        }
-                    }
-                }
-                if($radio_type == 7) {
-                    require_once('application/third_party/PHPExcel/PHPExcel.php');
-                    // Cash account id = CASH_ACCOUNT_ID 227  //
-                    $objPHPExcel = PHPExcel_IOFactory::load($_FILES['userfile']['tmp_name']);
-                    $allDataInSheet = $objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
-                    $import_client_ledger_data = array();
-                    if(!empty($allDataInSheet)){
-                        unset($allDataInSheet[1]);
-                        unset($allDataInSheet[2]);
-                        unset($allDataInSheet[3]);
-                        $acc_name = substr($allDataInSheet[4]['A'], strpos($allDataInSheet[4]['A'], 'For') + 4);
+                        if(!empty($allDataInSheet)){
+                            foreach ($allDataInSheet as $sheet_entry){
+                                if($sheet_entry['B'] == 'DB Closing Balance' || $sheet_entry['D'] == 'DB Closing Balance'){
+                                    break;
+                                } else {
+                                    if(!empty($sheet_entry['A']) && !empty($sheet_entry['B'])){
+                                        $rec_dat = str_replace('/', '-', substr($sheet_entry['B'], 0, 10));
+                                        $rec_date = date('Y-m-d', strtotime($rec_dat));
+                                        $opposite_data = substr($sheet_entry['B'], 11);
+                                        $exd = explode(' ', $opposite_data);
+                                        $opposite_acc = $exd[0];
+                                        $note = substr($opposite_data, strpos($opposite_data, $opposite_acc));
 
-                        $acc_id = $this->crud->getFromSQL("SELECT account_id FROM account WHERE account_name = '".$acc_name."' AND created_by = ".$this->logged_in_id." ");
-                        if(empty($acc_id)){
-                            $this->session->set_flashdata('success', false);
-                            $this->session->set_flashdata('message', '<b>'.$acc_name.'</b> : This Account not Exists !');
-                            redirect('master/import');
-                        } else {
-                            $acc_id = $acc_id[0]->account_id;
-                            unset($allDataInSheet[4]);
-                            unset($allDataInSheet[5]);
-                            unset($allDataInSheet[6]);
-
-                            if(!empty($allDataInSheet)){
-                                foreach ($allDataInSheet as $sheet_entry){
-                                    if($sheet_entry['B'] == 'DB Closing Balance' || $sheet_entry['D'] == 'DB Closing Balance'){
-                                        break;
-                                    } else {
-                                        if(!empty($sheet_entry['A']) && !empty($sheet_entry['B'])){
-                                            $rec_dat = str_replace('/', '-', substr($sheet_entry['B'], 0, 10));
-                                            $rec_date = date('Y-m-d', strtotime($rec_dat));
-                                            $opposite_data = substr($sheet_entry['B'], 11);
-                                            $exd = explode(' ', $opposite_data);
-                                            $opposite_acc = $exd[0];
-                                            $note = substr($opposite_data, strpos($opposite_data, $opposite_acc));
-
-                                            if($opposite_acc == 'CRct' || $opposite_acc == 'Jrnl' || $opposite_acc == 'SRet'){ } else {
-                                                if(!empty($sheet_entry['B'])){
-                                                    $import_client_ledger_data[] = array('0' => 'Credit', '1' => $sheet_entry['A'], '2' => $sheet_entry['B']);
-                                                }
-                                            }
-                                            if($opposite_acc == 'CRct' || $opposite_acc == 'Jrnl'){
-                                                $op_acc_id = CASH_ACCOUNT_ID;
-                                                $entry_arr = array();
-                                                $entry_arr['transaction_type'] = '2';
-                                                $entry_arr['transaction_date'] = $rec_date;
-                                                $entry_arr['amount'] = str_replace(",","",$sheet_entry['A']);
-                                                $entry_arr['to_account_id'] = $op_acc_id;
-                                                $entry_arr['from_account_id'] = $acc_id;
-                                                $tr_note = 'Import from Excel : '.$note;
-                                                $entry_arr['note'] = $tr_note;
-                                                $entry_arr['created_at'] = $this->now_time;
-                                                $entry_arr['created_by'] = $this->logged_in_id;
-                                                $entry_arr['user_created_by'] = $this->session->userdata()['login_user_id'];
-                                                $this->crud->insert('transaction_entry', $entry_arr);
-                                            }
-                                            if($opposite_acc == 'SRet'){
-                                                $credit_note_no = $this->crud->get_max_number('credit_note', 'credit_note_no', $this->logged_in_id);
-                                                if(!empty($credit_note_no->credit_note_no)){
-                                                    $new_credit_note_no = $credit_note_no->credit_note_no + 1;
-                                                } else {
-                                                    $new_credit_note_no = 1;
-                                                }
-                                                $entry_arr = array();
-                                                $entry_arr['credit_note_no'] = $new_credit_note_no;
-                                                $entry_arr['bill_no'] = $new_credit_note_no;
-                                                $entry_arr['invoice_date'] = $rec_date;
-                                                $entry_arr['account_id'] = $acc_id;
-                                                $entry_arr['against_account_id'] = '152';
-                                                $entry_arr['credit_note_date'] = $rec_date;
-                                                $entry_arr['qty_total'] = '1';
-                                                $entry_arr['pure_amount_total'] = $sheet_entry['A'];
-                                                $entry_arr['amount_total'] = $sheet_entry['A'];
-                                                $entry_arr['credit_note_desc'] = 'Import from Excel : '.$note;
-                                                $entry_arr['created_at'] = $this->now_time;
-                                                $entry_arr['created_by'] = $this->logged_in_id;
-                                                $entry_arr['user_created_by'] = $this->session->userdata()['login_user_id'];
-                                                $this->crud->insert('credit_note', $entry_arr);
+                                        if($opposite_acc == 'CRct' || $opposite_acc == 'Jrnl' || $opposite_acc == 'SRet'){ } else {
+                                            if(!empty($sheet_entry['B'])){
+                                                $import_client_ledger_data[] = array('0' => 'Credit', '1' => $sheet_entry['A'], '2' => $sheet_entry['B']);
                                             }
                                         }
-                                        
-                                        if(!empty($sheet_entry['C']) && !empty($sheet_entry['D'])){
-                                            $pay_dat = str_replace('/', '-', substr($sheet_entry['D'], 0, 10));
-                                            $rec_date = date('Y-m-d', strtotime($pay_dat));
-                                            $opposite_data = substr($sheet_entry['D'], 11);
-                                            $exd = explode(' ', $opposite_data);
-                                            $opposite_acc = $exd[0];
-                                            $note = substr($opposite_data, strpos($opposite_data, $opposite_acc));
-                                            if($opposite_acc == 'CPmt' || $opposite_acc == 'Jrnl' || $opposite_acc == 'Sale'){ } else {
-                                                if(!empty($sheet_entry['D'])){
-                                                    $import_client_ledger_data[] = array('0' => 'Debit', '1' => $sheet_entry['C'], '2' => $sheet_entry['D']);
-                                                }
+                                        if($opposite_acc == 'CRct' || $opposite_acc == 'Jrnl'){
+                                            $op_acc_id = CASH_ACCOUNT_ID;
+                                            $entry_arr = array();
+                                            $entry_arr['transaction_type'] = '2';
+                                            $entry_arr['transaction_date'] = $rec_date;
+                                            $entry_arr['amount'] = str_replace(",","",$sheet_entry['A']);
+                                            $entry_arr['to_account_id'] = $op_acc_id;
+                                            $entry_arr['from_account_id'] = $acc_id;
+                                            $tr_note = 'Import from Excel : '.$note;
+                                            $entry_arr['note'] = $tr_note;
+                                            $entry_arr['created_at'] = $this->now_time;
+                                            $entry_arr['created_by'] = $this->logged_in_id;
+                                            $entry_arr['user_created_by'] = $this->session->userdata()['login_user_id'];
+                                            $this->crud->insert('transaction_entry', $entry_arr);
+                                        }
+                                        if($opposite_acc == 'SRet'){
+                                            $credit_note_no = $this->crud->get_max_number('credit_note', 'credit_note_no', $this->logged_in_id);
+                                            if(!empty($credit_note_no->credit_note_no)){
+                                                $new_credit_note_no = $credit_note_no->credit_note_no + 1;
+                                            } else {
+                                                $new_credit_note_no = 1;
                                             }
-                                            if($opposite_acc == 'CPmt' || $opposite_acc == 'Jrnl'){
-                                                $op_acc_id = CASH_ACCOUNT_ID;
-                                                $entry_arr = array();
-                                                $entry_arr['transaction_type'] = '1';
-                                                $entry_arr['transaction_date'] = $rec_date;
-                                                $entry_arr['amount'] = str_replace(",","",$sheet_entry['C']);
-                                                $entry_arr['to_account_id'] = $acc_id;
-                                                $entry_arr['from_account_id'] = $op_acc_id;
-                                                $tr_note = 'Import from Excel : '.$note;
-                                                $entry_arr['note'] = $tr_note;
-                                                $entry_arr['created_at'] = $this->now_time;
-                                                $entry_arr['created_by'] = $this->logged_in_id;
-                                                $entry_arr['user_created_by'] = $this->session->userdata()['login_user_id'];
-                                                $this->crud->insert('transaction_entry', $entry_arr);
+                                            $entry_arr = array();
+                                            $entry_arr['credit_note_no'] = $new_credit_note_no;
+                                            $entry_arr['bill_no'] = $new_credit_note_no;
+                                            $entry_arr['invoice_date'] = $rec_date;
+                                            $entry_arr['account_id'] = $acc_id;
+                                            $entry_arr['against_account_id'] = '152';
+                                            $entry_arr['credit_note_date'] = $rec_date;
+                                            $entry_arr['qty_total'] = '1';
+                                            $entry_arr['pure_amount_total'] = $sheet_entry['A'];
+                                            $entry_arr['amount_total'] = $sheet_entry['A'];
+                                            $entry_arr['credit_note_desc'] = 'Import from Excel : '.$note;
+                                            $entry_arr['created_at'] = $this->now_time;
+                                            $entry_arr['created_by'] = $this->logged_in_id;
+                                            $entry_arr['user_created_by'] = $this->session->userdata()['login_user_id'];
+                                            $this->crud->insert('credit_note', $entry_arr);
+                                        }
+                                    }
+                                    
+                                    if(!empty($sheet_entry['C']) && !empty($sheet_entry['D'])){
+                                        $pay_dat = str_replace('/', '-', substr($sheet_entry['D'], 0, 10));
+                                        $rec_date = date('Y-m-d', strtotime($pay_dat));
+                                        $opposite_data = substr($sheet_entry['D'], 11);
+                                        $exd = explode(' ', $opposite_data);
+                                        $opposite_acc = $exd[0];
+                                        $note = substr($opposite_data, strpos($opposite_data, $opposite_acc));
+                                        if($opposite_acc == 'CPmt' || $opposite_acc == 'Jrnl' || $opposite_acc == 'Sale'){ } else {
+                                            if(!empty($sheet_entry['D'])){
+                                                $import_client_ledger_data[] = array('0' => 'Debit', '1' => $sheet_entry['C'], '2' => $sheet_entry['D']);
                                             }
-                                            if($opposite_acc == 'Sale'){
-                                                $sales_invoice_no = $this->crud->get_max_number_where('sales_invoice', 'sales_invoice_no', array('created_by' => $this->logged_in_id));
-                                                if(empty($sales_invoice_no->sales_invoice_no)){
-                                                    $new_sales_invoice_no = 1;
-                                                } else {
-                                                    $new_sales_invoice_no = $sales_invoice_no->sales_invoice_no + 1;    
-                                                }
-                                                $entry_arr = array();
-                                                $entry_arr['sales_invoice_no'] = $new_sales_invoice_no;
-                                                $entry_arr['account_id'] = $acc_id;
-                                                $entry_arr['against_account_id'] = '152';
-                                                $entry_arr['sales_invoice_date'] = $rec_date;
-                                                $entry_arr['sales_invoice_desc'] = 'Import from Excel : '.$note;
-                                                $entry_arr['qty_total'] = '1';
-                                                $entry_arr['pure_amount_total'] = $sheet_entry['C'];
-                                                $entry_arr['amount_total'] = $sheet_entry['C'];
-                                                $entry_arr['created_at'] = $this->now_time;
-                                                $entry_arr['created_by'] = $this->logged_in_id;
-                                                $entry_arr['user_created_by'] = $this->session->userdata()['login_user_id'];
-                                                $this->crud->insert('sales_invoice', $entry_arr);
+                                        }
+                                        if($opposite_acc == 'CPmt' || $opposite_acc == 'Jrnl'){
+                                            $op_acc_id = CASH_ACCOUNT_ID;
+                                            $entry_arr = array();
+                                            $entry_arr['transaction_type'] = '1';
+                                            $entry_arr['transaction_date'] = $rec_date;
+                                            $entry_arr['amount'] = str_replace(",","",$sheet_entry['C']);
+                                            $entry_arr['to_account_id'] = $acc_id;
+                                            $entry_arr['from_account_id'] = $op_acc_id;
+                                            $tr_note = 'Import from Excel : '.$note;
+                                            $entry_arr['note'] = $tr_note;
+                                            $entry_arr['created_at'] = $this->now_time;
+                                            $entry_arr['created_by'] = $this->logged_in_id;
+                                            $entry_arr['user_created_by'] = $this->session->userdata()['login_user_id'];
+                                            $this->crud->insert('transaction_entry', $entry_arr);
+                                        }
+                                        if($opposite_acc == 'Sale'){
+                                            $sales_invoice_no = $this->crud->get_max_number_where('sales_invoice', 'sales_invoice_no', array('created_by' => $this->logged_in_id));
+                                            if(empty($sales_invoice_no->sales_invoice_no)){
+                                                $new_sales_invoice_no = 1;
+                                            } else {
+                                                $new_sales_invoice_no = $sales_invoice_no->sales_invoice_no + 1;    
                                             }
+                                            $entry_arr = array();
+                                            $entry_arr['sales_invoice_no'] = $new_sales_invoice_no;
+                                            $entry_arr['account_id'] = $acc_id;
+                                            $entry_arr['against_account_id'] = '152';
+                                            $entry_arr['sales_invoice_date'] = $rec_date;
+                                            $entry_arr['sales_invoice_desc'] = 'Import from Excel : '.$note;
+                                            $entry_arr['qty_total'] = '1';
+                                            $entry_arr['pure_amount_total'] = $sheet_entry['C'];
+                                            $entry_arr['amount_total'] = $sheet_entry['C'];
+                                            $entry_arr['created_at'] = $this->now_time;
+                                            $entry_arr['created_by'] = $this->logged_in_id;
+                                            $entry_arr['user_created_by'] = $this->session->userdata()['login_user_id'];
+                                            $this->crud->insert('sales_invoice', $entry_arr);
                                         }
                                     }
                                 }
-                                $data['import_client_ledger_data'] = $import_client_ledger_data;
                             }
+                            $data['import_client_ledger_data'] = $import_client_ledger_data;
                         }
-                        
+                    }
+                    
+                }
+            }
+            if($radio_type == 8) {
+                require_once('application/third_party/PHPExcel/PHPExcel.php');
+            	$objPHPExcel = PHPExcel_IOFactory::load($_FILES['userfile']['tmp_name']);
+                $allDataInSheet = $objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
+                unset($allDataInSheet[1]);
+                unset($allDataInSheet[2]);
+                unset($allDataInSheet[3]);
+                unset($allDataInSheet[4]);
+                unset($allDataInSheet[5]);
+                unset($allDataInSheet[6]);
+                unset($allDataInSheet[7]);
+                $import_acc_data = array();
+
+                $sales_invoice_res = array();
+                $sales_invoice_no = 0;
+                foreach ($allDataInSheet as $key => $excel_row) {
+                	if(empty($excel_row['I'])) { //Product
+                		continue;
+                	}
+
+                	$excel_row = array_map('trim', $excel_row);
+
+                	if(!empty($excel_row['B'])) {
+                		$sales_invoice_no = $excel_row['B'];	
+                	}
+
+                	if(!empty($sales_invoice_no)) {
+                		if(isset($sales_invoice_res[$sales_invoice_no]['lineitem'])) {
+                			$sales_invoice_res[$sales_invoice_no]['lineitem'][] = $excel_row;
+                		} else {
+                			$excel_row['K'] = str_replace(array(' ','%','GST'),'',$excel_row['K']);
+                			$sales_invoice_res[$sales_invoice_no] = $excel_row;
+                			$sales_invoice_res[$sales_invoice_no]['lineitem'][] = $excel_row;
+                		}
+                	}                	
+                }
+                /*echo "<pre>";
+                print_r($sales_invoice_res);
+                exit();*/
+                $import_sales_data = array();
+                foreach ($sales_invoice_res as $sales_invoice_no => $excel_row) {
+                	if(empty($excel_row['I'])) { //Product
+                		continue;
+                	}                    	
+                	/*echo "<pre>";
+                	print_r($excel_row);
+                	exit();*/
+
+                	$sales_invoice_row = $this->crud->get_data_row_by_where('sales_invoice',array('sales_invoice_no' => $sales_invoice_no, 'created_by' => $this->logged_in_id));
+
+                	if(!empty($sales_invoice_row)) {
+                		$import_sales_data[] = array(
+                			'invoice_no' => $excel_row['B'],
+                			'message' => '<span class="text-red">Invoice Already Added</span>',
+                		);
+                		continue;
+                	}
+                	
+                	$account_row = $this->crud->get_data_row_by_where('account',array('account_name' => $excel_row['D'], 'created_by' => $this->logged_in_id));
+                	if(!empty($account_row)) {
+                		$account_id = $account_row->account_id;
+                	} else {
+                		if($excel_row['C'] == "Cash") {
+                    		$account_group_id = CASH_IN_HAND_ACC_GROUP_ID;
+                    	} else {
+                    		$account_group_id = SUNDRY_DEBTORS_ACC_GROUP_ID;
+                    	}
+
+                		if(empty($excel_row['F'])) {
+                			$excel_row['F'] = 'Gujarat';	
+                		}                    		
+                		$account_state = $this->crud->get_data_row_by_where('state',array('state_name' => $excel_row['F']));
+
+                		if(!empty($account_state)) {
+                			$account_state = $account_state->state_id;
+                		} else {
+                			$state_data = array(
+                				'state_name' => $excel_row['F'],
+                				'is_deleted' => 0,
+                				'created_by' => $this->logged_in_id,
+                				'user_created_by' => $this->session->userdata()['login_user_id'],
+                				'created_at' => $this->now_time,
+                			);
+                			$account_state = $this->crud->insert('state',$state_data);
+                		}
+
+                		$account_city = $this->crud->get_data_row_by_where('city',array('city_name' => $excel_row['E'],'state_id' => $account_state));
+                		if(!empty($account_city)) {
+                			$account_city = $account_city->city_id;
+                		} else {
+                			$city_data = array(
+                				'state_id' => $account_state,
+                				'city_name' => $excel_row['E'],
+                				'is_deleted' => 0,
+                				'created_by' => $this->logged_in_id,
+                				'user_created_by' => $this->session->userdata()['login_user_id'],
+                				'created_at' => $this->now_time,
+                			);
+                			$account_city = $this->crud->insert('city',$city_data);
+                		}
+
+                		$account_data = array(
+                			'account_name' => $excel_row['D'],
+                			'account_group_id' => $account_group_id,
+                			'account_state' => $account_state,
+                			'account_city' => $account_city,
+                			'account_gst_no' => $excel_row['S'],
+                			'created_by' => $this->logged_in_id,
+                			'user_created_by' => $this->session->userdata()['login_user_id'],
+                			'created_at' => $this->now_time,
+                		);
+                		$account_id = $this->crud->insert('account',$account_data);
+                	}
+
+                	$qty_total = 0;
+                	$pure_amount_total = 0;
+                	$gst_per = $excel_row['K'];
+                	$cgst_amount_total = 0;
+            		$sgst_amount_total = 0;
+            		$igst_amount_total = 0;
+                	$amount_total = $excel_row['R'];
+
+            		if($excel_row['P'] > 0) {
+                		$igst = $gst_per;
+                		$cgst = 0;
+                		$sgst = 0;
+                	} else {
+                		$igst = 0;
+                		$cgst = ($gst_per / 2);
+                		$sgst = ($gst_per / 2);
+                	}
+
+                	$lineitem_data = array();
+                	foreach ($excel_row['lineitem'] as $key => $lineitem_row) {
+                		$item_data = $this->crud->get_data_row_by_where('item',array('item_name' => $lineitem_row['I']));
+                		if(!empty($item_data)) {
+                			$item_id = $item_data->item_id;
+                			$cat_id = $item_data->category_id;
+                			$sub_cat_id = $item_data->sub_category_id;
+                			$item_group_id = $item_data->item_group_id;
+                		} else {
+                			$hsn_code = $this->crud->get_data_row_by_where('hsn',array('hsn' => $lineitem_row['J']));
+                			if(!empty($hsn_code)) {
+                				$hsn_code = $hsn_code->hsn_id;
+                			} else {
+                				$hsn_code = $this->crud->insert('hsn',array('hsn' => $lineitem_row['J'],'created_by' => $this->logged_in_id,'created_at' => $this->now_time));
+                			}
+
+                			$item_data = array(
+                				'item_name' => $lineitem_row['I'],
+                				'hsn_code' => $hsn_code,
+                				'current_stock_qty' => 0,
+                				'created_by' => $this->logged_in_id,
+                				'user_created_by' => $this->session->userdata()['login_user_id'],
+                				'created_at' => $this->now_time,
+                			);
+                			$item_id = $this->crud->insert('item',$item_data);
+                			$cat_id = null;
+                			$sub_cat_id = null;
+                			$item_group_id = null;
+                		}
+
+                		$cgst_amount = 0;
+                		if($cgst > 0) {
+                			$cgst_amount = (($lineitem_row['M'] * $cgst) / 100);	
+                			$cgst_amount = round($cgst_amount);
+                		}
+
+                		$sgst_amount = 0;
+                		if($sgst > 0) {
+                			$sgst_amount = (($lineitem_row['M'] * $sgst) / 100);	
+                			$sgst_amount = round($sgst_amount);
+                		}
+
+                		$igst_amount = 0;
+                		if($igst > 0) {
+                			$igst_amount = (($lineitem_row['M'] * $igst) / 100);
+                			$igst_amount = round($igst_amount);
+                		}
+                		
+                		$amount = $lineitem_row['M'] + $cgst_amount + $sgst_amount + $igst_amount;
+                		if($lineitem_row['M'] > 0 && $lineitem_row['L'] > 0) {
+                			$price = ($lineitem_row['M'] / $lineitem_row['L']);
+                		} else {
+                			$price = 0;
+                		}                    		
+                		$price = round($price,2);
+
+                		$lineitem_data[] = array(
+                			'cat_id' => $cat_id,
+                			'sub_cat_id' => $sub_cat_id,
+                			'item_id' => $item_id,
+                			'item_group_id' => $item_group_id,
+                			'item_qty' => $lineitem_row['L'],
+                			'pure_amount' => $lineitem_row['M'],
+                			'unit_id' => KG_PACK_UNIT_ID,
+                			'price' => $price,
+                			'discount' => 0,
+                			'discounted_price' => $lineitem_row['M'],
+                			'cgst' => $cgst,
+                			'cgst_amount' => $cgst_amount,
+                			'sgst' => $sgst,
+                			'sgst_amount' => $sgst_amount,
+                			'igst' => $igst,
+                			'igst_amount' => $igst_amount,
+                			'other_charges' => 0,
+                			'amount' => $amount,
+                		);
+                		
+                		$qty_total += $lineitem_row['L'];
+                		$pure_amount_total += $lineitem_row['M'];
+                		$cgst_amount_total += $cgst_amount;
+                		$sgst_amount_total += $sgst_amount;
+                		$igst_amount_total += $igst_amount;
+                	}
+					
+					$round_off_amount = $amount_total - ($pure_amount_total + $cgst_amount_total + $sgst_amount_total + $igst_amount_total);
+					$round_off_amount = round($round_off_amount,2);
+
+					$invoice_type_row = $this->crud->get_data_row_by_where('invoice_type',array('invoice_type' => $excel_row['H']));
+                	if(!empty($invoice_type_row)) {
+                		$invoice_type = $invoice_type_row->invoice_type_id;
+                	} else {
+                		$invoice_type = $this->crud->insert('invoice_type',array('invoice_type' => $excel_row['H'],'created_by' => $this->logged_in_id,'created_at' => $this->now_time));
+                	}
+
+                	$sales_invoice_date = str_replace('/', '-',$excel_row['A']);
+                	$sales_invoice_date = date('Y-m-d', strtotime($sales_invoice_date));
+
+                	$invoice_data = array(
+                		'sales_invoice_no' => $excel_row['B'],
+                		'account_id' => $account_id,
+                		'sales_invoice_date' => $sales_invoice_date,
+                		'tax_type' => ($excel_row['G'] == "GST"?1:2),
+                		'invoice_type' => $invoice_type,
+                		'sales_invoice_desc' => 'Miracle Sales Data',
+                		'qty_total' => $qty_total,
+                		'pure_amount_total' => $pure_amount_total,
+                		'discount_total' => 0,
+                		'cgst_amount_total' => $cgst_amount_total,
+                		'sgst_amount_total' => $sgst_amount_total,
+                		'igst_amount_total' => $igst_amount_total,
+                		'other_charges_total' => 0,
+                		'round_off_amount' => $round_off_amount,
+                		'amount_total' => $amount_total,
+                		'created_by' => $this->logged_in_id,
+                		'user_created_by' => $this->session->userdata()['login_user_id'],
+                		'created_at' => $this->now_time,
+                	);
+                	$parent_id = $this->crud->insert('sales_invoice', $invoice_data);
+
+                	foreach($lineitem_data as $lineitem) {
+		                $lineitem['module'] = 2;
+		                $lineitem['parent_id'] = $parent_id;
+		                $lineitem['created_at'] = $this->now_time;
+		                $lineitem['updated_at'] = $this->now_time;
+		                $lineitem['updated_by'] = $this->logged_in_id;
+		                $lineitem['user_updated_by'] = $this->session->userdata()['login_user_id'];
+		                $lineitem['created_by'] = $this->logged_in_id;
+		                $lineitem['user_created_by'] = $this->session->userdata()['login_user_id'];
+		                $this->crud->insert('lineitems',$lineitem);
+
+		                $this->crud->update_item_current_stock_qty($lineitem['item_id'],$parent_id,'sales',1,'add');
+		            }
+
+                	$voucher_id = $parent_id;
+        			$operation = 'add';
+			        $other_params = array();
+			        $other_params['invoice_date'] = date('Y-m-d', strtotime($invoice_data['sales_invoice_date']));
+			        $this->crud->kasar_entry($invoice_data['account_id'],$voucher_id,'sales',$invoice_data['round_off_amount'],$operation,$other_params);
+
+                	/*$import_sales_data[] = array(
+            			'invoice_no' => $excel_row['B'],
+            			'message' => '<span class="text-green">Sales Invoice Inserted</span>',
+            		);*/
+                }
+                $data['import_sales_data'] = $import_sales_data;
+            }
+            if($radio_type == 9) {
+                require_once('application/third_party/PHPExcel/PHPExcel.php');
+                $objPHPExcel = PHPExcel_IOFactory::load($_FILES['userfile']['tmp_name']);
+                $allDataInSheet = $objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
+                unset($allDataInSheet[1]);
+                $import_acc_data = array();
+                if(!empty($allDataInSheet)){
+                    foreach ($allDataInSheet as $item){
+                        $item_arr = array();
+                        $item_arr['item_name'] = $item['A'];
+                        $item_arr['igst_per'] = $item['B'];
+                        $item_arr['cgst_per'] = $item['C'];
+                        $item_arr['sgst_per'] = $item['D'];
+                        $item_arr['created_at'] = $this->now_time;
+                        $item_arr['updated_at'] = $this->now_time;
+                        $item_arr['updated_by'] = $this->logged_in_id;
+                        $item_arr['created_by'] = $this->logged_in_id;
+                        $this->crud->insert('item',$item_arr);
                     }
                 }
-                if($radio_type == 8) {
-                    require_once('application/third_party/PHPExcel/PHPExcel.php');
-                	$objPHPExcel = PHPExcel_IOFactory::load($_FILES['userfile']['tmp_name']);
-                    $allDataInSheet = $objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
+				// echo "<pre>"; print_r($allDataInSheet); exit;
+            }
+            if($radio_type == 10) {
+                require_once('application/third_party/PHPExcel/PHPExcel.php');
+            	$objPHPExcel = PHPExcel_IOFactory::load($_FILES['userfile']['tmp_name']);
+                $allDataInSheet = $objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
+                unset($allDataInSheet[1]);
+                unset($allDataInSheet[2]);
+                unset($allDataInSheet[3]);
+                unset($allDataInSheet[4]);
+                unset($allDataInSheet[5]);
+                unset($allDataInSheet[6]);
+                unset($allDataInSheet[7]);
+                $import_acc_data = array();
+
+                $purchase_invoice_res = array();
+                $purchase_invoice_no = 0;
+                foreach ($allDataInSheet as $key => $excel_row) {
+                	if(empty($excel_row['I'])) { //Product
+                		continue;
+                	}
+
+                	$excel_row = array_map('trim', $excel_row);
+
+                	if(!empty($excel_row['B'])) {
+                		$purchase_invoice_no = $excel_row['B'];	
+                	}
+
+                	if(!empty($purchase_invoice_no)) {
+                		if(isset($purchase_invoice_res[$purchase_invoice_no]['lineitem'])) {
+                			$purchase_invoice_res[$purchase_invoice_no]['lineitem'][] = $excel_row;
+                		} else {
+                			$excel_row['K'] = str_replace(array(' ','%','GST'),'',$excel_row['K']);
+                			$purchase_invoice_res[$purchase_invoice_no] = $excel_row;
+                			$purchase_invoice_res[$purchase_invoice_no]['lineitem'][] = $excel_row;
+                		}
+                	}                	
+                }
+                /*echo "<pre>";
+                print_r($purchase_invoice_res);
+                exit();*/
+                $import_purchase_data = array();
+                foreach ($purchase_invoice_res as $purchase_invoice_no => $excel_row) {
+                	if(empty($excel_row['I'])) { //Product
+                		continue;
+                	}                    	
+                	/*echo "<pre>";
+                	print_r($excel_row);
+                	exit();*/
+
+                	// $purchase_invoice_row = $this->crud->get_data_row_by_where('purchase_invoice',array('purchase_invoice_no' => $purchase_invoice_no, 'created_by' => $this->logged_in_id));
+
+                	// TODO : Actually this conditon should be use more properly, but for now, removed to make data import work faster.
+					// if(!empty($purchase_invoice_row)) {
+                	// 	$import_purchase_data[] = array(
+                	// 		'invoice_no' => $excel_row['B'],
+                	// 		'message' => '<span class="text-red">Invoice Already Added</span>',
+                	// 	);
+                	// 	continue;
+                	// }
+                	
+                	$account_row = $this->crud->get_data_row_by_where('account',array('account_name' => $excel_row['D'], 'created_by' => $this->logged_in_id));
+                	if(!empty($account_row)) {
+                		$account_id = $account_row->account_id;
+                	} else {
+                		if($excel_row['C'] == "Cash") {
+                    		$account_group_id = CASH_IN_HAND_ACC_GROUP_ID;
+                    	} else {
+                    		$account_group_id = SUNDRY_DEBTORS_ACC_GROUP_ID;
+                    	}
+
+                		if(empty($excel_row['F'])) {
+                			$excel_row['F'] = 'Gujarat';	
+                		}                    		
+                		$account_state = $this->crud->get_data_row_by_where('state',array('state_name' => $excel_row['F']));
+
+                		if(!empty($account_state)) {
+                			$account_state = $account_state->state_id;
+                		} else {
+                			$state_data = array(
+                				'state_name' => $excel_row['F'],
+                				'is_deleted' => 0,
+                				'created_by' => $this->logged_in_id,
+                				'user_created_by' => $this->session->userdata()['login_user_id'],
+                				'created_at' => $this->now_time,
+                			);
+                			$account_state = $this->crud->insert('state',$state_data);
+                		}
+
+                		$account_city = $this->crud->get_data_row_by_where('city',array('city_name' => $excel_row['E'],'state_id' => $account_state));
+                		if(!empty($account_city)) {
+                			$account_city = $account_city->city_id;
+                		} else {
+                			$city_data = array(
+                				'state_id' => $account_state,
+                				'city_name' => $excel_row['E'],
+                				'is_deleted' => 0,
+                				'created_by' => $this->logged_in_id,
+                				'user_created_by' => $this->session->userdata()['login_user_id'],
+                				'created_at' => $this->now_time,
+                			);
+                			$account_city = $this->crud->insert('city',$city_data);
+                		}
+
+                		$account_data = array(
+                			'account_name' => $excel_row['D'],
+                			'account_group_id' => $account_group_id,
+                			'account_state' => $account_state,
+                			'account_city' => $account_city,
+                			'account_gst_no' => $excel_row['S'],
+                			'created_by' => $this->logged_in_id,
+                			'user_created_by' => $this->session->userdata()['login_user_id'],
+                			'created_at' => $this->now_time,
+                		);
+                		$account_id = $this->crud->insert('account',$account_data);
+                	}
+
+                	$qty_total = 0;
+                	$pure_amount_total = 0;
+                	$gst_per = $excel_row['K'];
+                	$cgst_amount_total = 0;
+            		$sgst_amount_total = 0;
+            		$igst_amount_total = 0;
+                	$amount_total = $excel_row['R'];
+
+            		if($excel_row['P'] > 0) {
+                		$igst = $gst_per;
+                		$cgst = 0;
+                		$sgst = 0;
+                	} else {
+                		$igst = 0;
+                		$cgst = ($gst_per / 2);
+                		$sgst = ($gst_per / 2);
+                	}
+
+                	$lineitem_data = array();
+                	foreach ($excel_row['lineitem'] as $key => $lineitem_row) {
+                		$item_data = $this->crud->get_data_row_by_where('item',array('item_name' => $lineitem_row['I']));
+                		if(!empty($item_data)) {
+                			$item_id = $item_data->item_id;
+                			$cat_id = $item_data->category_id;
+                			$sub_cat_id = $item_data->sub_category_id;
+                			$item_group_id = $item_data->item_group_id;
+                		} else {
+                			$hsn_code = $this->crud->get_data_row_by_where('hsn',array('hsn' => $lineitem_row['J']));
+                			if(!empty($hsn_code)) {
+                				$hsn_code = $hsn_code->hsn_id;
+                			} else {
+                				$hsn_code = $this->crud->insert('hsn',array('hsn' => $lineitem_row['J'],'created_by' => $this->logged_in_id,'created_at' => $this->now_time));
+                			}
+
+                			$item_data = array(
+                				'item_name' => $lineitem_row['I'],
+                				'hsn_code' => $hsn_code,
+                				'current_stock_qty' => 0,
+                				'created_by' => $this->logged_in_id,
+                				'user_created_by' => $this->session->userdata()['login_user_id'],
+                				'created_at' => $this->now_time,
+                			);
+                			$item_id = $this->crud->insert('item',$item_data);
+                			$cat_id = null;
+                			$sub_cat_id = null;
+                			$item_group_id = null;
+                		}
+
+                		$cgst_amount = 0;
+                		if($cgst > 0) {
+                			$cgst_amount = (($lineitem_row['M'] * $cgst) / 100);	
+                			$cgst_amount = round($cgst_amount);
+                		}
+
+                		$sgst_amount = 0;
+                		if($sgst > 0) {
+                			$sgst_amount = (($lineitem_row['M'] * $sgst) / 100);	
+                			$sgst_amount = round($sgst_amount);
+                		}
+
+                		$igst_amount = 0;
+                		if($igst > 0) {
+                			$igst_amount = (($lineitem_row['M'] * $igst) / 100);
+                			$igst_amount = round($igst_amount);
+                		}
+                		
+                		$amount = $lineitem_row['M'] + $cgst_amount + $sgst_amount + $igst_amount;
+                		if($lineitem_row['M'] > 0 && $lineitem_row['L'] > 0) {
+                			$price = ($lineitem_row['M'] / $lineitem_row['L']);
+                		} else {
+                			$price = 0;
+                		}                    		
+                		$price = round($price,2);
+
+                		$lineitem_data[] = array(
+                			'cat_id' => $cat_id,
+                			'sub_cat_id' => $sub_cat_id,
+                			'item_id' => $item_id,
+                			'item_group_id' => $item_group_id,
+                			'item_qty' => $lineitem_row['L'],
+                			'pure_amount' => $lineitem_row['M'],
+                			'unit_id' => KG_PACK_UNIT_ID,
+                			'price' => $price,
+                			'discount' => 0,
+                			'discounted_price' => $lineitem_row['M'],
+                			'cgst' => $cgst,
+                			'cgst_amount' => $cgst_amount,
+                			'sgst' => $sgst,
+                			'sgst_amount' => $sgst_amount,
+                			'igst' => $igst,
+                			'igst_amount' => $igst_amount,
+                			'other_charges' => 0,
+                			'amount' => $amount,
+                		);
+                		
+                		$qty_total += $lineitem_row['L'];
+                		$pure_amount_total += $lineitem_row['M'];
+                		$cgst_amount_total += $cgst_amount;
+                		$sgst_amount_total += $sgst_amount;
+                		$igst_amount_total += $igst_amount;
+                	}
+					
+					$round_off_amount = $amount_total - ($pure_amount_total + $cgst_amount_total + $sgst_amount_total + $igst_amount_total);
+					$round_off_amount = round($round_off_amount,2);
+
+					$invoice_type_row = $this->crud->get_data_row_by_where('invoice_type',array('invoice_type' => $excel_row['H']));
+                	if(!empty($invoice_type_row)) {
+                		$invoice_type = $invoice_type_row->invoice_type_id;
+                	} else {
+                		$invoice_type = $this->crud->insert('invoice_type',array('invoice_type' => $excel_row['H'],'created_by' => $this->logged_in_id,'created_at' => $this->now_time));
+                	}
+
+                	$purchase_invoice_date = str_replace('/', '-',$excel_row['A']);
+                	$purchase_invoice_date = date('Y-m-d', strtotime($purchase_invoice_date));
+
+                	$invoice_data = array(
+                		'purchase_invoice_no' => $excel_row['B'],
+                		'account_id' => $account_id,
+                		'purchase_invoice_date' => $purchase_invoice_date,
+                		'invoice_type' => $invoice_type,
+                		'purchase_invoice_desc' => 'Miracle Purchase Data',
+                		'qty_total' => $qty_total,
+                		'pure_amount_total' => $pure_amount_total,
+                		'discount_total' => 0,
+                		'cgst_amount_total' => $cgst_amount_total,
+                		'sgst_amount_total' => $sgst_amount_total,
+                		'igst_amount_total' => $igst_amount_total,
+                		'other_charges_total' => 0,
+                		'round_off_amount' => $round_off_amount,
+                		'amount_total' => $amount_total,
+                		'created_by' => $this->logged_in_id,
+                		'user_created_by' => $this->session->userdata()['login_user_id'],
+                		'created_at' => $this->now_time,
+                	);
+                	$parent_id = $this->crud->insert('purchase_invoice', $invoice_data);
+
+                	foreach($lineitem_data as $lineitem) {
+		                $lineitem['module'] = 2;
+		                $lineitem['parent_id'] = $parent_id;
+		                $lineitem['created_at'] = $this->now_time;
+		                $lineitem['updated_at'] = $this->now_time;
+		                $lineitem['updated_by'] = $this->logged_in_id;
+		                $lineitem['user_updated_by'] = $this->session->userdata()['login_user_id'];
+		                $lineitem['created_by'] = $this->logged_in_id;
+		                $lineitem['user_created_by'] = $this->session->userdata()['login_user_id'];
+		                $this->crud->insert('lineitems',$lineitem);
+
+		                $this->crud->update_item_current_stock_qty($lineitem['item_id'],$parent_id,'purchase',1,'add');
+		            }
+
+                	$voucher_id = $parent_id;
+        			$operation = 'add';
+			        $other_params = array();
+			        $other_params['invoice_date'] = date('Y-m-d', strtotime($invoice_data['purchase_invoice_date']));
+			        $this->crud->kasar_entry($invoice_data['account_id'],$voucher_id,'purchase',$invoice_data['round_off_amount'],$operation,$other_params);
+
+                	/*$import_purchase_data[] = array(
+            			'invoice_no' => $excel_row['B'],
+            			'message' => '<span class="text-green">Purchase Invoice Inserted!</span>',
+            		);*/
+                }
+                $data['import_purchase_data'] = $import_purchase_data;
+            }
+			if($radio_type == 11) {
+                require_once('application/third_party/PHPExcel/PHPExcel.php');
+                // Cash account id = CASH_ACCOUNT_ID 7  //
+                $objPHPExcel = PHPExcel_IOFactory::load($_FILES['userfile']['tmp_name']);
+                $allDataInSheet = $objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
+				// echo '<pre>';
+				// print_r($allDataInSheet);
+				// die();
+                $import_client_ledger_data = array();
+                if(!empty($allDataInSheet)){
                     unset($allDataInSheet[1]);
                     unset($allDataInSheet[2]);
                     unset($allDataInSheet[3]);
-                    unset($allDataInSheet[4]);
-                    unset($allDataInSheet[5]);
-                    unset($allDataInSheet[6]);
-                    unset($allDataInSheet[7]);
-                    $import_acc_data = array();
+					unset($allDataInSheet[4]);
+					unset($allDataInSheet[5]);
+					unset($allDataInSheet[6]);
+					unset($allDataInSheet[7]);
+					unset($allDataInSheet[8]);
+					unset($allDataInSheet[9]);
 
-                    $sales_invoice_res = array();
-                    $sales_invoice_no = 0;
-                    foreach ($allDataInSheet as $key => $excel_row) {
-                    	if(empty($excel_row['I'])) { //Product
-                    		continue;
-                    	}
+					if (!empty($allDataInSheet)) {
+						foreach ($allDataInSheet as $sheet_entry) {
+							if (empty($sheet_entry['F'])) {
+								break;
+							} else {
+								if (!empty($sheet_entry['A']) && !empty($sheet_entry['B'])) {
+									$rec_dat = str_replace('/', '-', substr($sheet_entry['A'], 0, 10));
+									$rec_date = date('Y-m-d', strtotime($rec_dat));
 
-                    	$excel_row = array_map('trim', $excel_row);
-
-                    	if(!empty($excel_row['B'])) {
-                    		$sales_invoice_no = $excel_row['B'];	
-                    	}
-
-                    	if(!empty($sales_invoice_no)) {
-                    		if(isset($sales_invoice_res[$sales_invoice_no]['lineitem'])) {
-                    			$sales_invoice_res[$sales_invoice_no]['lineitem'][] = $excel_row;
-                    		} else {
-                    			$excel_row['K'] = str_replace(array(' ','%','GST'),'',$excel_row['K']);
-                    			$sales_invoice_res[$sales_invoice_no] = $excel_row;
-                    			$sales_invoice_res[$sales_invoice_no]['lineitem'][] = $excel_row;
-                    		}
-                    	}                	
-                    }
-                    /*echo "<pre>";
-                    print_r($sales_invoice_res);
-                    exit();*/
-                    $import_sales_data = array();
-                    foreach ($sales_invoice_res as $sales_invoice_no => $excel_row) {
-                    	if(empty($excel_row['I'])) { //Product
-                    		continue;
-                    	}                    	
-                    	/*echo "<pre>";
-                    	print_r($excel_row);
-                    	exit();*/
-
-                    	$sales_invoice_row = $this->crud->get_data_row_by_where('sales_invoice',array('sales_invoice_no' => $sales_invoice_no, 'created_by' => $this->logged_in_id));
-
-                    	if(!empty($sales_invoice_row)) {
-                    		$import_sales_data[] = array(
-                    			'invoice_no' => $excel_row['B'],
-                    			'message' => '<span class="text-red">Invoice Already Added</span>',
-                    		);
-                    		continue;
-                    	}
-                    	
-                    	$account_row = $this->crud->get_data_row_by_where('account',array('account_name' => $excel_row['D'], 'created_by' => $this->logged_in_id));
-                    	if(!empty($account_row)) {
-                    		$account_id = $account_row->account_id;
-                    	} else {
-                    		if($excel_row['C'] == "Cash") {
-	                    		$account_group_id = CASH_IN_HAND_ACC_GROUP_ID;
-	                    	} else {
-	                    		$account_group_id = SUNDRY_DEBTORS_ACC_GROUP_ID;
-	                    	}
-
-                    		if(empty($excel_row['F'])) {
-                    			$excel_row['F'] = 'Gujarat';	
-                    		}                    		
-                    		$account_state = $this->crud->get_data_row_by_where('state',array('state_name' => $excel_row['F']));
-
-                    		if(!empty($account_state)) {
-                    			$account_state = $account_state->state_id;
-                    		} else {
-                    			$state_data = array(
-                    				'state_name' => $excel_row['F'],
-                    				'is_deleted' => 0,
-                    				'created_by' => $this->logged_in_id,
-                    				'user_created_by' => $this->session->userdata()['login_user_id'],
-                    				'created_at' => $this->now_time,
-                    			);
-                    			$account_state = $this->crud->insert('state',$state_data);
-                    		}
-
-                    		$account_city = $this->crud->get_data_row_by_where('city',array('city_name' => $excel_row['E'],'state_id' => $account_state));
-                    		if(!empty($account_city)) {
-                    			$account_city = $account_city->city_id;
-                    		} else {
-                    			$city_data = array(
-                    				'state_id' => $account_state,
-                    				'city_name' => $excel_row['E'],
-                    				'is_deleted' => 0,
-                    				'created_by' => $this->logged_in_id,
-                    				'user_created_by' => $this->session->userdata()['login_user_id'],
-                    				'created_at' => $this->now_time,
-                    			);
-                    			$account_city = $this->crud->insert('city',$city_data);
-                    		}
-
-                    		$account_data = array(
-                    			'account_name' => $excel_row['D'],
-                    			'account_group_id' => $account_group_id,
-                    			'account_state' => $account_state,
-                    			'account_city' => $account_city,
-                    			'account_gst_no' => $excel_row['S'],
-                    			'created_by' => $this->logged_in_id,
-                    			'user_created_by' => $this->session->userdata()['login_user_id'],
-                    			'created_at' => $this->now_time,
-                    		);
-                    		$account_id = $this->crud->insert('account',$account_data);
-                    	}
-
-                    	$qty_total = 0;
-                    	$pure_amount_total = 0;
-                    	$gst_per = $excel_row['K'];
-                    	$cgst_amount_total = 0;
-                		$sgst_amount_total = 0;
-                		$igst_amount_total = 0;
-                    	$amount_total = $excel_row['R'];
-
-                		if($excel_row['P'] > 0) {
-                    		$igst = $gst_per;
-                    		$cgst = 0;
-                    		$sgst = 0;
-                    	} else {
-                    		$igst = 0;
-                    		$cgst = ($gst_per / 2);
-                    		$sgst = ($gst_per / 2);
-                    	}
-
-                    	$lineitem_data = array();
-                    	foreach ($excel_row['lineitem'] as $key => $lineitem_row) {
-                    		$item_data = $this->crud->get_data_row_by_where('item',array('item_name' => $lineitem_row['I']));
-                    		if(!empty($item_data)) {
-                    			$item_id = $item_data->item_id;
-                    			$cat_id = $item_data->category_id;
-                    			$sub_cat_id = $item_data->sub_category_id;
-                    			$item_group_id = $item_data->item_group_id;
-                    		} else {
-                    			$hsn_code = $this->crud->get_data_row_by_where('hsn',array('hsn' => $lineitem_row['J']));
-                    			if(!empty($hsn_code)) {
-                    				$hsn_code = $hsn_code->hsn_id;
-                    			} else {
-                    				$hsn_code = $this->crud->insert('hsn',array('hsn' => $lineitem_row['J'],'created_by' => $this->logged_in_id,'created_at' => $this->now_time));
-                    			}
-
-                    			$item_data = array(
-                    				'item_name' => $lineitem_row['I'],
-                    				'hsn_code' => $hsn_code,
-                    				'current_stock_qty' => 0,
-                    				'created_by' => $this->logged_in_id,
-                    				'user_created_by' => $this->session->userdata()['login_user_id'],
-                    				'created_at' => $this->now_time,
-                    			);
-                    			$item_id = $this->crud->insert('item',$item_data);
-                    			$cat_id = null;
-                    			$sub_cat_id = null;
-                    			$item_group_id = null;
-                    		}
-
-                    		$cgst_amount = 0;
-                    		if($cgst > 0) {
-                    			$cgst_amount = (($lineitem_row['M'] * $cgst) / 100);	
-                    			$cgst_amount = round($cgst_amount);
-                    		}
-
-                    		$sgst_amount = 0;
-                    		if($sgst > 0) {
-                    			$sgst_amount = (($lineitem_row['M'] * $sgst) / 100);	
-                    			$sgst_amount = round($sgst_amount);
-                    		}
-
-                    		$igst_amount = 0;
-                    		if($igst > 0) {
-                    			$igst_amount = (($lineitem_row['M'] * $igst) / 100);
-                    			$igst_amount = round($igst_amount);
-                    		}
-                    		
-                    		$amount = $lineitem_row['M'] + $cgst_amount + $sgst_amount + $igst_amount;
-                    		if($lineitem_row['M'] > 0 && $lineitem_row['L'] > 0) {
-                    			$price = ($lineitem_row['M'] / $lineitem_row['L']);
-                    		} else {
-                    			$price = 0;
-                    		}                    		
-                    		$price = round($price,2);
-
-                    		$lineitem_data[] = array(
-                    			'cat_id' => $cat_id,
-                    			'sub_cat_id' => $sub_cat_id,
-                    			'item_id' => $item_id,
-                    			'item_group_id' => $item_group_id,
-                    			'item_qty' => $lineitem_row['L'],
-                    			'pure_amount' => $lineitem_row['M'],
-                    			'unit_id' => KG_PACK_UNIT_ID,
-                    			'price' => $price,
-                    			'discount' => 0,
-                    			'discounted_price' => $lineitem_row['M'],
-                    			'cgst' => $cgst,
-                    			'cgst_amount' => $cgst_amount,
-                    			'sgst' => $sgst,
-                    			'sgst_amount' => $sgst_amount,
-                    			'igst' => $igst,
-                    			'igst_amount' => $igst_amount,
-                    			'other_charges' => 0,
-                    			'amount' => $amount,
-                    		);
-                    		
-                    		$qty_total += $lineitem_row['L'];
-                    		$pure_amount_total += $lineitem_row['M'];
-                    		$cgst_amount_total += $cgst_amount;
-                    		$sgst_amount_total += $sgst_amount;
-                    		$igst_amount_total += $igst_amount;
-                    	}
-						
-						$round_off_amount = $amount_total - ($pure_amount_total + $cgst_amount_total + $sgst_amount_total + $igst_amount_total);
-						$round_off_amount = round($round_off_amount,2);
-
-						$invoice_type_row = $this->crud->get_data_row_by_where('invoice_type',array('invoice_type' => $excel_row['H']));
-                    	if(!empty($invoice_type_row)) {
-                    		$invoice_type = $invoice_type_row->invoice_type_id;
-                    	} else {
-                    		$invoice_type = $this->crud->insert('invoice_type',array('invoice_type' => $excel_row['H'],'created_by' => $this->logged_in_id,'created_at' => $this->now_time));
-                    	}
-
-                    	$sales_invoice_date = str_replace('/', '-',$excel_row['A']);
-                    	$sales_invoice_date = date('Y-m-d', strtotime($sales_invoice_date));
-
-                    	$invoice_data = array(
-                    		'sales_invoice_no' => $excel_row['B'],
-                    		'account_id' => $account_id,
-                    		'sales_invoice_date' => $sales_invoice_date,
-                    		'tax_type' => ($excel_row['G'] == "GST"?1:2),
-                    		'invoice_type' => $invoice_type,
-                    		'sales_invoice_desc' => 'Miracle Sales Data',
-                    		'qty_total' => $qty_total,
-                    		'pure_amount_total' => $pure_amount_total,
-                    		'discount_total' => 0,
-                    		'cgst_amount_total' => $cgst_amount_total,
-                    		'sgst_amount_total' => $sgst_amount_total,
-                    		'igst_amount_total' => $igst_amount_total,
-                    		'other_charges_total' => 0,
-                    		'round_off_amount' => $round_off_amount,
-                    		'amount_total' => $amount_total,
-                    		'created_by' => $this->logged_in_id,
-                    		'user_created_by' => $this->session->userdata()['login_user_id'],
-                    		'created_at' => $this->now_time,
-                    	);
-                    	$parent_id = $this->crud->insert('sales_invoice', $invoice_data);
-
-                    	foreach($lineitem_data as $lineitem) {
-			                $lineitem['module'] = 2;
-			                $lineitem['parent_id'] = $parent_id;
-			                $lineitem['created_at'] = $this->now_time;
-			                $lineitem['updated_at'] = $this->now_time;
-			                $lineitem['updated_by'] = $this->logged_in_id;
-			                $lineitem['user_updated_by'] = $this->session->userdata()['login_user_id'];
-			                $lineitem['created_by'] = $this->logged_in_id;
-			                $lineitem['user_created_by'] = $this->session->userdata()['login_user_id'];
-			                $this->crud->insert('lineitems',$lineitem);
-
-			                $this->crud->update_item_current_stock_qty($lineitem['item_id'],$parent_id,'sales',1,'add');
-			            }
-
-                    	$voucher_id = $parent_id;
-            			$operation = 'add';
-				        $other_params = array();
-				        $other_params['invoice_date'] = date('Y-m-d', strtotime($invoice_data['sales_invoice_date']));
-				        $this->crud->kasar_entry($invoice_data['account_id'],$voucher_id,'sales',$invoice_data['round_off_amount'],$operation,$other_params);
-
-                    	/*$import_sales_data[] = array(
-                			'invoice_no' => $excel_row['B'],
-                			'message' => '<span class="text-green">Sales Invoice Inserted</span>',
-                		);*/
-                    }
-                    $data['import_sales_data'] = $import_sales_data;
-                }
-                if($radio_type == 9) {
-                    require_once('application/third_party/PHPExcel/PHPExcel.php');
-                    $objPHPExcel = PHPExcel_IOFactory::load($_FILES['userfile']['tmp_name']);
-                    $allDataInSheet = $objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
-                    unset($allDataInSheet[1]);
-                    $import_acc_data = array();
-                    if(!empty($allDataInSheet)){
-                        foreach ($allDataInSheet as $item){
-                            $item_arr = array();
-                            $item_arr['item_name'] = $item['A'];
-                            $item_arr['igst_per'] = $item['B'];
-                            $item_arr['cgst_per'] = $item['C'];
-                            $item_arr['sgst_per'] = $item['D'];
-                            $item_arr['created_at'] = $this->now_time;
-                            $item_arr['updated_at'] = $this->now_time;
-                            $item_arr['updated_by'] = $this->logged_in_id;
-                            $item_arr['created_by'] = $this->logged_in_id;
-                            $this->crud->insert('item',$item_arr);
-                        }
-                    }
-//                    echo "<pre>"; print_r($allDataInSheet); exit;
-                }
-                if($radio_type == 10) {
-                    require_once('application/third_party/PHPExcel/PHPExcel.php');
-                	$objPHPExcel = PHPExcel_IOFactory::load($_FILES['userfile']['tmp_name']);
-                    $allDataInSheet = $objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
-                    unset($allDataInSheet[1]);
-                    unset($allDataInSheet[2]);
-                    unset($allDataInSheet[3]);
-                    unset($allDataInSheet[4]);
-                    unset($allDataInSheet[5]);
-                    unset($allDataInSheet[6]);
-                    unset($allDataInSheet[7]);
-                    $import_acc_data = array();
-
-                    $purchase_invoice_res = array();
-                    $purchase_invoice_no = 0;
-                    foreach ($allDataInSheet as $key => $excel_row) {
-                    	if(empty($excel_row['I'])) { //Product
-                    		continue;
-                    	}
-
-                    	$excel_row = array_map('trim', $excel_row);
-
-                    	if(!empty($excel_row['B'])) {
-                    		$purchase_invoice_no = $excel_row['B'];	
-                    	}
-
-                    	if(!empty($purchase_invoice_no)) {
-                    		if(isset($purchase_invoice_res[$purchase_invoice_no]['lineitem'])) {
-                    			$purchase_invoice_res[$purchase_invoice_no]['lineitem'][] = $excel_row;
-                    		} else {
-                    			$excel_row['K'] = str_replace(array(' ','%','GST'),'',$excel_row['K']);
-                    			$purchase_invoice_res[$purchase_invoice_no] = $excel_row;
-                    			$purchase_invoice_res[$purchase_invoice_no]['lineitem'][] = $excel_row;
-                    		}
-                    	}                	
-                    }
-                    /*echo "<pre>";
-                    print_r($purchase_invoice_res);
-                    exit();*/
-                    $import_purchase_data = array();
-                    foreach ($purchase_invoice_res as $purchase_invoice_no => $excel_row) {
-                    	if(empty($excel_row['I'])) { //Product
-                    		continue;
-                    	}                    	
-                    	/*echo "<pre>";
-                    	print_r($excel_row);
-                    	exit();*/
-
-                    	// $purchase_invoice_row = $this->crud->get_data_row_by_where('purchase_invoice',array('purchase_invoice_no' => $purchase_invoice_no, 'created_by' => $this->logged_in_id));
-
-                    	// TODO : Actually this conditon should be use more properly, but for now, removed to make data import work faster.
-						// if(!empty($purchase_invoice_row)) {
-                    	// 	$import_purchase_data[] = array(
-                    	// 		'invoice_no' => $excel_row['B'],
-                    	// 		'message' => '<span class="text-red">Invoice Already Added</span>',
-                    	// 	);
-                    	// 	continue;
-                    	// }
-                    	
-                    	$account_row = $this->crud->get_data_row_by_where('account',array('account_name' => $excel_row['D'], 'created_by' => $this->logged_in_id));
-                    	if(!empty($account_row)) {
-                    		$account_id = $account_row->account_id;
-                    	} else {
-                    		if($excel_row['C'] == "Cash") {
-	                    		$account_group_id = CASH_IN_HAND_ACC_GROUP_ID;
-	                    	} else {
-	                    		$account_group_id = SUNDRY_DEBTORS_ACC_GROUP_ID;
-	                    	}
-
-                    		if(empty($excel_row['F'])) {
-                    			$excel_row['F'] = 'Gujarat';	
-                    		}                    		
-                    		$account_state = $this->crud->get_data_row_by_where('state',array('state_name' => $excel_row['F']));
-
-                    		if(!empty($account_state)) {
-                    			$account_state = $account_state->state_id;
-                    		} else {
-                    			$state_data = array(
-                    				'state_name' => $excel_row['F'],
-                    				'is_deleted' => 0,
-                    				'created_by' => $this->logged_in_id,
-                    				'user_created_by' => $this->session->userdata()['login_user_id'],
-                    				'created_at' => $this->now_time,
-                    			);
-                    			$account_state = $this->crud->insert('state',$state_data);
-                    		}
-
-                    		$account_city = $this->crud->get_data_row_by_where('city',array('city_name' => $excel_row['E'],'state_id' => $account_state));
-                    		if(!empty($account_city)) {
-                    			$account_city = $account_city->city_id;
-                    		} else {
-                    			$city_data = array(
-                    				'state_id' => $account_state,
-                    				'city_name' => $excel_row['E'],
-                    				'is_deleted' => 0,
-                    				'created_by' => $this->logged_in_id,
-                    				'user_created_by' => $this->session->userdata()['login_user_id'],
-                    				'created_at' => $this->now_time,
-                    			);
-                    			$account_city = $this->crud->insert('city',$city_data);
-                    		}
-
-                    		$account_data = array(
-                    			'account_name' => $excel_row['D'],
-                    			'account_group_id' => $account_group_id,
-                    			'account_state' => $account_state,
-                    			'account_city' => $account_city,
-                    			'account_gst_no' => $excel_row['S'],
-                    			'created_by' => $this->logged_in_id,
-                    			'user_created_by' => $this->session->userdata()['login_user_id'],
-                    			'created_at' => $this->now_time,
-                    		);
-                    		$account_id = $this->crud->insert('account',$account_data);
-                    	}
-
-                    	$qty_total = 0;
-                    	$pure_amount_total = 0;
-                    	$gst_per = $excel_row['K'];
-                    	$cgst_amount_total = 0;
-                		$sgst_amount_total = 0;
-                		$igst_amount_total = 0;
-                    	$amount_total = $excel_row['R'];
-
-                		if($excel_row['P'] > 0) {
-                    		$igst = $gst_per;
-                    		$cgst = 0;
-                    		$sgst = 0;
-                    	} else {
-                    		$igst = 0;
-                    		$cgst = ($gst_per / 2);
-                    		$sgst = ($gst_per / 2);
-                    	}
-
-                    	$lineitem_data = array();
-                    	foreach ($excel_row['lineitem'] as $key => $lineitem_row) {
-                    		$item_data = $this->crud->get_data_row_by_where('item',array('item_name' => $lineitem_row['I']));
-                    		if(!empty($item_data)) {
-                    			$item_id = $item_data->item_id;
-                    			$cat_id = $item_data->category_id;
-                    			$sub_cat_id = $item_data->sub_category_id;
-                    			$item_group_id = $item_data->item_group_id;
-                    		} else {
-                    			$hsn_code = $this->crud->get_data_row_by_where('hsn',array('hsn' => $lineitem_row['J']));
-                    			if(!empty($hsn_code)) {
-                    				$hsn_code = $hsn_code->hsn_id;
-                    			} else {
-                    				$hsn_code = $this->crud->insert('hsn',array('hsn' => $lineitem_row['J'],'created_by' => $this->logged_in_id,'created_at' => $this->now_time));
-                    			}
-
-                    			$item_data = array(
-                    				'item_name' => $lineitem_row['I'],
-                    				'hsn_code' => $hsn_code,
-                    				'current_stock_qty' => 0,
-                    				'created_by' => $this->logged_in_id,
-                    				'user_created_by' => $this->session->userdata()['login_user_id'],
-                    				'created_at' => $this->now_time,
-                    			);
-                    			$item_id = $this->crud->insert('item',$item_data);
-                    			$cat_id = null;
-                    			$sub_cat_id = null;
-                    			$item_group_id = null;
-                    		}
-
-                    		$cgst_amount = 0;
-                    		if($cgst > 0) {
-                    			$cgst_amount = (($lineitem_row['M'] * $cgst) / 100);	
-                    			$cgst_amount = round($cgst_amount);
-                    		}
-
-                    		$sgst_amount = 0;
-                    		if($sgst > 0) {
-                    			$sgst_amount = (($lineitem_row['M'] * $sgst) / 100);	
-                    			$sgst_amount = round($sgst_amount);
-                    		}
-
-                    		$igst_amount = 0;
-                    		if($igst > 0) {
-                    			$igst_amount = (($lineitem_row['M'] * $igst) / 100);
-                    			$igst_amount = round($igst_amount);
-                    		}
-                    		
-                    		$amount = $lineitem_row['M'] + $cgst_amount + $sgst_amount + $igst_amount;
-                    		if($lineitem_row['M'] > 0 && $lineitem_row['L'] > 0) {
-                    			$price = ($lineitem_row['M'] / $lineitem_row['L']);
-                    		} else {
-                    			$price = 0;
-                    		}                    		
-                    		$price = round($price,2);
-
-                    		$lineitem_data[] = array(
-                    			'cat_id' => $cat_id,
-                    			'sub_cat_id' => $sub_cat_id,
-                    			'item_id' => $item_id,
-                    			'item_group_id' => $item_group_id,
-                    			'item_qty' => $lineitem_row['L'],
-                    			'pure_amount' => $lineitem_row['M'],
-                    			'unit_id' => KG_PACK_UNIT_ID,
-                    			'price' => $price,
-                    			'discount' => 0,
-                    			'discounted_price' => $lineitem_row['M'],
-                    			'cgst' => $cgst,
-                    			'cgst_amount' => $cgst_amount,
-                    			'sgst' => $sgst,
-                    			'sgst_amount' => $sgst_amount,
-                    			'igst' => $igst,
-                    			'igst_amount' => $igst_amount,
-                    			'other_charges' => 0,
-                    			'amount' => $amount,
-                    		);
-                    		
-                    		$qty_total += $lineitem_row['L'];
-                    		$pure_amount_total += $lineitem_row['M'];
-                    		$cgst_amount_total += $cgst_amount;
-                    		$sgst_amount_total += $sgst_amount;
-                    		$igst_amount_total += $igst_amount;
-                    	}
-						
-						$round_off_amount = $amount_total - ($pure_amount_total + $cgst_amount_total + $sgst_amount_total + $igst_amount_total);
-						$round_off_amount = round($round_off_amount,2);
-
-						$invoice_type_row = $this->crud->get_data_row_by_where('invoice_type',array('invoice_type' => $excel_row['H']));
-                    	if(!empty($invoice_type_row)) {
-                    		$invoice_type = $invoice_type_row->invoice_type_id;
-                    	} else {
-                    		$invoice_type = $this->crud->insert('invoice_type',array('invoice_type' => $excel_row['H'],'created_by' => $this->logged_in_id,'created_at' => $this->now_time));
-                    	}
-
-                    	$purchase_invoice_date = str_replace('/', '-',$excel_row['A']);
-                    	$purchase_invoice_date = date('Y-m-d', strtotime($purchase_invoice_date));
-
-                    	$invoice_data = array(
-                    		'purchase_invoice_no' => $excel_row['B'],
-                    		'account_id' => $account_id,
-                    		'purchase_invoice_date' => $purchase_invoice_date,
-                    		'invoice_type' => $invoice_type,
-                    		'purchase_invoice_desc' => 'Miracle Purchase Data',
-                    		'qty_total' => $qty_total,
-                    		'pure_amount_total' => $pure_amount_total,
-                    		'discount_total' => 0,
-                    		'cgst_amount_total' => $cgst_amount_total,
-                    		'sgst_amount_total' => $sgst_amount_total,
-                    		'igst_amount_total' => $igst_amount_total,
-                    		'other_charges_total' => 0,
-                    		'round_off_amount' => $round_off_amount,
-                    		'amount_total' => $amount_total,
-                    		'created_by' => $this->logged_in_id,
-                    		'user_created_by' => $this->session->userdata()['login_user_id'],
-                    		'created_at' => $this->now_time,
-                    	);
-                    	$parent_id = $this->crud->insert('purchase_invoice', $invoice_data);
-
-                    	foreach($lineitem_data as $lineitem) {
-			                $lineitem['module'] = 2;
-			                $lineitem['parent_id'] = $parent_id;
-			                $lineitem['created_at'] = $this->now_time;
-			                $lineitem['updated_at'] = $this->now_time;
-			                $lineitem['updated_by'] = $this->logged_in_id;
-			                $lineitem['user_updated_by'] = $this->session->userdata()['login_user_id'];
-			                $lineitem['created_by'] = $this->logged_in_id;
-			                $lineitem['user_created_by'] = $this->session->userdata()['login_user_id'];
-			                $this->crud->insert('lineitems',$lineitem);
-
-			                $this->crud->update_item_current_stock_qty($lineitem['item_id'],$parent_id,'purchase',1,'add');
-			            }
-
-                    	$voucher_id = $parent_id;
-            			$operation = 'add';
-				        $other_params = array();
-				        $other_params['invoice_date'] = date('Y-m-d', strtotime($invoice_data['purchase_invoice_date']));
-				        $this->crud->kasar_entry($invoice_data['account_id'],$voucher_id,'purchase',$invoice_data['round_off_amount'],$operation,$other_params);
-
-                    	/*$import_purchase_data[] = array(
-                			'invoice_no' => $excel_row['B'],
-                			'message' => '<span class="text-green">Purchase Invoice Inserted!</span>',
-                		);*/
-                    }
-                    $data['import_purchase_data'] = $import_purchase_data;
-                }
-				if($radio_type == 11) {
-                    require_once('application/third_party/PHPExcel/PHPExcel.php');
-                    // Cash account id = CASH_ACCOUNT_ID 7  //
-                    $objPHPExcel = PHPExcel_IOFactory::load($_FILES['userfile']['tmp_name']);
-                    $allDataInSheet = $objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
-					// echo '<pre>';
-					// print_r($allDataInSheet);
-					// die();
-                    $import_client_ledger_data = array();
-                    if(!empty($allDataInSheet)){
-                        unset($allDataInSheet[1]);
-                        unset($allDataInSheet[2]);
-                        unset($allDataInSheet[3]);
-						unset($allDataInSheet[4]);
-						unset($allDataInSheet[5]);
-						unset($allDataInSheet[6]);
-						unset($allDataInSheet[7]);
-						unset($allDataInSheet[8]);
-						unset($allDataInSheet[9]);
-
-						if (!empty($allDataInSheet)) {
-							foreach ($allDataInSheet as $sheet_entry) {
-								if (empty($sheet_entry['F'])) {
-									break;
-								} else {
-									if (!empty($sheet_entry['A']) && !empty($sheet_entry['B'])) {
-										$rec_dat = str_replace('/', '-', substr($sheet_entry['A'], 0, 10));
-										$rec_date = date('Y-m-d', strtotime($rec_dat));
-
-										$opposite_data = trim($sheet_entry['B'], " ");
-										$opposite_acc = $opposite_data;
-										$note = "This is note";
-										$account_row = $this->crud->get_data_row_by_where('account', array('account_name' => $opposite_acc));
-										if (!empty($account_row)) {
-											$account_id = $account_row->account_id;
-										}
-										else
-										{
-											$account_data['account_name'] = $opposite_acc;
-											$account_data['account_group_id'] = SUNDRY_DEBTORS_ACC_GROUP_ID;
-											$account_data['opening_balance'] = 0;
-											$account_data['credit_debit'] = "1";
-											$account_data['account_city'] = 2;
-											$account_data['account_postal_code'] = "";
-											$account_data['account_state'] = 7;
-											$account_data['account_pan'] = "";
-											$account_data['account_aadhaar'] = "";
-											$account_data['account_gst_no'] = "";
-											$account_data['account_contect_person_name'] = "";
-											$account_data['account_address'] = "";
-											$account_data['account_mobile_numbers'] = "";
-											$account_data['account_phone'] = "";
-											$account_data['account_email_ids'] = "";
-											$account_data['consider_in_pl'] = 1;
-											$account_data['created_by'] = $this->logged_in_id;
-											$account_data['user_created_by'] = $this->session->userdata()['login_user_id'];
-											$account_data['created_at'] = $this->now_time;
-											
-											$account_id = $this->crud->insert('account',$account_data);
-										}
-										
-										$credit_value = str_replace(",","",$sheet_entry['D']);
-										$debit_value  = str_replace(",","",$sheet_entry['E']);
-										if (empty($credit_value) && !empty($debit_value)) {
-											$transaction_entry_data['transaction_type'] = 2; // 1 = Payment, 2 = Receipt
-											$transaction_entry_data['transaction_date'] = $rec_date;
-											$transaction_entry_data['from_account_id']  = $account_id;
-											$transaction_entry_data['to_account_id']    = CASH_ACCOUNT_ID;
-											$transaction_entry_data['receipt_no']       = "";//there is No column for this in excel
-											$transaction_entry_data['amount']           = $debit_value;
-											$transaction_entry_data['created_at'] = $this->now_time;
-											$transaction_entry_data['created_by'] = $this->logged_in_id;
-											$transaction_entry_data['user_created_by'] = $this->session->userdata()['login_user_id'];
-											$result = $this->crud->insert('transaction_entry', $transaction_entry_data);
-											$last_tr_id = $this->db->insert_id();
-										} else if (!empty($credit_value) && empty($debit_value)) {
-											$transaction_entry_data['transaction_type'] = 1; // 1 = Payment, 2 = Receipt
-											$transaction_entry_data['transaction_date'] = $rec_date;
-											$transaction_entry_data['from_account_id']  = CASH_ACCOUNT_ID;
-											$transaction_entry_data['to_account_id']    = $account_id;
-											$transaction_entry_data['receipt_no']       = "";//there is No column for this in excel
-											$transaction_entry_data['amount']           = $credit_value;
-											$transaction_entry_data['created_at'] = $this->now_time;
-											$transaction_entry_data['created_by'] = $this->logged_in_id;
-											$transaction_entry_data['user_created_by'] = $this->session->userdata()['login_user_id'];
-											$result = $this->crud->insert('transaction_entry', $transaction_entry_data);
-											$last_tr_id = $this->db->insert_id();
-										}
+									$opposite_data = trim($sheet_entry['B'], " ");
+									$opposite_acc = $opposite_data;
+									$note = "This is note";
+									$account_row = $this->crud->get_data_row_by_where('account', array('account_name' => $opposite_acc));
+									if (!empty($account_row)) {
+										$account_id = $account_row->account_id;
 									}
-								}
-							}
-							$data['import_client_ledger_data'] = $import_client_ledger_data;
-						}
-					}
-				}
-				if($radio_type == 12) {
-                    require_once('application/third_party/PHPExcel/PHPExcel.php');
-                    // Cash account id = CASH_ACCOUNT_ID 7  //
-                    $objPHPExcel = PHPExcel_IOFactory::load($_FILES['userfile']['tmp_name']);
-                    $allDataInSheet = $objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
-					// echo '<pre>';
-					// print_r($allDataInSheet);
-					// die();
-                    $import_client_ledger_data = array();
-                    if(!empty($allDataInSheet)){
-                        unset($allDataInSheet[1]);
-                        unset($allDataInSheet[2]);
-                        unset($allDataInSheet[3]);
-						unset($allDataInSheet[4]);
-						unset($allDataInSheet[5]);
-
-                        //For Bank Name : Start
-						$bank_acc_name = substr($allDataInSheet[6]['A'], strpos($allDataInSheet[6]['A'], 'For') + 4);
-						$bank_account_row = $this->crud->get_data_row_by_where('account', array('account_name' => $bank_acc_name));
-						if (!empty($bank_account_row)) {
-							$bank_account_id = $bank_account_row->account_id;
-						}
-						else
-						{
-							$bank_account_data['account_name'] = $bank_acc_name;
-							$bank_account_data['account_group_id'] = BANK_ACC_GROUP_ID;
-							$bank_account_data['opening_balance'] = 0;
-							$bank_account_data['credit_debit'] = "1";
-							$bank_account_data['account_city'] = 2;
-							$bank_account_data['account_postal_code'] = "";
-							$bank_account_data['account_state'] = 7;
-							$bank_account_data['account_pan'] = "";
-							$bank_account_data['account_aadhaar'] = "";
-							$bank_account_data['account_gst_no'] = "";
-							$bank_account_data['account_contect_person_name'] = "";
-							$bank_account_data['account_address'] = "";
-							$bank_account_data['account_mobile_numbers'] = "";
-							$bank_account_data['account_phone'] = "";
-							$bank_account_data['account_email_ids'] = "";
-							$bank_account_data['consider_in_pl'] = 1;
-							$bank_account_data['created_by'] = $this->logged_in_id;
-							$bank_account_data['user_created_by'] = $this->session->userdata()['login_user_id'];
-							$bank_account_data['created_at'] = $this->now_time;
-							
-							$bank_account_id = $this->crud->insert('account',$bank_account_data);
-						}
-                        //For Bank Name : End
-
-						unset($allDataInSheet[6]);
-						unset($allDataInSheet[7]);
-						unset($allDataInSheet[8]);
-						if(strpos($allDataInSheet[9]['A'], 'Opening') !== false)
-							unset($allDataInSheet[9]);//When htere is No opening, Miracle does Not give Opening row and starts data
-
-						if (!empty($allDataInSheet)) {
-							foreach ($allDataInSheet as $sheet_entry) {
-								if (strpos($sheet_entry['A'], 'Total') > 0) {
-									break;
-								} else {
-									if (!empty($sheet_entry['A'])) {
-										$rec_dat = str_replace('/', '-', substr($sheet_entry['A'], 0, 10));
-										$rec_date = date('Y-m-d', strtotime($rec_dat));
-
-										$opposite_data = trim($sheet_entry['B'], " ");
-										$opposite_acc = $opposite_data;
-										$note = "This is note";
-										$account_row = $this->crud->get_data_row_by_where('account', array('account_name' => $opposite_acc));
-										if (!empty($account_row)) {
-											$account_id = $account_row->account_id;
-										}
-										else
-										{
-											$account_data['account_name'] = $opposite_acc;
-											$account_data['account_group_id'] = SUNDRY_DEBTORS_ACC_GROUP_ID;
-											$account_data['opening_balance'] = 0;
-											$account_data['credit_debit'] = "1";
-											$account_data['account_city'] = 2;
-											$account_data['account_postal_code'] = "";
-											$account_data['account_state'] = 7;
-											$account_data['account_pan'] = "";
-											$account_data['account_aadhaar'] = "";
-											$account_data['account_gst_no'] = "";
-											$account_data['account_contect_person_name'] = "";
-											$account_data['account_address'] = "";
-											$account_data['account_mobile_numbers'] = "";
-											$account_data['account_phone'] = "";
-											$account_data['account_email_ids'] = "";
-											$account_data['consider_in_pl'] = 1;
-											$account_data['created_by'] = $this->logged_in_id;
-											$account_data['user_created_by'] = $this->session->userdata()['login_user_id'];
-											$account_data['created_at'] = $this->now_time;
-											
-											$account_id = $this->crud->insert('account',$account_data);
-										}
-										
-										$credit_value = str_replace(",","",$sheet_entry['D']);
-										$debit_value  = str_replace(",","",$sheet_entry['E']);
-										if (empty($credit_value) && !empty($debit_value)) {
-											$transaction_entry_data['transaction_type'] = 2; // 1 = Payment, 2 = Receipt
-											$transaction_entry_data['transaction_date'] = $rec_date;
-											$transaction_entry_data['from_account_id']  = $account_id;
-											$transaction_entry_data['to_account_id']    = $bank_account_id;
-											$transaction_entry_data['receipt_no']       = "";//there is No column for this in excel
-											$transaction_entry_data['amount']           = $debit_value;
-											$transaction_entry_data['created_at'] = $this->now_time;
-											$transaction_entry_data['created_by'] = $this->logged_in_id;
-											$transaction_entry_data['user_created_by'] = $this->session->userdata()['login_user_id'];
-											$result = $this->crud->insert('transaction_entry', $transaction_entry_data);
-											$last_tr_id = $this->db->insert_id();
-										} else if (!empty($credit_value) && empty($debit_value)) {
-											$transaction_entry_data['transaction_type'] = 1; // 1 = Payment, 2 = Receipt
-											$transaction_entry_data['transaction_date'] = $rec_date;
-											$transaction_entry_data['from_account_id']  = $bank_account_id;
-											$transaction_entry_data['to_account_id']    = $account_id;
-											$transaction_entry_data['receipt_no']       = "";//there is No column for this in excel
-											$transaction_entry_data['amount']           = $credit_value;
-											$transaction_entry_data['created_at'] = $this->now_time;
-											$transaction_entry_data['created_by'] = $this->logged_in_id;
-											$transaction_entry_data['user_created_by'] = $this->session->userdata()['login_user_id'];
-											$result = $this->crud->insert('transaction_entry', $transaction_entry_data);
-											$last_tr_id = $this->db->insert_id();
-										}
-									}
-								}
-							}
-							$data['import_client_ledger_data'] = $import_client_ledger_data;
-						}
-					}
-				}
-				if($radio_type == 13) {
-                    require_once('application/third_party/PHPExcel/PHPExcel.php');
-                    // Cash account id = CASH_ACCOUNT_ID 7  //
-                    $objPHPExcel = PHPExcel_IOFactory::load($_FILES['userfile']['tmp_name']);
-                    $allDataInSheet = $objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
-					// echo '<pre>';
-					// print_r($allDataInSheet);
-					// die();
-                    $import_client_ledger_data = array();
-                    if(!empty($allDataInSheet)){
-                        unset($allDataInSheet[1]);
-                        unset($allDataInSheet[2]);
-                        unset($allDataInSheet[3]);
-						unset($allDataInSheet[4]);
-						unset($allDataInSheet[5]);
-						unset($allDataInSheet[6]);
-						unset($allDataInSheet[7]);
-
-						if (!empty($allDataInSheet)) {
-							foreach ($allDataInSheet as $sheet_entry) {
-								// print_r($sheet_entry);
-								if (strpos($sheet_entry['A'], 'Total') > 0) {
-									break;
-								} else {
-									if(strpos($sheet_entry['A'], 'Date') !== false)
+									else
 									{
-										$date_need_format     = str_replace('/', '-', substr($sheet_entry['A'], strpos($sheet_entry['A'], 'Date') + 7));
-										$current_journal_date = date('Y-m-d', strtotime($date_need_format));
-
-										continue;//date row contains date only, nothing else, this date will be used in next rows.
-									}
-									
-									if(strpos($sheet_entry['A'], 'Jrnl') !== false)
-									{//1 journal_id multiple record started here
-										$journal_data = array();
-										$journal_data['journal_date'] = $current_journal_date;
-										$journal_data['created_at'] = $this->now_time;
-										$journal_data['created_by'] = $this->logged_in_id;
-										$journal_data['user_created_by'] = $this->session->userdata()['login_user_id'];
-										$journal_id = $this->crud->insert('journal', $journal_data);
-									}
-
-									if (!empty($sheet_entry['B'])) {
-										$opposite_data = trim($sheet_entry['B'], " ");
-										$opposite_acc = $opposite_data;
-										$account_row = $this->crud->get_data_row_by_where('account', array('account_name' => $opposite_acc));
-										if (!empty($account_row)) {
-											$account_id = $account_row->account_id;
-										}
-										else
-										{
-											$account_data['account_name'] = $opposite_acc;
-											$account_data['account_group_id'] = SUNDRY_DEBTORS_ACC_GROUP_ID;
-											$account_data['opening_balance'] = 0;
-											$account_data['credit_debit'] = "1";
-											$account_data['account_city'] = 2;
-											$account_data['account_postal_code'] = "";
-											$account_data['account_state'] = 7;
-											$account_data['account_pan'] = "";
-											$account_data['account_aadhaar'] = "";
-											$account_data['account_gst_no'] = "";
-											$account_data['account_contect_person_name'] = "";
-											$account_data['account_address'] = "";
-											$account_data['account_mobile_numbers'] = "";
-											$account_data['account_phone'] = "";
-											$account_data['account_email_ids'] = "";
-											$account_data['consider_in_pl'] = 1;
-											$account_data['created_by'] = $this->logged_in_id;
-											$account_data['user_created_by'] = $this->session->userdata()['login_user_id'];
-											$account_data['created_at'] = $this->now_time;
-											
-											$account_id = $this->crud->insert('account',$account_data);
-										}
+										$account_data['account_name'] = $opposite_acc;
+										$account_data['account_group_id'] = SUNDRY_DEBTORS_ACC_GROUP_ID;
+										$account_data['opening_balance'] = 0;
+										$account_data['credit_debit'] = "1";
+										$account_data['account_city'] = 2;
+										$account_data['account_postal_code'] = "";
+										$account_data['account_state'] = 7;
+										$account_data['account_pan'] = "";
+										$account_data['account_aadhaar'] = "";
+										$account_data['account_gst_no'] = "";
+										$account_data['account_contect_person_name'] = "";
+										$account_data['account_address'] = "";
+										$account_data['account_mobile_numbers'] = "";
+										$account_data['account_phone'] = "";
+										$account_data['account_email_ids'] = "";
+										$account_data['consider_in_pl'] = 1;
+										$account_data['created_by'] = $this->logged_in_id;
+										$account_data['user_created_by'] = $this->session->userdata()['login_user_id'];
+										$account_data['created_at'] = $this->now_time;
 										
-										$contra = $this->crud->get_max_number_from_table('transaction_entry','contra_no');
-										if($contra->contra_no > 0){
-											$contra_no = $contra->contra_no + 1;
-										}
-										else
-											$contra_no = 1;
-							
-										$transaction_entry_data['transaction_type'] = 4; // 1 = Payment, 2 = Receipt, 4 = Havala (Journal)
-										$transaction_entry_data['journal_id']       = $journal_id;
-										$transaction_entry_data['transaction_date'] = $current_journal_date;
-										$transaction_entry_data['account_id']       = $account_id;
-										$transaction_entry_data['receipt_no']       = "";//there is No column for this in excel
-										$transaction_entry_data['contra_no']        = $contra_no;
-										$transaction_entry_data['created_at']       = $this->now_time;
-										$transaction_entry_data['created_by']       = $this->logged_in_id;
-										$transaction_entry_data['user_created_by']  = $this->session->userdata()['login_user_id'];
+										$account_id = $this->crud->insert('account',$account_data);
+									}
 									
-										$credit_value = str_replace(",","",$sheet_entry['D']);
-										$debit_value  = str_replace(",","",$sheet_entry['E']);
-										if (empty($credit_value) && !empty($debit_value)) {
-											$transaction_entry_data['is_credit_debit']  = 2; // 1 = Credit, 2 = Debit
-											$transaction_entry_data['from_account_id']  = $account_id;
-											$transaction_entry_data['to_account_id']    = NULL;
-											$transaction_entry_data['amount']           = $debit_value;
-											$result = $this->crud->insert('transaction_entry', $transaction_entry_data);
-											$last_tr_id = $this->db->insert_id();
-										} else if (!empty($credit_value) && empty($debit_value)) {
-											$transaction_entry_data['is_credit_debit']  = 1; // 1 = Credit, 2 = Debit
-											$transaction_entry_data['from_account_id']  = NULL;
-											$transaction_entry_data['to_account_id']    = $account_id;
-											$transaction_entry_data['amount']           = $credit_value;
-											$result = $this->crud->insert('transaction_entry', $transaction_entry_data);
-											$last_tr_id = $this->db->insert_id();
-										}
+									$credit_value = str_replace(",","",$sheet_entry['D']);
+									$debit_value  = str_replace(",","",$sheet_entry['E']);
+									if (empty($credit_value) && !empty($debit_value)) {
+										$transaction_entry_data['transaction_type'] = 2; // 1 = Payment, 2 = Receipt
+										$transaction_entry_data['transaction_date'] = $rec_date;
+										$transaction_entry_data['from_account_id']  = $account_id;
+										$transaction_entry_data['to_account_id']    = CASH_ACCOUNT_ID;
+										$transaction_entry_data['receipt_no']       = "";//there is No column for this in excel
+										$transaction_entry_data['amount']           = $debit_value;
+										$transaction_entry_data['created_at'] = $this->now_time;
+										$transaction_entry_data['created_by'] = $this->logged_in_id;
+										$transaction_entry_data['user_created_by'] = $this->session->userdata()['login_user_id'];
+										$result = $this->crud->insert('transaction_entry', $transaction_entry_data);
+										$last_tr_id = $this->db->insert_id();
+									} else if (!empty($credit_value) && empty($debit_value)) {
+										$transaction_entry_data['transaction_type'] = 1; // 1 = Payment, 2 = Receipt
+										$transaction_entry_data['transaction_date'] = $rec_date;
+										$transaction_entry_data['from_account_id']  = CASH_ACCOUNT_ID;
+										$transaction_entry_data['to_account_id']    = $account_id;
+										$transaction_entry_data['receipt_no']       = "";//there is No column for this in excel
+										$transaction_entry_data['amount']           = $credit_value;
+										$transaction_entry_data['created_at'] = $this->now_time;
+										$transaction_entry_data['created_by'] = $this->logged_in_id;
+										$transaction_entry_data['user_created_by'] = $this->session->userdata()['login_user_id'];
+										$result = $this->crud->insert('transaction_entry', $transaction_entry_data);
+										$last_tr_id = $this->db->insert_id();
 									}
 								}
 							}
-							$data['import_client_ledger_data'] = $import_client_ledger_data;
+						}
+						$data['import_client_ledger_data'] = $import_client_ledger_data;
+					}
+				}
+			}
+			if($radio_type == 12) {
+                require_once('application/third_party/PHPExcel/PHPExcel.php');
+                // Cash account id = CASH_ACCOUNT_ID 7  //
+                $objPHPExcel = PHPExcel_IOFactory::load($_FILES['userfile']['tmp_name']);
+                $allDataInSheet = $objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
+				// echo '<pre>';
+				// print_r($allDataInSheet);
+				// die();
+                $import_client_ledger_data = array();
+                if(!empty($allDataInSheet)){
+                    unset($allDataInSheet[1]);
+                    unset($allDataInSheet[2]);
+                    unset($allDataInSheet[3]);
+					unset($allDataInSheet[4]);
+					unset($allDataInSheet[5]);
+
+                    //For Bank Name : Start
+					$bank_acc_name = substr($allDataInSheet[6]['A'], strpos($allDataInSheet[6]['A'], 'For') + 4);
+					$bank_account_row = $this->crud->get_data_row_by_where('account', array('account_name' => $bank_acc_name));
+					if (!empty($bank_account_row)) {
+						$bank_account_id = $bank_account_row->account_id;
+					}
+					else
+					{
+						$bank_account_data['account_name'] = $bank_acc_name;
+						$bank_account_data['account_group_id'] = BANK_ACC_GROUP_ID;
+						$bank_account_data['opening_balance'] = 0;
+						$bank_account_data['credit_debit'] = "1";
+						$bank_account_data['account_city'] = 2;
+						$bank_account_data['account_postal_code'] = "";
+						$bank_account_data['account_state'] = 7;
+						$bank_account_data['account_pan'] = "";
+						$bank_account_data['account_aadhaar'] = "";
+						$bank_account_data['account_gst_no'] = "";
+						$bank_account_data['account_contect_person_name'] = "";
+						$bank_account_data['account_address'] = "";
+						$bank_account_data['account_mobile_numbers'] = "";
+						$bank_account_data['account_phone'] = "";
+						$bank_account_data['account_email_ids'] = "";
+						$bank_account_data['consider_in_pl'] = 1;
+						$bank_account_data['created_by'] = $this->logged_in_id;
+						$bank_account_data['user_created_by'] = $this->session->userdata()['login_user_id'];
+						$bank_account_data['created_at'] = $this->now_time;
+						
+						$bank_account_id = $this->crud->insert('account',$bank_account_data);
+					}
+                    //For Bank Name : End
+
+					unset($allDataInSheet[6]);
+					unset($allDataInSheet[7]);
+					unset($allDataInSheet[8]);
+					if(strpos($allDataInSheet[9]['A'], 'Opening') !== false)
+						unset($allDataInSheet[9]);//When htere is No opening, Miracle does Not give Opening row and starts data
+
+					if (!empty($allDataInSheet)) {
+						foreach ($allDataInSheet as $sheet_entry) {
+							if (strpos($sheet_entry['A'], 'Total') > 0) {
+								break;
+							} else {
+								if (!empty($sheet_entry['A'])) {
+									$rec_dat = str_replace('/', '-', substr($sheet_entry['A'], 0, 10));
+									$rec_date = date('Y-m-d', strtotime($rec_dat));
+
+									$opposite_data = trim($sheet_entry['B'], " ");
+									$opposite_acc = $opposite_data;
+									$note = "This is note";
+									$account_row = $this->crud->get_data_row_by_where('account', array('account_name' => $opposite_acc));
+									if (!empty($account_row)) {
+										$account_id = $account_row->account_id;
+									}
+									else
+									{
+										$account_data['account_name'] = $opposite_acc;
+										$account_data['account_group_id'] = SUNDRY_DEBTORS_ACC_GROUP_ID;
+										$account_data['opening_balance'] = 0;
+										$account_data['credit_debit'] = "1";
+										$account_data['account_city'] = 2;
+										$account_data['account_postal_code'] = "";
+										$account_data['account_state'] = 7;
+										$account_data['account_pan'] = "";
+										$account_data['account_aadhaar'] = "";
+										$account_data['account_gst_no'] = "";
+										$account_data['account_contect_person_name'] = "";
+										$account_data['account_address'] = "";
+										$account_data['account_mobile_numbers'] = "";
+										$account_data['account_phone'] = "";
+										$account_data['account_email_ids'] = "";
+										$account_data['consider_in_pl'] = 1;
+										$account_data['created_by'] = $this->logged_in_id;
+										$account_data['user_created_by'] = $this->session->userdata()['login_user_id'];
+										$account_data['created_at'] = $this->now_time;
+										
+										$account_id = $this->crud->insert('account',$account_data);
+									}
+									
+									$credit_value = str_replace(",","",$sheet_entry['D']);
+									$debit_value  = str_replace(",","",$sheet_entry['E']);
+									if (empty($credit_value) && !empty($debit_value)) {
+										$transaction_entry_data['transaction_type'] = 2; // 1 = Payment, 2 = Receipt
+										$transaction_entry_data['transaction_date'] = $rec_date;
+										$transaction_entry_data['from_account_id']  = $account_id;
+										$transaction_entry_data['to_account_id']    = $bank_account_id;
+										$transaction_entry_data['receipt_no']       = "";//there is No column for this in excel
+										$transaction_entry_data['amount']           = $debit_value;
+										$transaction_entry_data['created_at'] = $this->now_time;
+										$transaction_entry_data['created_by'] = $this->logged_in_id;
+										$transaction_entry_data['user_created_by'] = $this->session->userdata()['login_user_id'];
+										$result = $this->crud->insert('transaction_entry', $transaction_entry_data);
+										$last_tr_id = $this->db->insert_id();
+									} else if (!empty($credit_value) && empty($debit_value)) {
+										$transaction_entry_data['transaction_type'] = 1; // 1 = Payment, 2 = Receipt
+										$transaction_entry_data['transaction_date'] = $rec_date;
+										$transaction_entry_data['from_account_id']  = $bank_account_id;
+										$transaction_entry_data['to_account_id']    = $account_id;
+										$transaction_entry_data['receipt_no']       = "";//there is No column for this in excel
+										$transaction_entry_data['amount']           = $credit_value;
+										$transaction_entry_data['created_at'] = $this->now_time;
+										$transaction_entry_data['created_by'] = $this->logged_in_id;
+										$transaction_entry_data['user_created_by'] = $this->session->userdata()['login_user_id'];
+										$result = $this->crud->insert('transaction_entry', $transaction_entry_data);
+										$last_tr_id = $this->db->insert_id();
+									}
+								}
+							}
+						}
+						$data['import_client_ledger_data'] = $import_client_ledger_data;
+					}
+				}
+			}
+			if($radio_type == 13) {
+                require_once('application/third_party/PHPExcel/PHPExcel.php');
+                // Cash account id = CASH_ACCOUNT_ID 7  //
+                $objPHPExcel = PHPExcel_IOFactory::load($_FILES['userfile']['tmp_name']);
+                $allDataInSheet = $objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
+				// echo '<pre>';
+				// print_r($allDataInSheet);
+				// die();
+                $import_client_ledger_data = array();
+                if(!empty($allDataInSheet)){
+                    unset($allDataInSheet[1]);
+                    unset($allDataInSheet[2]);
+                    unset($allDataInSheet[3]);
+					unset($allDataInSheet[4]);
+					unset($allDataInSheet[5]);
+					unset($allDataInSheet[6]);
+					unset($allDataInSheet[7]);
+
+					if (!empty($allDataInSheet)) {
+						foreach ($allDataInSheet as $sheet_entry) {
+							// print_r($sheet_entry);
+							if (strpos($sheet_entry['A'], 'Total') > 0) {
+								break;
+							} else {
+								if(strpos($sheet_entry['A'], 'Date') !== false)
+								{
+									$date_need_format     = str_replace('/', '-', substr($sheet_entry['A'], strpos($sheet_entry['A'], 'Date') + 7));
+									$current_journal_date = date('Y-m-d', strtotime($date_need_format));
+
+									continue;//date row contains date only, nothing else, this date will be used in next rows.
+								}
+								
+								if(strpos($sheet_entry['A'], 'Jrnl') !== false)
+								{//1 journal_id multiple record started here
+									$journal_data = array();
+									$journal_data['journal_date'] = $current_journal_date;
+									$journal_data['created_at'] = $this->now_time;
+									$journal_data['created_by'] = $this->logged_in_id;
+									$journal_data['user_created_by'] = $this->session->userdata()['login_user_id'];
+									$journal_id = $this->crud->insert('journal', $journal_data);
+								}
+
+								if (!empty($sheet_entry['B'])) {
+									$opposite_data = trim($sheet_entry['B'], " ");
+									$opposite_acc = $opposite_data;
+									$account_row = $this->crud->get_data_row_by_where('account', array('account_name' => $opposite_acc));
+									if (!empty($account_row)) {
+										$account_id = $account_row->account_id;
+									}
+									else
+									{
+										$account_data['account_name'] = $opposite_acc;
+										$account_data['account_group_id'] = SUNDRY_DEBTORS_ACC_GROUP_ID;
+										$account_data['opening_balance'] = 0;
+										$account_data['credit_debit'] = "1";
+										$account_data['account_city'] = 2;
+										$account_data['account_postal_code'] = "";
+										$account_data['account_state'] = 7;
+										$account_data['account_pan'] = "";
+										$account_data['account_aadhaar'] = "";
+										$account_data['account_gst_no'] = "";
+										$account_data['account_contect_person_name'] = "";
+										$account_data['account_address'] = "";
+										$account_data['account_mobile_numbers'] = "";
+										$account_data['account_phone'] = "";
+										$account_data['account_email_ids'] = "";
+										$account_data['consider_in_pl'] = 1;
+										$account_data['created_by'] = $this->logged_in_id;
+										$account_data['user_created_by'] = $this->session->userdata()['login_user_id'];
+										$account_data['created_at'] = $this->now_time;
+										
+										$account_id = $this->crud->insert('account',$account_data);
+									}
+									
+									$contra = $this->crud->get_max_number_from_table('transaction_entry','contra_no');
+									if($contra->contra_no > 0){
+										$contra_no = $contra->contra_no + 1;
+									}
+									else
+										$contra_no = 1;
+						
+									$transaction_entry_data['transaction_type'] = 4; // 1 = Payment, 2 = Receipt, 4 = Havala (Journal)
+									$transaction_entry_data['journal_id']       = $journal_id;
+									$transaction_entry_data['transaction_date'] = $current_journal_date;
+									$transaction_entry_data['account_id']       = $account_id;
+									$transaction_entry_data['receipt_no']       = "";//there is No column for this in excel
+									$transaction_entry_data['contra_no']        = $contra_no;
+									$transaction_entry_data['created_at']       = $this->now_time;
+									$transaction_entry_data['created_by']       = $this->logged_in_id;
+									$transaction_entry_data['user_created_by']  = $this->session->userdata()['login_user_id'];
+								
+									$credit_value = str_replace(",","",$sheet_entry['D']);
+									$debit_value  = str_replace(",","",$sheet_entry['E']);
+									if (empty($credit_value) && !empty($debit_value)) {
+										$transaction_entry_data['is_credit_debit']  = 2; // 1 = Credit, 2 = Debit
+										$transaction_entry_data['from_account_id']  = $account_id;
+										$transaction_entry_data['to_account_id']    = NULL;
+										$transaction_entry_data['amount']           = $debit_value;
+										$result = $this->crud->insert('transaction_entry', $transaction_entry_data);
+										$last_tr_id = $this->db->insert_id();
+									} else if (!empty($credit_value) && empty($debit_value)) {
+										$transaction_entry_data['is_credit_debit']  = 1; // 1 = Credit, 2 = Debit
+										$transaction_entry_data['from_account_id']  = NULL;
+										$transaction_entry_data['to_account_id']    = $account_id;
+										$transaction_entry_data['amount']           = $credit_value;
+										$result = $this->crud->insert('transaction_entry', $transaction_entry_data);
+										$last_tr_id = $this->db->insert_id();
+									}
+								}
+							}
+						}
+						$data['import_client_ledger_data'] = $import_client_ledger_data;
+					}
+				}
+			}
+			if($radio_type == 14) {
+                require_once('application/third_party/PHPExcel/PHPExcel.php');
+                // Cash account id = CASH_ACCOUNT_ID 7  //
+                $objPHPExcel = PHPExcel_IOFactory::load($_FILES['userfile']['tmp_name']);
+                $allDataInSheet = $objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
+				// echo '<pre>';
+				// print_r($allDataInSheet);
+				// die();
+                $import_client_ledger_data = array();
+                if(!empty($allDataInSheet)){
+                    unset($allDataInSheet[1]);
+                    unset($allDataInSheet[2]);
+                    unset($allDataInSheet[3]);
+					unset($allDataInSheet[4]);
+					unset($allDataInSheet[5]);
+					unset($allDataInSheet[6]);
+					unset($allDataInSheet[7]);
+					unset($allDataInSheet[8]);
+					unset($allDataInSheet[9]);
+					unset($allDataInSheet[10]);
+					unset($allDataInSheet[11]);
+					unset($allDataInSheet[12]);
+					unset($allDataInSheet[13]);
+					unset($allDataInSheet[14]);
+					unset($allDataInSheet[15]);
+					unset($allDataInSheet[16]);
+					unset($allDataInSheet[17]);
+					unset($allDataInSheet[24]);
+					unset($allDataInSheet[25]);
+					unset($allDataInSheet[39]);
+					unset($allDataInSheet[40]);
+					unset($allDataInSheet[57]);
+					unset($allDataInSheet[58]);
+					unset($allDataInSheet[73]);
+					unset($allDataInSheet[74]);
+					unset($allDataInSheet[87]);
+					unset($allDataInSheet[88]);
+					unset($allDataInSheet[89]);
+					unset($allDataInSheet[90]);
+					unset($allDataInSheet[91]);
+					unset($allDataInSheet[92]);
+					unset($allDataInSheet[93]);
+					unset($allDataInSheet[94]);
+					unset($allDataInSheet[95]);
+					unset($allDataInSheet[96]);
+					unset($allDataInSheet[97]);
+					unset($allDataInSheet[98]);
+					unset($allDataInSheet[99]);
+					unset($allDataInSheet[100]);
+					unset($allDataInSheet[101]);
+					unset($allDataInSheet[102]);
+					unset($allDataInSheet[103]);
+					unset($allDataInSheet[104]);
+					unset($allDataInSheet[105]);
+
+					if (!empty($allDataInSheet)) {
+						// echo '<pre>';
+						// print_r($allDataInSheet);
+						// die();
+						foreach ($allDataInSheet as $sheet_entry) {
+							// echo '<pre>'; print_r($sheet_entry); 
+							
+							unset($sheet_entry['A']);
+
+							$transaction_entry_data['voucher_remote_id'] = (isset($sheet_entry['B']) && !empty($sheet_entry['B'])) ? $sheet_entry['B'] : null;
+							$transaction_entry_data['transaction_date'] = (isset($sheet_entry['D']) && !empty($sheet_entry['D'])) ? date('Y-m-d', strtotime($sheet_entry['D'])) : null;
+							$transaction_entry_data['note'] = (isset($sheet_entry['F']) && !empty($sheet_entry['F'])) ? $sheet_entry['F'] : null;
+							$transaction_entry_data['receipt_no'] = (isset($sheet_entry['I']) && !empty($sheet_entry['I'])) ? $sheet_entry['I'] : null;
+							$transaction_entry_data['transaction_type'] = (isset($sheet_entry['J']) && !empty($sheet_entry['J'])) ? 1 : 2;
+
+							// echo '<pre>'; print_r($transaction_entry_data); 
+							
+							$result = $this->crud->insert('transaction_entry', $transaction_entry_data);
+
+							if($transaction_entry_data['transaction_type'] == 1) { //payment
+				                $company_settings_id = $this->crud->get_column_value_by_id('company_settings','company_settings_id',array('company_id' => $this->logged_in_id,'setting_key' => 'payment_date'));
+				                if(!empty($company_settings_id)) {
+				                    $this->crud->update('company_settings',array("setting_value" => $transaction_entry_data['transaction_date'],'updated_at' => $this->now_time,'updated_by' => $this->logged_in_id),array('company_settings_id'=>$company_settings_id));
+				                } else {
+				                    $this->crud->insert('company_settings',array('company_id' => $this->logged_in_id,'setting_key' => 'payment_date',"setting_value" => $transaction_entry_data['transaction_date'],'created_at' => $this->now_time,'created_by' => $this->logged_in_id));
+				                }
+				            } else { //receipt
+				                $company_settings_id = $this->crud->get_column_value_by_id('company_settings','company_settings_id',array('company_id' => $this->logged_in_id,'setting_key' => 'receipt_date'));
+				                if(!empty($company_settings_id)) {
+				                    $this->crud->update('company_settings',array("setting_value" => $transaction_entry_data['transaction_date'],'updated_at' => $this->now_time,'updated_by' => $this->logged_in_id),array('company_settings_id'=>$company_settings_id));
+				                } else {
+				                    $this->crud->insert('company_settings',array('company_id' => $this->logged_in_id,'setting_key' => 'receipt_date',"setting_value" => $transaction_entry_data['transaction_date'],'created_at' => $this->now_time,'created_by' => $this->logged_in_id));
+				                }
+				            }	
 						}
 					}
 				}
-
-                
-                //if($result) {
-                    $this->session->set_flashdata('success', true);
-                    $this->session->set_flashdata('message', 'File Imported Successfully');
-                //}
-                set_page('master/import',$data);
+			}
+            
+            //if($result) {
+                $this->session->set_flashdata('success', true);
+                $this->session->set_flashdata('message', 'File Imported Successfully');
+            //}
+            set_page('master/import',$data);
         }
     }
     
