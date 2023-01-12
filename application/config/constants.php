@@ -249,6 +249,8 @@ define('UTGST_PENALTY_TYPE_ID', 18);
 define('UTGST_FEES_TYPE_ID', 19);
 define('UTGST_OTHER_CHARGES_TYPE_ID', 20);
 
+define('SHOW_TEXTAREA', 1);
+
 
 // VUE App URL
 define('VUE_BASE_URL', 'http://192.168.0.119:8081/');

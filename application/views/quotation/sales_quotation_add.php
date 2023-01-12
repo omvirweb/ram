@@ -76,11 +76,28 @@
                                                 </div>
                                             <?php } ?>
                                         <?php } ?>
-                                        <div class="col-md-3 ">
+                                        <!-- <div class="col-md-3 ">
                                             <div class="form-group">
                                                 <label for="item_id" class="control-label">Item.</label>         
                                                 <select name="line_items_data[item_id]" id="item_id" class="item_id" data-index="29"></select>
                                             </div>
+                                        </div> -->
+                                        <div class="col-md-3 ">
+                                            <?php if(SHOW_TEXTAREA==0) {?>
+                                                <div class="form-group">
+                                                    <label for="item_id" class="control-label">Item.</label>         
+                                                    <select name="line_items_data[item_id]" id="item_id" class="item_id" data-index="29"></select>
+                                                </div>
+                                            <?php } else{?>
+
+                                                
+                                                <div class="form-group">
+                                                    <label for="line_item_des" class="control-label">Item Description</label>
+                                                    <textarea name="line_items_data[line_item_des]" id="line_item_des" class="line_item_des form-control" data-index="29" placeholder=""></textarea>
+                                                </div>
+                                                
+
+                                            <?php } ?>
                                         </div>
                                         <!-- <div class="col-md-1 pr0">
                                             <div class="form-group">
@@ -249,7 +266,15 @@ $(document).on('keydown', function(event) {
     $(document).ready(function(){
         initAjaxSelect2($("#site_id"), "<?= base_url('app/sites_select2_source') ?>");
         initAjaxSelect2($("#account_id"),"<?=base_url('app/account_select2_source/')?>");
-        initAjaxSelect2($("#unit_id"),"<?=base_url('app/unit_select2_source/')?>");
+        // initAjaxSelect2($("#unit_id"),"<?=base_url('app/unit_select2_source/')?>");
+
+        <?php if(SHOW_TEXTAREA==0) { ?>
+		  initAjaxSelect2($("#unit_id"),"<?=base_url('app/unit_select2_source_by_item_id/')?>");
+        <?php } else {?>
+            initAjaxSelect2($("#unit_id"),"<?=base_url('app/unit_select2_source/')?>");
+        <?php }?>
+
+
         <?php if(isset($quotation_data->account_id)){ ?>
             setSelect2Value($("#account_id"),"<?=base_url('app/set_account_select2_val_by_id/')?>" + <?=$quotation_data->account_id; ?>);
         <?php } ?>
@@ -312,6 +337,12 @@ $(document).on('keydown', function(event) {
                 });
             }
         });
+
+        function nl2br(str){
+            if(str != "undefined" && str !== null){
+                return str.replace(/(?:\r\n|\r|\n)/g, '<br>');
+            }
+        }
 
         $('#item_id').on('change', function() {
             var item_id = $('#item_id').val();
@@ -393,11 +424,27 @@ $(document).on('keydown', function(event) {
         });
 
         $('#add_lineitem').on('click', function() {
+
+
+
+            var line_item_des='';
+
+            <?php if(SHOW_TEXTAREA==0) { ?>
             var item_id = $("#item_id").val();
             if(item_id == '' || item_id == null){
                 show_notify("Please select Product.", false);
                 return false;
             }
+            <?php } else {?>
+            var item_id = nl2br($("#line_item_des").val());
+            line_item_des=nl2br($("#line_item_des").val());
+            if(item_id == '' || item_id == null){
+                show_notify("Please select Item Description.", false);
+                return false;
+            }
+
+            <?php }?>
+
             var item_qty = $("#item_qty").val();
             if(item_qty == '' || item_qty == null){
                 show_notify("Please enter Product Qty.", false);
@@ -422,6 +469,8 @@ $(document).on('keydown', function(event) {
                 value = $(this).val();
                 lineitem[key] = value;
             });
+
+            lineitem['line_item_des'] =  line_item_des;
 
             var item_price = $('#price').val();
             var item_qty = $('#item_qty').val();
@@ -547,7 +596,12 @@ $(document).on('keydown', function(event) {
             '<td>' + value_item_group_name + '</td>' + 
             <?php } ?>
 
+            <?php if(SHOW_TEXTAREA==0){ ?>
             '<td>' + item_name + '</td>' +
+            <?php }else{ ?>
+
+            '<td>' + value.line_item_des + '</td>' +
+            <?php } ?>
             '<td class="text-right">' + value.item_qty + '</td>' +
             // '<td class="text-right">' + (value.item_mrp != null && value.item_mrp != 0?value.item_mrp:'') + '</td>' +
             '<td class="text-right">' + value.price + '</td>' +
@@ -603,6 +657,13 @@ $(document).on('keydown', function(event) {
         if(typeof(value.id) != "undefined" && value.id !== null) {
             $("#lineitem_id").val(value.id);
         }
+
+        <?php if(SHOW_TEXTAREA==0){ ?>
+            
+        <?php }else{ ?>
+
+            $("#line_item_des").val(value.line_item_des);
+        <?php } ?>
 
         $("#item_qty").val(value.item_qty);
         $("#price").val(value.price);
