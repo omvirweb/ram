@@ -132,6 +132,9 @@
         </thead>
         <tbody id="doc_table"></tbody>
         </table>
+        <form target="_blank" id="frm-download-multiple-invoices" action="<?php echo base_url('sales/download_multiple_invoices') ?>" method="POST">
+            <input type="hidden" name="invoice_ids">
+        </form>
       </div>
     </div>
   </div>
@@ -246,7 +249,23 @@
                         $(win.document.body).find('table thead th:nth-child(5)').css('text-align', 'right');
                         $(win.document.body).find('table tbody td:nth-child(5)').css('text-align', 'right');
                         $(win.document.body).find('table tfoot th:nth-child(5)').css('text-align', 'right');
-                    }, orientation: 'landscape', action: newExportAction}),
+                    }, orientation: 'landscape', action: newExportAction
+                }),
+                {
+                    text: 'Download Multiple Invoices',
+                    action: function ( e, dt, node, config ) {
+                        let values = [];
+                        $('#product-table [name="invoice_ids[]"]:checked').each(function() {
+                           values.push($(this).val());
+                        });
+                        if (values.length) {
+                            $('#frm-download-multiple-invoices [name="invoice_ids"]').val(values);
+                            $('#frm-download-multiple-invoices').submit();
+                        } else {
+                            show_notify('Please select at least one invoice!', false);
+                        }
+                    }
+                }
             ],
             "serverSide": true,
             "ordering": true,

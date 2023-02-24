@@ -65,6 +65,7 @@ ob_start();
 
     </head>
     <body>
+        <?php foreach($invoice_data as $data) { extract($data); ?>
         <table border="1" style="width: 100%; font-size: 13px">
             <?php if(!empty($letterpad_print)){ ?>
             <tr align="center" class="border1">
@@ -264,6 +265,6 @@ ob_start();
                 </td>
             </tr>
         </table>
-
+        <?php } ?>
     </body>
 </html>

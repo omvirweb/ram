@@ -1321,8 +1321,11 @@ class Report extends CI_Controller {
                     $delete_link = '';
                 }
                 
-                $debit_amt = 0;
-                $credit_amt = $list_row->amount_total; 
+                // $debit_amt = 0;
+                // $credit_amt = $list_row->amount_total; 
+                
+                $credit_amt = 0;
+                $debit_amt = $list_row->amount_total; 
             
             } elseif ($list_row->tran_type == "against_purchase") {
                 $bill_no = $list_row->bill_no;
