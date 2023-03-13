@@ -962,6 +962,22 @@ class Transaction extends CI_Controller {
             redirect('/');
         }
 
+        // Get Partners
+        $partners = [];
+        $this->db->select("partner_id,partner_name,partner_sign");
+        $this->db->from("partners");
+        $this->db->order_by("partner_name");
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            foreach ($query->result() as $row) {
+                $partners[] = array(
+                    'partner_id' => $row->partner_id,
+                    'partner_name' => $row->partner_name,
+                    'partner_sign' => $row->partner_sign
+                );
+            }
+        }
+
         $data['page_title'] = $page_title;
         $data['voucher_type'] = $voucher_type;
         $data['voucher_label'] = $voucher_label;
@@ -969,10 +985,15 @@ class Transaction extends CI_Controller {
         $data['invoice_list_url'] = $invoice_list_url;
         $data['invoice_save_url'] = $invoice_save_url;
         $data['invoice_id'] = $invoice_id;
+        $data['partners'] = $partners;
         
         if(isset($invoice_type)) {
             $data['invoice_type'] = $invoice_type;
         }
+
+        // echo "<pre>";
+        // print_r($data);
+        // exit;
 
         $is_single_line_item = $this->session->userdata(PACKAGE_FOLDER_NAME.'is_logged_in')['is_single_line_item'];
         if($is_single_line_item) {
@@ -1263,6 +1284,11 @@ class Transaction extends CI_Controller {
             $post_data['prefix'] = '';
         }
 
+        // check for partner
+        if(isset($post_data['partner_sign'])) {
+            $invoice_data['partner_sign'] = $post_data['partner_sign'];
+        }
+
         if($voucher_type == 'sales') {
             $module = 2;
             $invoice_data['prefix'] = $post_data['prefix'];
@@ -1501,7 +1527,6 @@ class Transaction extends CI_Controller {
 
             }
             elseif($voucher_type == 'purchase') {
-
                 $where_array['purchase_invoice_id'] = $post_data['invoice_id'];
                 $this->crud->update('purchase_invoice', $invoice_data, $where_array);
                 $this->session->set_flashdata('message','Purchase Invoice Updated Successfully');

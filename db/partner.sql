@@ -1,0 +1,3 @@
+CREATE TABLE `rambirthtest`.`partners` ( `partner_id` INT(11) NOT NULL AUTO_INCREMENT , `partner_name` VARCHAR(255) NOT NULL , `partner_sign` VARCHAR(255) NULL DEFAULT NULL , `created_by` INT(11) NULL DEFAULT NULL , `created_at` DATETIME NULL DEFAULT NULL , `updated_by` INT(11) NULL DEFAULT NULL , `updated_at` DATETIME NULL DEFAULT NULL , `user_updated_by` INT(11) NULL DEFAULT NULL , `user_created_by` INT(11) NULL DEFAULT NULL , PRIMARY KEY (`partner_id`)) ENGINE = InnoDB;
+ALTER TABLE `sales_invoice` ADD `partner_sign` VARCHAR(255) NULL DEFAULT NULL AFTER `prof_tax`;
+ALTER TABLE `purchase_invoice` ADD `partner_sign` VARCHAR(255) NULL DEFAULT NULL AFTER `company_id`;

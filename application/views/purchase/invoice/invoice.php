@@ -81,6 +81,18 @@
 										<input type="text" name="bill_no" id="bill_no" class="form-control" data-index="3" value="<?=isset($purchase_invoice_data->bill_no) ? $purchase_invoice_data->bill_no : ''; ?>">
 									</div>
 								</div>
+								<?php if (isset($partners)) { ?>
+									<div class="col-md-6">
+										<div class="form-group">
+											<label for="bill_no" class="control-label">Partner</label>
+											<select name="partner_sign" id="partner_sign" required class="form-control">
+												<?php foreach($partners as $partner) { ?>
+													<option value="<?php $partner['partner_sign'] ?>" <?=isset($purchase_invoice_data->partner_sign) && $purchase_invoice_data->partner_sign == $partner['partner_sign'] ? 'selected' : ''; ?>><?php $partner['partner_name'] ?></option>
+												<?php } ?>
+											</select>
+										</div>
+									</div>
+								<?php } ?>
 								<div class="clearfix"></div>
 								
 								

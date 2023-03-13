@@ -4663,6 +4663,148 @@ class Master extends CI_Controller
 		print json_encode($return);
 		exit;
 	}
+	
+	function partners(){
+		$data = array();
+        if (!empty($_POST['id']) && isset($_POST['id'])) {
+            if($this->applib->have_access_role(MASTER_ITEM_TYPE_ID,"edit")) {
+            	$result = $this->crud->get_data_row_by_id('partners','partner_id',$_POST['id']);
+				$data = array(
+					'id' => $result->partner_id,
+					'name' => $result->partner_name,
+				);
+	        	set_page('master/partner', $data);;
+	        } else {
+	        	$this->session->set_flashdata('success', false);
+                $this->session->set_flashdata('message', 'You have not permission to access this page.');
+	        	redirect('/');
+	        }
+        } else {
+            if($this->applib->have_access_role(MASTER_ITEM_TYPE_ID,"view") || $this->applib->have_access_role(MASTER_ITEM_TYPE_ID,"add")) {
+	        	set_page('master/partner', $data);
+	        } else {
+	        	$this->session->set_flashdata('success', false);
+                $this->session->set_flashdata('message', 'You have not permission to access this page.');
+	        	redirect('/');
+	        }
+        }
+	}
+
+	function partner_datatable(){
+		$config['select'] = 'partner_id, partner_name, partner_sign';
+		$config['table'] = 'partners';
+		$config['column_order'] = array(null, 'partner_name');
+		$config['column_search'] = array('partner_name');
+		$config['order'] = array('partner_name' => 'desc');
+		$this->load->library('datatables', $config, 'datatable');
+		$list = $this->datatable->get_datatables();
+		$data = array();
+		$isEdit = $this->applib->have_access_role(MASTER_ITEM_TYPE_ID, "edit");
+		$isDelete = $this->applib->have_access_role(MASTER_ITEM_TYPE_ID, "delete");
+		foreach ($list as $partners) {
+			$row = array();
+			$action = '';
+			if($isEdit) {
+				$action .= '<form id="edit_' . $partners->partner_id . '" method="post" action="' . base_url() . 'master/partners" class="pull-left">
+						<input type="hidden" name="id" id="id" value="' . $partners->partner_id . '">
+						<a class="edit_button btn-primary btn-xs" href="javascript:{}" onclick="document.getElementById(\'edit_' . $partners->partner_id . '\').submit();" title="Edit Company"><i class="fa fa-edit"></i></a>
+						</form>';	
+			}
+			
+			if($isDelete) {
+				$action .= ' &nbsp; <a href="javascript:void(0);" class="delete_button btn-danger btn-xs" data-href="' . base_url('master/delete/' . $partners->partner_id) . '"><i class="fa fa-trash"></i></a>';	
+			}
+			
+			$row[] = $action;
+			$row[] = $partners->partner_name;
+			$row[] = "<img src='".base_url('assets/uploads/images/signs/'.$partners->partner_sign)."' alt='Sign' width='100px' class='img-thumbnail' />";
+			$data[] = $row;
+		}
+
+		$output = array(
+			"draw" => $_POST['draw'],
+			"recordsTotal" => $this->datatable->count_all(),
+			"recordsFiltered" => $this->datatable->count_filtered(),
+			"data" => $data,
+		);
+		//output to json format
+		echo json_encode($output);
+	}
+
+	function save_partner(){
+		$return = array();
+		$post_data = $this->input->post();
+		if(isset($post_data['id']) && !empty($post_data['id'])){
+			$v_id = $this->crud->get_id_by_val_not('partners','partner_id','partner_name',trim($post_data['partner_name']),$post_data['id']);
+			if(!empty($v_id)) {
+				$return['error'] = "Exist";
+				print json_encode($return);
+				exit;
+			}
+
+			if (isset($_FILES['partner_sign'])) {
+				$data['partner_sign'] = $this->uploadPartnerSign('partner_sign');
+			}
+
+			$data['partner_name'] = $post_data['partner_name'];
+			$data['updated_at'] = $this->now_time;
+			$data['updated_by'] = $this->logged_in_id;
+			$data['user_updated_by'] = $this->session->userdata()['login_user_id'];
+			$where_array['partner_id'] = $post_data['id'];
+			$result = $this->crud->update('partners', $data, $where_array);
+			if ($result) {
+				$return['success'] = "Updated";
+			}
+		}else{
+			$v_id = $this->crud->get_id_by_val('partners','partner_id','partner_name',trim($post_data['partner_name']));
+			if(!empty($v_id)) {
+				$return['error'] = "Exist";
+				print json_encode($return);
+				exit;
+			}
+			if (isset($_FILES['partner_sign'])) {
+				$data['partner_sign'] = $this->uploadPartnerSign('partner_sign');
+			}
+			$data['partner_name'] = $post_data['partner_name'];
+			$data['created_at'] = $this->now_time;
+			$data['updated_at'] = $this->now_time;
+			$data['updated_by'] = $this->logged_in_id;
+			$data['user_updated_by'] = $this->session->userdata()['login_user_id'];
+			$data['created_by'] = $this->logged_in_id;
+			$data['user_created_by'] = $this->session->userdata()['login_user_id'];
+			$result = $this->crud->insert('partners',$data);
+			if($result){
+				$return['success'] = "Added";
+			}
+		}
+		print json_encode($return);
+		exit;
+	}
+
+	public function uploadPartnerSign($key)
+	{
+		$file_element_name = $key;
+		$config['upload_path'] = './assets/uploads/images/signs/';
+		$config['allowed_types'] = 'jpg|png';
+		$config['overwrite'] = TRUE;
+		$config['encrypt_name'] = FALSE;
+		$config['remove_spaces'] = TRUE;
+		$newFileName = $_FILES[$key]['name'];
+		$tmp = explode('.', $newFileName);
+		$file_extension = end($tmp);
+		$filename = "partner_sign_".time().".".$file_extension;
+		$config['file_name'] = $filename;
+		if(!is_dir($config['upload_path'])){
+			mkdir($config['upload_path'],0777,TRUE);
+		}
+		$this->load->library('upload', $config);
+		if (!$this->upload->do_upload($file_element_name)){
+			$return['Uploaderror'] = $this->upload->display_errors();
+		}
+		$file_data = $this->upload->data();
+		@unlink($_FILES[$file_element_name]);
+		return $file_data['file_name'];
+	}
 
 }
 
