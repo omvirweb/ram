@@ -179,6 +179,19 @@
                                                 <input type="text" name="bill_no" id="bill_no" class="form-control" data-index="4" value="<?=isset($invoice_data->bill_no) ? $invoice_data->bill_no : ''; ?>">
                                             </div>
                                         </div>
+                                        <?php if (isset($partners)) { ?>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="bill_no" class="control-label">Partner</label>
+                                                    <select name="partner_sign" id="partner_sign" required class="form-control">
+                                                        <option value="">Select Partner</option>
+                                                        <?php foreach($partners as $partner) { ?>
+                                                            <option value="<?php echo $partner['partner_sign']; ?>" <?=isset($invoice_data->partner_sign) && $invoice_data->partner_sign == $partner['partner_sign'] ? 'selected' : ''; ?>><?php echo $partner['partner_name']; ?></option>
+                                                        <?php } ?>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        <?php } ?>
                                     <?php } elseif($voucher_type == "credit_note" || $voucher_type == "debit_note") { ?> 
                                         <div class="col-md-3">
                                             <div class="form-group">

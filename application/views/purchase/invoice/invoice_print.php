@@ -255,7 +255,9 @@ ob_start();
                 </td>
                 <td valign="top" colspan="5" class="no-border-left text_bold">For, <?= isset($user_name) ? $user_name : '' ?><br/>
                     <br/>
-                    <br/>
+                    <?php if (isset($partner_sign) && !empty($partner_sign)) { ?>
+                        <img src="<?php echo base_url('assets/uploads/images/signs/'.$partner_sign); ?>" alt='Sign' width='100px' class='img-thumbnail' />
+                    <?php } ?>
                     <br/>
                     <span style="text-align: right;">(Authorised Signatory)</span>
                 </td>

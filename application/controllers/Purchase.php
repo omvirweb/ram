@@ -588,6 +588,7 @@ class Purchase extends CI_Controller {
                 'igst_amount_total' => $result->igst_amount_total,
                 'amount_total' => $result->amount_total,
                 'amount_total_word' => $amount_total_word,
+                'partner_sign' => $result->partner_sign,
             );
             $data['purchase_invoice_data'] = $result;
             $data['user_name'] = $user_detail->user_name;

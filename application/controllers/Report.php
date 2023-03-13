@@ -1321,8 +1321,11 @@ class Report extends CI_Controller {
                     $delete_link = '';
                 }
                 
-                $debit_amt = 0;
-                $credit_amt = $list_row->amount_total; 
+                // $debit_amt = 0;
+                // $credit_amt = $list_row->amount_total; 
+                
+                $credit_amt = 0;
+                $debit_amt = $list_row->amount_total; 
             
             } elseif ($list_row->tran_type == "against_purchase") {
                 $bill_no = $list_row->bill_no;
@@ -1555,7 +1558,8 @@ class Report extends CI_Controller {
             
             $total_credit_amt += abs($credit_amt);
             $total_debit_amt += abs($debit_amt);
-            $balance_amt = $total_debit_amt - $total_credit_amt;
+            // $balance_amt = $total_debit_amt - $total_credit_amt;
+            $balance_amt = $total_credit_amt - $total_debit_amt;
 
             if ( isset( $list_row->purchase_invoice_id )) {
                 $unit_data = $this->crud->getFromSQL("SELECT u.pack_unit_name as unit_name FROM lineitems as li LEFT JOIN pack_unit as u ON u.pack_unit_id = li.unit_id  WHERE li.parent_id=".$list_row->purchase_invoice_id."");
@@ -1587,7 +1591,7 @@ class Report extends CI_Controller {
         $total[] = '';
         $data[] = $total;
         
-        $total = $total_debit_amt - $total_credit_amt;
+        $total = $total_credit_amt - $total_debit_amt;
         $total2[] = '';
         $total2[] = '';
         $total2[] = '';
