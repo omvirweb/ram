@@ -145,7 +145,7 @@ ob_start();
                 ?>
                 <td valign="top" colspan="2" class="divRight"><?php echo $lineitem->item_qty; ?></td>
                 <!-- <td valign="top" colspan="1" class="divRight"><?php //echo $unit; ?></td> -->
-                <td valign="top" colspan="2" class="divRight"><?php echo $lineitem->price; ?></td>
+                <td valign="top" colspan="2" class="divRight"><?php echo number_format((float)$lineitem->price, 2, '.', ''); ?></td>
                 <?php //$gst = $lineitem->cgst +  $lineitem->sgst + $lineitem->igst?>
                 <!-- <td valign="top" colspan="1" class="divRight"><?php //echo $lineitem->gst . '%'; ?></td> -->
                 <?php
