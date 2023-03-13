@@ -309,6 +309,11 @@ $is_single_line_item = 1;
 					                    <li class="<?= ($segment1 == 'master' && $segment2 == 'pack_unit') ? 'active' : '' ?>">
 					                        <a href="<?php echo base_url() ?>master/pack_unit/"><i class="fa fa-circle-o"></i> Pack Unit</a>
 					                    </li>
+					                    <?php if($this->applib->have_access_role(MASTER_ITEM_TYPE_ID,"view")) { ?>
+					                        <li class="<?= ($segment1 == 'master' && $segment2 == 'partners') ? 'active' : '' ?>">
+					                            <a href="<?php echo base_url() ?>master/partners/"><i class="fa fa-circle-o"></i> Partners</a>
+					                        </li>
+					                    <?php } ?>
                                     </ul>
                                 </li>	
                                 <?php } ?>
