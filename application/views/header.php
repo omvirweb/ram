@@ -764,9 +764,9 @@ $is_single_line_item = 1;
                         </div>
                         <div class="navbar-custom-menu">
                         	<ul class="nav navbar-nav">
-                        		<!-- <?php
-                                    // if($userType == 'Admin') {
-                                        ?> -->
+                        		<?php
+                                    if($userType == 'Admin') {
+                                ?>
                                     <li class="dropdown staff-menu">
                                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                                             <i class="fa fa-users"></i>
@@ -790,9 +790,9 @@ $is_single_line_item = 1;
                                             </li>
                                         </ul>
                                     </li>
-								<!-- <?php
-                                    // }
-                                    ?> -->
+								<?php
+                                    }
+                                ?>
 
 								<!-- User Account: style can be found in dropdown.less -->
 								<li class="dropdown user user-menu">
