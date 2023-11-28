@@ -200,7 +200,7 @@ ob_start();
                 ?>
                     <tr>
                         <td valign="top" class="text-left border-right"><?php echo $inc; ?></td>
-                        <td valign="top" class="text-left border-right"><?php  isset($lineitem->line_item_des) ? $lineitem->line_item_des : $lineitem->item_name; ?><br><?php echo $lineitem->note;?></td>
+                        <td valign="top" class="text-left border-right"><?php echo isset($lineitem->line_item_des) ? $lineitem->line_item_des : $lineitem->item_name; ?><br><?php echo $lineitem->note;?></td>
                         <td valign="top" class="text-left border-right"><?php echo $lineitem->hsn ?  $lineitem->hsn : $lineitem->hsn_code; ?></td>
                         <td valign="top" class="text-right border-right"><?php echo $lineitem->item_qty; ?></td>
                         <td valign="top" class="text-left border-right"><?php echo $lineitem->rate_unit; ?></td>
