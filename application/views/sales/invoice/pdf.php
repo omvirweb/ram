@@ -86,8 +86,8 @@ ob_start();
                     ?>
                         <tr>
                                 <td class="center"><?php echo $inc; ?></td>
-                                <td class="left"><?php echo $lineitem->item_name;?><br><?php echo $lineitem->note;?></td>
-                                <td class="center"><?php echo $lineitem->hsn_code; ?></td>
+                                <td class="left"><?php echo isset($lineitem->item_name) ? $lineitem->item_name : $lineitem->line_item_des; ?></td>
+                                <td class="center"><?php echo $lineitem->hsn ?  $lineitem->hsn : $lineitem->hsn_code; ?></td>
                                 <td class="right"><?php echo $lineitem->item_qty; ?></td>
                                 <td class="right"><?php echo $lineitem->price; ?></td>
                                 <?php if(in_array('discount', $invoice_line_item_fields)) { ?>

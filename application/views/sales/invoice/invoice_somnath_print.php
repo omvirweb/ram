@@ -157,8 +157,8 @@ ob_start();
             ?>
             <tr>
                 <td valign="top" colspan="1" class="text_center"><?php echo $inc; ?></td>
-                <td valign="top" colspan="7" align="left"><?php echo $lineitem->item_name;?><br><?php echo $lineitem->note;?></td>
-                <td valign="top" colspan="2" align="center"><?php echo $lineitem->hsn; ?></td>
+                <td valign="top" colspan="7" align="left"><?php echo isset($lineitem->item_name) ? $lineitem->item_name : $lineitem->line_item_des;?><br><?php echo $lineitem->note;?></td>
+                <td valign="top" colspan="2" align="center"><?php echo $lineitem->hsn ?  $lineitem->hsn : $lineitem->hsn_code; ?></td>
                 <?php 
                     $unit = $this->crud->get_column_value_by_id('pack_unit', 'pack_unit_name', array('pack_unit_id' => $lineitem->unit_id));
                 ?>
