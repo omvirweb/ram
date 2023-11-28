@@ -143,8 +143,8 @@ ob_start();
 					?>
                     <tr>
                         <td class="no-border-top no-border-bottom" colspan="1" width="50px"><?php echo $inc; ?></td>
-                        <td class="no-border-top no-border-bottom text-bold" colspan="5"><b><?php echo $lineitem->item_name;?></b></td>
-                        <td class="no-border-top no-border-bottom" colspan="2"><?php echo $lineitem->hsn_code; ?></td>
+                        <td class="no-border-top no-border-bottom text-bold" colspan="5"><b><?php echo isset($lineitem->item_name) ? $lineitem->item_name :  $lineitem->line_item_des ;?></b></td>
+                        <td class="no-border-top no-border-bottom" colspan="2"><?php echo $lineitem->hsn ?  $lineitem->hsn : $lineitem->hsn_code; ?></td>
                         <td class="no-border-top no-border-bottom text-right text-bold" colspan="2"><b><?php echo $lineitem->item_qty; ?> <?php echo $lineitem->rate_unit; ?></b></td>
                         <td class="no-border-top no-border-bottom" colspan="2"><?php echo $lineitem->price; ?></td>
                         <td class="no-border-top no-border-bottom" colspan="1"><?php echo $lineitem->rate_unit; ?></td>
