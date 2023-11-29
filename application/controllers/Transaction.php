@@ -299,7 +299,7 @@ class Transaction extends CI_Controller {
 
     function save_transaction() {
         $post_data = $this->input->post();
-//        echo "<pre>"; print_r($post_data); exit;
+        
         $checked_items = array();
         $checked_amt_data = array();
         if(isset($post_data['invoice_amount'])){
@@ -310,10 +310,14 @@ class Transaction extends CI_Controller {
             $checked_items = $post_data['checked_items'];
             unset($post_data['checked_items']);
         }
+       
+        $invoice_id_list = json_encode(array_values($post_data['invoice_no']),true);
+        unset($post_data['invoice_no']);
         if (isset($post_data['transaction_id']) && !empty($post_data['transaction_id'])) {
             $old_acc_id = $post_data['old_account_id'];
             unset($post_data['old_account_id']);
             $post_data['transaction_date'] = (isset($post_data['transaction_date']) && !empty($post_data['transaction_date'])) ? date('Y-m-d', strtotime($post_data['transaction_date'])) : null;
+            $post_data['invoice_no'] = $invoice_id_list;
             $post_data['updated_at'] = $this->now_time;
             $post_data['updated_by'] = $this->logged_in_id;
             $post_data['user_updated_by'] = $this->session->userdata()['login_user_id'];
@@ -374,12 +378,13 @@ class Transaction extends CI_Controller {
             }
         } else {
             $post_data['transaction_date'] = (isset($post_data['transaction_date']) && !empty($post_data['transaction_date'])) ? date('Y-m-d', strtotime($post_data['transaction_date'])) : null;
+            $post_data['invoice_no'] = $invoice_id_list;
             $post_data['created_at'] = $this->now_time;
             $post_data['created_by'] = $this->logged_in_id;
             $post_data['user_created_by'] = $this->session->userdata()['login_user_id'];
+            
             $result = $this->crud->insert('transaction_entry', $post_data);
-            $last_tr_id = $this->db->insert_id();
-            // echo $this->db->last_query(); exit;
+            $last_tr_id = $this->db->insert_id(); 
 
             if($post_data['transaction_type'] == 1) { //payment
                 $company_settings_id = $this->crud->get_column_value_by_id('company_settings','company_settings_id',array('company_id' => $this->logged_in_id,'setting_key' => 'payment_date'));
@@ -403,7 +408,7 @@ class Transaction extends CI_Controller {
                         if($p_item > 0){
                             $paid_data = array();
                             $paid_data['transaction_id'] = $last_tr_id;
-                            $paid_data['invoice_id'] = $invoice_id;
+                            $paid_data['invoice_id'] = $invoice_id_list;
                             $paid_data['paid_amount'] = $p_item;
                             $paid_data['account_id'] = $post_data['from_account_id'];
                             $paid_data['created_at'] = $this->now_time;

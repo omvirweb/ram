@@ -126,6 +126,14 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
+                                        <label for="invoice_no" class="control-label" style="line-height: 30px;">Invoice No</label>
+                                        <select name="invoice_no[]" id="invoice_no" class="form-control select2" multiple="multiple" ></select> 
+                                    </div>
+                                </div>
+ 
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
                                         <label for="note" class="control-label">Note</label>
                                         <textarea name="note" class="form-control" id="note"><?= (isset($transaction_data->note)) ? $transaction_data->note : ''; ?> </textarea>
                                     </div>
@@ -198,6 +206,7 @@
     $(document).ready(function () {
         var checked_invoice_ids = [];
         var unchecked_invoice_ids = [];
+        initAjaxSelect2Mutiple($("#invoice_no"), "<?= base_url('app/transaction_invoice_select2_source/') ?>");
         initAjaxSelect2($("#cas_bank_account_id"), "<?= base_url('app/cash_bank_account_select2_source') ?>");
         initAjaxSelect2($("#account_id"), "<?= base_url('app/account_select2_source') ?>");
         initAjaxSelect2($("#site_id"), "<?= base_url('app/sites_select2_source') ?>");
@@ -217,7 +226,15 @@
                 setSelect2Value($("#cas_bank_account_id"), "<?= base_url('app/set_account_select2_val_by_id/' . $transaction_data->to_account_id) ?>");
             <?php } ?>
         <?php } ?>
-
+        <?php if (isset($transaction_data->invoice_no)) { ?>
+                var selectValues =  <?= $transaction_data->invoice_no ; ?>;
+                console.log(selectValues);
+                $.each(selectValues, function(key, value) {   
+                    $("#invoice_no").select2("trigger", "select", {
+                        data: value
+                    });
+                }); 
+        <?php } ?>
         setTimeout(function(){
             $('#cas_bank_account_id').select2('open');
         },100);
@@ -268,6 +285,7 @@
                 $("#bank_id").focus();
                 return false;
             }
+           
             var is_billwise = "<?php echo $this->session->userdata(PACKAGE_FOLDER_NAME.'is_logged_in')['is_bill_wise']; ?>";
             var is_segment2 = "<?php echo $segment2; ?>";
             if((is_segment2 == 'receipt') && (is_billwise == '1')) {
@@ -378,4 +396,23 @@
         $('.foot').text(total_amt);
 //        $('#amount').val(total_amt);
     }
+
+        
+       
+       
+        var client = 'All';
+        $(document).on('change', '#invoice_no', function () {
+            client = $("#invoice_no option:selected").text();
+        });
+
+        var buttonCommon = {
+            exportOptions: {
+                format: {body: function (data, row, column, node) {
+                        return data.replace(/(&nbsp;|<([^>]+)>)/ig, "");
+                    }},
+                columns: [1, 2, 3, 4, 5],
+            }
+        };
+
+         
 </script>

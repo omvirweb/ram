@@ -1758,4 +1758,42 @@ class App extends CI_Controller{
 		echo json_encode($results);
 		exit();
 	}
+
+	function transaction_invoice_select2_source() {
+        $search = isset($_GET['q']) ? $_GET['q'] : '';
+        $page = isset($_GET['page']) ? $_GET['page'] : 1;
+        
+        $select2_data = array();
+        $resultCount = 10;
+        $offset = ($page - 1) * $resultCount;
+        $this->db->select("sales_invoice.sales_invoice_id as sales_invoice_id ,account.account_name");
+		$this->db->join('account', 'account.account_id = sales_invoice.account_id');
+        $this->db->from("sales_invoice");
+        // $this->db->where('created_by', $this->logged_in_id); 
+        $this->db->limit($resultCount, $offset);
+        $this->db->order_by("sales_invoice.account_id");
+        $query = $this->db->get();
+		 
+        if ($query->num_rows() > 0) {
+            foreach ($query->result() as $row) {
+                $select2_data[] = array(
+                    'id' => $row->sales_invoice_id,
+                    'text' => $row->sales_invoice_id,
+                );
+            }
+        }
+        $results = array(
+            "results" => $select2_data,
+            "total_count" => $this->count_select2_data('account', 'account_id', 'account_name', $search),
+        );
+        
+        echo json_encode($results);
+        exit();
+    }
+
+	function set_invoice_no_select2_multi_val_by_id($ids){
+        $myArray = explode(',', $ids);
+        $this->get_select2_text_by_id_multiple('sales_invoice', 'sales_invoice_id', 'sales_invoice_id', $myArray);
+    }
+
 }
