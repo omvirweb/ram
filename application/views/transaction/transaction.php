@@ -126,6 +126,12 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
+                                        <label for="invoice_no" class="control-label" style="line-height: 30px;">Invoice No</label>
+                                        <select name="invoice_no[]" id="invoice_no" class="form-control select2" multiple="multiple" ></select> 
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
                                         <label for="note" class="control-label">Note</label>
                                         <textarea name="note" class="form-control" id="note"><?= (isset($transaction_data->note)) ? $transaction_data->note : ''; ?> </textarea>
                                     </div>
@@ -198,6 +204,7 @@
     $(document).ready(function () {
         var checked_invoice_ids = [];
         var unchecked_invoice_ids = [];
+        initAjaxSelect2Mutiple($("#invoice_no"), "<?= base_url('app/transaction_invoice_select2_source/') ?>");
         initAjaxSelect2($("#cas_bank_account_id"), "<?= base_url('app/cash_bank_account_select2_source') ?>");
         initAjaxSelect2($("#account_id"), "<?= base_url('app/account_select2_source') ?>");
         initAjaxSelect2($("#site_id"), "<?= base_url('app/sites_select2_source') ?>");
@@ -216,6 +223,16 @@
             <?php } else { ?> 
                 setSelect2Value($("#cas_bank_account_id"), "<?= base_url('app/set_account_select2_val_by_id/' . $transaction_data->to_account_id) ?>");
             <?php } ?>
+        <?php } ?>
+
+        <?php if (isset($transaction_data->invoice_no)) { ?>
+                var selectValues =  <?= $transaction_data->invoice_no ; ?>;
+                console.log(selectValues);
+                $.each(selectValues, function(key, value) {   
+                    $("#invoice_no").select2("trigger", "select", {
+                        data: value
+                    });
+                }); 
         <?php } ?>
 
         setTimeout(function(){

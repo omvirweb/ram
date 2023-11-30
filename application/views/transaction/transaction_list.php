@@ -59,7 +59,8 @@ if ($segment2 == 'receipt_list') {
                                 <thead>
                                     <tr>
                                         <th>Action &nbsp; &nbsp; <input type="checkbox" id="check_all" style="height:17px;width: 17px;"></th>
-                                        <th>Date</th>
+                                        <th>Invoice Number </th>
+                                        <th>Received Date</th>
                                         <th>Account</th>
                                         <th>Bank / Cash</th>
                                         <th>Amount</th>
@@ -91,7 +92,7 @@ if ($segment2 == 'receipt_list') {
         var buttonCommon = {
 			exportOptions: {
 				format: { body: function ( data, row, column, node ) { return data.replace(/(&nbsp;|<([^>]+)>)/ig, ""); } },
-                columns: [1, 2, 3, 4],
+                columns: [1, 2, 3, 4,5],
 			}
 		};
                 
@@ -110,7 +111,7 @@ if ($segment2 == 'receipt_list') {
 						var rowCount = document.getElementById("transaction-table").rows.length;
 
 						for (i = 1; i < rowCount; i++) {
-								doc.content[1].table.body[i][3].alignment = 'right';
+								doc.content[2].table.body[i][4].alignment = 'right';
 						};
 					}
                 } ),
@@ -138,7 +139,7 @@ if ($segment2 == 'receipt_list') {
             },
             "columnDefs": [{
                 "className": "dt-right",
-                "targets": [4],
+                "targets": [5],
             },
             {"targets": 0,"orderable": false}
             ],

@@ -310,10 +310,14 @@ class Transaction extends CI_Controller {
             $checked_items = $post_data['checked_items'];
             unset($post_data['checked_items']);
         }
+
+        $invoice_id_list = json_encode(array_values($post_data['invoice_no']),true);
+        unset($post_data['invoice_no']);
         if (isset($post_data['transaction_id']) && !empty($post_data['transaction_id'])) {
             $old_acc_id = $post_data['old_account_id'];
             unset($post_data['old_account_id']);
             $post_data['transaction_date'] = (isset($post_data['transaction_date']) && !empty($post_data['transaction_date'])) ? date('Y-m-d', strtotime($post_data['transaction_date'])) : null;
+            $post_data['invoice_no'] = $invoice_id_list;
             $post_data['updated_at'] = $this->now_time;
             $post_data['updated_by'] = $this->logged_in_id;
             $post_data['user_updated_by'] = $this->session->userdata()['login_user_id'];
@@ -374,6 +378,7 @@ class Transaction extends CI_Controller {
             }
         } else {
             $post_data['transaction_date'] = (isset($post_data['transaction_date']) && !empty($post_data['transaction_date'])) ? date('Y-m-d', strtotime($post_data['transaction_date'])) : null;
+            $post_data['invoice_no'] = $invoice_id_list;
             $post_data['created_at'] = $this->now_time;
             $post_data['created_by'] = $this->logged_in_id;
             $post_data['user_created_by'] = $this->session->userdata()['login_user_id'];
