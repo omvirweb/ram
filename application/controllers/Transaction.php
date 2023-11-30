@@ -612,6 +612,7 @@ class Transaction extends CI_Controller {
             $action .= ' &nbsp; <input type="checkbox" name="transaction_ids[]" value="'.$transaction->transaction_id.'" style="height:17px;width: 17px;">';
 
             $row[] = $action;
+            $row[] = explode(',', str_replace(']','',str_replace('[','',str_replace('"','',$transaction->invoice_no))));
             $row[] = (!empty(strtotime($transaction->transaction_date))) ? date('d-m-Y', strtotime($transaction->transaction_date)) : '';
             $row[] = $transaction->account_name;
             $row[] = $transaction->cash_bank_acc;
@@ -663,6 +664,7 @@ class Transaction extends CI_Controller {
             $action .= ' &nbsp; <input type="checkbox" name="transaction_ids[]" value="'.$transaction->transaction_id.'" style="height:17px;width: 17px;">';
 
             $row[] = $action;
+            $row[] = explode(',', str_replace(']','',str_replace('[','',str_replace('"','',$transaction->invoice_no))));
             $row[] = (!empty(strtotime($transaction->transaction_date))) ? date('d-m-Y', strtotime($transaction->transaction_date)) : '';
             $row[] = $transaction->account_name;
             $row[] = $transaction->cash_bank_acc;

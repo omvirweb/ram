@@ -225,9 +225,9 @@ ob_start();
                 </td>
                 <td valign="top" colspan="5" class="no-border-left text_bold">For, <?= isset($user_name) ? $user_name : '' ?><br/>
                     <br/>
-                    <?php if(isset($this->session->userdata(PACKAGE_FOLDER_NAME.'is_logged_in')['user_id']) && $this->session->userdata(PACKAGE_FOLDER_NAME.'is_logged_in')['user_id'] == 2) { ?>
+                    <?php if(isset($this->logged_in_id) && $this->logged_in_id == 2) { ?>
                         <img style="height: 90px;" src="<?php echo base_url('assets/uploads/images/signature.png');  ?>" class="saas-logo" alt="saas-logo">
-                    <?php } else if(isset($this->session->userdata(PACKAGE_FOLDER_NAME.'is_logged_in')['user_id']) && $this->session->userdata(PACKAGE_FOLDER_NAME.'is_logged_in')['user_id'] == 86){  ?>
+                    <?php } else if(isset($this->logged_in_id) && $this->logged_in_id == 86){  ?>
                         <img style="height: 90px;" src="<?php echo base_url('assets/uploads/images/huma.jpeg');  ?>" class="saas-logo" alt="saas-logo">
                     <?php } ?>
                     <br/>
