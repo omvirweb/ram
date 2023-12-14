@@ -167,7 +167,9 @@ class Auth extends CI_Controller
     function save_user() {
         $return = array();
         $post_data = $this->input->post();
-        //echo '<pre>';print_r($post_data);exit;
+        // echo '<pre>';print_r($post_data);
+        // echo '<pre>';print_r($_FILES);
+        // exit;
         $user_id = isset($post_data['user_id']) ? $post_data['user_id'] : 0;
         $post_data['state'] = isset($post_data['state']) ? $post_data['state'] : null;
         $post_data['city'] = isset($post_data['city']) ? $post_data['city'] : null;
@@ -598,34 +600,116 @@ class Auth extends CI_Controller
                 $return['error'] = "errorAdded";
             }
         }
-        if ($result) {
-            $file_element_name = 'logo_image';
-            $config['upload_path'] = './assets/uploads/logo_image/';
-            $config['allowed_types'] = 'gif|jpg|png';
-            $config['overwrite'] = TRUE;
-            $config['encrypt_name'] = FALSE;
-            $config['remove_spaces'] = TRUE;
-            $newFileName = $_FILES['logo_image']['name'];
-            $tmp = explode('.', $newFileName);
-            $file_extension = end($tmp);
-            $filename = $last_query_id . "_" . time() . "." . $file_extension;
-            $config['file_name'] = $filename;
-            if (!is_dir($config['upload_path'])) {
-                mkdir($config['upload_path'], 0777, TRUE);
-            }
-            $this->load->library('upload', $config);
-            if (!$this->upload->do_upload($file_element_name)) {
+        if ($_FILES['logo_image']['name']) {
+
+            $config_logo = array(
+                'upload_path' => './assets/uploads/logo_image/',
+                'allowed_types' => 'gif|jpg|png',
+                'overwrite' => TRUE,
+                'encrypt_name' => FALSE,
+                'remove_spaces' => TRUE,
+                // ... (other config options)
+            );
+
+            $this->load->library('upload', $config_logo);
+            if (!$this->upload->do_upload('logo_image')) {
                 $return['Uploaderror'] = $this->upload->display_errors();
             }
-            $file_data = $this->upload->data();
-            if (!empty($file_data['file_name']) && !empty($file_extension)) {
-                $f_data['logo_image'] = $file_data['file_name'];
+
+            $this->load->library('upload', $config_logo);
+            if ($this->upload->do_upload('logo_image')) {
+                $file_data_logo = $this->upload->data();
+                $f_data['logo_image'] = $file_data_logo['file_name'];
                 $f_where_array['user_id'] = $last_query_id;
-                $file_id = $this->crud->update('user', $f_data, $f_where_array);
+                $file_id_logo = $this->crud->update('user', $f_data, $f_where_array);
+            } else {
+                $return['Uploaderror_logo'] = $this->upload->display_errors();
             }
+
+             $file_element_name = 'logo_image';
+            // $config['upload_path'] = './assets/uploads/logo_image/';
+            // $config['allowed_types'] = 'gif|jpg|png';
+            // $config['overwrite'] = TRUE;
+            // $config['encrypt_name'] = FALSE;
+            // $config['remove_spaces'] = TRUE;
+            // $newFileName = $_FILES['logo_image']['name'];
+            // $tmp = explode('.', $newFileName);
+            // $file_extension = end($tmp);
+            // $filename = $last_query_id . "_" . time() . "." . $file_extension;
+            // $config['file_name'] = $filename;
+            // if (!is_dir($config['upload_path'])) {
+            //     mkdir($config['upload_path'], 0777, TRUE);
+            // }
+            // $this->load->library('upload', $config);
+            // if (!$this->upload->do_upload($file_element_name)) {
+            //     $return['Uploaderror'] = $this->upload->display_errors();
+            // }
+            // $file_data = $this->upload->data();
+            // if (!empty($file_data['file_name']) && !empty($file_extension)) {
+            //     $f_data['logo_image'] = $file_data['file_name'];
+            //     $f_where_array['user_id'] = $last_query_id;
+            //     $file_id = $this->crud->update('user', $f_data, $f_where_array);
+            // }
+            @unlink($_FILES[$file_element_name]);
+
+           
+        }
+
+        if ($_FILES['stamp_image']['name']) {
+
+            $config_stamp = array(
+                'upload_path' => './assets/uploads/stamp_image/',
+                'allowed_types' => 'gif|jpg|png',
+                'overwrite' => TRUE,
+                'encrypt_name' => FALSE,
+                'remove_spaces' => TRUE,
+                // ... (other config options)
+            );
+           
+            $this->load->library('upload', $config_stamp);
+            if (!$this->upload->do_upload('stamp_image')) {
+                $return['Uploaderror'] = $this->upload->display_errors();
+            }
+
+            $this->load->library('upload', $config_stamp);
+            if ($this->upload->do_upload('stamp_image')) {
+                $file_data_stamp = $this->upload->data();
+                $f_data['stamp_image'] = $file_data_stamp['file_name'];
+                $f_where_array['user_id'] = $last_query_id;
+                $file_id_stamp = $this->crud->update('user', $f_data, $f_where_array);
+            } else {
+                $return['Uploaderror_stamp'] = $this->upload->display_errors();
+            }
+
+            // $config = [];
+            // $file_data = [];
+             $file_element_name = 'stamp_image';
+            // $config['upload_path'] = './assets/uploads/stamp_image/';
+            // $config['allowed_types'] = 'gif|jpg|png';
+            // $config['overwrite'] = TRUE;
+            // $config['encrypt_name'] = FALSE;
+            // $config['remove_spaces'] = TRUE;
+            // $newFileName = $_FILES['stamp_image']['name'];
+            // $tmp = explode('.', $newFileName);
+            // $file_extension = end($tmp);
+            // $filename = $last_query_id . "_" . time() . "." . $file_extension;
+            // $config['file_name'] = $filename;
+            // if (!is_dir($config['upload_path'])) {
+            //     mkdir($config['upload_path'], 0777, TRUE);
+            // }
+            // $this->load->library('upload', $config);
+            // if (!$this->upload->do_upload($file_element_name)) {
+            //     $return['Uploaderror'] = $this->upload->display_errors();
+            // }
+            // $file_data = $this->upload->data();
+            // if (!empty($file_data['file_name']) && !empty($file_extension)) {
+            //     $f_data['stamp_image'] = $config['file_name'];
+            //     $f_where_array['user_id'] = $last_query_id; 
+            //     $file_id = $this->crud->update('user', $f_data, $f_where_array);
+            // }
             @unlink($_FILES[$file_element_name]);
         }
-        //echo '<pre>';print_r($data);exit;
+        
         print json_encode($return);
         exit;
     }
@@ -860,5 +944,6 @@ class Auth extends CI_Controller
         print_r($session);
         echo "</pre>";
     }
+
 
 }

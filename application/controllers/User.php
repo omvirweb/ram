@@ -44,6 +44,7 @@ class User extends CI_Controller
                         'edit_password' => $result->password,
                         'edit_gst_no' => $result->gst_no,
                         'edit_logo_image' => $result->logo_image,
+                        'edit_stamp_image' => $result->stamp_image,
                         'edit_invoice_no_start_from' => $result->invoice_no_start_from,
                         'edit_is_letter_pad' => $result->is_letter_pad,
                         'edit_is_bill_wise' => $result->is_bill_wise,

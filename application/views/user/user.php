@@ -100,42 +100,53 @@
                                         <input type="number" name="postal_code" class="form-control" id="igst_per" value="<?= isset($edit_postal_code) ? $edit_postal_code : '' ?>" data-index="9" placeholder="">
                                     </div>
                                 </div>
+
+                                <div class="col-md-4"> 
+                                    <div class="form-group">
+                                        <label for="stamp_image">Stamp Image</label>
+                                        <input type="file" name="stamp_image" id="stamp_image" data-index="10"  >
+                                        <?php if (!empty($edit_stamp_image)) { ?>
+                                                <img src="<?php echo base_url('assets/uploads/stamp_image/' . $edit_stamp_image); ?>" width="100px" />
+                                            <?php } ?>
+                                    </div> 
+                                </div> 
+                                
                                 <div class="clearfix"></div>
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="aadhaar" class="control-label">Aadhaar</label>
-                                        <input type="text" name="aadhaar" class="form-control" id="aadhaar" value="<?= isset($edit_aadhaar) ? $edit_aadhaar : '' ?>" data-index="10" placeholder="">
+                                        <input type="text" name="aadhaar" class="form-control" id="aadhaar" value="<?= isset($edit_aadhaar) ? $edit_aadhaar : '' ?>" data-index="11" placeholder="">
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="pan" class="control-label">Pan</label>
-                                        <input type="text" name="pan" class="form-control" id="pan" value="<?= isset($edit_pan) ? $edit_pan : '' ?>" data-index="11" placeholder="">
+                                        <input type="text" name="pan" class="form-control" id="pan" value="<?= isset($edit_pan) ? $edit_pan : '' ?>" data-index="12" placeholder="">
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="invoice_no_start_from" class="control-label">Invoice Start From</label>
-                                        <input type="text" name="invoice_no_start_from" class="form-control" id="invoice_no_start_from" value="<?= isset($edit_invoice_no_start_from) ? $edit_invoice_no_start_from : '' ?>" data-index="12" placeholder="">
+                                        <input type="text" name="invoice_no_start_from" class="form-control" id="invoice_no_start_from" value="<?= isset($edit_invoice_no_start_from) ? $edit_invoice_no_start_from : '' ?>" data-index="13" placeholder="">
                                     </div>
                                 </div>
                                 <div class="clearfix"></div>
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="contect_person_name">Contact Person Name</label>
-                                        <input type="text" name="contect_person_name" class="form-control" id="contect_person_name" value="<?= isset($edit_contect_person_name) ? $edit_contect_person_name : '' ?>" data-index="13" placeholder="">
+                                        <input type="text" name="contect_person_name" class="form-control" id="contect_person_name" value="<?= isset($edit_contect_person_name) ? $edit_contect_person_name : '' ?>" data-index="14" placeholder="">
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="gst_no" class="control-label">GSTIN</label>
-                                        <input type="text" name="gst_no" class="form-control" id="gst_no" maxlength="15" value="<?= isset($edit_gst_no) ? $edit_gst_no : '' ?>" data-index="14" placeholder="" autocomplete="off"/>
+                                        <input type="text" name="gst_no" class="form-control" id="gst_no" maxlength="15" value="<?= isset($edit_gst_no) ? $edit_gst_no : '' ?>" data-index="15" placeholder="" autocomplete="off"/>
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="userType" class="control-label">User Type</label>
-                                        <select name="userType" id="userType" class="selectSearch" data-index="15" >
+                                        <select name="userType" id="userType" class="selectSearch" data-index="16" >
                                             <?php
                                             if (isset($edit_userType)) {
                                                 if ($edit_userType == 'Company') {
@@ -158,19 +169,19 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="user" class="control-label">Email / Phone / User Name</label>
-                                        <input type="text" name="user" class="form-control" id="user" value="<?= isset($edit_user) ? $edit_user : '' ?>" data-index="16" placeholder="" />
+                                        <input type="text" name="user" class="form-control" id="user" value="<?= isset($edit_user) ? $edit_user : '' ?>" data-index="17" placeholder="" />
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="password" class="control-label">Password</label>
-                                        <input type="password" name="" class="form-control"  id="cpassword" value="" data-index="17" placeholder="" autocomplete="new-password"/>
+                                        <input type="password" name="" class="form-control"  id="cpassword" value="" data-index="18" placeholder="" autocomplete="new-password"/>
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="cpassword" class="control-label">Confirm Password</label>
-                                        <input type="password" name="password" class="form-control" data-parsley-equalto="#cpassword" id="password" value="" data-index="18" placeholder="" autocomplete="new-password"/>
+                                        <input type="password" name="password" class="form-control" data-parsley-equalto="#cpassword" id="password" value="" data-index="19" placeholder="" autocomplete="new-password"/>
                                     </div>
                                 </div>
                                 <div class="clearfix"></div>
@@ -179,38 +190,38 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="bank_name" class="control-label">Bank Name</label>
-                                        <input type="text" name="bank_name" id="bank_name" class="form-control" value="<?= isset($edit_bank_name) ? $edit_bank_name : ''; ?>" data-index="19">
+                                        <input type="text" name="bank_name" id="bank_name" class="form-control" value="<?= isset($edit_bank_name) ? $edit_bank_name : ''; ?>" data-index="20">
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="bank_acc_name" class="control-label">Bank Account Name</label>
-                                        <input type="text" name="bank_acc_name" id="bank_acc_name" class="form-control" value="<?= isset($edit_bank_acc_name) ? $edit_bank_acc_name : ''; ?>" data-index="20">
+                                        <input type="text" name="bank_acc_name" id="bank_acc_name" class="form-control" value="<?= isset($edit_bank_acc_name) ? $edit_bank_acc_name : ''; ?>" data-index="21">
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="bank_branch" class="control-label">Bank Branch</label>
-                                        <input type="text" name="bank_branch" id="bank_branch" class="form-control" value="<?= isset($edit_bank_branch) ? $edit_bank_branch : ''; ?>" data-index="21">
+                                        <input type="text" name="bank_branch" id="bank_branch" class="form-control" value="<?= isset($edit_bank_branch) ? $edit_bank_branch : ''; ?>" data-index="22">
                                     </div>
                                 </div>
                                 <div class="clearfix"></div>
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="bank_city" class="control-label">Bank City</label>
-                                        <input type="text" name="bank_city" id="bank_city" class="form-control" value="<?= isset($edit_bank_city) ? $edit_bank_city : ''; ?>" data-index="22">
+                                        <input type="text" name="bank_city" id="bank_city" class="form-control" value="<?= isset($edit_bank_city) ? $edit_bank_city : ''; ?>" data-index="23">
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="bank_ac_no" class="control-label">Bank Account No.</label>
-                                        <input type="text" name="bank_ac_no" id="bank_ac_no" class="form-control" value="<?= isset($edit_bank_ac_no) ? $edit_bank_ac_no : ''; ?>" data-index="23">
+                                        <input type="text" name="bank_ac_no" id="bank_ac_no" class="form-control" value="<?= isset($edit_bank_ac_no) ? $edit_bank_ac_no : ''; ?>" data-index="24">
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="rtgs_ifsc_code" class="control-label">RTGS / IFSC Code</label>
-                                        <input type="text" name="rtgs_ifsc_code" id="rtgs_ifsc_code" class="form-control" value="<?= isset($edit_rtgs_ifsc_code) ? $edit_rtgs_ifsc_code : ''; ?>" data-index="24">
+                                        <input type="text" name="rtgs_ifsc_code" id="rtgs_ifsc_code" class="form-control" value="<?= isset($edit_rtgs_ifsc_code) ? $edit_rtgs_ifsc_code : ''; ?>" data-index="25">
                                     </div>
                                 </div>
                                 <div class="clearfix"></div>
@@ -219,7 +230,7 @@
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label for="purchase_rate" class="control-label">Purchase Rate</label>
-                                        <select class="select2" id="purchase_rate" name="purchase_rate" data-index="25">
+                                        <select class="select2" id="purchase_rate" name="purchase_rate" data-index="26">
                                             <option value="1" <?php echo (isset($edit_purchase_rate) && $edit_purchase_rate == 1) ? 'selected' : 'selected' ?>>Including Tax</option>
                                             <option value="2" <?php echo (isset($edit_purchase_rate) && $edit_purchase_rate == 2) ? 'selected' : '' ?>>Excluding Tax</option>
                                         </select>
@@ -228,7 +239,7 @@
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label for="sales_rate" class="control-label">Sales Rate</label>
-                                        <select class="select2" id="sales_rate" name="sales_rate" data-index="26">
+                                        <select class="select2" id="sales_rate" name="sales_rate" data-index="27">
                                             <option value="1" <?php echo (isset($edit_sales_rate) && $edit_sales_rate == 1) ? 'selected' : 'selected' ?>>Including Tax</option>
                                             <option value="2" <?php echo (isset($edit_sales_rate) && $edit_sales_rate == 2) ? 'selected' : '' ?>>Excluding Tax</option>
                                         </select>
@@ -237,7 +248,7 @@
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label for="discount_on" class="control-label">Discount On</label>
-                                        <select name="discount_on" id="discount_on" class="select2" data-index="27">
+                                        <select name="discount_on" id="discount_on" class="select2" data-index="28">
                                             <option value="1" <?php echo (isset($edit_discount_on) && $edit_discount_on == 1) ? 'selected' : '' ?>>List Price</option>
                                             <option value="2" <?php echo isset($edit_discount_on) ? ($edit_discount_on == 2) ? 'selected' : '' : 'selected' ?>>MRP</option>
                                         </select>
@@ -267,23 +278,23 @@
                                     <div class="row">
                                         <div class="col-md-4">
                                             <label for="invoice_no_digit" class="control-label">Invoice No. Digit</label>
-                                            <input type="text" name="prefix[invoice_no_digit]" class="form-control" value="<?php echo isset($invoice_no_digit) ? $invoice_no_digit : ''; ?>" data-index="28">
+                                            <input type="text" name="prefix[invoice_no_digit]" class="form-control" value="<?php echo isset($invoice_no_digit) ? $invoice_no_digit : ''; ?>" data-index="29">
                                         </div>
                                         <div class="col-md-4">
                                             <div class="form-group"><br />
-                                                <label><input type="checkbox" name="prefix[year_post_fix]" value="year_post_fix" class="checkbox_ch" data-index="29" <?php echo isset($year_post_fix) && $year_post_fix == 1 ? 'checked' : '' ?>>&nbsp;&nbsp;&nbsp;Year Post Fix&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                                                <label><input type="checkbox" name="prefix[year_post_fix]" value="year_post_fix" class="checkbox_ch" data-index="30" <?php echo isset($year_post_fix) && $year_post_fix == 1 ? 'checked' : '' ?>>&nbsp;&nbsp;&nbsp;Year Post Fix&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
                                             </div>
                                         </div>
                                         <div class="clearfix"></div>
                                         <div class="col-md-12">
                                             <div class="form-group"><br />
-                                                <label><input type="checkbox" name="is_bill_wise" class="checkbox_ch" data-index="30" <?php echo (isset($edit_is_bill_wise) ? ($edit_is_bill_wise == 1 ? 'checked' : '') : ''); ?>>&nbsp;&nbsp;&nbsp;Balance Bill Wise</label>
+                                                <label><input type="checkbox" name="is_bill_wise" class="checkbox_ch" data-index="31" <?php echo (isset($edit_is_bill_wise) ? ($edit_is_bill_wise == 1 ? 'checked' : '') : ''); ?>>&nbsp;&nbsp;&nbsp;Balance Bill Wise</label>
                                             </div>
                                         </div>
                                         <div class="col-md-12">
                                             <div class="form-group">
                                                 <label for="sales_invoice_notes" class="control-label">Sales Invoice Notes</label>
-                                                <textarea name="sales_invoice_notes" id="sales_invoice_notes" class="form-control" data-index="31" style="height: 100px">
+                                                <textarea name="sales_invoice_notes" id="sales_invoice_notes" class="form-control" data-index="32" style="height: 100px">
                                                     <?= isset($edit_sales_invoice_notes) ? $edit_sales_invoice_notes : ''; ?>
                                                 </textarea>
                                             </div>
@@ -299,11 +310,11 @@
                                         <input type="hidden" id="index" value="">
                                         <div class="col-md-6">
                                             <label for="line_item_fields" class="control-label">Invoice Prefix</label>
-                                            <input type="textbox" name="line_items_data[company_invoice_prefix]" id="company_invoice_prefix" class="form-control" value="" data-index="32">
+                                            <input type="textbox" name="line_items_data[company_invoice_prefix]" id="company_invoice_prefix" class="form-control" value="" data-index="33">
                                         </div>
                                         <div class="col-md-2">
                                             <label for="line_item_fields" class="control-label">Is Default</label><br>
-                                            <input type="checkbox" name="line_items_data[default_prefix]" id="default_prefix" class="checkbox_ch" value="" data-index="33">
+                                            <input type="checkbox" name="line_items_data[default_prefix]" id="default_prefix" class="checkbox_ch" value="" data-index="34">
                                         </div>
                                         <div class="col-md-2 pull-left"><br>
                                             <a href="javascript:void(0);" class="btn btn-primary" id="add_lineitem">Add</a>
@@ -328,7 +339,7 @@
                                     <div class="form-group">
                                         <label for="main_fields" class="control-label">Main Fields</label><br>
                                         <div class="col-md-3">
-                                            <label><input type="checkbox" name="main_fields[]" value="shipment_invoice_no" id="shipment_invoice_no" class="checkbox_ch" data-index="34" <?php echo isset($invoice_main_fields) && !empty($invoice_main_fields) && in_array('shipment_invoice_no', $invoice_main_fields) ? 'checked' : ''; ?>>&nbsp;&nbsp;&nbsp;Shipment Invoice No.</label>
+                                            <label><input type="checkbox" name="main_fields[]" value="shipment_invoice_no" id="shipment_invoice_no" class="checkbox_ch" data-index="35" <?php echo isset($invoice_main_fields) && !empty($invoice_main_fields) && in_array('shipment_invoice_no', $invoice_main_fields) ? 'checked' : ''; ?>>&nbsp;&nbsp;&nbsp;Shipment Invoice No.</label>
                                         </div>
                                         <div class="col-md-3">
                                             <label><input type="checkbox" name="main_fields[]" value="shipment_invoice_date" class="checkbox_ch" <?php echo isset($invoice_main_fields) && !empty($invoice_main_fields) && in_array('shipment_invoice_date', $invoice_main_fields) ? 'checked' : ''; ?>>&nbsp;&nbsp;&nbsp;Shipment Invoice Date</label>
@@ -664,7 +675,7 @@
                 processData: false,
                 contentType: false,
                 cache: false,
-                fileElementId: 'logo_image',
+                 
                 data: postData,
                 success: function (response) {
                     $('#ajax-loader').hide();

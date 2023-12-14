@@ -2893,12 +2893,13 @@ class Sales extends CI_Controller
             $data['user_phone'] = $user_detail->phone;
             $data['email_ids'] = $user_detail->email_ids;
             $data['logo_image'] = $user_detail->logo_image;
+            $data['stamp_image'] = $user_detail->stamp_image;
             // $data['bank_name'] = $user_detail->bank_name;
             // $data['bank_branch'] = $user_detail->bank_branch;
             // $data['bank_ac_no'] = $user_detail->bank_ac_no;
             // $data['rtgs_ifsc_code'] = $user_detail->rtgs_ifsc_code;
             $data['is_letter_pad'] = $this->session->userdata(PACKAGE_FOLDER_NAME . 'is_logged_in')['is_letter_pad'];
-
+            
             $data['account_name'] = $account_detail->account_name;
             $cash_in_hand_acc = $this->applib->is_cash_in_hand_account($result->account_id);
             if ($cash_in_hand_acc == true && !empty($result->cash_customer)) {
@@ -3439,12 +3440,13 @@ class Sales extends CI_Controller
             $data['user_phone'] = $user_detail->phone;
             $data['email_ids'] = $user_detail->email_ids;
             $data['logo_image'] = $user_detail->logo_image;
+            $data['stamp_image'] = $user_detail->stamp_image;
             // $data['bank_name'] = $user_detail->bank_name;
             // $data['bank_branch'] = $user_detail->bank_branch;
             // $data['bank_ac_no'] = $user_detail->bank_ac_no;
             // $data['rtgs_ifsc_code'] = $user_detail->rtgs_ifsc_code;
             $data['is_letter_pad'] = $this->session->userdata(PACKAGE_FOLDER_NAME . 'is_logged_in')['is_letter_pad'];
-
+             
             $data['account_name'] = $account_detail->account_name;
             $cash_in_hand_acc = $this->applib->is_cash_in_hand_account($result->account_id);
             if ($cash_in_hand_acc == true && !empty($result->cash_customer)) {
@@ -3889,8 +3891,9 @@ class Sales extends CI_Controller
             $data['user_phone'] = $user_detail->phone;
             $data['email_ids'] = $user_detail->email_ids;
             $data['logo_image'] = $user_detail->logo_image;
+            $data['stamp_image'] = $user_detail->stamp_image;
             $data['is_letter_pad'] = $this->session->userdata(PACKAGE_FOLDER_NAME . 'is_logged_in')['is_letter_pad'];
-            $data['account_name'] = $account_detail->account_name;
+            $data['account_name'] = $account_detail->account_name; 
             $cash_in_hand_acc = $this->applib->is_cash_in_hand_account($result->account_id);
             if ($cash_in_hand_acc == true && !empty($result->cash_customer)) {
                 $data['account_name'] = $result->cash_customer;
