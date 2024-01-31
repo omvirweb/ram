@@ -100,6 +100,7 @@ class Sales extends CI_Controller
 	}
 	
 	function save_sales_invoice(){
+        // print_r($_POST); die;
         $return = [];
 		$post_data = $this->input->post();
 
@@ -366,14 +367,16 @@ class Sales extends CI_Controller
 	}
 	
 	function invoice_datatable(){
-		/*echo "welcome";die();*/
 		$from_date = '';
         $to_date = '';
         $account_id = '';
         $list_type = '';
+        $paymentType = isset($_POST['paymentType']) ? $_POST['paymentType'] : '';
+
         if (isset($_POST['list_type']) && $_POST['list_type'] != '') {
             $list_type = $_POST['list_type'];
         }
+
 
         if( isset($_POST['daterange_1']) && !empty($_POST['daterange_1']) && isset($_POST['daterange_2']) && !empty($_POST['daterange_2'])){
             $from_date = trim($_POST['daterange_1']);
@@ -386,7 +389,8 @@ class Sales extends CI_Controller
         }
         
 		$config['table'] = 'sales_invoice si';
-		$config['select'] = 'pd.transaction_id,si.invoice_type, si.sales_invoice_id, si.sales_invoice_no, si.sales_invoice_date, si.amount_total, si.data_lock_unlock, a.account_name, a.account_group_id, a.account_gst_no, si.created_by, si.created_at, si.updated_by, si.updated_at, si.user_created_by, si.user_updated_by,';
+		$config['select'] = 'te.transaction_type,te.transaction_id,si.invoice_type, si.sales_invoice_id, si.sales_invoice_no, si.sales_invoice_date, si.amount_total,si.aspergem_service_charge, si.data_lock_unlock, a.account_name, a.account_group_id, a.account_gst_no, si.created_by, si.created_at, si.updated_by, si.updated_at, si.user_created_by, si.user_updated_by,';   //  and hsn !=""
+
 		$config['column_order'] = array(null, 'si.sales_invoice_no', 'a.account_name', 'si.sales_invoice_date', 'si.amount_total');
 		$config['column_search'] = array('si.sales_invoice_no', 'a.account_name', 'DATE_FORMAT(si.sales_invoice_date,"%d-%m-%Y")', 'si.amount_total');
 		$config['wheres'][] = array('column_name' => 'si.created_by', 'column_value' => $this->logged_in_id);
@@ -400,102 +404,144 @@ class Sales extends CI_Controller
             $config['wheres'][] = array('column_name' => 'si.sales_invoice_date >=', 'column_value' => $from_date);
             $config['wheres'][] = array('column_name' => 'si.sales_invoice_date <=', 'column_value' => $to_date);
         }
+        $config['wheres'][] = array('column_name' => 'ln.hsn !=', 'column_value' => '');
+        
 		$config['joins'][] = array('join_table' => 'account a', 'join_by' => 'a.account_id = si.account_id', 'join_type' => 'left');
+		// $config['joins'][] = array('join_table' => 'lineitems ln', 'join_by' => 'ln.parent_id = si.sales_invoice_id', 'join_type' => 'left');
 		$config['joins'][] = array('join_table' => 'invoice_paid_details pd', 'join_by' => 'pd.invoice_id = si.sales_invoice_id', 'join_type' => 'left');
-		$config['order'] = array('si.created_at' => 'desc');
 		
+        $config['joins'][] = array('join_table' => 'transaction_entry te', 'join_by' => 'te.invoice_no LIKE CONCAT("%",si.sales_invoice_no, "%")', 'join_type' => 'left');
+        if($paymentType == '1'){
+            $config['wheres'][] = array('column_name' => 'te.transaction_type', 'column_value' => '1');
+            $config['group_by'] = 'si.sales_invoice_no';
+        }
+        else { // if($paymentType == '0'){
+            $config['group_by'] = 'si.sales_invoice_no';
+        }
+        
+		$config['order'] = array('si.created_at' => 'desc');
+
 		$this->load->library('datatables', $config, 'datatable');
-		$list = $this->datatable->get_datatables();
+		
+        $list = $this->datatable->get_datatables();
+		// echo $this->db->last_query(); die;
+        
 		$isEdit = $this->applib->have_access_role(MODULE_SALES_INVOICE_ID, "edit");
 		$isDelete = $this->applib->have_access_role(MODULE_SALES_INVOICE_ID, "delete");
-
+        
 		$data = array();
-		foreach ($list as $invoice) {
-			$row = array();
-			$action = '';
-
-			if($invoice->data_lock_unlock == 0){
-				if($isEdit) {
-                    $tt="";
-                    if($list_type==1){
-                        $tt="sales";
-                    }elseif($list_type==2){
-                        $tt="sales2";
-                    }else if($list_type==3){
-                        $tt="sales3";
-                    }else if($list_type==4){
-                        $tt="sales4";
-                    }else{
-                        $tt="sales";
-                    }
-                    // if($this->is_single_line_item == 1) {
-					// 	$action .= '<form id="edit_' . $invoice->sales_invoice_id . '" method="post" action="' . base_url() . 'sales/sales_invoice_frmquot_add/'.$invoice->sales_invoice_id.'" style="width: 25px; display: initial;" >
-	                //             <input type="hidden" name="sales_invoice_id" id="sales_invoice_id" value="' . $invoice->sales_invoice_id . '">
-	                //             <a class="edit_button btn-primary btn-xs" href="javascript:{}" onclick="document.getElementById(\'edit_' . $invoice->sales_invoice_id . '\').submit();" title="Edit Invoice"><i class="fa fa-edit"></i></a>
-	                //         </form> ';
-					// } else {
-					// 	$action .= '<form id="edit_' . $invoice->sales_invoice_id . '" method="post" action="' . base_url() . 'sales/sales_invoice_frmquot_add/'.$invoice->sales_invoice_id.'" style="width: 25px; display: initial;" >
-	                //             <input type="hidden" name="sales_invoice_id" id="sales_invoice_id" value="' . $invoice->sales_invoice_id . '">
-	                //             <a class="edit_button btn-primary btn-xs" href="javascript:{}" onclick="document.getElementById(\'edit_' . $invoice->sales_invoice_id . '\').submit();" title="Edit Invoice"><i class="fa fa-edit"></i></a>
-	                //         </form> ';
-					// }
-					if($this->is_single_line_item == 1) {
-						$action .= '<form id="edit_' . $invoice->sales_invoice_id . '" method="post" action="' . base_url() . 'transaction/sales_purchase_transaction/'.$tt.'" style="width: 25px; display: initial;" >
-	                            <input type="hidden" name="sales_invoice_id" id="sales_invoice_id" value="' . $invoice->sales_invoice_id . '">
-	                            <a class="edit_button btn-primary btn-xs" href="javascript:{}" onclick="document.getElementById(\'edit_' . $invoice->sales_invoice_id . '\').submit();" title="Edit Invoice"><i class="fa fa-edit"></i></a>
-	                        </form> ';
-					} else {
-						$action .= '<form id="edit_' . $invoice->sales_invoice_id . '" method="post" action="' . base_url() . 'transaction/sales_purchase_transaction/'.$tt.'" style="width: 25px; display: initial;" >
-	                            <input type="hidden" name="sales_invoice_id" id="sales_invoice_id" value="' . $invoice->sales_invoice_id . '">
-	                            <a class="edit_button btn-primary btn-xs" href="javascript:{}" onclick="document.getElementById(\'edit_' . $invoice->sales_invoice_id . '\').submit();" title="Edit Invoice"><i class="fa fa-edit"></i></a>
-	                        </form> ';
-					}
-				}
-				if($isDelete) {
-					$action .= ' &nbsp; <a href="javascript:void(0);" class="delete_button btn-danger btn-xs" data-href="' . base_url('sales/invoice_delete/' . $invoice->sales_invoice_id) . '"><i class="fa fa-trash"></i></a>';		
-				}
-
-				$action_detail = ' &nbsp; <form id="detail_' . $invoice->sales_invoice_id . '" method="post" action="' . base_url() . 'sales/invoice_detail" style="width: 25px; display: initial;" >
-                            <input type="hidden" name="sales_invoice_id" id="sales_invoice_id" value="' . $invoice->sales_invoice_id . '">
-                            <a class="detail_button btn-info btn-xs" href="javascript:{}" onclick="document.getElementById(\'detail_' . $invoice->sales_invoice_id . '\').submit();" title="Invoice Detail"><i class="fa fa-eye"></i></a>
-                        </form>  &nbsp; ';
-            }
-
-           /* $action .= '&nbsp;<a href="' . base_url('sales/invoice_print_pdf/' . $invoice->sales_invoice_id) . '" target="_blank" title="Invoice Print" class="detail_button btn-info btn-xs"><span class="fa fa-print"></span></a>';*/
-
-            if($invoice->account_group_id != CASH_IN_HAND_ACC_GROUP_ID) {
-            	/* $action .= '&nbsp;<a href="' . base_url('sales/format_2_invoice_print/' . $invoice->sales_invoice_id) . '" target="_blank" title="Formamt 2 Invoice Print" class="detail_button btn-info btn-xs"><span class="fa fa-print"></span></a>';*/
-                if($list_type==2){
-                    $action .= '&nbsp;<a href="' . base_url('sales/format_3_2_invoice_print/' . $invoice->sales_invoice_id) . '" target="_blank" title="Formamt 3 Invoice Print" class="detail_button btn-info btn-xs"><span class="fa fa-print"></span></a>&nbsp;<a href="' . base_url('sales/format_3_2_invoice_print_stax_before/' . $invoice->sales_invoice_id) . '" target="_blank" title="Formamt 3 Invoice Print Before" class="detail_button btn-danger btn-xs"><span class="fa fa-print"></span></a>';
-                    $action .= '&nbsp;<a href="' . base_url('sales/format_3_2_invoice_print_sign/' . $invoice->sales_invoice_id) . '" target="_blank" title="With Sign Format 3 of 1" class="detail_button btn-info btn-xs"><span class="fa fa-print"></span></a>&nbsp;<a href="' . base_url('sales/format_3_2_invoice_print_stax_before_sign/' . $invoice->sales_invoice_id) . '" target="_blank" title="With Sign Format 3 of 2" class="detail_button btn-danger btn-xs"><span class="fa fa-print"></span></a>';
-
-                }else if($list_type==3){
-                    $action .= '&nbsp;<a href="' . base_url('sales/format_3_3_invoice_print/' . $invoice->sales_invoice_id) . '" target="_blank" title="Formamt 3 Invoice Print" class="detail_button btn-info btn-xs"><span class="fa fa-print"></span></a>';
-                }
-                else if($list_type==4){
-                    $action .= '&nbsp;<a href="' . base_url('sales/format_3_4_invoice_print/' . $invoice->sales_invoice_id) . '" target="_blank" title="Formamt 3 Invoice Print" class="detail_button btn-info btn-xs"><span class="fa fa-print"></span></a>';
-                    $action .= '&nbsp;<a href="' . base_url('sales/format_3_4_invoice_print_sign/' . $invoice->sales_invoice_id) . '" target="_blank" title="Formamt 3 Invoice Print sign" class="detail_button btn-info btn-xs"><span class="fa fa-print"></span></a>';
-
-                }else{
-                    $action .= '&nbsp;<a href="' . base_url('sales/format_3_invoice_print/' . $invoice->sales_invoice_id) . '" target="_blank" title="Formamt 3 Invoice Print" class="detail_button btn-info btn-xs"><span class="fa fa-print"></span></a>';
-                    $action .= '&nbsp;<a href="' . base_url('sales/format_3_invoice_print/' . $invoice->sales_invoice_id) . '?new=true" target="_blank" title="Formamt 3 Invoice Print" class="detail_button btn-info btn-xs"><span class="fa fa-print"></span></a>';
-
-                    $action .= '&nbsp;<a href="' . base_url('sales/format_3_invoice_print_sign/' . $invoice->sales_invoice_id) . '?new=true" target="_blank" title="With Sign Format 3" class="detail_button btn-info btn-xs"><span class="fa fa-print"></span></a>';
-                }
-            }
+        foreach ($list as $invoice) {
             
-            /* $action .= '&nbsp;<a href="' . base_url('sales/invoice_print_new_pdf/' . $invoice->sales_invoice_id) . '" target="_blank" title="Tally Invoice Print" class="detail_button btn-info btn-xs"><span class="fa fa-print"></span></a>';*/
+            $row = array();
+            $action = '';
 
-            if($invoice->account_group_id == CASH_IN_HAND_ACC_GROUP_ID) {
-            	$action .= '&nbsp;<a href="' . base_url('sales/invoice_miracle_print/' . $invoice->sales_invoice_id) . '" target="_blank" title="Miracle Invoice Print" class="detail_button btn-info btn-xs"><span class="fa fa-print"></span></a>';
-            }       
-            $action .= ' &nbsp; <input type="checkbox" name="invoice_ids[]" value="'.$invoice->sales_invoice_id.'" style="height:17px;width: 17px;">';
-            /*if(!empty($invoice->invoice_type)){
-                if($invoice->invoice_type == INVOICE_TYPE_FREIGHT_ID || $invoice->invoice_type == INVOICE_TYPE_INVOICE_ID || $invoice->invoice_type == INVOICE_TYPE_REIMBURSEMENT_ID){
-                    $action .= ' &nbsp; <a href="' . base_url('sales/invoice_pdf_new/' . $invoice->sales_invoice_id) . '" target="_blank" title="Invoice Print" class="detail_button btn-info btn-xs" style="background-color: #0f9abc;"><span class="fa fa-print"></span></a>';
+            /* $this->db->select('t.*, a.account_name, aa.account_name as cash_bank_acc');
+            $this->db->from('transaction_entry t');
+            $this->db->join('account a', 'a.account_id = t.to_account_id', 'left');
+            $this->db->join('account aa', 'aa.account_id = t.from_account_id', 'left');
+            $this->db->where('t.transaction_type', '1');
+            $this->db->like('t.invoice_no', '"' . $invoice->sales_invoice_no . '"');
+            $this->db->order_by('t.transaction_date', 'desc');
+
+            $query = $this->db->get();
+            
+            if ($query->num_rows() > 0) {
+                $transaction =$query->row();
+            } */
+            
+            $action1 = "";
+            $paidStatus = 'Unpaid';
+            if($invoice->transaction_id !=''){
+                $paidStatus = 'paid';
+            }
+            if(($paidStatus == 'paid' && $paymentType == '1') || ($paidStatus == 'Unpaid' && $paymentType == '0') || ($paymentType == '')){
+            
+                if($invoice->data_lock_unlock == 0){
+                    if($isEdit) {
+                        $tt="";
+                        if($list_type==1){
+                            $tt="sales";
+                        }elseif($list_type==2){
+                            $tt="sales2";
+                        }else if($list_type==3){
+                            $tt="sales3";
+                        }else if($list_type==4){
+                            $tt="sales4";
+                        }else{
+                            $tt="sales";
+                        }
+                        // if($this->is_single_line_item == 1) {
+                        // 	$action .= '<form id="edit_' . $invoice->sales_invoice_id . '" method="post" action="' . base_url() . 'sales/sales_invoice_frmquot_add/'.$invoice->sales_invoice_id.'" style="width: 25px; display: initial;" >
+                        //             <input type="hidden" name="sales_invoice_id" id="sales_invoice_id" value="' . $invoice->sales_invoice_id . '">
+                        //             <a class="edit_button btn-primary btn-xs" href="javascript:{}" onclick="document.getElementById(\'edit_' . $invoice->sales_invoice_id . '\').submit();" title="Edit Invoice"><i class="fa fa-edit"></i></a>
+                        //         </form> ';
+                        // } else {
+                        // 	$action .= '<form id="edit_' . $invoice->sales_invoice_id . '" method="post" action="' . base_url() . 'sales/sales_invoice_frmquot_add/'.$invoice->sales_invoice_id.'" style="width: 25px; display: initial;" >
+                        //             <input type="hidden" name="sales_invoice_id" id="sales_invoice_id" value="' . $invoice->sales_invoice_id . '">
+                        //             <a class="edit_button btn-primary btn-xs" href="javascript:{}" onclick="document.getElementById(\'edit_' . $invoice->sales_invoice_id . '\').submit();" title="Edit Invoice"><i class="fa fa-edit"></i></a>
+                        //         </form> ';
+                        // }
+                        if($this->is_single_line_item == 1) {
+                            $action .= '<form id="edit_' . $invoice->sales_invoice_id . '" method="post" action="' . base_url() . 'transaction/sales_purchase_transaction/'.$tt.'" style="width: 25px; display: initial;" >
+                                    <input type="hidden" name="sales_invoice_id" id="sales_invoice_id" value="' . $invoice->sales_invoice_id . '">
+                                    <a class="edit_button btn-primary btn-xs" href="javascript:{}" onclick="document.getElementById(\'edit_' . $invoice->sales_invoice_id . '\').submit();" title="Edit Invoice"><i class="fa fa-edit"></i></a>
+                                </form> ';
+                        } else {
+                            $action .= '<form id="edit_' . $invoice->sales_invoice_id . '" method="post" action="' . base_url() . 'transaction/sales_purchase_transaction/'.$tt.'" style="width: 25px; display: initial;" >
+                                    <input type="hidden" name="sales_invoice_id" id="sales_invoice_id" value="' . $invoice->sales_invoice_id . '">
+                                    <a class="edit_button btn-primary btn-xs" href="javascript:{}" onclick="document.getElementById(\'edit_' . $invoice->sales_invoice_id . '\').submit();" title="Edit Invoice"><i class="fa fa-edit"></i></a>
+                                </form> ';
+                        }
+                    }
+                    if($isDelete) {
+                        $action .= ' &nbsp; <a href="javascript:void(0);" class="delete_button btn-danger btn-xs" data-href="' . base_url('sales/invoice_delete/' . $invoice->sales_invoice_id) . '"><i class="fa fa-trash"></i></a>';		
+                    }
+
+                    $action_detail = ' &nbsp; <form id="detail_' . $invoice->sales_invoice_id . '" method="post" action="' . base_url() . 'sales/invoice_detail" style="width: 25px; display: initial;" >
+                                <input type="hidden" name="sales_invoice_id" id="sales_invoice_id" value="' . $invoice->sales_invoice_id . '">
+                                <a class="detail_button btn-info btn-xs" href="javascript:{}" onclick="document.getElementById(\'detail_' . $invoice->sales_invoice_id . '\').submit();" title="Invoice Detail"><i class="fa fa-eye"></i></a>
+                            </form>  &nbsp; ';
                 }
-            }*/
-    		$row[] = $action;
+
+                /* $action .= '&nbsp;<a href="' . base_url('sales/invoice_print_pdf/' . $invoice->sales_invoice_id) . '" target="_blank" title="Invoice Print" class="detail_button btn-info btn-xs"><span class="fa fa-print"></span></a>';*/
+
+                if($invoice->account_group_id != CASH_IN_HAND_ACC_GROUP_ID) {
+                    /* $action .= '&nbsp;<a href="' . base_url('sales/format_2_invoice_print/' . $invoice->sales_invoice_id) . '" target="_blank" title="Formamt 2 Invoice Print" class="detail_button btn-info btn-xs"><span class="fa fa-print"></span></a>';*/
+                    if($list_type==2){
+                        $action .= '&nbsp;<a href="' . base_url('sales/format_3_2_invoice_print/' . $invoice->sales_invoice_id) . '" target="_blank" title="Formamt 3 Invoice Print" class="detail_button btn-info btn-xs"><span class="fa fa-print"></span></a>&nbsp;<a href="' . base_url('sales/format_3_2_invoice_print_stax_before/' . $invoice->sales_invoice_id) . '" target="_blank" title="Formamt 3 Invoice Print Before" class="detail_button btn-danger btn-xs"><span class="fa fa-print"></span></a>';
+                        $action .= '&nbsp;<a href="' . base_url('sales/format_3_2_invoice_print_sign/' . $invoice->sales_invoice_id) . '" target="_blank" title="With Sign Format 3 of 1" class="detail_button btn-info btn-xs"><span class="fa fa-print"></span></a>&nbsp;<a href="' . base_url('sales/format_3_2_invoice_print_stax_before_sign/' . $invoice->sales_invoice_id) . '" target="_blank" title="With Sign Format 3 of 2" class="detail_button btn-danger btn-xs"><span class="fa fa-print"></span></a>';
+
+                    }else if($list_type==3){
+                        $action .= '&nbsp;<a href="' . base_url('sales/format_3_3_invoice_print/' . $invoice->sales_invoice_id) . '" target="_blank" title="Formamt 3 Invoice Print" class="detail_button btn-info btn-xs"><span class="fa fa-print"></span></a>';
+                    }
+                    else if($list_type==4){
+                        $action .= '&nbsp;<a href="' . base_url('sales/format_3_4_invoice_print/' . $invoice->sales_invoice_id) . '" target="_blank" title="Formamt 3 Invoice Print" class="detail_button btn-info btn-xs"><span class="fa fa-print"></span></a>';
+                        $action .= '&nbsp;<a href="' . base_url('sales/format_3_4_invoice_print_sign/' . $invoice->sales_invoice_id) . '" target="_blank" title="Formamt 3 Invoice Print sign" class="detail_button btn-info btn-xs"><span class="fa fa-print"></span></a>';
+
+                    }else{
+                        $action .= '&nbsp;<a href="' . base_url('sales/format_3_invoice_print/' . $invoice->sales_invoice_id) . '" target="_blank" title="Formamt 3 Invoice Print" class="detail_button btn-info btn-xs"><span class="fa fa-print"></span></a>';
+                        $action .= '&nbsp;<a href="' . base_url('sales/format_3_invoice_print/' . $invoice->sales_invoice_id) . '?new=true" target="_blank" title="Formamt 3 Invoice Print" class="detail_button btn-info btn-xs"><span class="fa fa-print"></span></a>';
+
+                        $action .= '&nbsp;<a href="' . base_url('sales/format_3_invoice_print_sign/' . $invoice->sales_invoice_id) . '?new=true" target="_blank" title="With Sign Format 3" class="detail_button btn-info btn-xs"><span class="fa fa-print"></span></a>';
+                    }
+                }
+                
+                /* $action .= '&nbsp;<a href="' . base_url('sales/invoice_print_new_pdf/' . $invoice->sales_invoice_id) . '" target="_blank" title="Tally Invoice Print" class="detail_button btn-info btn-xs"><span class="fa fa-print"></span></a>';*/
+
+                if($invoice->account_group_id == CASH_IN_HAND_ACC_GROUP_ID) {
+                    $action .= '&nbsp;<a href="' . base_url('sales/invoice_miracle_print/' . $invoice->sales_invoice_id) . '" target="_blank" title="Miracle Invoice Print" class="detail_button btn-info btn-xs"><span class="fa fa-print"></span></a>';
+                }       
+                
+                if($paidStatus === 'paid') {
+                    $action1 .= '&nbsp;<a href="' . base_url("transaction/payment_print/" . $invoice->transaction_id) . '" target="_blank" title="Payment Print" class="btn-info btn-xs"><span class="fa fa-print"></span></a>';    
+                }
+                $action .= ' &nbsp; <input type="checkbox" name="invoice_ids[]" value="'.$invoice->sales_invoice_id.'" style="height:17px;width: 17px;">';
+                /*if(!empty($invoice->invoice_type)){
+                    if($invoice->invoice_type == INVOICE_TYPE_FREIGHT_ID || $invoice->invoice_type == INVOICE_TYPE_INVOICE_ID || $invoice->invoice_type == INVOICE_TYPE_REIMBURSEMENT_ID){
+                        $action .= ' &nbsp; <a href="' . base_url('sales/invoice_pdf_new/' . $invoice->sales_invoice_id) . '" target="_blank" title="Invoice Print" class="detail_button btn-info btn-xs" style="background-color: #0f9abc;"><span class="fa fa-print"></span></a>';
+                    }
+                }*/
+                $row[] = $action;
                 $this->load->library('applib');
                 $sales_invoice_no = $this->applib->format_invoice_number($invoice->sales_invoice_id, $invoice->sales_invoice_date);
                 $row[] = $sales_invoice_no;
@@ -506,18 +552,22 @@ class Sales extends CI_Controller
                         $row[] = 'Unpaid';
                     }
                 }
+                // echo $invoice->sales_invoice_id."<br/>"; 
                 $row[] = $invoice->account_name;
                 // $row[] = $invoice->account_gst_no;
+                $totalAmount = $invoice->aspergem_service_charge+$invoice->amount_total;
                 $row[] = date('d-m-Y', strtotime($invoice->sales_invoice_date));
-                $row[] = number_format($invoice->amount_total, 2, '.', '');
+                $row[] = number_format($totalAmount, 2, '.', '');
+                $row[] = $paidStatus.$action1;
                 $data[] = $row;
-		}
-		$output = array(
-			"draw" => $_POST['draw'],
-			"recordsTotal" => $this->datatable->count_all(),
-			"recordsFiltered" => $this->datatable->count_filtered(),
-			"data" => $data,
-		);
+            }
+        }
+        $output = array(
+            "draw" => $_POST['draw'],
+            "recordsTotal" => $this->datatable->count_filtered(), //$this->datatable->count_all(),
+            "recordsFiltered" => $this->datatable->count_filtered(),
+            "data" => $data,
+        );
 		//output to json format
 		echo json_encode($output);
 	}
@@ -1180,7 +1230,7 @@ class Sales extends CI_Controller
 
     function format_3_invoice_print($sales_invoice_id, $is_multiple = '' ,$new=false) {
         if (!empty($sales_invoice_id) && isset($sales_invoice_id)) {
-            $result = $this->crud->get_data_row_by_id('sales_invoice', 'sales_invoice_id', $sales_invoice_id);            
+            $result = $this->crud->get_data_row_by_id('sales_invoice', 'sales_invoice_id', $sales_invoice_id);         
             $user_detail = $this->crud->get_data_row_by_id('user', 'user_id', $result->created_by);
             $account_detail = $this->crud->get_data_row_by_id('account', 'account_id', $result->account_id);
             $this->load->library('numbertowords');
@@ -1309,6 +1359,10 @@ class Sales extends CI_Controller
             }
             $data['gst_total_word'] = $gst_total_word;
 
+            /* echo "<pre>";
+            print_r($data);
+            echo "</pre>";
+            die; */
 //            echo '<pre>'; print_r($lineitem_arr); exit;
         } else {
             redirect($_SERVER['HTTP_REFERER']);
@@ -2623,6 +2677,7 @@ class Sales extends CI_Controller
             $data['user_phone'] = $user_detail->phone;
             $data['email_ids'] = $user_detail->email_ids;
             $data['logo_image'] = $user_detail->logo_image;
+            // $data['stamp_image'] = $user_detail->stamp_image;
             // $data['bank_name'] = $user_detail->bank_name;
             // $data['bank_branch'] = $user_detail->bank_branch;
             // $data['bank_ac_no'] = $user_detail->bank_ac_no;
@@ -2893,7 +2948,7 @@ class Sales extends CI_Controller
             $data['user_phone'] = $user_detail->phone;
             $data['email_ids'] = $user_detail->email_ids;
             $data['logo_image'] = $user_detail->logo_image;
-            $data['stamp_image'] = $user_detail->stamp_image;
+            $data['stamp_image'] = $user_detail->stamp_image;  // k203s 19-01-2023 
             // $data['bank_name'] = $user_detail->bank_name;
             // $data['bank_branch'] = $user_detail->bank_branch;
             // $data['bank_ac_no'] = $user_detail->bank_ac_no;
@@ -3124,7 +3179,7 @@ class Sales extends CI_Controller
 
 
             $total_gst = $result->cgst_amount_total + $result->sgst_amount_total + $result->igst_amount_total;
-			//$total_gst = $result->gst;
+			// $total_gst = $result->gst;
             if ($total_gst < 0) {
                 $gst_total_word = 'Minus ' . $this->numbertowords->convert_number(abs($total_gst));
             } else {
@@ -3169,6 +3224,7 @@ class Sales extends CI_Controller
             $data['user_phone'] = $user_detail->phone;
             $data['email_ids'] = $user_detail->email_ids;
             $data['logo_image'] = $user_detail->logo_image;
+            // $data['stamp_image'] = $user_detail->stamp_image;
             // $data['bank_name'] = $user_detail->bank_name;
             // $data['bank_branch'] = $user_detail->bank_branch;
             // $data['bank_ac_no'] = $user_detail->bank_ac_no;
@@ -3197,9 +3253,9 @@ class Sales extends CI_Controller
             $lineitem_arr = array();
             $where = array('module' => '2', 'parent_id' => $sales_invoice_id);
             $sales_invoice_lineitems = $this->crud->get_row_by_id('lineitems', $where);
-            /*echo "<pre>";
-            print_r( $sales_invoice_lineitems[] );
-            die();*/
+            /* echo "<pre>";
+            print_r($data);
+            die(); */
             $total_gst = 0;
 
             foreach ($sales_invoice_lineitems as $key=>$sales_invoice_lineitem) {
@@ -3227,13 +3283,13 @@ class Sales extends CI_Controller
                     $data['site_address'] = (isset($site_data)) ? $site_data[0]->site_address : '';
                 }
             }
-//            $no_arr = count($lineitem_arr);
-//            if($no_arr < 10){
-//                for ($i = $no_arr; $i < 10; $i++) {
-//                    $lineitem_arr[$i] = array('');
-//                    $lineitem_arr[$i] = (object) $lineitem_arr[$i];
-//                }
-//            }
+            /* $no_arr = count($lineitem_arr);
+            if($no_arr < 10){
+                for ($i = $no_arr; $i < 10; $i++) {
+                    $lineitem_arr[$i] = array('');
+                    $lineitem_arr[$i] = (object) $lineitem_arr[$i];
+                }
+            } */
             
             $data['lineitems'] = $lineitem_arr;
             $total_gst = $total_gst + ($result->total_pf_amount * 18 / 100);
@@ -3245,7 +3301,7 @@ class Sales extends CI_Controller
                 $gst_total_word = $this->numbertowords->convert_number($total_gst);
             }
             $data['gst_total_word'] = $gst_total_word;
-//            echo '<pre>'; print_r($lineitem_arr); exit;
+            // echo '<pre>'; print_r($lineitem_arr); exit;
         } else {
             redirect($_SERVER['HTTP_REFERER']);
             $data = array();
@@ -3257,7 +3313,7 @@ class Sales extends CI_Controller
                 $data['amount_total'] = number_format((float) $amount_total_r, 2, '.', '');
             }
         }
-//		echo '<pre>'; print_r($data); exit;
+		// echo '<pre>'; print_r($data); exit;
         $letterpad_print = $this->crud->get_id_by_val('user', 'is_letter_pad', 'user_id', $this->logged_in_id);
         $termsdata = $this->crud->get_column_value_by_id('settings', 'setting_value', array('setting_key' => 'sales_terms'));
         $data['terms_data'] = $termsdata;
@@ -3375,6 +3431,7 @@ class Sales extends CI_Controller
     function format_3_2_invoice_print_stax_before_sign($sales_invoice_id, $is_multiple = '') {
         if (!empty($sales_invoice_id) && isset($sales_invoice_id)) {
             $result = $this->crud->get_data_row_by_id('sales_invoice', 'sales_invoice_id', $sales_invoice_id);
+            
             $user_detail = $this->crud->get_data_row_by_id('user', 'user_id', $result->created_by);
             $account_detail = $this->crud->get_data_row_by_id('account', 'account_id', $result->account_id);
             $this->load->library('numbertowords');
@@ -3440,7 +3497,7 @@ class Sales extends CI_Controller
             $data['user_phone'] = $user_detail->phone;
             $data['email_ids'] = $user_detail->email_ids;
             $data['logo_image'] = $user_detail->logo_image;
-            $data['stamp_image'] = $user_detail->stamp_image;
+            $data['stamp_image'] = $user_detail->stamp_image;   // k203s 19-01-2023 
             // $data['bank_name'] = $user_detail->bank_name;
             // $data['bank_branch'] = $user_detail->bank_branch;
             // $data['bank_ac_no'] = $user_detail->bank_ac_no;
@@ -3475,6 +3532,7 @@ class Sales extends CI_Controller
             $total_gst = 0;
 
             foreach ($sales_invoice_lineitems as $key=>$sales_invoice_lineitem) {
+                
                 $sales_invoice_lineitem->item_name = $this->crud->get_id_by_val('item', 'item_name', 'item_id', $sales_invoice_lineitem->item_id);
                 $hsn_id = $this->crud->get_id_by_val('item', 'hsn_code', 'item_id', $sales_invoice_lineitem->item_id);
                 if (!empty($hsn_id)) {
@@ -3517,7 +3575,7 @@ class Sales extends CI_Controller
                 $gst_total_word = $this->numbertowords->convert_number($total_gst);
             }
             $data['gst_total_word'] = $gst_total_word;
-//            echo '<pre>'; print_r($lineitem_arr); exit;
+        //    echo '<pre>'; print_r($data); exit;
         } else {
             redirect($_SERVER['HTTP_REFERER']);
             $data = array();
@@ -3891,7 +3949,7 @@ class Sales extends CI_Controller
             $data['user_phone'] = $user_detail->phone;
             $data['email_ids'] = $user_detail->email_ids;
             $data['logo_image'] = $user_detail->logo_image;
-            $data['stamp_image'] = $user_detail->stamp_image;
+            $data['stamp_image'] = $user_detail->stamp_image;     // k203s 19-01-2023 
             $data['is_letter_pad'] = $this->session->userdata(PACKAGE_FOLDER_NAME . 'is_logged_in')['is_letter_pad'];
             $data['account_name'] = $account_detail->account_name; 
             $cash_in_hand_acc = $this->applib->is_cash_in_hand_account($result->account_id);
@@ -4077,6 +4135,7 @@ class Sales extends CI_Controller
             $data['user_postal_code'] = $user_detail->postal_code;
             $data['user_phone'] = $user_detail->phone;
             $data['email_ids'] = $user_detail->email_ids;
+            $data['stamp_image'] = $user_detail->stamp_image;    // k203s 19-01-2023 
             $data['logo_image'] = $user_detail->logo_image;
             $data['is_letter_pad'] = $this->session->userdata(PACKAGE_FOLDER_NAME . 'is_logged_in')['is_letter_pad'];
             $data['account_name'] = $account_detail->account_name;

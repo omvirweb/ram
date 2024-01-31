@@ -102,11 +102,29 @@ class Transaction extends CI_Controller {
                 $transaction_row = $query->row();
             }
             $data['company_row'] = $this->crud->get_data_row_by_id('user', 'user_id',$this->logged_in_id);
+
+            /* $where = array('module' => '2', 'parent_id' => 616);
+            $sales_invoice_lineitems = $this->crud->get_row_by_id('lineitems', $where);
+             */
+            /* echo "<pre>";
+            print_r( $transaction_row);
+            die(); */
             $data['transaction_row'] = $transaction_row;
             $html = $this->load->view('transaction/payment_print', $data, true);
-            //echo $html;exit();
+
+            if($transaction_row->document != "" && $transaction_row->document != null){
+                $secondPdfFilePath = 'assets/uploads/payment/'.$transaction_row->document;
+            }
+            
             $pdfFilePath = "CashPayment.pdf";
             $this->load->library('m_pdf');
+            $this->m_pdf->pdf->SetImportUse();
+            $extention = pathinfo($transaction_row->document, PATHINFO_EXTENSION);
+            // print_r($dddd); 
+            // echo $transaction_row->document; die;
+            if($transaction_row->document != "" && $transaction_row->document != null && $extention == 'pdf'){
+                $pagecount = $this->m_pdf->pdf->SetSourceFile($secondPdfFilePath);
+            }
             $this->m_pdf->pdf->AddPage('','', '', '', '',
                           15, // margin_left
                           15, // margin right
@@ -115,6 +133,13 @@ class Transaction extends CI_Controller {
                           5, // margin header
                           5);
             $this->m_pdf->pdf->WriteHTML($html);
+            if($transaction_row->document != "" && $transaction_row->document != null && $extention == 'pdf'){
+                for ($i=0; $i < $pagecount; $i++) { 
+                    $this->m_pdf->pdf->AddPage();
+                    $tplId =  $this->m_pdf->pdf->importPage($i+1);
+                    $this->m_pdf->pdf->useTemplate($tplId);
+                }
+            }
             $this->m_pdf->pdf->Output($pdfFilePath, 'I');
             exit();
         } else {
@@ -257,6 +282,7 @@ class Transaction extends CI_Controller {
     } 
     
     function receipt($transaction_id = '') {
+        
         $data = array();
         $transaction_date = $this->crud->get_column_value_by_id('company_settings','setting_value',array('company_id' => $this->logged_in_id,'setting_key' => 'receipt_date'));
         if(!empty($transaction_date) && strtotime($transaction_date) > 0) {
@@ -299,7 +325,7 @@ class Transaction extends CI_Controller {
 
     function save_transaction() {
         $post_data = $this->input->post();
-//        echo "<pre>"; print_r($post_data); exit;
+        // echo "<pre>"; print_r($post_data); exit;
         $checked_items = array();
         $checked_amt_data = array();
         if(isset($post_data['invoice_amount'])){
@@ -311,6 +337,34 @@ class Transaction extends CI_Controller {
             unset($post_data['checked_items']);
         }
 
+        // k203s 17-01-2024 start
+        $config['upload_path'] = './assets/uploads/payment/';
+        $config['allowed_types'] = 'pdf';
+        $config['overwrite'] = TRUE;
+        $config['encrypt_name'] = FALSE;
+        $config['remove_spaces'] = TRUE;
+
+        $filename = '';
+        if(isset($_FILES['file']) && $_FILES['file']['name'] !=''){
+            $newFileName = $_FILES['file']['name'];
+            $tmp = explode('.', $newFileName);
+            $file_extension = end($tmp);
+            $filename = time().".".$file_extension;
+            $config['file_name'] = $filename;
+    
+            if(!is_dir($config['upload_path'])){
+                mkdir($config['upload_path'],0777,TRUE);
+            }
+            $this->load->library('upload', $config);
+            if (!$this->upload->do_upload('file')){
+                $return['success'] = 'error';
+                $return['msg'] = "The filetype you are attempting to upload is not allowed.";
+
+                print json_encode($return);
+                exit;
+            }
+        }
+        // k203s 17-01-2024 end
         $invoice_id_list = json_encode(array_values($post_data['invoice_no']),true);
         unset($post_data['invoice_no']);
         if (isset($post_data['transaction_id']) && !empty($post_data['transaction_id'])) {
@@ -318,6 +372,9 @@ class Transaction extends CI_Controller {
             unset($post_data['old_account_id']);
             $post_data['transaction_date'] = (isset($post_data['transaction_date']) && !empty($post_data['transaction_date'])) ? date('Y-m-d', strtotime($post_data['transaction_date'])) : null;
             $post_data['invoice_no'] = $invoice_id_list;
+            if($filename !=''){
+                $post_data['document'] = $filename;
+            }
             $post_data['updated_at'] = $this->now_time;
             $post_data['updated_by'] = $this->logged_in_id;
             $post_data['user_updated_by'] = $this->session->userdata()['login_user_id'];
@@ -379,6 +436,7 @@ class Transaction extends CI_Controller {
         } else {
             $post_data['transaction_date'] = (isset($post_data['transaction_date']) && !empty($post_data['transaction_date'])) ? date('Y-m-d', strtotime($post_data['transaction_date'])) : null;
             $post_data['invoice_no'] = $invoice_id_list;
+            $post_data['document'] = $filename;
             $post_data['created_at'] = $this->now_time;
             $post_data['created_by'] = $this->logged_in_id;
             $post_data['user_created_by'] = $this->session->userdata()['login_user_id'];
@@ -754,7 +812,6 @@ class Transaction extends CI_Controller {
 
 
     function sales_purchase_transaction($voucher_type, $order_id = '') {
-
         $data = array();
         $page_title = '';
         $invoice_id = 0;
