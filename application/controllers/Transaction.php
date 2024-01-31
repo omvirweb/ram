@@ -88,7 +88,7 @@ class Transaction extends CI_Controller {
     }
 
     function payment_print($transaction_id) {
-        $data = array();
+        $data = $data1 = array();
         if (isset($transaction_id) && !empty($transaction_id)) {
             $this->db->select('t.*,a.account_name,aa.account_name as cash_bank_acc');
             $this->db->from('transaction_entry t');
@@ -101,30 +101,15 @@ class Transaction extends CI_Controller {
             if($query->num_rows() > 0) {
                 $transaction_row = $query->row();
             }
-            $data['company_row'] = $this->crud->get_data_row_by_id('user', 'user_id',$this->logged_in_id);
-
-            /* $where = array('module' => '2', 'parent_id' => 616);
-            $sales_invoice_lineitems = $this->crud->get_row_by_id('lineitems', $where);
-             */
-            /* echo "<pre>";
-            print_r( $transaction_row);
-            die(); */
-            $data['transaction_row'] = $transaction_row;
-            $html = $this->load->view('transaction/payment_print', $data, true);
-
-            if($transaction_row->document != "" && $transaction_row->document != null){
-                $secondPdfFilePath = 'assets/uploads/payment/'.$transaction_row->document;
-            }
-            
-            $pdfFilePath = "CashPayment.pdf";
+            // echo $transaction_row->invoice_no; die;
+            $invoiceId = json_decode(str_replace('"', '', $transaction_row->invoice_no), true);
+            $data1['company_row'] = $this->crud->get_data_row_by_id('user', 'user_id',$this->logged_in_id);
+            $data1['inviceId'] =  $invoiceId;
+            // sales invoice data start k203 31-01-2024
             $this->load->library('m_pdf');
-            $this->m_pdf->pdf->SetImportUse();
-            $extention = pathinfo($transaction_row->document, PATHINFO_EXTENSION);
-            // print_r($dddd); 
-            // echo $transaction_row->document; die;
-            if($transaction_row->document != "" && $transaction_row->document != null && $extention == 'pdf'){
-                $pagecount = $this->m_pdf->pdf->SetSourceFile($secondPdfFilePath);
-            }
+
+            $data1['transaction_row'] = $transaction_row;
+            $html1 = $this->load->view('transaction/payment_print', $data1, true);
             $this->m_pdf->pdf->AddPage('','', '', '', '',
                           15, // margin_left
                           15, // margin right
@@ -132,13 +117,275 @@ class Transaction extends CI_Controller {
                           15, // margin bottom
                           5, // margin header
                           5);
-            $this->m_pdf->pdf->WriteHTML($html);
-            if($transaction_row->document != "" && $transaction_row->document != null && $extention == 'pdf'){
-                for ($i=0; $i < $pagecount; $i++) { 
-                    $this->m_pdf->pdf->AddPage();
-                    $tplId =  $this->m_pdf->pdf->importPage($i+1);
-                    $this->m_pdf->pdf->useTemplate($tplId);
+            $this->m_pdf->pdf->WriteHTML($html1);
+
+            for($i=0;$i<count($invoiceId);$i++){
+                $this->db->select('sales_invoice_id,sales_invoice_no');
+                $this->db->from('sales_invoice ss');
+                $this->db->where('ss.sales_invoice_no',$invoiceId[$i]);
+                $queryInvoice = $this->db->get();
+                
+                if($queryInvoice->num_rows() > 0) {
+                    $rowData =$queryInvoice->row();
+                
+                    $sales_invoice_id = $rowData->sales_invoice_id;
+                    $result = $this->crud->get_data_row_by_id('sales_invoice', 'sales_invoice_id', $sales_invoice_id);
+                    $user_detail = $this->crud->get_data_row_by_id('user', 'user_id', $result->created_by);
+                    $account_detail = $this->crud->get_data_row_by_id('account', 'account_id', $result->account_id);
+                    $this->load->library('numbertowords');
+                    $total_pf_amount = 0;
+                    if($result->total_pf_amount) {
+                        $total_pf_amount = $result->total_pf_amount + ($result->total_pf_amount * 18 / 100);
+                    }
+                    $aspergem_service_charge = 0;
+                    if($result->aspergem_service_charge) {
+                        $aspergem_service_charge = $result->aspergem_service_charge + ($result->aspergem_service_charge * 18 / 100);
+                    }
+                    $total_amount_word = $result->amount_total + $total_pf_amount + $aspergem_service_charge + $result->prof_tax;
+                    if ($total_amount_word < 0) {
+                        $amount_total_word = 'Minus ' . $this->numbertowords->convert_number(abs($total_amount_word));
+                    } else {
+                        $amount_total_word = $this->numbertowords->convert_number($total_amount_word);
+                    }
+
+                    $total_gst = $result->cgst_amount_total + $result->sgst_amount_total + $result->igst_amount_total;
+                    //$total_gst = $result->gst;
+                    if ($total_gst < 0) {
+                        $gst_total_word = 'Minus ' . $this->numbertowords->convert_number(abs($total_gst));
+                    } else {
+                        $gst_total_word = $this->numbertowords->convert_number($total_gst);
+                    }
+                    $print_type = $result->print_type;
+                    $this->load->library('applib');
+                    $sales_invoice_no = $this->applib->format_invoice_number($result->sales_invoice_id, $result->sales_invoice_date);
+                    $data = array(
+                        'sales_invoice_id' => $result->sales_invoice_id,
+                        'sales_invoice_no' => $sales_invoice_no,
+                        'prefix' => $result->prefix,
+                        'sales_invoice_date' => date('d-m-Y', strtotime($result->sales_invoice_date)),
+                        'sales_invoice_desc' => nl2br($result->sales_invoice_desc),
+                        'qty_total' => $result->qty_total,
+                        'pure_amount_total' => $result->pure_amount_total,
+                        'discount_total' => $result->discount_total,
+                        'cgst_amount_total' => $result->cgst_amount_total,
+                        'sgst_amount_total' => $result->sgst_amount_total,
+                        'igst_amount_total' => $result->igst_amount_total,
+                        'amount_total' => $total_amount_word,
+                        'amount_total_word' => $amount_total_word,
+                        'gst_total_word' => $gst_total_word,
+                        'sales_subject' => $result->sales_subject,
+                        'sales_note' => $result->sales_note,
+                        'prof_tax' => $result->prof_tax,
+                        'round_off_amount' => $result->round_off_amount,
+                        'total_pf_amount' => $result->total_pf_amount,
+                        'aspergem_service_charge' => isset($result->aspergem_service_charge) ? $result->aspergem_service_charge:0 ,
+                        
+                    );
+                    $data['sales_invoice_data'] = $result;
+                    $data['user_name'] = $user_detail->user_name;
+                    $data['user_address'] = $user_detail->address;
+                    $data['user_gst_no'] = $user_detail->gst_no;
+                    $data['user_country'] = 'India';
+                    $usr_city = $this->crud->get_id_by_val('city', 'city_name', 'city_id', $user_detail->city);
+                    $data['user_city'] = strtolower($usr_city);
+                    $data['user_state'] = $this->crud->get_id_by_val('state', 'state_name', 'state_id', $user_detail->state);
+                    $data['user_pan'] = $user_detail->pan;
+                    $data['user_postal_code'] = $user_detail->postal_code;
+                    $data['user_phone'] = $user_detail->phone;
+                    $data['email_ids'] = $user_detail->email_ids;
+                    $data['logo_image'] = $user_detail->logo_image;
+                    // $data['stamp_image'] = $user_detail->stamp_image;
+                    // $data['bank_name'] = $user_detail->bank_name;
+                    // $data['bank_branch'] = $user_detail->bank_branch;
+                    // $data['bank_ac_no'] = $user_detail->bank_ac_no;
+                    // $data['rtgs_ifsc_code'] = $user_detail->rtgs_ifsc_code;
+                    $data['is_letter_pad'] = $this->session->userdata(PACKAGE_FOLDER_NAME . 'is_logged_in')['is_letter_pad'];
+
+                    $data['account_name'] = $account_detail->account_name;
+                    $cash_in_hand_acc = $this->applib->is_cash_in_hand_account($result->account_id);
+                    if ($cash_in_hand_acc == true && !empty($result->cash_customer)) {
+                        $data['account_name'] = $result->cash_customer;
+                    }
+                    $data['account_gst_no'] = $account_detail->account_gst_no;
+                    if (!empty($result->is_shipping_same_as_billing_address) && $result->is_shipping_same_as_billing_address == '1') {
+                        $data['account_address'] = $result->shipping_address;
+                    } else {
+                        $data['account_address'] = $account_detail->account_address;
+                    }
+                    $data['account_country'] = 'India';
+                    $data['account_state'] = $this->crud->get_id_by_val('state', 'state_name', 'state_id', $account_detail->account_state);
+                    $data['account_city'] = $this->crud->get_id_by_val('city', 'city_name', 'city_id', $account_detail->account_city);
+                    $data['account_postal_code'] = $account_detail->account_postal_code;
+                    $data['account_pan'] = $account_detail->account_pan;
+                    $data['transport_name'] = $result->transport_name;
+                    $data['lr_no'] = $result->lr_no;
+
+                    $lineitem_arr = array();
+                    $where = array('module' => '2', 'parent_id' => $sales_invoice_id);
+                    $sales_invoice_lineitems = $this->crud->get_row_by_id('lineitems', $where);
+                    // echo "<pre>";
+                    // print_r( $sales_invoice_lineitems[] );
+                    // die();
+                    $total_gst = 0;
+                    foreach ($sales_invoice_lineitems as $key=>$sales_invoice_lineitem) {
+                        $sales_invoice_lineitem->item_name = $this->crud->get_id_by_val('item', 'item_name', 'item_id', $sales_invoice_lineitem->item_id);
+                        $hsn_id = $this->crud->get_id_by_val('item', 'hsn_code', 'item_id', $sales_invoice_lineitem->item_id);
+                        if (!empty($hsn_id)) {
+                            $sales_invoice_lineitem->hsn_code = $this->crud->get_id_by_val('hsn', 'hsn', 'hsn_id', $hsn_id);
+                        } else {
+                            $sales_invoice_lineitem->hsn_code = '';
+                        }
+                        //$sales_invoice_lineitem->pure_amount = $sales_invoice_lineitem->item_qty * $sales_invoice_lineitem->price;
+                        $sales_invoice_lineitem->pure_amount = $sales_invoice_lineitem->pure_amount;
+                        $sales_invoice_lineitem->cgst_amt = $sales_invoice_lineitem->cgst_amount;
+                        $sales_invoice_lineitem->sgst_amt = $sales_invoice_lineitem->sgst_amount;
+                        $sales_invoice_lineitem->igst_amt = $sales_invoice_lineitem->igst_amount;
+                        $lineitem_arr[] = $sales_invoice_lineitem;
+                        $amt =  $sales_invoice_lineitem->price * $sales_invoice_lineitem->item_qty;
+                        $gst_amount = $amt * $sales_invoice_lineitem->gst / 100;
+                        $total_gst += $gst_amount;
+                        $data['site_name'] = '';
+                        $data['site_address'] = '';
+                        if ($key == 0 && $sales_invoice_lineitem->site_id != null) {
+                            $site_data = $this->crud->get_row_by_id('sites', array('site_id' => $sales_invoice_lineitem->site_id));
+                            $data['site_name'] = (isset($site_data)) ? $site_data[0]->site_name : '';
+                            $data['site_address'] = (isset($site_data)) ? $site_data[0]->site_address : '';
+                        }
+                    }
+                    $data['lineitems'] = $lineitem_arr;
+                    $total_gst = $total_gst + ($result->total_pf_amount * 18 / 100);
+                    $total_gst = $total_gst + ($result->aspergem_service_charge * 18 / 100);
+                    $data['total_gst'] = $total_gst;
+                    if ($total_gst < 0) {
+                        $gst_total_word = 'Minus ' . $this->numbertowords->convert_number(abs($total_gst));
+                    } else {
+                        $gst_total_word = $this->numbertowords->convert_number($total_gst);
+                    }
+                    $data['gst_total_word'] = $gst_total_word;
+                    if (isset($data['amount_total'])) {
+                        $round_off = $this->crud->get_column_value_by_id('settings', 'setting_value', array('setting_key' => 'round_off_apply'));
+                        if (!empty($round_off)) {
+                            $amount_total_r = number_format((float) $data['amount_total'], 0, '.', '');
+                            $data['amount_total'] = number_format((float) $amount_total_r, 2, '.', '');
+                        }
+                    }
+                    $letterpad_print = $this->crud->get_id_by_val('user', 'is_letter_pad', 'user_id', $this->logged_in_id);
+                    $termsdata = $this->crud->get_column_value_by_id('settings', 'setting_value', array('setting_key' => 'sales_terms'));
+                    $data['terms_data'] = $termsdata;
+                    $data['letterpad_print'] = $letterpad_print;
+                    $data['printtype'] = 0;
+                    $our_bank_label = $this->crud->get_column_value_by_id('account', 'account_name', array('account_id' => $data['sales_invoice_data']->our_bank_id));
+                    $data['our_bank_label'] = $our_bank_label;
+            
+                    $bank_details = $this->crud->get_data_row_by_where('account', array('account_id' => $data['sales_invoice_data']->our_bank_id));
+                    $data['bank_name'] = isset($bank_details->bank_name) ? $bank_details->bank_name : '';
+                    $data['bank_branch'] = isset($bank_details->bank_branch) ? $bank_details->bank_branch : '';
+                    $data['bank_ac_no'] = isset($bank_details->bank_ac_no) ? $bank_details->bank_ac_no : '';
+                    $data['rtgs_ifsc_code'] = isset($bank_details->rtgs_ifsc_code) ? $bank_details->rtgs_ifsc_code : '';
+            
+                    $html = $this->load->view('sales/invoice/invoice_3_2_somnath_print', $data, true);
+                    // $pdfFilePath = "sales_invoice_miracle_print.pdf";
+                    $this->m_pdf->pdf->AddPage('', '', '', '', '', 5, // margin_left
+                            5, // margin right
+                            5, // margin top
+                            15, // margin bottom
+                            5, // margin header
+                            5); // margin footer
+                    $this->m_pdf->pdf->SetHTMLFooter('<table width="100%" style="vertical-align: bottom; font-family: serif; font-size: 8pt; color: #000000; font-weight: bold; font-style: italic;"><tr>
+                    <td width="33%"><span style="font-weight: bold; font-style: italic;">{DATE j-m-Y}</span></td>
+                    <td width="33%" align="center" style="font-weight: bold; font-style: italic;">{PAGENO}/{nbpg}</td>
+                    <td width="33%" style="text-align: right; "></td></tr></table>');
+                    $this->m_pdf->pdf->WriteHTML($html);
+
+                    if ($print_type == 2) {
+                        $data['printtype'] = 1;
+                        $html = $this->load->view('sales/invoice/invoice_somnath_print', $data, true);
+                        $this->m_pdf->pdf->AddPage('', '', '', '', '', 5, // margin_left
+                                5, // margin right
+                                5, // margin top
+                                15, // margin bottom
+                                5, // margin header
+                                5); // margin footer
+
+                        $this->m_pdf->pdf->SetHTMLFooter('<table width="100%" style="vertical-align: bottom; font-family: serif; font-size: 8pt; color: #000000; font-weight: bold; font-style: italic;"><tr>
+                                <td width="33%"><span style="font-weight: bold; font-style: italic;">{DATE j-m-Y}</span></td>
+                                <td width="33%" align="center" style="font-weight: bold; font-style: italic;">{PAGENO}/{nbpg}</td>
+                                <td width="33%" style="text-align: right; "></td></tr></table>'); // Note that the second parameter is optional : default = 'O' for ODD
+                        $this->m_pdf->pdf->WriteHTML($html);
+
+                        $data['printtype'] = 2;
+                        $html = $this->load->view('sales/invoice/invoice_somnath_print', $data, true);
+                        $this->m_pdf->pdf->AddPage('', '', '', '', '', 5, // margin_left
+                                5, // margin right
+                                5, // margin top
+                                15, // margin bottom
+                                5, // margin header
+                                5); // margin footer
+
+                        $this->m_pdf->pdf->SetHTMLFooter('<table width="100%" style="vertical-align: bottom; font-family: serif; font-size: 8pt; color: #000000; font-weight: bold; font-style: italic;"><tr>
+                                <td width="33%"><span style="font-weight: bold; font-style: italic;">{DATE j-m-Y}</span></td>
+                                <td width="33%" align="center" style="font-weight: bold; font-style: italic;">{PAGENO}/{nbpg}</td>
+                                <td width="33%" style="text-align: right; "></td></tr></table>'); // Note that the second parameter is optional : default = 'O' for ODD
+                        $this->m_pdf->pdf->WriteHTML($html);
+                    }
+                    if ($print_type == 1) {
+                        $data['printtype'] = 1;
+                        $html = $this->load->view('sales/invoice/invoice_somnath_print', $data, true);
+                        $this->m_pdf->pdf->AddPage('', '', '', '', '', 5, // margin_left
+                                5, // margin right
+                                5, // margin top
+                                15, // margin bottom
+                                5, // margin header
+                                5); // margin footer
+
+                        $this->m_pdf->pdf->SetHTMLFooter('<table width="100%" style="vertical-align: bottom; font-family: serif; font-size: 8pt; color: #000000; font-weight: bold; font-style: italic;"><tr>
+                                <td width="33%"><span style="font-weight: bold; font-style: italic;">{DATE j-m-Y}</span></td>
+                                <td width="33%" align="center" style="font-weight: bold; font-style: italic;">{PAGENO}/{nbpg}</td>
+                                <td width="33%" style="text-align: right; "></td></tr></table>'); // Note that the second parameter is optional : default = 'O' for ODD
+                        $this->m_pdf->pdf->WriteHTML($html);
+                    }
                 }
+            }
+            // sales invoice data end k203 31-01-2024
+
+            /* $where = array('module' => '2', 'parent_id' => 616);
+            $sales_invoice_lineitems = $this->crud->get_row_by_id('lineitems', $where);
+             */
+            // echo "<pre>";
+            // print_r($result);
+            // die();
+                        
+            $pdfFilePath = "CashPayment.pdf";
+            
+            
+
+            $this->m_pdf->pdf->SetImportUse();
+            $extention = pathinfo($transaction_row->document, PATHINFO_EXTENSION);
+            $secondPdfFilePath = 'assets/uploads/payment/'.$transaction_row->document;
+            if (file_exists($secondPdfFilePath)) {
+                if($transaction_row->document != "" && $transaction_row->document != null){
+                    if($transaction_row->document != "" && $transaction_row->document != null && $extention == 'pdf'){
+                        $pagecount = $this->m_pdf->pdf->SetSourceFile($secondPdfFilePath);
+                    }
+                }
+            }
+            // print_r($dddd); 
+            // echo $transaction_row->document; die;
+            
+            if (file_exists($secondPdfFilePath)) {
+                if($transaction_row->document != "" && $transaction_row->document != null && $extention == 'pdf'){
+                    for ($i=0; $i < $pagecount; $i++) { 
+                        $this->m_pdf->pdf->AddPage();
+                        $tplId =  $this->m_pdf->pdf->importPage($i+1);
+                        $this->m_pdf->pdf->useTemplate($tplId);
+                    }
+                }
+                else if($transaction_row->document != "" && $transaction_row->document != null && $extention == 'jpg'){
+                    // echo $secondPdfFilePath; die; 
+                    $this->m_pdf->pdf->AddPage();
+                    $this->m_pdf->pdf->Image($secondPdfFilePath, 0, 0, 210, 127, 'jpg', '', true, false);
+                }
+
             }
             $this->m_pdf->pdf->Output($pdfFilePath, 'I');
             exit();
@@ -339,7 +586,7 @@ class Transaction extends CI_Controller {
 
         // k203s 17-01-2024 start
         $config['upload_path'] = './assets/uploads/payment/';
-        $config['allowed_types'] = 'pdf';
+        $config['allowed_types'] = 'pdf|jpg|png';
         $config['overwrite'] = TRUE;
         $config['encrypt_name'] = FALSE;
         $config['remove_spaces'] = TRUE;

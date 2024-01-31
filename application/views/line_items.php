@@ -380,6 +380,7 @@
 		var li_lineitem_objectdata = [<?php echo $sales_invoice_lineitems; ?>];
 		var lineitem_objectdata = [];
 		$.each(li_lineitem_objectdata, function (index, value) {
+            value = value.replace(/\t/g, '');
             value = JSON.parse(value);
 			lineitem_objectdata.push(value);
 		});
