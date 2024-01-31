@@ -68,56 +68,57 @@ ob_start();
         <table border="1" style="width: 100%; font-size: 13px">
             <?php if(!empty($letterpad_print)){ ?>
             <tr align="center" class="border1">
-                <td align="center" colspan="16" class="border1" style="background-color: #EAEAEA;"><h2><?= isset($user_name) ? $user_name : '' ?></h2></td>
+                <td align="center" colspan="17" class="border1" style="background-color: #EAEAEA;"><h2><?= isset($user_name) ? $user_name : '' ?></h2></td>
             </tr>
             <tr align="center" style="border: 1px 0px 1px 0px;">
-                <td align="center" colspan="16"  class="">
+                <td align="center" colspan="17"  class="">
                     <?=isset($user_address) ? $user_address : '' ?><br/>
                    <?=isset($user_phone) ? "Mo. ".$user_phone : '' ?> <?=isset($email_ids) ? "Email - ".$email_ids : '' ?>
                 </td>
             </tr>
             <?php } else { ?>
             <tr align="center" class="border1">
-                <td align="left" colspan="16" class="no-border-right">
+                <td align="left" colspan="17" class="no-border-right">
                     <img style="height: 76px;" src="<?php if(isset($logo_image) && $logo_image != '') { echo base_url('assets/uploads/logo_image/'.$logo_image); } else {  echo base_url('assets/dist/img/ram-logo.png'); } ?>" class="saas-logo" alt="saas-logo">
                 </td>
             </tr>
             <tr align="center" style="border: 1px 0px 1px 0px;">
-                <td align="left" colspan="16">
+                <td align="left" colspan="17">
                     <?=isset($user_address) ? $user_address : '' ?>&nbsp;&nbsp;
                     Mobile No. <?=isset($user_phone) ? $user_phone : '' ?>
                 </td>
             </tr>
             <?php } ?>
             <tr class="border1">
-                <td colspan="12" class="text_bold no-border-right" style="text-align: left;">Bill No.: <?=isset($sales_invoice_no) ?$sales_invoice_no : '' ?></td>
+                <td colspan="13" class="text_bold no-border-right" style="text-align: left;">Bill No.: <?=isset($sales_invoice_no) ?$sales_invoice_no : '' ?></td>
                 <td colspan="4" class="text_bold text_right no-border-left no-border-right" style="text-align: center;">Date: <?=isset($sales_invoice_date) ? $sales_invoice_date : '';?>
                 </td>
             </tr>
             <tr class="border1">
-                <td colspan="16" class="text_bold no-border-right text_center"><u>INVOICE</u></td>
+                <td colspan="17" class="text_bold no-border-right text_center"><u>INVOICE</u></td>
                 </td>
             </tr>
             <tr class="">
-                <td colspan="16" class="text_bold text_left no-border-bottom">To,</td>
+                <td colspan="17" class="text_bold text_left no-border-bottom">To,</td>
             </tr>
             <tr class="">
-                <td colspan="16" class="text_bold text_left no-border-bottom no-border-top"><?=isset($account_name) ? $account_name : '&nbsp;' ?></td>
+                <td colspan="17" class="text_bold text_left no-border-bottom no-border-top"><?=isset($account_name) ? $account_name : '&nbsp;' ?></td>
             </tr>
             <tr class="">
-                <td colspan="16" class="text_bold text_left no-border-bottom no-border-top"><?=isset($account_address) ? nl2br($account_address) : '';?></td>
+                <td colspan="17" class="text_bold text_left no-border-bottom no-border-top"><?=isset($account_address) ? nl2br($account_address) : '';?></td>
             </tr>
             <tr class="">
-                <td colspan="16" class="text_bold text_left no-border-bottom no-border-top"><?=isset($account_city) ? nl2br($account_city) : '';?></td>
+                <td colspan="17" class="text_bold text_left no-border-bottom no-border-top"><?=isset($account_city) ? nl2br($account_city) : '';?></td>
             </tr>
             <tr class="">
-                 <td align="center" colspan="16" class="text_bold no-border-bottom">Sub. : <?=isset($sales_subject)?$sales_subject:'';?></td>   
+                 <td align="center" colspan="17" class="text_bold no-border-bottom">Sub. : <?=isset($sales_subject)?$sales_subject:'';?></td>   
             </tr>
             <tr class=""></tr>
             <tr class="border1">
                 <td colspan="1" width="50px" class="text_bold text_center">Sr No</td>
-                <td colspan="9" class="text_bold text_center" width="250px">Particular</td>
+                <td colspan="8" class="text_bold text_center" width="250px">Particular</td>
                 <!-- <td colspan="2" class="text_bold text_center">HSN/SAC</td> -->
+                <td colspan="2" class="text_bold text_center">HSN</td>
                 <td colspan="2" class="text_bold text_center">Qty</td>
                 <!-- <td colspan="1" class="text_bold text_center">Unit</td> -->
                 <td colspan="2" class="text_bold text_center">Rate</td>
@@ -138,14 +139,14 @@ ob_start();
             ?>
             <tr>
                 <td valign="top" colspan="1" class="text_center"><?php echo $inc; ?></td>
-                <td valign="top" colspan="9" align="left"><?php echo $lineitem->line_item_des;?><br><?php echo $lineitem->note;?></td>
-                <!-- <td valign="top" colspan="2" align="center"><?php //echo $lineitem->hsn_code; ?></td> -->
+                <td valign="top" colspan="8" align="left"><?php echo $lineitem->line_item_des;?><br><?php echo $lineitem->note;?></td>
+                <td valign="top" colspan="2" align="center"><?php echo $lineitem->hsn; ?></td>
                 <?php 
                     $unit = $this->crud->get_column_value_by_id('pack_unit', 'pack_unit_name', array('pack_unit_id' => $lineitem->unit_id));
                 ?>
                 <td valign="top" colspan="2" class="divRight"><?php echo $lineitem->item_qty; ?></td>
                 <!-- <td valign="top" colspan="1" class="divRight"><?php //echo $unit; ?></td> -->
-                <td valign="top" colspan="2" class="divRight"><?php echo $lineitem->price; ?></td>
+                <td valign="top" colspan="2" class="divRight"><?php echo number_format((float)$lineitem->price, 2, '.', ''); ?></td>
                 <?php //$gst = $lineitem->cgst +  $lineitem->sgst + $lineitem->igst?>
                 <!-- <td valign="top" colspan="1" class="divRight"><?php //echo $lineitem->gst . '%'; ?></td> -->
                 <?php
@@ -176,8 +177,8 @@ ob_start();
             ?>
                     <tr>
                         <td colspan="1"> &nbsp;</td>
-                        <td colspan="9">&nbsp;</td>
-                        <!-- <td colspan="2">&nbsp;</td> -->
+                        <td colspan="8">&nbsp;</td>
+                        <td colspan="2">&nbsp;</td>
                         <td colspan="2" class="divRight">&nbsp;</td>
                         <!-- <td colspan="1" class="divRight">&nbsp;</td> -->
                         <td colspan="2" class="divRight">&nbsp;</td>
@@ -186,20 +187,20 @@ ob_start();
                     </tr>
             <?php } ?>
             <tr class="border1" style="background-color: #EAEAEA;">
-                <td colspan="11" class="text_bold">GSTIN No. : <?=isset($user_gst_no) ? $user_gst_no : '' ?></td>
+                <td colspan="12" class="text_bold">GSTIN No. : <?=isset($user_gst_no) ? $user_gst_no : '' ?></td>
                 <td colspan="3" class="text_bold no-border-right">Total PF Amount </td>
                 <td colspan="2" align="right" class="text_bold no-border-left"><?php echo number_format((float)$total_pf_amount, 2, '.', ''); ?></td>
             </tr>
-            <tr class="">
+             <tr class="">
                 <td colspan="4" class="no-border-right no-border-bottom text_bold">Bank Name</td>
-                <td colspan="7" class="no-border-left no-border-right no-border-bottom"> : <?=isset($bank_name) ? $bank_name : '' ?></td>
+                <td colspan="8" class="no-border-left no-border-right no-border-bottom"> : <?=isset($bank_name) ? $bank_name : '' ?></td>
                 <td colspan="3" class="no-border-top no-border-bottom no-border-right">Service Charge</td>
                 <td colspan="2" align="right" class="no-border-left no-border-top no-border-bottom"><?php echo number_format((float)($aspergem_service_charge), 2, '.', ''); ?></td>
 
             </tr>
             <tr class="">
                 <td colspan="4" class="no-border-right no-border-top no-border-bottom text_bold">Branch</td>
-                <td colspan="7" class="no-border"> : <?=isset($bank_branch) ? $bank_branch : '' ?></td>
+                <td colspan="8" class="no-border"> : <?=isset($bank_branch) ? $bank_branch : '' ?></td>
                 <td colspan="3" class="text_bold no-border-right">SUB TOTAL </td>
                 <?php 
                     // On 14_09_2022 Issue
@@ -211,37 +212,37 @@ ob_start();
             </tr>
             <tr class="">
                 <td colspan="4" class="no-border-right no-border-bottom no-border-top text_bold">Bank A/c. No.</td>
-                <td colspan="7" class="no-border"> : <?=isset($bank_ac_no) ? $bank_ac_no : '' ?></td>
+                <td colspan="8" class="no-border"> : <?=isset($bank_ac_no) ? $bank_ac_no : '' ?></td>
                 <td colspan="3" class="no-border-top no-border-bottom no-border-right">CGST</td>
                 <td colspan="2" align="right" class="no-border-left no-border-top no-border-bottom"><?php echo number_format((float)($total_gst/2), 2, '.', ''); ?></td>
 
             </tr>
             <tr class="">
                 <td colspan="4" class="no-border-right no-border-bottom no-border-top text_bold">RTGS/IFSC Code</td>
-                <td colspan="7" class="no-border"> : <?=isset($rtgs_ifsc_code) ? $rtgs_ifsc_code : '' ?></td>
+                <td colspan="8" class="no-border"> : <?=isset($rtgs_ifsc_code) ? $rtgs_ifsc_code : '' ?></td>
                 <td colspan="3" class="no-border-top no-border-bottom no-border-right">SGST</td>
                 <?php // $discounted_amt_total = $pure_total_amt + $dis_total_amt;?>
                 <td colspan="2" align="right" class="no-border-left no-border-top no-border-bottom"><?php echo number_format((float)($total_gst/2), 2, '.', ''); ?></td>
             </tr>
             <tr class="">
                 <td colspan="4" rowspan="2" class="border1 no-border-right no-border-bottom text_bold">Total GST</td>
-                <td colspan="7" rowspan="2" class=" border1 no-border-left no-border-bottom no-border-right"> : <?php echo $gst_total_word; ?></td>
+                <td colspan="8" rowspan="2" class=" border1 no-border-left no-border-bottom no-border-right"> : <?php echo $gst_total_word; ?></td>
                 <td colspan="3" class="no-border-top no-border-bottom no-border-right">Prof. Tax</td>
                 <td colspan="2" align="right" class="no-border-left no-border-top no-border-bottom"><?php echo number_format((float)($prof_tax), 2, '.', ''); ?></td><br>
             </tr>
             <tr class="">
                 <td colspan="3" rowspan="2" class="no-border-top no-border-bottom no-border-right">Round Off</td>
-                <td colspan="2" rowspan="2" align="right" class="no-border-left no-border-top no-border-bottom"><?php echo number_format((float)($round_off_amount), 2, '.', ''); ?></td>
+                <td colspan="3" rowspan="2" align="right" class="no-border-left no-border-top no-border-bottom"><?php echo number_format((float)($round_off_amount), 2, '.', ''); ?></td>
             </tr>
             <tr class="border1 no-border-top no-border-bottom text_bold">
-                <td colspan="16" class="no-border-right text_bold">&nbsp;</td>
+                <td colspan="17" class="no-border-right text_bold">&nbsp;</td>
             </tr>
             <?php 
                 $amount_totalToDisplay = $aspergem_service_charge + $pure_total_amt + $total_gst + $prof_tax + $round_off_amount;
             ?>
             <tr class="border1" style="background-color: #EAEAEA;">
                 <td colspan="4" class="no-border-right text_bold">Bill Amount</td>
-                <td colspan="7" class="no-border-left no-border-right no-border-bottom"> : <?php echo (isset($amount_totalToDisplay) && $amount_totalToDisplay != '' ) ? $this->numbertowords->convert_number($amount_totalToDisplay) : $amount_total_word; ?></td>
+                <td colspan="8" class="no-border-left no-border-right no-border-bottom"> : <?php echo (isset($amount_totalToDisplay) && $amount_totalToDisplay != '' ) ? $this->numbertowords->convert_number($amount_totalToDisplay) : $amount_total_word; ?></td>
                 <td colspan="3" class="text_bold no-border-right ">Total Due</td>                
                 <td colspan="2" align="right" class="text_bold no-border-left">
                     <?php 
@@ -250,16 +251,18 @@ ob_start();
                 </td>
             </tr>
             <tr class="border1">
-                <td valign="top" colspan="11" class="no-border-right" style="font-size: 12px;"><span class="text_bold" >Note : </span><br/>
+                <td valign="top" colspan="12" class="no-border-right" style="font-size: 12px;"><span class="text_bold" >Note : </span><br/>
                     <?=isset($sales_note)?$sales_note:'';?>
                 </td>
                 <td valign="top" colspan="5" class="no-border-left text_bold">For, <?= isset($user_name) ? $user_name : '' ?><br/>
                     <br/>
-                    <br/>
+                    <?php   if(isset($stamp_image)){ ?>
+                        <img style="height: 90px;" src="<?php echo base_url('assets/uploads/stamp_image/'.$stamp_image);  ?>" class="saas-logo" alt="saas-logo">
+                    <?php } ?>
                     <br/>
                     <span style="text-align: right;">(Authorised Signatory)</span>
                 </td>
-            </tr>
+            </tr> 
         </table>
 
     </body>

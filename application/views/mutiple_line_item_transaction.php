@@ -121,9 +121,10 @@
                                     <?php } ?>
                                         <div class="form-group">
                                             <label for="invoice_date" class="control-label"><?=$voucher_label?> Date<span class="required-sign">*</span></label>
-                                            <input type="text" name="invoice_date" id="datepicker2" class="form-control date-size" data-index="2" required value="<?=isset($invoice_data->invoice_date) ? date('d-m-Y', strtotime($invoice_data->invoice_date)) : date('d-m-Y', strtotime($transaction_date)); ?>">
+                                            <input type="text" name="invoice_date" id="datepicker2" class="form-control date-size" data-index="2" required value="<?php echo date('d-m-Y', strtotime($transaction_date)); ?>">
                                         </div>
                                     </div>
+                                    
                                     <?php if($voucher_type != "material_in" && $voucher_type != "purchase") { ?>
                                     <div class="col-md-2">
                                         <div class="form-group">
@@ -545,7 +546,13 @@
 <script type="text/javascript">
     var table;
     $(document).ready(function(){
-
+        $('#datepicker2').datepicker({
+            format: 'dd-mm-yyyy',
+            todayBtn: "linked",
+            autoclose: true,
+            startDate: '<?php echo date('d-m-Y', strtotime($transaction_date)); ?>',
+        });
+        
         ss_data = '<?php echo $line_item_fields_data; ?>';
         ss_data1 = JSON.parse(ss_data);
         cgst_div = 0;

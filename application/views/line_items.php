@@ -188,6 +188,7 @@
                                         <th>Sub Category</th>
                                     <?php } ?>
                                     <th style="border-color:#2b3984;">Item</th>
+                                    <th style="border-color:#2b3984;">HSN</th>  <!-- k203s 19-01-2023 -->
                                     <th class="text-right" style="border-color:#2b3984;">Qty</th>
                                     <th class="text-right <?php echo isset($line_item_fields['unit']) ? $line_item_fields['unit'] : ''; ?>" style="border-color:#2b3984;">Unit</th>
                                     <th class="text-right <?php echo isset($line_item_fields['Rate']) ? $line_item_fields['Rate'] : ''; ?>" style="border-color:#2b3984;">Rate</th>
@@ -210,6 +211,7 @@
                                         <th style="border-color:#2b3984;"></th>
                                     <?php } ?>
                                     <th style="border-color:#2b3984;"></th>
+                                    <th style="border-color:#2b3984;"></th>   <!-- k203s 19-01-2023 -->
                                     <th class="text-right" style="border-color:#2b3984;"><span class="qty_total"></span><input type="hidden" name="qty_total" id="qty_total" /></th>
                                     <th class="<?php echo isset($line_item_fields['unit']) ? $line_item_fields['unit'] : ''; ?>" style="border-color:#2b3984;"></th>
                                     <th class="<?php echo isset($line_item_fields['Rate']) ? $line_item_fields['Rate'] : ''; ?>" style="border-color:#2b3984;"></th>
@@ -1185,6 +1187,7 @@
             '<td style="border-color:#2b3984;">' + value_sub_cat_name + '</td>' +
             <?php } ?>
             '<td style="border-color:#2b3984;">' + item_name + '</td>' +
+            '<td style="border-color:#2b3984;">' + value.hsn + '</td>' +  /* k203s 19-01-2023 */
             '<td class="text-right" style="border-color:#2b3984;">' + value.item_qty + '</td>' +
 			'<td class="<?php echo isset($line_item_fields['unit']) ? $line_item_fields['unit'] : ''; ?>" style="border-color:#2b3984;">' + value_unit_name + '</td>' +
 			'<td class="text-right <?php echo isset($line_item_fields['Rate']) ? $line_item_fields['Rate'] : ''; ?>" style="border-color:#2b3984;">' + parseF(value.price) + '</td>' +

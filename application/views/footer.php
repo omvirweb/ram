@@ -176,12 +176,14 @@ immediately after the control sidebar -->
             }
         });
 
-        $('#datepicker1,#datepicker2,#datepicker3,.datepicker').datepicker({
+        $('#datepicker1,#datepicker3,.datepicker').datepicker({  // ,#datepicker2
             format: 'dd-mm-yyyy',
             todayBtn: "linked",
             autoclose: true,
             constrainInput: false
         });
+        
+        
 
         $(document).on('focus',"#datepicker1,#datepicker2,#datepicker3,.datepicker",function () {
            $(this).select();

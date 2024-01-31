@@ -127,7 +127,10 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="invoice_no" class="control-label" style="line-height: 30px;">Invoice No</label>
-                                        <select name="invoice_no[]" id="invoice_no" class="form-control select2" multiple="multiple" ></select> 
+                                        <select name="invoice_no[]" id="invoice_no" class="form-control select2" multiple="multiple" >
+                                            
+
+                                        </select> 
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -136,6 +139,15 @@
                                         <textarea name="note" class="form-control" id="note"><?= (isset($transaction_data->note)) ? $transaction_data->note : ''; ?> </textarea>
                                     </div>
                                 </div>
+                                <!-- k203s 19-01-2023 start -->
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="note" class="control-label">Document</label>
+                                        <input type="file" name="file" class="form-control" id="file">
+                                        <p>(PDF allowed only.)</p>
+                                    </div>
+                                </div>
+                                <!-- k203s 19-01-2023 end -->
                                 <div class="clearfix"></div>
                             </div>
                         </div>
@@ -225,14 +237,12 @@
             <?php } ?>
         <?php } ?>
 
-        <?php if (isset($transaction_data->invoice_no)) { ?>
-                var selectValues =  <?= $transaction_data->invoice_no ; ?>;
-                console.log(selectValues);
-                $.each(selectValues, function(key, value) {   
-                    $("#invoice_no").select2("trigger", "select", {
-                        data: value
-                    });
-                }); 
+        <?php if (isset($transaction_data->invoice_no)) { // k203s 22-01-2023 start ?>
+            var selectValues =  <?= $transaction_data->invoice_no ; ?>;
+            selectValues.forEach(function(value) {
+                var option = new Option(value, value, true, true);
+                $('#invoice_no').append(option).trigger('change');
+            });                
         <?php } ?>
 
         setTimeout(function(){
@@ -309,8 +319,13 @@
                     if (json['success'] == 'Added') {
                         window.location.reload();
                     }
-                    if (json['success'] == 'Updated') {
+                    else if (json['success'] == 'Updated') {
                         window.location.href = "<?php if($segment2 == 'payment') { echo base_url('transaction/payment_list'); } else { echo base_url('transaction/receipt_list'); } ?>";
+                    }
+                    else if(json['success'] == 'error') {
+                        show_notify(json['msg'], false);
+                        $("#file").focus();
+                        return false;
                     }
                     return false;
                 },

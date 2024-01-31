@@ -97,6 +97,17 @@
         </style>
     </head>
 
+    <?php
+    // echo $transaction_row->invoice_no;
+    $invoiceId = json_decode(str_replace('"', '', $transaction_row->invoice_no), true);
+
+            // echo base_url().'assets/uploads/payment/'.$transaction_row->document; die;
+    /* echo "<pre>";
+        print_r($transaction_row);
+        echo "</pre>";
+        die; */
+    
+    ?>
     <body class="">
         <table style="width: 100%;border:solid 1px black;">
             <tbody>
@@ -111,9 +122,9 @@
                         <table style="width: 100%;">
                             <tbody>
                                 <tr>
-                                    <td width="33.33%">Vou. No. : <strong> <?=$transaction_row->receipt_no;?></strong> </td>
-                                    <td width="33.33%" class="text-center"><strong>Cash Payment</strong></td>
-                                    <td width="33.33%" class="text-right">Date : <strong><?=date('d-m-Y',strtotime($transaction_row->transaction_date));?></strong></td>
+                                    <td width="33.33%">Check No / FTO : <strong> <?=$transaction_row->receipt_no;?></strong> </td>
+                                    <td width="33.33%" class="text-center"><strong>Bill No : <?php echo implode(',',$invoiceId); ?></strong></td>
+                                    <td width="33.33%" class="text-right">Received Date : <strong><?=date('d-m-Y',strtotime($transaction_row->transaction_date));?></strong></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -121,7 +132,7 @@
                 </tr>
                 <tr>
                     <td style="padding: 5px;border-top: solid 1px black;">
-                        Paid on account of &nbsp; <strong> <?=$transaction_row->account_name;?></strong>
+                        Payment Received From &nbsp; <strong> <?=$transaction_row->account_name;?></strong>
                     </td>
                 </tr>
                 <tr>
@@ -129,19 +140,65 @@
                         <table style="width: 100%;">
                             <tbody>
                                 <tr>
-                                    <td style="padding: 5px;border-top: solid 1px black;"><strong>Particular</strong></td>
-                                    <td width="150" class="text-right" style="padding: 5px;border-top: solid 1px black;border-left: solid 1px black;"><strong>Amount</strong></td>
+                                    <td style="padding: 5px;border-top: solid 1px black; width:5%"><strong>No</strong></td>
+                                    <td style="padding: 5px;border-top: solid 1px black;border-left: solid 1px black;width:45%"><strong>Particular</strong></td>
+                                    <td class="text-right" style="padding: 5px;border-top: solid 1px black;border-left: solid 1px black;width:15%"><strong>GST Amount</strong></td>
+                                    <td class="text-right" style="padding: 5px;border-top: solid 1px black;border-left: solid 1px black;width:15%"><strong>Bill Amount</strong></td>
+                                    <td class="text-right" style="padding: 5px;border-top: solid 1px black;border-left: solid 1px black;width:20%"><strong>Received Amount</strong></td>
                                 </tr>
+                                <?php 
+                                $totalRecive = $totalDue = 0;
+                                for($i=0;$i<count($invoiceId);$i++){
+                                    
+                                    // $this->db->select('*');
+                                    $this->db->select('sales_invoice_id,aspergem_service_charge,sales_subject');
+                                    $this->db->from('sales_invoice');
+                                    $this->db->where('sales_invoice_no', $invoiceId[$i]);
+                                    $query = $this->db->get();
+                                    
+                                    if ($query->num_rows() > 0) {
+                                        $transaction =$query->row();
+
+                                        /* echo "<pre>";
+                                        print_r($transaction);
+                                        echo "</pre>";
+                                        die; */
+
+                                        $totalDueAmount = 0;
+                                        $where = array('module' => '2', 'parent_id' => $transaction->sales_invoice_id);
+                                        $sales_invoice_lineitems = $this->crud->get_row_by_id('lineitems', $where);
+                                        foreach($sales_invoice_lineitems as $sales_invoice_lineitem){
+                                            $totalDueAmount += $sales_invoice_lineitem->price*$sales_invoice_lineitem->item_qty;
+                                        }
+                                        $gstAmount = ($totalDueAmount*0.18);
+                                        $service_charge = number_format((float) $transaction->aspergem_service_charge, 2, '.', '');
+                                        $totalAmount = $totalDueAmount+$gstAmount+$service_charge;
+
+                                        $totalRecive += $transaction_row->amount;
+                                        $totalDue += $totalAmount;
+                                        // echo $gstAmount; die;
+                                      ?>
+                                    <tr>
+                                        <td height="125" style="vertical-align: top;padding: 5px;border-top: solid 1px black;">1</td>
+                                        <td style="vertical-align: top;padding: 5px;border-top: solid 1px black;border-left: solid 1px black;"><?= $transaction->sales_subject; ?></td>
+                                        <td class="text-right" style="vertical-align: top;padding: 5px;border-top: solid 1px black;border-left: solid 1px black;"><?=number_format((float) $gstAmount, 2, '.', '');?></td>
+                                        <td class="text-right" style="vertical-align: top;padding: 5px;border-top: solid 1px black;border-left: solid 1px black;"><?=number_format((float) $totalAmount, 2, '.', '');?></td>
+                                        <td class="text-right" style="vertical-align: top;padding: 5px;border-top: solid 1px black;border-left: solid 1px black;"><?=number_format((float) $transaction_row->amount, 2, '.', '');?></td>
+                                    </tr>
+                                <?php }
+                                } ?>
                                 <tr>
-                                    <td height="125" style="vertical-align: top;padding: 5px;border-top: solid 1px black;"></td>
-                                    <td class="text-right" style="vertical-align: top;padding: 5px;border-top: solid 1px black;border-left: solid 1px black;"><?=number_format((float) $transaction_row->amount, 2, '.', '');?></td>
+                                    <td colspan="4" style="vertical-align: top;padding: 5px;border-top: solid 1px black;text-align:right;">
+                                    Difference amount
+                                    </td>
+                                    <td class="text-right" style="vertical-align: top;padding: 5px;border-top: solid 1px black;border-left: solid 1px black;"><strong><?=number_format((float) $totalDue-$totalRecive, 2, '.', '');?></strong></td>
                                 </tr>
-                                <tr>
-                                    <td height="40" style="vertical-align: top;padding: 5px;border-top: solid 1px black;">
+                                <!-- <tr>
+                                    <td colspan="4" style="vertical-align: top;padding: 5px;border-top: solid 1px black;">
                                         <strong>Rs. (in words) :</strong> <i><?=$this->applib->getIndianCurrency($transaction_row->amount);?></i>
                                     </td>
                                     <td class="text-right" style="vertical-align: top;padding: 5px;border-top: solid 1px black;border-left: solid 1px black;"><strong><?=number_format((float) $transaction_row->amount, 2, '.', '');?></strong></td>
-                                </tr>
+                                </tr> -->
                             </tbody>
                         </table>
                     </td>
@@ -169,6 +226,7 @@
                         </table>
                     </td>
                 </tr>
+                
             </tbody>
         </table>
     </body>

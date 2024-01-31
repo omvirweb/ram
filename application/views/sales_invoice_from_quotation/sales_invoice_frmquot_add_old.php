@@ -116,7 +116,7 @@ $invoice_no = 1;
                                     </div>
                                     <div class="col-md-2">
                                         <div class="form-group">
-                                            <label for="our_bank_label" class="control-label">Our Bank Label</label>
+                                            <label for="our_bank_label" class="control-label">Our Bank Label123</label>
                                             <select name="our_bank_label" id="our_bank_label" class="form-control select2 our_bank_label" required data-index="1"></select>
                                             
                                         </div>

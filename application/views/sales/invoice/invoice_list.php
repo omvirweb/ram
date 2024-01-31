@@ -71,6 +71,7 @@
                             <a href="javascript:void(0);" class="btn btn-info btn_print_multiple_invoice" data-print_type = "invoice_print_new_pdf" title="Tally Invoice Print"><span class="fa fa-print"></span></a>
                             <a href="#" title="Download Google Sheet"><img src="<?php echo base_url(); ?>assets/dist/img/google_sheet_icon.png" style="width:25px;margin-left: 25px" ></a>
                             <a href="#" title="Email"> <img src="<?php echo base_url(); ?>assets/dist/img/email_icon.png" style="width:25px;margin-left: 25px" ></a>
+                            
                         </h3>
                     </div>
                     <!-- /.box-header -->
@@ -89,6 +90,7 @@
                                         <th>Account</th>
                                         <th>Invoice Date</th>
                                         <th>Amount</th>
+                                        <th>Payment Status</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -100,6 +102,7 @@
                                         <?php if ($this->session->userdata(PACKAGE_FOLDER_NAME . 'is_logged_in')['is_bill_wise'] == '1') { ?>
                                             <th></th>
                                         <?php } ?>
+                                        <th></th>
                                         <th></th>
                                         <th></th>
                                         <th></th>
@@ -125,7 +128,9 @@
 	var table;
 	var datepicker1 = '';
 	var datepicker2 = '';
+    var paymentType ='';
 	$(document).ready(function(){
+       
 		initAjaxSelect2($("#account_id"),"<?=base_url('app/account_select2_source/')?>");
 
 		var client = 'All'
@@ -153,7 +158,7 @@
                         objLayout['hLineWidth'] = function(i) { return .5; };
                         objLayout['vLineWidth'] = function(i) { return .5; };
                         doc.content[1].layout = objLayout;
-                        doc.content[1].table.widths = ["25%", "25%", "25%", "25%"]; //costringe le colonne ad occupare un dato spazio per gestire il baco del 100% width che non si concretizza mai
+                        doc.content[1].table.widths = ["10%", "15%", "55%", "10%", "10%"]; //costringe le colonne ad occupare un dato spazio per gestire il baco del 100% width che non si concretizza mai
                         var rowCount = document.getElementById("product-table").rows.length;
 
                         for (i = 1; i < rowCount; i++) {
@@ -223,6 +228,7 @@
 				"url": "<?php echo base_url('sales/invoice_datatable')?>",
 				"type": "POST",
 				"data": function(d){
+                    d.paymentType = paymentType;
 					d.daterange_1 = datepicker1;
 					d.daterange_2 = datepicker2;
 					d.account_id = $("#account_id").val();
@@ -236,7 +242,18 @@
 			"columnDefs": [
 				{"targets": 0, "orderable": false },
 				{ className: "text-right", "targets": [4] },
+				{ className: "text-center", "targets": [5] },
 			],
+            'rowCallback': function(row, data, index){
+                if(data[5] == "Unpaid"){
+                    $(row).find('td:eq(5)').css('background','#F89F8C') // .addClass('bg-red');
+                    $(row).find('td:eq(5)').addClass('text-bold');
+                }
+                else {
+                    $(row).find('td:eq(5)').addClass('text-bold');
+                    $(row).find('td:eq(5)').addClass('bg-green');
+                }
+            },
 			"footerCallback": function (row, data, start, end, display) {
                 var api = this.api(), data;
                 // Remove the formatting to get integer data for summation
@@ -266,6 +283,19 @@
             }
 		});
 		
+        $('.dt-buttons').addClass('col-md-9 col-sm-8 padding0 mb10');
+        $('.dt-buttons').css({'display': 'flex'},
+        {'align-items': 'center'});
+        $('.dt-buttons a:last').after(`<div class="col-lg-2 col-sm-5">
+                                    <select name="paymentType" id="paymentType" class="paymentType">
+                                        <option value="">All</option>
+                                        <option value="1">Paid</option>
+                                        <option value="0">Unpaid</option>
+                                    </select>
+                            </div>`);
+        $('.paymentType').select2({
+            width:'100%',
+        });
 		$(document).on('click','#btn_datepicker',function(e){
 			e.preventDefault();
 			datepicker1 = $('#datepicker1').val();
@@ -276,6 +306,11 @@
 			}
 		});
 		
+		$(document).on('change','#paymentType',function(){
+            paymentType = $(this).val();
+            table.draw();
+			return false;
+        });
 		$(document).on('change','#account_id',function(){
 			table.draw();
 		});
