@@ -77,8 +77,8 @@ $db['default'] = array(
 	'dsn'	=> '',
 	'hostname' => 'localhost',
 	'username' => 'root',
-	'password' => 'DB@RamConstructions@2023',
-	'database' => 'rambirth',
+	'password' => '',  // DB@RamConstructions@2023
+	'database' => 'ramlive',
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
 	'pconnect' => FALSE,
@@ -95,4 +95,4 @@ $db['default'] = array(
 	'save_queries' => TRUE
 );
 
-$db['default']['port'] = 3308;
+// $db['default']['port'] = 3308;

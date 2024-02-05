@@ -109,42 +109,42 @@
     
     ?>
     <body class="">
-        <table style="width: 100%;border:solid 1px black;">
+        <table style="width: 100%;">
             <tbody>
                 <tr>
-                    <td class="text-center" style="padding: 5px;">
-                        <h2><strong><?=$company_row->user_name;?></strong></h2>
+                    <td class="text-center" style="padding: 5px;border:1px solid black;">
+                        <h2 style="font-weight: bold; font-size: 18px;font-family: 'Times New Roman', Times, serif;"><strong><?=$company_row->user_name;?></strong></h2>
                         <p><?=$company_row->address;?></p>
                     </td>
                 </tr>
                 <tr>
-                    <td style="padding: 5px;border-top: solid 1px black;">
+                    <td style="padding: 5px;border: solid 1px black;border-top:0px;">
                         <table style="width: 100%;">
                             <tbody>
                                 <tr>
-                                    <td width="33.33%">Check No / FTO : <strong> <?=$transaction_row->receipt_no;?></strong> </td>
-                                    <td width="33.33%" class="text-center"><strong>Bill No : <?php echo implode(',',$invoiceId); ?></strong></td>
-                                    <td width="33.33%" class="text-right">Received Date : <strong><?=date('d-m-Y',strtotime($transaction_row->transaction_date));?></strong></td>
+                                    <td width="33.33%" >Check No / FTO : <span style="font-weight: bold; font-family: 'Times New Roman', Times, serif;"> <?=$transaction_row->receipt_no;?></span> </td>
+                                    <td width="33.33%" class="text-center"><span style="font-weight: bold; font-family: 'Times New Roman', Times, serif;">Bill No : <?php echo implode(',',$invoiceId); ?></span></td>
+                                    <td width="33.33%" class="text-right">Received Date : <span style="font-weight: bold; font-family: 'Times New Roman', Times, serif;"><?=date('d-m-Y',strtotime($transaction_row->transaction_date));?></span></td>
                                 </tr>
                             </tbody>
                         </table>
                     </td>
                 </tr>
                 <tr>
-                    <td style="padding: 5px;border-top: solid 1px black;">
-                        Payment Received From &nbsp; <strong> <?=$transaction_row->account_name;?></strong>
+                    <td style="padding: 5px;border-bottom: 0px;border-left: 1px solid black;border-right: 1px solid black;">
+                        Payment Received From &nbsp; <span style="font-weight: bold; font-family: 'Times New Roman', Times, serif;"> <?=$transaction_row->account_name;?></span>
                     </td>
                 </tr>
                 <tr>
-                    <td>
+                    <td style="border-left: solid 1px black;border-right:1px solid  black;padding:0px;">
                         <table style="width: 100%;">
                             <tbody>
                                 <tr>
-                                    <td style="padding: 5px;border-top: solid 1px black; width:5%"><strong>No</strong></td>
-                                    <td style="padding: 5px;border-top: solid 1px black;border-left: solid 1px black;width:45%"><strong>Particular</strong></td>
-                                    <td class="text-right" style="padding: 5px;border-top: solid 1px black;border-left: solid 1px black;width:15%"><strong>GST Amount</strong></td>
-                                    <td class="text-right" style="padding: 5px;border-top: solid 1px black;border-left: solid 1px black;width:15%"><strong>Bill Amount</strong></td>
-                                    <td class="text-right" style="padding: 5px;border-top: solid 1px black;border-left: solid 1px black;width:20%"><strong>Received Amount</strong></td>
+                                    <td style="padding: 5px;border-top: solid 1px black; width:5%"><span style="font-weight: bold; font-family: 'Times New Roman', Times, serif;">No</span></td>
+                                    <td style="padding: 5px;border-top: solid 1px black;border-left: solid 1px black;width:45%"><span style="font-weight: bold; font-family: 'Times New Roman', Times, serif;">Particular</span></td>
+                                    <td class="text-right" style="padding: 5px;border-top: solid 1px black;border-left: solid 1px black;width:15%"><span style="font-weight: bold; font-family: 'Times New Roman', Times, serif;">GST Amount</span></td>
+                                    <td class="text-right" style="padding: 5px;border-top: solid 1px black;border-left: solid 1px black;width:15%"><span style="font-weight: bold; font-family: 'Times New Roman', Times, serif;">Bill Amount</span></td>
+                                    <td class="text-right" style="padding: 5px;border-top: solid 1px black;border-left: solid 1px black;width:20%"><span style="font-weight: bold; font-family: 'Times New Roman', Times, serif;">Received Amount</span></td>
                                 </tr>
                                 <?php 
                                 $totalRecive = $totalDue = 0;
@@ -179,7 +179,7 @@
                                         // echo $gstAmount; die;
                                       ?>
                                     <tr>
-                                        <td height="125" style="vertical-align: top;padding: 5px;border-top: solid 1px black;">1</td>
+                                        <td height="125" style="vertical-align: top;padding: 5px;border-top: solid 1px black;"><?php echo $i+1; ?></td>
                                         <td style="vertical-align: top;padding: 5px;border-top: solid 1px black;border-left: solid 1px black;"><?= $transaction->sales_subject; ?></td>
                                         <td class="text-right" style="vertical-align: top;padding: 5px;border-top: solid 1px black;border-left: solid 1px black;"><?=number_format((float) $gstAmount, 2, '.', '');?></td>
                                         <td class="text-right" style="vertical-align: top;padding: 5px;border-top: solid 1px black;border-left: solid 1px black;"><?=number_format((float) $totalAmount, 2, '.', '');?></td>
@@ -191,7 +191,7 @@
                                     <td colspan="4" style="vertical-align: top;padding: 5px;border-top: solid 1px black;text-align:right;">
                                     Difference amount
                                     </td>
-                                    <td class="text-right" style="vertical-align: top;padding: 5px;border-top: solid 1px black;border-left: solid 1px black;"><strong><?=number_format((float) $totalDue-$totalRecive, 2, '.', '');?></strong></td>
+                                    <td class="text-right" style="vertical-align: top;padding: 5px;border-top: solid 1px black;border-left: solid 1px black;"><span style="font-weight: bold; font-family: 'Times New Roman', Times, serif;"><?=number_format((float) $totalDue-$totalRecive, 2, '.', '');?></span></td>
                                 </tr>
                                 <!-- <tr>
                                     <td colspan="4" style="vertical-align: top;padding: 5px;border-top: solid 1px black;">
@@ -204,7 +204,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td style="padding: 10px;border-top: solid 1px black;">
+                    <td style="padding: 10px;border: solid 1px black;">
                         <table style="width: 100%;">
                             <tbody>
                                 <tr>

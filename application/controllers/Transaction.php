@@ -103,21 +103,11 @@ class Transaction extends CI_Controller {
             }
             // echo $transaction_row->invoice_no; die;
             $invoiceId = json_decode(str_replace('"', '', $transaction_row->invoice_no), true);
-            $data1['company_row'] = $this->crud->get_data_row_by_id('user', 'user_id',$this->logged_in_id);
-            $data1['inviceId'] =  $invoiceId;
+            
             // sales invoice data start k203 31-01-2024
             $this->load->library('m_pdf');
 
-            $data1['transaction_row'] = $transaction_row;
-            $html1 = $this->load->view('transaction/payment_print', $data1, true);
-            $this->m_pdf->pdf->AddPage('','', '', '', '',
-                          15, // margin_left
-                          15, // margin right
-                          15, // margin top
-                          15, // margin bottom
-                          5, // margin header
-                          5);
-            $this->m_pdf->pdf->WriteHTML($html1);
+            
 
             for($i=0;$i<count($invoiceId);$i++){
                 $this->db->select('sales_invoice_id,sales_invoice_no');
@@ -348,6 +338,18 @@ class Transaction extends CI_Controller {
             }
             // sales invoice data end k203 31-01-2024
 
+            $data1['company_row'] = $this->crud->get_data_row_by_id('user', 'user_id',$this->logged_in_id);
+            $data1['inviceId'] =  $invoiceId;
+            $data1['transaction_row'] = $transaction_row;
+            $html1 = $this->load->view('transaction/payment_print', $data1, true);
+            $this->m_pdf->pdf->AddPage('','', '', '', '',
+                          15, // margin_left
+                          15, // margin right
+                          15, // margin top
+                          15, // margin bottom
+                          5, // margin header
+                          5);
+            $this->m_pdf->pdf->WriteHTML($html1);
             /* $where = array('module' => '2', 'parent_id' => 616);
             $sales_invoice_lineitems = $this->crud->get_row_by_id('lineitems', $where);
              */
@@ -356,8 +358,6 @@ class Transaction extends CI_Controller {
             // die();
                         
             $pdfFilePath = "CashPayment.pdf";
-            
-            
 
             $this->m_pdf->pdf->SetImportUse();
             $extention = pathinfo($transaction_row->document, PATHINFO_EXTENSION);

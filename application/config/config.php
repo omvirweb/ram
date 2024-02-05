@@ -23,8 +23,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | a PHP script and you can easily do that on your own.
 |
 */
-$config['base_url'] = 'http://'.$_SERVER['HTTP_HOST'].'/rambirthtest/';
-define('PACKAGE_FOLDER_NAME', 'rambirthtest');
+$config['base_url'] = 'http://'.$_SERVER['HTTP_HOST'].'/ram/';
+define('PACKAGE_FOLDER_NAME', 'ram');
 
 /*
 |--------------------------------------------------------------------------
