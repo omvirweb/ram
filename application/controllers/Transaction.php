@@ -342,13 +342,12 @@ class Transaction extends CI_Controller {
             $data1['inviceId'] =  $invoiceId;
             $data1['transaction_row'] = $transaction_row;
             $html1 = $this->load->view('transaction/payment_print', $data1, true);
-            $this->m_pdf->pdf->AddPage('','', '', '', '',
-                          15, // margin_left
-                          15, // margin right
-                          15, // margin top
-                          15, // margin bottom
-                          5, // margin header
-                          5);
+            $this->m_pdf->pdf->AddPage('', '', '', '', '', 5, // margin_left
+                            5, // margin right
+                            5, // margin top
+                            15, // margin bottom
+                            5, // margin header
+                            5); // margin footer
             $this->m_pdf->pdf->WriteHTML($html1);
             /* $where = array('module' => '2', 'parent_id' => 616);
             $sales_invoice_lineitems = $this->crud->get_row_by_id('lineitems', $where);
