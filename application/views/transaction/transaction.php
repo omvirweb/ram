@@ -144,7 +144,7 @@
                                     <div class="form-group">
                                         <label for="note" class="control-label">Document</label>
                                         <input type="file" name="file" class="form-control" id="file">
-                                        <p>(PDF,JPG,PNG allowed only.)</p>
+                                        <p>(JPG,PNG allowed only.)</p>
                                     </div>
                                 </div>
                                 <!-- k203s 19-01-2023 end -->

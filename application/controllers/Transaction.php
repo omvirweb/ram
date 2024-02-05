@@ -383,7 +383,7 @@ class Transaction extends CI_Controller {
                 else if($transaction_row->document != "" && $transaction_row->document != null && $extention == 'jpg'){
                     // echo $secondPdfFilePath; die; 
                     $this->m_pdf->pdf->AddPage();
-                    $this->m_pdf->pdf->Image($secondPdfFilePath, 0, 0, 210, 127, 'jpg', '', true, false);
+                    $this->m_pdf->pdf->Image($secondPdfFilePath, 10, 10,10,10, 210, 127, 'jpg', '', true, false);
                 }
 
             }
@@ -586,7 +586,7 @@ class Transaction extends CI_Controller {
 
         // k203s 17-01-2024 start
         $config['upload_path'] = './assets/uploads/payment/';
-        $config['allowed_types'] = 'pdf|jpg|png';
+        $config['allowed_types'] = 'jpg|png';
         $config['overwrite'] = TRUE;
         $config['encrypt_name'] = FALSE;
         $config['remove_spaces'] = TRUE;
