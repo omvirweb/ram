@@ -362,25 +362,17 @@ class Transaction extends CI_Controller {
             $this->m_pdf->pdf->SetImportUse();
             $extention = pathinfo($transaction_row->document, PATHINFO_EXTENSION);
             $secondPdfFilePath = 'assets/uploads/payment/'.$transaction_row->document;
-            if (file_exists($secondPdfFilePath)) {
-                if($transaction_row->document != "" && $transaction_row->document != null){
-                    if($transaction_row->document != "" && $transaction_row->document != null && $extention == 'pdf'){
-                        $pagecount = $this->m_pdf->pdf->SetSourceFile($secondPdfFilePath);
-                    }
-                }
-            }
-            // print_r($dddd); 
-            // echo $transaction_row->document; die;
             
             if (file_exists($secondPdfFilePath)) {
                 if($transaction_row->document != "" && $transaction_row->document != null && $extention == 'pdf'){
+                    $pagecount = $this->m_pdf->pdf->SetSourceFile($secondPdfFilePath);
                     for ($i=0; $i < $pagecount; $i++) { 
                         $this->m_pdf->pdf->AddPage();
                         $tplId =  $this->m_pdf->pdf->importPage($i+1);
                         $this->m_pdf->pdf->useTemplate($tplId);
                     }
                 }
-                else if($transaction_row->document != "" && $transaction_row->document != null && $extention == 'jpg'){
+                else if($transaction_row->document != "" && $transaction_row->document != null && ($extention == 'jpg' || $extention == 'png')){
                     // echo $secondPdfFilePath; die; 
                     $this->m_pdf->pdf->AddPage();
                     $this->m_pdf->pdf->Image($secondPdfFilePath, 10, 10,10,10, 210, 127, 'jpg', '', true, false);
