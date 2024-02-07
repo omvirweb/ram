@@ -1292,9 +1292,8 @@ class Transaction extends CI_Controller {
         if(isset($invoice_type)) {
             $data['invoice_type'] = $invoice_type;
         }
-
         // echo "<pre>";
-        // print_r($data);
+        // print_r($_POST);
         // exit;
 
         $is_single_line_item = $this->session->userdata(PACKAGE_FOLDER_NAME.'is_logged_in')['is_single_line_item'];
@@ -1356,7 +1355,7 @@ class Transaction extends CI_Controller {
                 $data['against_account_id'] = $dispatch_invoice_data[0]->against_account_id;
                 $data['note'] = $dispatch_invoice_data[0]->sales_invoice_desc;
             }
-
+            
             set_page('single_line_item_transaction',$data);
         } else {
             $main_fields = $this->crud->getFromSQL('SELECT setting_key FROM company_settings WHERE setting_key != "display_dollar_sign" AND company_id = "'.$this->logged_in_id.'" AND module_name = 1 AND setting_value = 1');
@@ -1567,6 +1566,21 @@ class Transaction extends CI_Controller {
                 }
 
             }
+            if(isset($data['invoice_data']->sales_invoice_no) && $data['invoice_data']->sales_invoice_no !=''){
+                $lastSalesData  = $this->crud->getFromSQL('SELECT sales_invoice_date
+                FROM `sales_invoice`
+                WHERE sales_invoice_id > (
+                    SELECT sales_invoice_id
+                    FROM `sales_invoice`
+                    WHERE sales_invoice_no = '.$data['invoice_data']->sales_invoice_no.'
+                )
+                ORDER BY sales_invoice_id
+                LIMIT 1');
+                $data['last_after_sales_date'] = $lastSalesData[0]->sales_invoice_date;
+            }
+            // echo "<pre>";
+            // print_r($data);
+            // exit;
             set_page('mutiple_line_item_transaction',$data);
         }
     }

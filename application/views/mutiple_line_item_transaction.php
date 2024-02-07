@@ -119,10 +119,14 @@
                                     <?php } else { ?>
                                     <div class="col-md-6">
                                     <?php } ?>
+                                    <?php //echo $invoice_data->sales_invoice_date;
+                                    $salesInvoiceDt = $invoice_id ? $invoice_data->sales_invoice_date : $transaction_date; ?>
+                                    
                                         <div class="form-group">
                                             <label for="invoice_date" class="control-label"><?=$voucher_label?> Date<span class="required-sign">*</span></label>
-                                            <input type="text" name="invoice_date" id="datepicker2" class="form-control date-size" data-index="2" required value="<?php echo date('d-m-Y', strtotime($transaction_date)); ?>">
+                                            <input type="text" name="invoice_date" id="datepicker2" class="form-control date-size" data-index="2" required value="<?php echo date('d-m-Y', strtotime($salesInvoiceDt)); ?>">
                                         </div>
+                                    
                                     </div>
                                     
                                     <?php if($voucher_type != "material_in" && $voucher_type != "purchase") { ?>
@@ -546,11 +550,16 @@
 <script type="text/javascript">
     var table;
     $(document).ready(function(){
+        // $salesInvoiceDt = $invoice_id ? $invoice_data->sales_invoice_date : $transaction_date;
+        <?php $last_after_sales_date ?>
         $('#datepicker2').datepicker({
             format: 'dd-mm-yyyy',
             todayBtn: "linked",
             autoclose: true,
-            startDate: '<?php echo date('d-m-Y', strtotime($transaction_date)); ?>',
+            startDate: '<?php echo date('d-m-Y', strtotime($salesInvoiceDt)); ?>',
+            <?php if(isset($last_after_sales_date)){ ?>
+            endDate: '<?php echo date('d-m-Y', strtotime($last_after_sales_date)); ?>',
+            <?php } ?>
         });
         
         ss_data = '<?php echo $line_item_fields_data; ?>';
