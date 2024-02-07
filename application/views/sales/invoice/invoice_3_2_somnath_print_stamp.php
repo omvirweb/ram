@@ -90,29 +90,38 @@ ob_start();
             </tr>
             <?php } ?>
             <tr class="border1">
-                <td colspan="12" class="text_bold no-border-right" style="text-align: left;">Bill No.: <?=isset($sales_invoice_no) ?$sales_invoice_no : '' ?></td>
-                <td colspan="4" class="text_bold text_right no-border-left no-border-right" style="text-align: center;">Date: <?=isset($sales_invoice_date) ? $sales_invoice_date : '';?>
-                </td>
-            </tr>
-            <tr class="border1">
                 <td colspan="16" class="text_bold no-border-right text_center"><u>INVOICE</u></td>
                 </td>
             </tr>
+            <!-- k203s 07-02-2024 start -->
             <tr class="">
-                <td colspan="16" class="text_bold text_left no-border-bottom">To,</td>
+                <td colspan="2" class="text_bold text_left no-border-bottom no-border-right">M/s &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </td>
+                <td colspan="8" class="text_bold text_left no-border-left no-border-bottom"><?=isset($account_name) ? $account_name : '&nbsp;' ?></td>
+                <td colspan="3" class="text_bold text_left no-border-right no-border-bottom">Invoice No.</td>
+                <td colspan="3" class="text_bold text_left no-border-left no-border-bottom"> : <?=isset($sales_invoice_no) ?$sales_invoice_no : '' ?></td>
             </tr>
             <tr class="">
-                <td colspan="16" class="text_bold text_left no-border-bottom no-border-top"><?=isset($account_name) ? $account_name : '&nbsp;' ?></td>
+                <td colspan="2" rowspan="3" valign="top" class="text_bold text_left no-border-bottom no-border-right no-border-top">Address &nbsp;&nbsp;<b class="text_bold"> : </b></td>
+                <td colspan="8" rowspan="3" valign="top" class=" text_left no-border-bottom no-border-left no-border-top"><span><?=isset($account_address) ? nl2br($account_address) : '';?></span></td>
+                <td colspan="3" valign="top" class="text_bold text_left no-border-bottom no-border-right no-border-top">Date</td>
+                <td colspan="3" valign="top" class="text_bold text_left no-border-bottom no-border-left no-border-top"><b> : </b><?=isset($sales_invoice_date) ? $sales_invoice_date : '';?></td>
+            </tr>
+            <tr class=""></tr>
+            <tr class=""></tr>
+            <tr class="">
+                <td colspan="2" class="text_bold text_left no-border-bottom no-border-right no-border-top" style="white-space: nowrap;">GSTIN No. : </td>
+                <td colspan="8" class=" text_left no-border-bottom no-border-left no-border-top"><?=isset($account_gst_no) ? $account_gst_no : '';?></td>
+                <td colspan="3" class="text_bold text_left no-border-bottom no-border-right no-border-top">Place Of Supply</td>
+                <td colspan="3" class=" text_left no-border-bottom no-border-left no-border-top"><b class="text_bold"> : </b><?=isset($account_state) ? $account_state : '';?></td>
             </tr>
             <tr class="">
-                <td colspan="16" class="text_bold text_left no-border-bottom no-border-top"><?=isset($account_address) ? nl2br($account_address) : '';?></td>
+                <td colspan="2" class="text_bold text_left no-border-bottom no-border-right no-border-top" style="white-space: nowrap;">Site Name :</td>
+                <td colspan="8" class=" text_left no-border-bottom no-border-left no-border-top">
+                    <?= (isset($site_name)) ? $site_name.'<br/>' : ''; ?>
+                </td>
+                <td colspan="6" class="text_bold text_left no-border-bottom no-border-top">&nbsp;</td>
             </tr>
-            <tr class="">
-                <td colspan="16" class="text_bold text_left no-border-bottom no-border-top"><?=isset($account_city) ? nl2br($account_city) : '';?></td>
-            </tr>
-            <tr class="">
-                 <td align="center" colspan="16" class="text_bold no-border-bottom">Sub. : <?=isset($sales_subject)?$sales_subject:'';?></td>   
-            </tr>
+            <!-- k203s 07-02-2024 end -->
             <tr class=""></tr>
             <tr class="border1">
                 <td colspan="1" width="50px" class="text_bold text_center">Sr No</td>
