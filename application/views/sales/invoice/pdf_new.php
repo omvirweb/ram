@@ -342,7 +342,7 @@ ob_start();
                         <table border="1" style="width: 100%;">
                             <tr>
                                 <td colspan="2" style="border:0px;">
-                                    Goods Recevied on Behalf of NRUSINH CONSTRUCTION
+                                    Goods Recevied on Behalf of <?=isset($user_name) ? $user_name : '' ?>
                                 </td>
                             </tr>    
                             <tr><td colspan="2" style="border:0px;">&nbsp;</td></tr>
@@ -363,7 +363,7 @@ ob_start();
                         <table border="1" style="width: 100%;">
                             <tr>
                                 <td style="text-align: right; font-size: 13px;border:0px;">
-                                    For KAMDHENU PIPE
+                                    For <?=isset($user_name) ? $user_name : '' ?>
                                 </td>
                             </tr>
                             <tr><td style="border:0px;">&nbsp;</td></tr>

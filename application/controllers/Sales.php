@@ -862,24 +862,14 @@ class Sales extends CI_Controller
         $this->m_pdf->pdf->AddPage('', '', '', '', '', 
                 10, // margin_left
                 10, // margin right
-                134, // margin top
+                140, // margin top
                 15, // margin bottom
                 15, // margin header
-                15); // margin footer
+                17); // margin footer
 
         $this->m_pdf->pdf->SetHTMLHeader($html_header, 'OE', true);
-        /* $this->m_pdf->pdf->SetHTMLHeader('<table width="100%" style="vertical-align: bottom; font-family:; font-size: 8pt; color: #000000; font-weight: bold;"><tr>
-          <td width="33%"><span style="font-weight: bold; font-style: italic;">{DATE j-m-Y}</span></td>
-          <td width="33%" align="center" style="font-weight: bold; font-style: italic;"></td>
-          <td width="33%" style="text-align:right; ">My document</td></tr>
-          </table>','O'); */
-        //$this->m_pdf->pdf->SetHTMLHeader('<div style="border-bottom: 1px solid #000000;">My document</div>','E');
         $this->m_pdf->pdf->SetHTMLFooter('<table width="100%" style="vertical-align: bottom; font-family: serif; font-size: 8pt; color: #000000; font-weight: bold; font-style: italic;"><tr><td style="border-top:1px solid;"></td></tr></table>');
-        /* $this->m_pdf->pdf->SetHTMLFooter('<table width="100%" style="vertical-align: bottom; font-family: serif; font-size: 8pt; color: #000000; font-weight: bold; font-style: italic;"><tr>
-		<td width="33%"><span style="font-weight: bold; font-style: italic;">{DATE j-m-Y}</span></td>
-		<td width="33%" align="center" style="font-weight: bold; font-style: italic;">{PAGENO}/{nbpg}</td>
-		<td width="33%" style="text-align: right; "></td></tr></table>'); */ // Note that the second parameter is optional : default = 'O' for ODD
-        //$this->m_pdf->pdf->WriteHTML(file_get_contents(base_url().'assets/bootstrap/css/bootstrap.min.css'), 1);
+        
         $this->m_pdf->pdf->WriteHTML($html);
         if (empty($is_multiple)) {
             $this->m_pdf->pdf->Output($pdfFilePath, 'I');

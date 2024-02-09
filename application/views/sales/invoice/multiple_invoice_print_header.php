@@ -1,7 +1,7 @@
 
 <table border="0" style="width: 100%;">
     <tr>
-        <td style="text-align: center;font-size: 14px;">KAMDHENU PIPE</td>
+        <td style="text-align: center;font-size: 14px;"><?=isset($user_name) ? $user_name : '' ?></td>
     </tr>
 </table>
 <table border="0" style="width: 100%;">
@@ -12,7 +12,7 @@
         <td colspan="2" style="width: 60%;padding: 8px;text-align: center;">
             <span class="address" style="font-size: 12px !important;"> 
             <?=isset($user_address) ? $user_address : '' ?>,</span> <span style="font-size: 10px;">State Name : <?=isset($user_state) ? $user_state : '' ?>
-                E-Mail : <?=isset($user_state) ? $email_ids : '' ?>, Web : WWW.KAMDHENUPIPES.COM
+                E-Mail : <?=isset($user_state) ? $email_ids : '' ?>,<br/> Web : &nbsp;
             Contact : <?=isset($user_phone) ? $user_phone : '' ?></span>
         </td>
         <td rowspan="2" style="width: 20%;text-align: center;border-bottom: 0px;">
