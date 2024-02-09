@@ -110,16 +110,8 @@ class Transaction extends CI_Controller {
             
 
             for($i=0;$i<count($invoiceId);$i++){
-                $this->db->select('sales_invoice_id,sales_invoice_no');
-                $this->db->from('sales_invoice ss');
-                $this->db->where('ss.sales_invoice_no',$invoiceId[$i]);
-                $queryInvoice = $this->db->get();
-                
-                if($queryInvoice->num_rows() > 0) {
-                    $rowData =$queryInvoice->row();
-                
-                    $sales_invoice_id = $rowData->sales_invoice_id;
-                    $result = $this->crud->get_data_row_by_id('sales_invoice', 'sales_invoice_id', $sales_invoice_id);
+                    $sales_invoice_id = $invoiceId[$i];
+                    $result = $this->crud->get_data_row_by_id('sales_invoice', 'sales_invoice_no', $sales_invoice_id);
                     $user_detail = $this->crud->get_data_row_by_id('user', 'user_id', $result->created_by);
                     $account_detail = $this->crud->get_data_row_by_id('account', 'account_id', $result->account_id);
                     $this->load->library('numbertowords');
@@ -137,9 +129,10 @@ class Transaction extends CI_Controller {
                     } else {
                         $amount_total_word = $this->numbertowords->convert_number($total_amount_word);
                     }
-
+            
+            
                     $total_gst = $result->cgst_amount_total + $result->sgst_amount_total + $result->igst_amount_total;
-                    //$total_gst = $result->gst;
+                    // $total_gst = $result->gst;
                     if ($total_gst < 0) {
                         $gst_total_word = 'Minus ' . $this->numbertowords->convert_number(abs($total_gst));
                     } else {
@@ -190,7 +183,7 @@ class Transaction extends CI_Controller {
                     // $data['bank_ac_no'] = $user_detail->bank_ac_no;
                     // $data['rtgs_ifsc_code'] = $user_detail->rtgs_ifsc_code;
                     $data['is_letter_pad'] = $this->session->userdata(PACKAGE_FOLDER_NAME . 'is_logged_in')['is_letter_pad'];
-
+            
                     $data['account_name'] = $account_detail->account_name;
                     $cash_in_hand_acc = $this->applib->is_cash_in_hand_account($result->account_id);
                     if ($cash_in_hand_acc == true && !empty($result->cash_customer)) {
@@ -209,14 +202,13 @@ class Transaction extends CI_Controller {
                     $data['account_pan'] = $account_detail->account_pan;
                     $data['transport_name'] = $result->transport_name;
                     $data['lr_no'] = $result->lr_no;
-
+            
                     $lineitem_arr = array();
-                    $where = array('module' => '2', 'parent_id' => $sales_invoice_id);
+                    $where = array('module' => '2', 'parent_id' => $result->sales_invoice_id);
                     $sales_invoice_lineitems = $this->crud->get_row_by_id('lineitems', $where);
-                    // echo "<pre>";
-                    // print_r( $sales_invoice_lineitems[] );
-                    // die();
+                    
                     $total_gst = 0;
+            
                     foreach ($sales_invoice_lineitems as $key=>$sales_invoice_lineitem) {
                         $sales_invoice_lineitem->item_name = $this->crud->get_id_by_val('item', 'item_name', 'item_id', $sales_invoice_lineitem->item_id);
                         $hsn_id = $this->crud->get_id_by_val('item', 'hsn_code', 'item_id', $sales_invoice_lineitem->item_id);
@@ -242,9 +234,17 @@ class Transaction extends CI_Controller {
                             $data['site_address'] = (isset($site_data)) ? $site_data[0]->site_address : '';
                         }
                     }
+                    /* $no_arr = count($lineitem_arr);
+                    if($no_arr < 10){
+                        for ($i = $no_arr; $i < 10; $i++) {
+                            $lineitem_arr[$i] = array('');
+                            $lineitem_arr[$i] = (object) $lineitem_arr[$i];
+                        }
+                    } */
+                    
                     $data['lineitems'] = $lineitem_arr;
                     $total_gst = $total_gst + ($result->total_pf_amount * 18 / 100);
-                    $total_gst = $total_gst + ($result->aspergem_service_charge * 18 / 100);
+                    //$total_gst = $total_gst + ($result->aspergem_service_charge * 18 / 100);//in this function, we do Not consider service charge in gst
                     $data['total_gst'] = $total_gst;
                     if ($total_gst < 0) {
                         $gst_total_word = 'Minus ' . $this->numbertowords->convert_number(abs($total_gst));
@@ -259,6 +259,10 @@ class Transaction extends CI_Controller {
                             $data['amount_total'] = number_format((float) $amount_total_r, 2, '.', '');
                         }
                     }
+                    /* echo "<pre>";
+                    print_r($data);
+                    die(); */
+                    // echo '<pre>'; print_r($data); exit;
                     $letterpad_print = $this->crud->get_id_by_val('user', 'is_letter_pad', 'user_id', $this->logged_in_id);
                     $termsdata = $this->crud->get_column_value_by_id('settings', 'setting_value', array('setting_key' => 'sales_terms'));
                     $data['terms_data'] = $termsdata;
@@ -266,7 +270,7 @@ class Transaction extends CI_Controller {
                     $data['printtype'] = 0;
                     $our_bank_label = $this->crud->get_column_value_by_id('account', 'account_name', array('account_id' => $data['sales_invoice_data']->our_bank_id));
                     $data['our_bank_label'] = $our_bank_label;
-            
+                
                     $bank_details = $this->crud->get_data_row_by_where('account', array('account_id' => $data['sales_invoice_data']->our_bank_id));
                     $data['bank_name'] = isset($bank_details->bank_name) ? $bank_details->bank_name : '';
                     $data['bank_branch'] = isset($bank_details->bank_branch) ? $bank_details->bank_branch : '';
@@ -274,17 +278,32 @@ class Transaction extends CI_Controller {
                     $data['rtgs_ifsc_code'] = isset($bank_details->rtgs_ifsc_code) ? $bank_details->rtgs_ifsc_code : '';
             
                     $html = $this->load->view('sales/invoice/invoice_3_2_somnath_print', $data, true);
-                    // $pdfFilePath = "sales_invoice_miracle_print.pdf";
+                    /*echo $html;exit;*/
+                    $pdfFilePath = "sales_invoice_miracle_print.pdf";
+                    $this->load->library('m_pdf');
                     $this->m_pdf->pdf->AddPage('', '', '', '', '', 5, // margin_left
                             5, // margin right
                             5, // margin top
                             15, // margin bottom
                             5, // margin header
                             5); // margin footer
+
+                    /* $this->m_pdf->pdf->SetHTMLHeader('<div style="text-align:left; font-weight: bold;"><h2 style="color:red;">Ajanta</h2></div>
+                        <div style="text-align:right; font-weight: bold;">Ajanta</div>
+                        ','O'); */
+
+                    /* $this->m_pdf->pdf->SetHTMLHeader('<table width="100%" style="vertical-align: bottom; font-family:; font-size: 8pt; color: #000000; font-weight: bold;"><tr>
+                        <td width="33%"><span style="font-weight: bold; font-style: italic;">{DATE j-m-Y}</span></td>
+                        <td width="33%" align="center" style="font-weight: bold; font-style: italic;"></td>
+                        <td width="33%" style="text-align:right; ">My document</td></tr>
+                        </table>','O'); */
+                    //$this->m_pdf->pdf->SetHTMLHeader('<div style="border-bottom: 1px solid #000000;">My document</div>','E');
+
                     $this->m_pdf->pdf->SetHTMLFooter('<table width="100%" style="vertical-align: bottom; font-family: serif; font-size: 8pt; color: #000000; font-weight: bold; font-style: italic;"><tr>
                     <td width="33%"><span style="font-weight: bold; font-style: italic;">{DATE j-m-Y}</span></td>
                     <td width="33%" align="center" style="font-weight: bold; font-style: italic;">{PAGENO}/{nbpg}</td>
-                    <td width="33%" style="text-align: right; "></td></tr></table>');
+                    <td width="33%" style="text-align: right; "></td></tr></table>'); // Note that the second parameter is optional : default = 'O' for ODD
+                    //$this->m_pdf->pdf->WriteHTML(file_get_contents(base_url().'assets/bootstrap/css/bootstrap.min.css'), 1);
                     $this->m_pdf->pdf->WriteHTML($html);
 
                     if ($print_type == 2) {
@@ -296,13 +315,19 @@ class Transaction extends CI_Controller {
                                 15, // margin bottom
                                 5, // margin header
                                 5); // margin footer
-
+                        /* $this->m_pdf->pdf->SetHTMLHeader('<table width="100%" style="vertical-align: bottom; font-family:; font-size: 8pt; color: #000000; font-weight: bold;"><tr>
+                            <td width="33%"><span style="font-weight: bold; font-style: italic;">{DATE j-m-Y}</span></td>
+                            <td width="33%" align="center" style="font-weight: bold; font-style: italic;"></td>
+                            <td width="33%" style="text-align:right; ">My document</td></tr>
+                            </table>','O'); */
+                        //$this->m_pdf->pdf->SetHTMLHeader('<div style="border-bottom: 1px solid #000000;">My document</div>','E');
+                
                         $this->m_pdf->pdf->SetHTMLFooter('<table width="100%" style="vertical-align: bottom; font-family: serif; font-size: 8pt; color: #000000; font-weight: bold; font-style: italic;"><tr>
                                 <td width="33%"><span style="font-weight: bold; font-style: italic;">{DATE j-m-Y}</span></td>
                                 <td width="33%" align="center" style="font-weight: bold; font-style: italic;">{PAGENO}/{nbpg}</td>
                                 <td width="33%" style="text-align: right; "></td></tr></table>'); // Note that the second parameter is optional : default = 'O' for ODD
                         $this->m_pdf->pdf->WriteHTML($html);
-
+                
                         $data['printtype'] = 2;
                         $html = $this->load->view('sales/invoice/invoice_somnath_print', $data, true);
                         $this->m_pdf->pdf->AddPage('', '', '', '', '', 5, // margin_left
@@ -311,7 +336,13 @@ class Transaction extends CI_Controller {
                                 15, // margin bottom
                                 5, // margin header
                                 5); // margin footer
-
+                        /* $this->m_pdf->pdf->SetHTMLHeader('<table width="100%" style="vertical-align: bottom; font-family:; font-size: 8pt; color: #000000; font-weight: bold;"><tr>
+                            <td width="33%"><span style="font-weight: bold; font-style: italic;">{DATE j-m-Y}</span></td>
+                            <td width="33%" align="center" style="font-weight: bold; font-style: italic;"></td>
+                            <td width="33%" style="text-align:right; ">My document</td></tr>
+                            </table>','O'); */
+                        //$this->m_pdf->pdf->SetHTMLHeader('<div style="border-bottom: 1px solid #000000;">My document</div>','E');
+                
                         $this->m_pdf->pdf->SetHTMLFooter('<table width="100%" style="vertical-align: bottom; font-family: serif; font-size: 8pt; color: #000000; font-weight: bold; font-style: italic;"><tr>
                                 <td width="33%"><span style="font-weight: bold; font-style: italic;">{DATE j-m-Y}</span></td>
                                 <td width="33%" align="center" style="font-weight: bold; font-style: italic;">{PAGENO}/{nbpg}</td>
@@ -327,14 +358,19 @@ class Transaction extends CI_Controller {
                                 15, // margin bottom
                                 5, // margin header
                                 5); // margin footer
-
+                        /* $this->m_pdf->pdf->SetHTMLHeader('<table width="100%" style="vertical-align: bottom; font-family:; font-size: 8pt; color: #000000; font-weight: bold;"><tr>
+                            <td width="33%"><span style="font-weight: bold; font-style: italic;">{DATE j-m-Y}</span></td>
+                            <td width="33%" align="center" style="font-weight: bold; font-style: italic;"></td>
+                            <td width="33%" style="text-align:right; ">My document</td></tr>
+                            </table>','O'); */
+                        //$this->m_pdf->pdf->SetHTMLHeader('<div style="border-bottom: 1px solid #000000;">My document</div>','E');
+                
                         $this->m_pdf->pdf->SetHTMLFooter('<table width="100%" style="vertical-align: bottom; font-family: serif; font-size: 8pt; color: #000000; font-weight: bold; font-style: italic;"><tr>
                                 <td width="33%"><span style="font-weight: bold; font-style: italic;">{DATE j-m-Y}</span></td>
                                 <td width="33%" align="center" style="font-weight: bold; font-style: italic;">{PAGENO}/{nbpg}</td>
                                 <td width="33%" style="text-align: right; "></td></tr></table>'); // Note that the second parameter is optional : default = 'O' for ODD
                         $this->m_pdf->pdf->WriteHTML($html);
                     }
-                }
             }
             // sales invoice data end k203 31-01-2024
 
@@ -597,12 +633,13 @@ class Transaction extends CI_Controller {
             if (!$this->upload->do_upload('file')){
                 $return['success'] = 'error';
                 $return['msg'] = "The filetype you are attempting to upload is not allowed.";
-
+                
                 print json_encode($return);
                 exit;
             }
         }
         // k203s 17-01-2024 end
+        // print_r($post_data); die;
         $invoice_id_list = json_encode(array_values($post_data['invoice_no']),true);
         unset($post_data['invoice_no']);
         if (isset($post_data['transaction_id']) && !empty($post_data['transaction_id'])) {
