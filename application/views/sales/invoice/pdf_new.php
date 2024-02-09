@@ -348,7 +348,7 @@ ob_start();
                             <tr><td colspan="2" style="border:0px;">&nbsp;</td></tr>
                             <tr><td style="border:0px;">&nbsp;</td><td style="font-weight: bold;border:0px;">Sign/Thumb</td></tr>
                             <tr>
-                                <td style="border:0px;">Place : RAMNAGAR</td>
+                                <td style="border:0px;">Place : <?=isset($account_city) ? $account_city : '' ?></td>
                                 <td style="border:0px;">Date</td>
                             </tr>
                             <tr>

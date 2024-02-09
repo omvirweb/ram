@@ -851,7 +851,7 @@ class Sales extends CI_Controller
             redirect($_SERVER['HTTP_REFERER']);
             $data = array();
         }
-        //~ echo '<pre>'; print_r($data); exit;
+        // echo '<pre>'; print_r($data); exit;
         
         $html = $this->load->view('sales/invoice/pdf_new', $data, true);
         

@@ -605,7 +605,9 @@ class Auth extends CI_Controller
                 'remove_spaces' => TRUE,
                 // ... (other config options)
             );
-
+            if (!is_dir($config_logo['upload_path'])) {
+                mkdir($config_logo['upload_path'], 0755, true);
+            }
             $this->load->library('upload', $config_logo);
             if (!$this->upload->do_upload('logo_image')) {
                 $return['Uploaderror'] = $this->upload->display_errors();
@@ -660,7 +662,9 @@ class Auth extends CI_Controller
                 'remove_spaces' => TRUE,
                 // ... (other config options)
             );
-           
+            if (!is_dir($config_stamp['upload_path'])) {
+                mkdir($config_stamp['upload_path'], 0755, true);
+            }      
             $this->load->library('upload', $config_stamp);
             if (!$this->upload->do_upload('stamp_image')) {
                 $return['Uploaderror'] = $this->upload->display_errors();
@@ -715,6 +719,9 @@ class Auth extends CI_Controller
                 // ... (other config options)
             );
            
+            if (!is_dir($config_barcode['upload_path'])) {
+                mkdir($config_barcode['upload_path'], 0755, true);
+            }
             $this->load->library('upload', $config_barcode);
             if (!$this->upload->do_upload('barcode_image')) {
                 $return['Uploaderror'] = $this->upload->display_errors();
