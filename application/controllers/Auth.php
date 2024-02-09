@@ -515,11 +515,6 @@ class Auth extends CI_Controller
                     $acc_arr['account_name'] = 'UTGST - Other charges';
                     $acc_arr['account_type'] = '20';
                     $this->crud->insert('account', $acc_arr);
-                        
-                   
-                   
-                   
-                   
                     
                     $user_id_logged_in = $this->session->userdata(PACKAGE_FOLDER_NAME . 'is_logged_in')['user_id'];
                     foreach ($sales_invoice_main_fields as $key => $value) {
@@ -626,7 +621,7 @@ class Auth extends CI_Controller
                 $return['Uploaderror_logo'] = $this->upload->display_errors();
             }
 
-             $file_element_name = 'logo_image';
+            //  $file_element_name = 'logo_image';
             // $config['upload_path'] = './assets/uploads/logo_image/';
             // $config['allowed_types'] = 'gif|jpg|png';
             // $config['overwrite'] = TRUE;
@@ -650,7 +645,7 @@ class Auth extends CI_Controller
             //     $f_where_array['user_id'] = $last_query_id;
             //     $file_id = $this->crud->update('user', $f_data, $f_where_array);
             // }
-            @unlink($_FILES[$file_element_name]);
+            // @unlink($_FILES[$file_element_name]);
 
            
         }
@@ -683,7 +678,7 @@ class Auth extends CI_Controller
 
             // $config = [];
             // $file_data = [];
-             $file_element_name = 'stamp_image';
+            //  $file_element_name = 'stamp_image';
             // $config['upload_path'] = './assets/uploads/stamp_image/';
             // $config['allowed_types'] = 'gif|jpg|png';
             // $config['overwrite'] = TRUE;
@@ -707,7 +702,36 @@ class Auth extends CI_Controller
             //     $f_where_array['user_id'] = $last_query_id; 
             //     $file_id = $this->crud->update('user', $f_data, $f_where_array);
             // }
-            @unlink($_FILES[$file_element_name]);
+            // @unlink($_FILES[$file_element_name]);
+        }
+        if ($_FILES['barcode_image']['name']) {
+
+            $config_barcode = array(
+                'upload_path' => './assets/uploads/barcode/',
+                'allowed_types' => 'gif|jpg|png',
+                'overwrite' => TRUE,
+                'encrypt_name' => FALSE,
+                'remove_spaces' => TRUE,
+                // ... (other config options)
+            );
+           
+            $this->load->library('upload', $config_barcode);
+            if (!$this->upload->do_upload('barcode_image')) {
+                $return['Uploaderror'] = $this->upload->display_errors();
+            }
+
+            $this->load->library('upload', $config_barcode);
+            if ($this->upload->do_upload('barcode_image')) {
+                $file_data_barcode = $this->upload->data();
+                $f_data['barcode'] = $file_data_barcode['file_name'];
+                $f_where_array['user_id'] = $last_query_id;
+                $file_id_stamp = $this->crud->update('user', $f_data, $f_where_array);
+            } else {
+                $return['Uploaderror_stamp'] = $this->upload->display_errors();
+            }
+
+            // $file_element_name = 'barcode_image';
+            // @unlink($_FILES[$file_element_name]);
         }
         
         print json_encode($return);

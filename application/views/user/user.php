@@ -101,17 +101,25 @@
                                     </div>
                                 </div>
 
-                                <div class="col-md-4"> 
+                                <div class="col-md-2"> 
                                     <div class="form-group">
                                         <label for="stamp_image">Stamp Image</label>
                                         <input type="file" name="stamp_image" id="stamp_image" data-index="10"  >
-                                        <?php if (!empty($edit_stamp_image)) { ?>
+                                        <?php if (!empty($edit_stamp_image)) {?>
                                                 <img src="<?php echo base_url('assets/uploads/stamp_image/' . $edit_stamp_image); ?>" width="100px" />
                                             <?php } ?>
                                     </div> 
                                 </div> 
+                                <div class="col-md-2"> 
+                                    <div class="form-group">
+                                        <label for="barcode_image">Barcode</label>
+                                        <input type="file" name="barcode_image" id="barcode_image" data-index="10"  >
+                                        <?php if (!empty($edit_barcode)) {?>
+                                                <img src="<?php echo base_url('assets/uploads/barcode/' . $edit_barcode); ?>" width="100px" />
+                                            <?php } ?>
+                                    </div> 
+                                </div> 
                                 
-                                <div class="clearfix"></div>
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="aadhaar" class="control-label">Aadhaar</label>

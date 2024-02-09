@@ -749,7 +749,7 @@ class Sales extends CI_Controller
         if (!empty($sales_invoice_id) && isset($sales_invoice_id)) {
             $result = $this->crud->get_data_row_by_id('sales_invoice', 'sales_invoice_id', $sales_invoice_id);
             $user_detail = $this->crud->get_data_row_by_id('user', 'user_id', $result->created_by);
-//            echo "<pre>"; print_r($result); exit;
+            // echo "<pre>"; print_r($user_detail); exit;
             $account_detail = $this->crud->get_data_row_by_id('account', 'account_id', $result->account_id);
             $this->load->library('numbertowords');
             if ($result->amount_total < 0) {
@@ -778,9 +778,14 @@ class Sales extends CI_Controller
                 'cgst_amount_total' => $result->cgst_amount_total,
                 'sgst_amount_total' => $result->sgst_amount_total,
                 'igst_amount_total' => $result->igst_amount_total,
+                'round_off_amount' => $result->round_off_amount,
                 'amount_total' => $result->amount_total,
                 'amount_total_word' => $amount_total_word,
+                'prof_tax' => $result->prof_tax,
                 'amount_total_amt_word' => $amount_total_amt_word,
+                'total_pf_amount' => $result->total_pf_amount,
+                'aspergem_service_charge' => isset($result->aspergem_service_charge) ? $result->aspergem_service_charge:0 ,
+                'sales_note' => $result->sales_note,
             );
             $data['sales_invoice_data'] = $result;
             $data['user_name'] = $user_detail->user_name;
@@ -793,9 +798,13 @@ class Sales extends CI_Controller
             $data['user_phone'] = $user_detail->phone;
             $data['email_ids'] = $user_detail->email_ids;
             $data['logo_image'] = $user_detail->logo_image;
+            $data['barcode'] = $user_detail->barcode;
             $data['is_letter_pad'] = $this->session->userdata(PACKAGE_FOLDER_NAME . 'is_logged_in')['is_letter_pad'];
 
             $data['account_name'] = $account_detail->account_name;
+            $data['bank_ac_no'] = $account_detail->bank_ac_no;
+            $data['bank_name'] = $account_detail->bank_name;
+            $data['rtgs_ifsc_code'] = $account_detail->rtgs_ifsc_code;
             $cash_in_hand_acc = $this->applib->is_cash_in_hand_account($result->account_id);
             if ($cash_in_hand_acc == true && !empty($result->cash_customer)) {
                 $data['account_name'] = $result->cash_customer;
@@ -812,11 +821,12 @@ class Sales extends CI_Controller
             $data['account_city'] = $this->crud->get_id_by_val('city', 'city_name', 'city_id', $account_detail->account_city);
             $data['account_postal_code'] = $account_detail->account_postal_code;
             $data['account_pan'] = $account_detail->account_pan;
+            $data['lr_no'] = $result->lr_no;
 
             $lineitem_arr = array();
             $where = array('module' => '2', 'parent_id' => $sales_invoice_id);
             $sales_invoice_lineitems = $this->crud->get_row_by_id('lineitems', $where);
-//            echo "<pre>"; print_r($sales_invoice_lineitems); exit;
+            // echo "<pre>"; print_r($sales_invoice_lineitems); exit;
             foreach ($sales_invoice_lineitems as $sales_invoice_lineitem) {
                 $sales_invoice_lineitem->item_name = $this->crud->get_id_by_val('item', 'item_name', 'item_id', $sales_invoice_lineitem->item_id);
 
@@ -842,30 +852,33 @@ class Sales extends CI_Controller
             $data = array();
         }
         //~ echo '<pre>'; print_r($data); exit;
+        
         $html = $this->load->view('sales/invoice/pdf_new', $data, true);
+        
         $pdfFilePath = "sales_invoice.pdf";
         $this->load->library('m_pdf');
-        $this->m_pdf->pdf->AddPage('', '', '', '', '', 5, // margin_left
-                5, // margin right
-                5, // margin top
-                15, // margin bottom
-                5, // margin header
-                5); // margin footer
+        $html_header = $this->load->view('sales/invoice/multiple_invoice_print_header',$data, true);
 
-        /* $this->m_pdf->pdf->SetHTMLHeader('<div style="text-align:left; font-weight: bold;"><h2 style="color:red;">Ajanta</h2></div>
-          <div style="text-align:right; font-weight: bold;">Ajanta</div>
-          ','O'); */
+        $this->m_pdf->pdf->AddPage('', '', '', '', '', 
+                10, // margin_left
+                10, // margin right
+                134, // margin top
+                15, // margin bottom
+                15, // margin header
+                15); // margin footer
+
+        $this->m_pdf->pdf->SetHTMLHeader($html_header, 'OE', true);
         /* $this->m_pdf->pdf->SetHTMLHeader('<table width="100%" style="vertical-align: bottom; font-family:; font-size: 8pt; color: #000000; font-weight: bold;"><tr>
           <td width="33%"><span style="font-weight: bold; font-style: italic;">{DATE j-m-Y}</span></td>
           <td width="33%" align="center" style="font-weight: bold; font-style: italic;"></td>
           <td width="33%" style="text-align:right; ">My document</td></tr>
           </table>','O'); */
         //$this->m_pdf->pdf->SetHTMLHeader('<div style="border-bottom: 1px solid #000000;">My document</div>','E');
-
-        $this->m_pdf->pdf->SetHTMLFooter('<table width="100%" style="vertical-align: bottom; font-family: serif; font-size: 8pt; color: #000000; font-weight: bold; font-style: italic;"><tr>
+        $this->m_pdf->pdf->SetHTMLFooter('<table width="100%" style="vertical-align: bottom; font-family: serif; font-size: 8pt; color: #000000; font-weight: bold; font-style: italic;"><tr><td style="border-top:1px solid;"></td></tr></table>');
+        /* $this->m_pdf->pdf->SetHTMLFooter('<table width="100%" style="vertical-align: bottom; font-family: serif; font-size: 8pt; color: #000000; font-weight: bold; font-style: italic;"><tr>
 		<td width="33%"><span style="font-weight: bold; font-style: italic;">{DATE j-m-Y}</span></td>
 		<td width="33%" align="center" style="font-weight: bold; font-style: italic;">{PAGENO}/{nbpg}</td>
-		<td width="33%" style="text-align: right; "></td></tr></table>'); // Note that the second parameter is optional : default = 'O' for ODD
+		<td width="33%" style="text-align: right; "></td></tr></table>'); */ // Note that the second parameter is optional : default = 'O' for ODD
         //$this->m_pdf->pdf->WriteHTML(file_get_contents(base_url().'assets/bootstrap/css/bootstrap.min.css'), 1);
         $this->m_pdf->pdf->WriteHTML($html);
         if (empty($is_multiple)) {
@@ -3557,13 +3570,13 @@ class Sales extends CI_Controller
                     $data['site_address'] = (isset($site_data)) ? $site_data[0]->site_address : '';
                 }
             }
-//            $no_arr = count($lineitem_arr);
-//            if($no_arr < 10){
-//                for ($i = $no_arr; $i < 10; $i++) {
-//                    $lineitem_arr[$i] = array('');
-//                    $lineitem_arr[$i] = (object) $lineitem_arr[$i];
-//                }
-//            }
+            /* $no_arr = count($lineitem_arr);
+            if($no_arr < 10){
+               for ($i = $no_arr; $i < 10; $i++) {
+                   $lineitem_arr[$i] = array('');
+                   $lineitem_arr[$i] = (object) $lineitem_arr[$i];
+               }
+            } */
             
             $data['lineitems'] = $lineitem_arr;
             $total_gst = $total_gst + ($result->total_pf_amount * 18 / 100);
@@ -3575,7 +3588,7 @@ class Sales extends CI_Controller
                 $gst_total_word = $this->numbertowords->convert_number($total_gst);
             }
             $data['gst_total_word'] = $gst_total_word;
-        //    echo '<pre>'; print_r($data); exit;
+            // echo '<pre>'; print_r($data); exit;
         } else {
             redirect($_SERVER['HTTP_REFERER']);
             $data = array();
@@ -3587,7 +3600,7 @@ class Sales extends CI_Controller
                 $data['amount_total'] = number_format((float) $amount_total_r, 2, '.', '');
             }
         }
-//		echo '<pre>'; print_r($data); exit;
+		// echo '<pre>'; print_r($data); exit;
         $letterpad_print = $this->crud->get_id_by_val('user', 'is_letter_pad', 'user_id', $this->logged_in_id);
         $termsdata = $this->crud->get_column_value_by_id('settings', 'setting_value', array('setting_key' => 'sales_terms'));
         $data['terms_data'] = $termsdata;
