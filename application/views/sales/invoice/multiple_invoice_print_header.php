@@ -7,7 +7,7 @@
 <table border="0" style="width: 100%;">
     <tr>
         <td style="width: 20%;text-align: center;">
-            <img src="<?=isset($logo_image) && !empty($logo_image) ? base_url() .'assets/uploads/logo_image/'.$logo_image : '';?>" class="user-image" alt="User Image">
+            <img src="<?=isset($logo_image) && !empty($logo_image) ? base_url() .'assets/uploads/logo_image/'.$logo_image : '';?>" style="width:150px" class="user-image" alt="User Image">
         </td>
         <td colspan="2" style="width: 60%;padding: 8px;text-align: center;">
             <span class="address" style="font-size: 12px !important;"> 
@@ -16,7 +16,7 @@
             Contact : <?=isset($user_phone) ? $user_phone : '' ?></span>
         </td>
         <td rowspan="2" style="width: 20%;text-align: center;border-bottom: 0px;">
-            <img src="<?=isset($barcode) && !empty($barcode) ? base_url() .'assets/uploads/barcode/'.$barcode : '';?>" class="user-image" alt="User Image">
+            <img src="<?=isset($barcode) && !empty($barcode) ? base_url() .'assets/uploads/barcode/'.$barcode : '';?>" style="width:140px" class="user-image" alt="User Image">
         </td>
     </tr>
     <tr>
