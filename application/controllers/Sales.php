@@ -858,19 +858,20 @@ class Sales extends CI_Controller
         $pdfFilePath = "sales_invoice.pdf";
         $this->load->library('m_pdf');
         $html_header = $this->load->view('sales/invoice/multiple_invoice_print_header',$data, true);
-
+        
+        $this->m_pdf->pdf->SetHTMLHeader($html_header, 'OE', true);
+        
         $this->m_pdf->pdf->AddPage('', '', '', '', '', 
                 10, // margin_left
                 10, // margin right
                 140, // margin top
-                15, // margin bottom
+                20, // margin bottom
                 15, // margin header
                 17); // margin footer
-
-        $this->m_pdf->pdf->SetHTMLHeader($html_header, 'OE', true);
-        $this->m_pdf->pdf->SetHTMLFooter('<table width="100%" style="vertical-align: bottom; font-family: serif; font-size: 8pt; color: #000000; font-weight: bold; font-style: italic;"><tr><td style="border-top:1px solid;"></td></tr></table>');
-        
-        $this->m_pdf->pdf->WriteHTML($html);
+                $this->m_pdf->pdf->SetHTMLFooter('<table width="100%" style="vertical-align: bottom; font-family: serif; font-size: 8pt; color: #000000; font-style: italic;"><tr><td style="border-top:1px solid;text-align:right;">Continued....</td></tr></table>');
+                
+                $this->m_pdf->pdf->WriteHTML($html);
+                $this->m_pdf->pdf->SetHTMLFooter('');
         if (empty($is_multiple)) {
             $this->m_pdf->pdf->Output($pdfFilePath, 'I');
         }
