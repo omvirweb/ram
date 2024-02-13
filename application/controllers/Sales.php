@@ -864,7 +864,7 @@ class Sales extends CI_Controller
         $this->m_pdf->pdf->AddPage('', '', '', '', '', 
                 10, // margin_left
                 10, // margin right
-                150, // margin top
+                147, // margin top
                 20, // margin bottom
                 15, // margin header
                 17); // margin footer
