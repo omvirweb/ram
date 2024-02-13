@@ -1799,26 +1799,29 @@ class App extends CI_Controller{
 	function transaction_invoice_select2_source() {
         $search = isset($_GET['q']) ? $_GET['q'] : '';
         $page = isset($_GET['page']) ? $_GET['page'] : 1;
-        $where = "";
+		
         $select2_data = array();
         $resultCount = 10;
         $offset = ($page - 1) * $resultCount;
-        $this->db->select("sales_invoice.sales_invoice_id as sales_invoice_id ,account.account_name");
-		$this->db->join('account', 'account.account_id = sales_invoice.account_id');
+
+		$this->db->select("sales_invoice_no");
         $this->db->from("sales_invoice");
 		if($search){
-			$this->db->like("sales_invoice_id", $search);
-		} 
+			$this->db->like("sales_invoice_no", $search);
+		}
         // $this->db->where('created_by', $this->logged_in_id); 
         $this->db->limit($resultCount, $offset);
+        $this->db->group_by('sales_invoice_no');
         $this->db->order_by("sales_invoice.account_id");
         $query = $this->db->get();
-		 
-        if ($query->num_rows() > 0) {
+
+		// echo $this->db->last_query(); die;
+        
+		if ($query->num_rows() > 0) {
             foreach ($query->result() as $row) {
                 $select2_data[] = array(
-                    'id' => $row->sales_invoice_id,
-                    'text' => $row->sales_invoice_id,
+                    'id' => $row->sales_invoice_no,
+                    'text' => $row->sales_invoice_no,
                 );
             }
         }
