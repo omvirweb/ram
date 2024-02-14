@@ -389,7 +389,7 @@ class Sales extends CI_Controller
         }
         
 		$config['table'] = 'sales_invoice si';
-		$config['select'] = 'te.transaction_type,te.transaction_id,si.invoice_type, si.sales_invoice_id, si.sales_invoice_no, si.sales_invoice_date, si.amount_total,si.aspergem_service_charge, si.data_lock_unlock, a.account_name, a.account_group_id, a.account_gst_no, si.created_by, si.created_at, si.updated_by, si.updated_at, si.user_created_by, si.user_updated_by,';   //  and hsn !=""
+		$config['select'] = 'te.transaction_type,te.transaction_id,te.created_by as transaction_user,si.invoice_type, si.sales_invoice_id, si.sales_invoice_no, si.sales_invoice_date, si.amount_total,si.aspergem_service_charge, si.data_lock_unlock, a.account_name, a.account_group_id, a.account_gst_no, si.created_by, si.created_at, si.updated_by, si.updated_at, si.user_created_by, si.user_updated_by,';   //  and hsn !=""
 
 		$config['column_order'] = array(null, 'si.sales_invoice_no', 'a.account_name', 'si.sales_invoice_date', 'si.amount_total');
 		$config['column_search'] = array('si.sales_invoice_no', 'a.account_name', 'DATE_FORMAT(si.sales_invoice_date,"%d-%m-%Y")', 'si.amount_total');
@@ -414,6 +414,7 @@ class Sales extends CI_Controller
         'join_by' => "te.invoice_no LIKE CONCAT('%', REPLACE(si.sales_invoice_no, '%', '%%'), '%')", 
         'join_type' => 'left');
         if($paymentType == '1'){
+            // $config['wheres'][] = array('column_name' => 'te.created_by', 'column_value' => $this->logged_in_id);
             $config['wheres'][] = array('column_name' => 'te.transaction_type', 'column_value' => '1');
             $config['group_by'] = 'si.sales_invoice_no';
         }
@@ -453,7 +454,7 @@ class Sales extends CI_Controller
             
             $action1 = "";
             $paidStatus = 'Unpaid';
-            if($invoice->transaction_id !=''){
+            if($invoice->transaction_id !='' && ($invoice->transaction_user == $this->logged_in_id)){
                 $paidStatus = 'paid';
             }
             if(($paidStatus == 'paid' && $paymentType == '1') || ($paidStatus == 'Unpaid' && $paymentType == '0') || ($paymentType == '')){
