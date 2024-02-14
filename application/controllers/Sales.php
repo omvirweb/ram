@@ -410,7 +410,9 @@ class Sales extends CI_Controller
 		// $config['joins'][] = array('join_table' => 'lineitems ln', 'join_by' => 'ln.parent_id = si.sales_invoice_id', 'join_type' => 'left');
 		$config['joins'][] = array('join_table' => 'invoice_paid_details pd', 'join_by' => 'pd.invoice_id = si.sales_invoice_id', 'join_type' => 'left');
 		
-        $config['joins'][] = array('join_table' => 'transaction_entry te', 'join_by' => 'te.invoice_no LIKE CONCAT("%",si.sales_invoice_no, "%")', 'join_type' => 'left');
+        $config['joins'][] = array('join_table' => 'transaction_entry te', 
+        'join_by' => "te.invoice_no LIKE CONCAT('%', REPLACE(si.sales_invoice_no, '%', '%%'), '%')", 
+        'join_type' => 'left');
         if($paymentType == '1'){
             $config['wheres'][] = array('column_name' => 'te.transaction_type', 'column_value' => '1');
             $config['group_by'] = 'si.sales_invoice_no';

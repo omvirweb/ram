@@ -109,7 +109,7 @@ class Transaction extends CI_Controller {
 
             for($i=0;$i<count($invoiceId);$i++){
                 $sales_invoice_id = $invoiceId[$i];
-                $result = $this->crud->get_data_row_by_id('sales_invoice', 'sales_invoice_no', $sales_invoice_id);
+                $result = $this->crud->get_data_row_by_id('sales_invoice', 'sales_invoice_no', $sales_invoice_id,'created_by',$this->logged_in_id);
                 $user_detail = $this->crud->get_data_row_by_id('user', 'user_id', $result->created_by);
                 $account_detail = $this->crud->get_data_row_by_id('account', 'account_id', $result->account_id);
                 $this->load->library('numbertowords');

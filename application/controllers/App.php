@@ -1809,7 +1809,7 @@ class App extends CI_Controller{
 		if($search){
 			$this->db->like("sales_invoice_no", $search);
 		}
-        // $this->db->where('created_by', $this->logged_in_id); 
+        $this->db->where('created_by', $this->logged_in_id); 
         $this->db->limit($resultCount, $offset);
         $this->db->group_by('sales_invoice_no');
         $this->db->order_by("sales_invoice.account_id");
