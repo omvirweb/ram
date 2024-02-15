@@ -130,6 +130,12 @@
 	var datepicker2 = '';
     var paymentType ='';
 	$(document).ready(function(){
+        $('#datepicker2').datepicker({  // ,#datepicker2
+            format: 'dd-mm-yyyy',
+            todayBtn: "linked",
+            autoclose: true,
+            constrainInput: false
+        });
        
 		initAjaxSelect2($("#account_id"),"<?=base_url('app/account_select2_source/')?>");
 
