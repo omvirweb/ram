@@ -1345,17 +1345,16 @@ class Sales extends CI_Controller
                 //     }
                 // }
             }
-//            $no_arr = count($lineitem_arr);
-//            if($no_arr < 10){
-//                for ($i = $no_arr; $i < 10; $i++) {
-//                    $lineitem_arr[$i] = array('');
-//                    $lineitem_arr[$i] = (object) $lineitem_arr[$i];
-//                }
-//            }
-
+            // $no_arr = count($lineitem_arr);
+            // if($no_arr < 10){
+            //     for ($i = $no_arr; $i < 10; $i++) {
+            //         $lineitem_arr[$i] = array('');
+            //         $lineitem_arr[$i] = (object) $lineitem_arr[$i];
+            //     }
+            // }
                     
-                    $data['site_name'] = $this->crud->get_id_by_val('sites', 'site_name', 'site_id', $lineitem_arr[0]->site_id);
-                    $data['site_address'] = $this->crud->get_id_by_val('sites', 'site_address', 'site_id', $lineitem_arr[0]->site_id);
+            $data['site_name'] = $this->crud->get_id_by_val('sites', 'site_name', 'site_id', $lineitem_arr[0]->site_id);
+            $data['site_address'] = $this->crud->get_id_by_val('sites', 'site_address', 'site_id', $lineitem_arr[0]->site_id);
             
             $data['lineitems'] = $lineitem_arr;
             $data['total_gst'] = $total_gst;
@@ -1370,7 +1369,7 @@ class Sales extends CI_Controller
             print_r($data);
             echo "</pre>";
             die; */
-//            echo '<pre>'; print_r($lineitem_arr); exit;
+            // echo '<pre>'; print_r($lineitem_arr); exit;
         } else {
             redirect($_SERVER['HTTP_REFERER']);
             $data = array();
@@ -1382,7 +1381,7 @@ class Sales extends CI_Controller
                 $data['amount_total'] = number_format((float) $amount_total_r, 2, '.', '');
             }
         }
-//		echo '<pre>'; print_r($data); exit;
+		// echo '<pre>'; print_r($data); exit;
         $letterpad_print = $this->crud->get_id_by_val('user', 'is_letter_pad', 'user_id', $this->logged_in_id);
         $termsdata = $this->crud->get_column_value_by_id('settings', 'setting_value', array('setting_key' => 'sales_terms'));
         $data['terms_data'] = $termsdata;
@@ -2572,6 +2571,7 @@ class Sales extends CI_Controller
     
     function print_multiple_invoice(){
         $post_data = $this->input->post();
+        // echo $post_data['print_type']; die;
         if($post_data['print_type'] == 'invoice_print_pdf'){
             foreach ($post_data['invoice_ids'] as $invoice_id){
                 $this->invoice_print_pdf($invoice_id, $is_multiple = '1');
@@ -2588,7 +2588,8 @@ class Sales extends CI_Controller
         }
         if($post_data['print_type'] == 'format_3_invoice_print'){
             foreach ($post_data['invoice_ids'] as $invoice_id){
-                $this->format_3_invoice_print($invoice_id, $is_multiple = '1');
+                $this->format_3_2_invoice_print_stax_before($invoice_id, $is_multiple = '1');
+                // $this->format_3_invoice_print($invoice_id, $is_multiple = '1');
             }
             $pdfFilePath = "sales_invoice_miracle_print.pdf";
             $this->m_pdf->pdf->Output($pdfFilePath, 'I');
@@ -2600,7 +2601,7 @@ class Sales extends CI_Controller
             $pdfFilePath = "sales_invoice.pdf";
             $this->m_pdf->pdf->Output($pdfFilePath, 'I');
         }
-//        echo '<pre>'; print_r($post_data); exit;
+        // echo '<pre>'; print_r($post_data); exit;
     }
 
     function order_invoice_list() {
