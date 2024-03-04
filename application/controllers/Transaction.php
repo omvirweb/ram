@@ -1573,7 +1573,7 @@ class Transaction extends CI_Controller {
                 WHERE sales_invoice_id > (
                     SELECT sales_invoice_id
                     FROM `sales_invoice`
-                    WHERE sales_invoice_no = '.$data['invoice_data']->sales_invoice_no.'
+                    WHERE sales_invoice_no = '.$data["invoice_data"]->sales_invoice_no.' and created_by = "'.$this->logged_in_id.'"
                 )
                 ORDER BY sales_invoice_id
                 LIMIT 1');
@@ -1581,7 +1581,7 @@ class Transaction extends CI_Controller {
             }
             else{
                 $lastSalesData  = $this->crud->getFromSQL('SELECT sales_invoice_date
-                FROM `sales_invoice`
+                FROM `sales_invoice` where created_by = "'.$this->logged_in_id.'"
                 ORDER BY sales_invoice_id DESC
                 LIMIT 1 ');
                 $data['transaction_date'] = $lastSalesData ? $lastSalesData[0]->sales_invoice_date : '';
