@@ -1579,6 +1579,13 @@ class Transaction extends CI_Controller {
                 LIMIT 1');
                 $data['last_after_sales_date'] = $lastSalesData ? $lastSalesData[0]->sales_invoice_date : '';
             }
+            else{
+                $lastSalesData  = $this->crud->getFromSQL('SELECT sales_invoice_date
+                FROM `sales_invoice`
+                ORDER BY sales_invoice_id DESC
+                LIMIT 1 ');
+                $data['transaction_date'] = $lastSalesData ? $lastSalesData[0]->sales_invoice_date : '';
+            }
             // echo "<pre>";
             // print_r($data);
             // exit;
