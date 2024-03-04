@@ -115,7 +115,7 @@ ob_start();
                 <td colspan="4" class=" text_left no-border-bottom no-border-left no-border-top"><b class="text_bold"> : </b><?=isset($account_state) ? $account_state : '';?></td>
             </tr>
             <tr class="">
-                <td colspan="2" class="text_bold text_left no-border-bottom no-border-right no-border-top" style="white-space: nowrap;">Site Name :</td>
+                <td colspan="2" class="text_bold text_left no-border-bottom no-border-right no-border-top" style="white-space: nowrap;">Site Name:</td>
                 <td colspan="8" class=" text_left no-border-bottom no-border-left no-border-top">
                     <?= (isset($site_name)) ? $site_name.'<br/>' : ''; ?>
                 </td>

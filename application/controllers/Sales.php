@@ -2736,21 +2736,21 @@ class Sales extends CI_Controller
                 $amt =  $sales_invoice_lineitem->price * $sales_invoice_lineitem->item_qty;
                 $gst_amount = $amt * $sales_invoice_lineitem->gst / 100;
                 $total_gst += $gst_amount;
-                $data['site_name'] = '';
-                $data['site_address'] = '';
                 if ($key == 0 && $sales_invoice_lineitem->site_id != null) {
-                    $site_data = $this->crud->get_row_by_id('sites', array('site_id' => $sales_invoice_lineitem->site_id));
-                    $data['site_name'] = (isset($site_data)) ? $site_data[0]->site_name : '';
-                    $data['site_address'] = (isset($site_data)) ? $site_data[0]->site_address : '';
+                    if(!isset($data['site_name']) && $data['site_name'] == ''){
+                        $site_data = $this->crud->get_row_by_id('sites', array('site_id' => $sales_invoice_lineitem->site_id));
+                        $data['site_name'] = $site_data ? $site_data[0]->site_name : '';
+                        $data['site_address'] = $site_data ? $site_data[0]->site_address : '';
+                    }
                 }
             }
-//            $no_arr = count($lineitem_arr);
-//            if($no_arr < 10){
-//                for ($i = $no_arr; $i < 10; $i++) {
-//                    $lineitem_arr[$i] = array('');
-//                    $lineitem_arr[$i] = (object) $lineitem_arr[$i];
-//                }
-//            }
+            /* $no_arr = count($lineitem_arr);
+            if($no_arr < 10){
+               for ($i = $no_arr; $i < 10; $i++) {
+                   $lineitem_arr[$i] = array('');
+                   $lineitem_arr[$i] = (object) $lineitem_arr[$i];
+               }
+            } */
             
             $data['lineitems'] = $lineitem_arr;
             $total_gst = $total_gst + ($result->total_pf_amount * 18 / 100);
@@ -3007,12 +3007,13 @@ class Sales extends CI_Controller
                 $amt =  $sales_invoice_lineitem->price * $sales_invoice_lineitem->item_qty;
                 $gst_amount = $amt * $sales_invoice_lineitem->gst / 100;
                 $total_gst += $gst_amount;
-                $data['site_name'] = '';
-                $data['site_address'] = '';
+                
                 if ($key == 0 && $sales_invoice_lineitem->site_id != null) {
-                    $site_data = $this->crud->get_row_by_id('sites', array('site_id' => $sales_invoice_lineitem->site_id));
-                    $data['site_name'] = (isset($site_data)) ? $site_data[0]->site_name : '';
-                    $data['site_address'] = (isset($site_data)) ? $site_data[0]->site_address : '';
+                    if(!isset($data['site_name']) && $data['site_name'] == ''){
+                        $site_data = $this->crud->get_row_by_id('sites', array('site_id' => $sales_invoice_lineitem->site_id));
+                        $data['site_name'] = $site_data ? $site_data[0]->site_name : '';
+                        $data['site_address'] = $site_data ? $site_data[0]->site_address : '';
+                    }
                 }
             }
 //            $no_arr = count($lineitem_arr);
@@ -3283,12 +3284,12 @@ class Sales extends CI_Controller
                 $amt =  $sales_invoice_lineitem->price * $sales_invoice_lineitem->item_qty;
                 $gst_amount = $amt * $sales_invoice_lineitem->gst / 100;
                 $total_gst += $gst_amount;
-                $data['site_name'] = '';
-                $data['site_address'] = '';
                 if ($key == 0 && $sales_invoice_lineitem->site_id != null) {
-                    $site_data = $this->crud->get_row_by_id('sites', array('site_id' => $sales_invoice_lineitem->site_id));
-                    $data['site_name'] = (isset($site_data)) ? $site_data[0]->site_name : '';
-                    $data['site_address'] = (isset($site_data)) ? $site_data[0]->site_address : '';
+                    if(!isset($data['site_name']) && $data['site_name'] == ''){
+                        $site_data = $this->crud->get_row_by_id('sites', array('site_id' => $sales_invoice_lineitem->site_id));
+                        $data['site_name'] = $site_data ? $site_data[0]->site_name : '';
+                        $data['site_address'] = $site_data ? $site_data[0]->site_address : '';
+                    }
                 }
             }
             /* $no_arr = count($lineitem_arr);
@@ -3309,7 +3310,6 @@ class Sales extends CI_Controller
                 $gst_total_word = $this->numbertowords->convert_number($total_gst);
             }
             $data['gst_total_word'] = $gst_total_word;
-            // echo '<pre>'; print_r($lineitem_arr); exit;
         } else {
             redirect($_SERVER['HTTP_REFERER']);
             $data = array();
@@ -3557,12 +3557,13 @@ class Sales extends CI_Controller
                 $amt =  $sales_invoice_lineitem->price * $sales_invoice_lineitem->item_qty;
                 $gst_amount = $amt * $sales_invoice_lineitem->gst / 100;
                 $total_gst += $gst_amount;
-                $data['site_name'] = '';
-                $data['site_address'] = '';
+                
                 if ($key == 0 && $sales_invoice_lineitem->site_id != null) {
-                    $site_data = $this->crud->get_row_by_id('sites', array('site_id' => $sales_invoice_lineitem->site_id));
-                    $data['site_name'] = (isset($site_data)) ? $site_data[0]->site_name : '';
-                    $data['site_address'] = (isset($site_data)) ? $site_data[0]->site_address : '';
+                    if(!isset($data['site_name']) && $data['site_name'] == ''){
+                        $site_data = $this->crud->get_row_by_id('sites', array('site_id' => $sales_invoice_lineitem->site_id));
+                        $data['site_name'] = $site_data ? $site_data[0]->site_name : '';
+                        $data['site_address'] = $site_data ? $site_data[0]->site_address : '';
+                    }
                 }
             }
             /* $no_arr = count($lineitem_arr);
@@ -3998,12 +3999,13 @@ class Sales extends CI_Controller
                 $amt =  $sales_invoice_lineitem->price * $sales_invoice_lineitem->item_qty;
                 $gst_amount = $amt * $sales_invoice_lineitem->gst / 100;
                 $total_gst += $gst_amount;
-                $data['site_name'] = '';
-                $data['site_address'] = '';
+                
                 if ($key == 0 && $sales_invoice_lineitem->site_id != null) {
-                    $site_data = $this->crud->get_row_by_id('sites', array('site_id' => $sales_invoice_lineitem->site_id));
-                    $data['site_name'] = (isset($site_data)) ? $site_data[0]->site_name : '';
-                    $data['site_address'] = (isset($site_data)) ? $site_data[0]->site_address : '';
+                    if(!isset($data['site_name']) && $data['site_name'] == ''){
+                        $site_data = $this->crud->get_row_by_id('sites', array('site_id' => $sales_invoice_lineitem->site_id));
+                        $data['site_name'] = $site_data ? $site_data[0]->site_name : '';
+                        $data['site_address'] = $site_data ? $site_data[0]->site_address : '';
+                    }
                 }
             }
             $data['lineitems'] = $lineitem_arr;
@@ -4185,12 +4187,13 @@ class Sales extends CI_Controller
                 $amt =  $sales_invoice_lineitem->price * $sales_invoice_lineitem->item_qty;
                 $gst_amount = $amt * $sales_invoice_lineitem->gst / 100;
                 $total_gst += $gst_amount;
-                $data['site_name'] = '';
-                $data['site_address'] = '';
+                
                 if ($key == 0 && $sales_invoice_lineitem->site_id != null) {
-                    $site_data = $this->crud->get_row_by_id('sites', array('site_id' => $sales_invoice_lineitem->site_id));
-                    $data['site_name'] = (isset($site_data)) ? $site_data[0]->site_name : '';
-                    $data['site_address'] = (isset($site_data)) ? $site_data[0]->site_address : '';
+                    if(!isset($data['site_name']) && $data['site_name'] == ''){
+                        $site_data = $this->crud->get_row_by_id('sites', array('site_id' => $sales_invoice_lineitem->site_id));
+                        $data['site_name'] = $site_data ? $site_data[0]->site_name : '';
+                        $data['site_address'] = $site_data ? $site_data[0]->site_address : '';
+                    }
                 }
             }
             $data['lineitems'] = $lineitem_arr;

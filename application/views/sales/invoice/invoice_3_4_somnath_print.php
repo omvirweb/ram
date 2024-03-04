@@ -109,6 +109,9 @@ ob_start();
                 <td colspan="16" class="text_bold no-border-right" style="text-align: left;">Address : <?=isset($account_address) ?$account_address : '' ?><br><?=isset($account_city) ?$account_city : '' ?></td>
             </tr>
             <tr class="border1">
+                <td colspan="16" class="text_bold no-border-right" style="text-align: left;">Site Name : <?=isset($site_name) ?$site_name : '' ?></td>
+            </tr>
+            <tr class="border1">
                 <td colspan="16" class="text_bold no-border-right" style="text-align: left;">GSTIN : <?=isset($account_gst_no) ?$account_gst_no : '' ?></td>
             </tr>
             <tr class="border1">
@@ -139,7 +142,7 @@ ob_start();
             ?>
             <tr>
                 <td valign="top" colspan="1" class="text_center"><?php echo $inc; ?></td>
-                <td valign="top" colspan="9" align="left"><?php echo $lineitem->line_item_des."&nbsp;".$site_name; ?><br><?php echo $lineitem->note;?></td>
+                <td valign="top" colspan="9" align="left"><?php echo $lineitem->line_item_des; ?><br><?php echo $lineitem->note;?></td>
                 <td valign="top" colspan="1" align="center"><?php echo $lineitem->hsn; ?></td>
                 <?php $unit = $this->crud->get_column_value_by_id('pack_unit', 'pack_unit_name', array('pack_unit_id' => $lineitem->unit_id)); ?>
                 <td valign="top" colspan="1" class="divRight"><?php echo $lineitem->item_qty; ?></td>
