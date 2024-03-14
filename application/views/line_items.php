@@ -711,7 +711,14 @@ if (isset($invoice_line_item_fields) && !empty($invoice_line_item_fields)) {
         });
         $('#add_lineitem').on('click', function() {
             var item_id = $("#item_id").val();
-            var line_item_des = nl2br($("#line_item_des").val());
+            var line_item_des = '';
+            var inputVal = $("#line_item_des").val();
+
+            if (typeof inputVal !== 'undefined') {
+                line_item_des = nl2br(inputVal);
+            } else {
+                line_item_des = ""; 
+            }
             <?php if ($voucher_type != "sales2" && $voucher_type != "sales3" && $voucher_type != "sales4") { ?>
                 if (item_id == '' || item_id == null) {
                     show_notify("Please select Product.", false);
