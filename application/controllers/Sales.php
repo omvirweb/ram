@@ -1390,7 +1390,8 @@ class Sales extends CI_Controller
         $our_bank_label = $this->crud->get_column_value_by_id('account', 'account_name', array('account_id' => $data['sales_invoice_data']->our_bank_id));
         $data['our_bank_label'] = $our_bank_label;
 
-        $bank_details = $this->crud->get_data_row_by_where('account', array('account_id' => $data['sales_invoice_data']->our_bank_id));
+        // $bank_details = $this->crud->get_data_row_by_where('account', array('account_id' => $data['sales_invoice_data']->our_bank_id));
+        $bank_details = $this->crud->get_data_row_by_where('user', array('user_id' => $this->session->userdata['ramis_logged_in']['user_id']));
         // $data['bank_name'] = isset($bank_details->bank_name) ? $bank_details->bank_name : '';
         // $data['bank_branch'] = isset($bank_details->bank_branch) ? $bank_details->bank_branch : '';
         // $data['bank_ac_no'] = isset($bank_details->bank_ac_no) ? $bank_details->bank_ac_no : '';
@@ -1893,7 +1894,9 @@ class Sales extends CI_Controller
         $our_bank_label = $this->crud->get_column_value_by_id('account', 'account_name', array('account_id' => $data['sales_invoice_data']->our_bank_id));
         $data['our_bank_label'] = $our_bank_label;
 
-        $bank_details = $this->crud->get_data_row_by_where('account', array('account_id' => $data['sales_invoice_data']->our_bank_id));
+        // $bank_details = $this->crud->get_data_row_by_where('account', array('account_id' => $data['sales_invoice_data']->our_bank_id));
+        $bank_details = $this->crud->get_data_row_by_where('user', array('user_id' => $this->session->userdata['ramis_logged_in']['user_id']));
+        
         $data['bank_name'] = isset($bank_details->bank_name) ? $bank_details->bank_name : '';
         $data['bank_branch'] = isset($bank_details->bank_branch) ? $bank_details->bank_branch : '';
         $data['bank_ac_no'] = isset($bank_details->bank_ac_no) ? $bank_details->bank_ac_no : '';
@@ -2783,7 +2786,9 @@ class Sales extends CI_Controller
         $our_bank_label = $this->crud->get_column_value_by_id('account', 'account_name', array('account_id' => $data['sales_invoice_data']->our_bank_id));
         $data['our_bank_label'] = $our_bank_label;
 
-        $bank_details = $this->crud->get_data_row_by_where('account', array('account_id' => $data['sales_invoice_data']->our_bank_id));
+        // $bank_details = $this->crud->get_data_row_by_where('account', array('account_id' => $data['sales_invoice_data']->our_bank_id));
+        $bank_details = $this->crud->get_data_row_by_where('user', array('user_id' => $this->session->userdata['ramis_logged_in']['user_id']));
+
         $data['bank_name'] = isset($bank_details->bank_name) ? $bank_details->bank_name : '';
         $data['bank_branch'] = isset($bank_details->bank_branch) ? $bank_details->bank_branch : '';
         $data['bank_ac_no'] = isset($bank_details->bank_ac_no) ? $bank_details->bank_ac_no : '';
@@ -3055,7 +3060,8 @@ class Sales extends CI_Controller
         $our_bank_label = $this->crud->get_column_value_by_id('account', 'account_name', array('account_id' => $data['sales_invoice_data']->our_bank_id));
         $data['our_bank_label'] = $our_bank_label;
 
-        $bank_details = $this->crud->get_data_row_by_where('account', array('account_id' => $data['sales_invoice_data']->our_bank_id));
+        // $bank_details = $this->crud->get_data_row_by_where('account', array('account_id' => $data['sales_invoice_data']->our_bank_id));
+        $bank_details = $this->crud->get_data_row_by_where('user', array('user_id' => $this->session->userdata['ramis_logged_in']['user_id']));
         $data['bank_name'] = isset($bank_details->bank_name) ? $bank_details->bank_name : '';
         $data['bank_branch'] = isset($bank_details->bank_branch) ? $bank_details->bank_branch : '';
         $data['bank_ac_no'] = isset($bank_details->bank_ac_no) ? $bank_details->bank_ac_no : '';
@@ -3330,7 +3336,8 @@ class Sales extends CI_Controller
         $our_bank_label = $this->crud->get_column_value_by_id('account', 'account_name', array('account_id' => $data['sales_invoice_data']->our_bank_id));
         $data['our_bank_label'] = $our_bank_label;
 
-        $bank_details = $this->crud->get_data_row_by_where('account', array('account_id' => $data['sales_invoice_data']->our_bank_id));
+        // $bank_details = $this->crud->get_data_row_by_where('account', array('account_id' => $data['sales_invoice_data']->our_bank_id));
+        $bank_details = $this->crud->get_data_row_by_where('user', array('user_id' => $this->session->userdata['ramis_logged_in']['user_id']));
         $data['bank_name'] = isset($bank_details->bank_name) ? $bank_details->bank_name : '';
         $data['bank_branch'] = isset($bank_details->bank_branch) ? $bank_details->bank_branch : '';
         $data['bank_ac_no'] = isset($bank_details->bank_ac_no) ? $bank_details->bank_ac_no : '';
@@ -3605,7 +3612,12 @@ class Sales extends CI_Controller
         $our_bank_label = $this->crud->get_column_value_by_id('account', 'account_name', array('account_id' => $data['sales_invoice_data']->our_bank_id));
         $data['our_bank_label'] = $our_bank_label;
 
-        $bank_details = $this->crud->get_data_row_by_where('account', array('account_id' => $data['sales_invoice_data']->our_bank_id));
+        $bank_details = $this->crud->get_data_row_by_where('user', array('user_id' => $this->session->userdata['ramis_logged_in']['user_id']));
+        // $bank_details = $this->crud->get_data_row_by_where('account', array('account_id' => $data['sales_invoice_data']->our_bank_id));
+
+        // echo "<pre>";
+        // echo $this->session->userdata['ramis_logged_in']['user_id']; die;
+
         $data['bank_name'] = isset($bank_details->bank_name) ? $bank_details->bank_name : '';
         $data['bank_branch'] = isset($bank_details->bank_branch) ? $bank_details->bank_branch : '';
         $data['bank_ac_no'] = isset($bank_details->bank_ac_no) ? $bank_details->bank_ac_no : '';
@@ -3847,7 +3859,10 @@ class Sales extends CI_Controller
         $data['printtype'] = 0;
         $our_bank_label = $this->crud->get_column_value_by_id('account', 'account_name', array('account_id' => $data['sales_invoice_data']->our_bank_id));
         $data['our_bank_label'] = $our_bank_label;
-        $bank_details = $this->crud->get_data_row_by_where('account', array('account_id' => $data['sales_invoice_data']->our_bank_id));
+        // $bank_details = $this->crud->get_data_row_by_where('account', array('account_id' => $data['sales_invoice_data']->our_bank_id));
+        
+        $bank_details = $this->crud->get_data_row_by_where('user', array('user_id' => $this->session->userdata['ramis_logged_in']['user_id']));
+
         $data['bank_name'] = isset($bank_details->bank_name) ? $bank_details->bank_name : '';
         $data['bank_branch'] = isset($bank_details->bank_branch) ? $bank_details->bank_branch : '';
         $data['bank_ac_no'] = isset($bank_details->bank_ac_no) ? $bank_details->bank_ac_no : '';
@@ -4035,7 +4050,10 @@ class Sales extends CI_Controller
         $data['printtype'] = 0;
         $our_bank_label = $this->crud->get_column_value_by_id('account', 'account_name', array('account_id' => $data['sales_invoice_data']->our_bank_id));
         $data['our_bank_label'] = $our_bank_label;
-        $bank_details = $this->crud->get_data_row_by_where('account', array('account_id' => $data['sales_invoice_data']->our_bank_id));
+        
+        // $bank_details = $this->crud->get_data_row_by_where('account', array('account_id' => $data['sales_invoice_data']->our_bank_id));
+        $bank_details = $this->crud->get_data_row_by_where('user', array('user_id' => $this->session->userdata['ramis_logged_in']['user_id']));
+
         $data['bank_name'] = isset($bank_details->bank_name) ? $bank_details->bank_name : '';
         $data['bank_branch'] = isset($bank_details->bank_branch) ? $bank_details->bank_branch : '';
         $data['bank_ac_no'] = isset($bank_details->bank_ac_no) ? $bank_details->bank_ac_no : '';
@@ -4223,7 +4241,10 @@ class Sales extends CI_Controller
         $data['printtype'] = 0;
         $our_bank_label = $this->crud->get_column_value_by_id('account', 'account_name', array('account_id' => $data['sales_invoice_data']->our_bank_id));
         $data['our_bank_label'] = $our_bank_label;
-        $bank_details = $this->crud->get_data_row_by_where('account', array('account_id' => $data['sales_invoice_data']->our_bank_id));
+        
+        // $bank_details = $this->crud->get_data_row_by_where('account', array('account_id' => $data['sales_invoice_data']->our_bank_id));
+        $bank_details = $this->crud->get_data_row_by_where('user', array('user_id' => $this->session->userdata['ramis_logged_in']['user_id']));
+        
         $data['bank_name'] = isset($bank_details->bank_name) ? $bank_details->bank_name : '';
         $data['bank_branch'] = isset($bank_details->bank_branch) ? $bank_details->bank_branch : '';
         $data['bank_ac_no'] = isset($bank_details->bank_ac_no) ? $bank_details->bank_ac_no : '';
