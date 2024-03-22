@@ -1387,11 +1387,11 @@ class Sales extends CI_Controller
         $data['terms_data'] = $termsdata;
         $data['letterpad_print'] = $letterpad_print;
         $data['printtype'] = 0;
-        $our_bank_label = $this->crud->get_column_value_by_id('account', 'account_name', array('account_id' => $data['sales_invoice_data']->created_by));
+        $our_bank_label = $this->crud->get_column_value_by_id('account', 'account_name', array('account_id' => $data['sales_invoice_data']->our_bank_id));
         $data['our_bank_label'] = $our_bank_label;
 
         // $bank_details = $this->crud->get_data_row_by_where('account', array('account_id' => $data['sales_invoice_data']->our_bank_id));
-        $bank_details = $this->crud->get_data_row_by_where('user', array('user_id' => $this->session->userdata['ramis_logged_in']['user_id']));
+        $bank_details = $this->crud->get_data_row_by_where('user', array('user_id' => $data['sales_invoice_data']->created_by));
         // $data['bank_name'] = isset($bank_details->bank_name) ? $bank_details->bank_name : '';
         // $data['bank_branch'] = isset($bank_details->bank_branch) ? $bank_details->bank_branch : '';
         // $data['bank_ac_no'] = isset($bank_details->bank_ac_no) ? $bank_details->bank_ac_no : '';
@@ -1644,7 +1644,7 @@ class Sales extends CI_Controller
         $data['terms_data'] = $termsdata;
         $data['letterpad_print'] = $letterpad_print;
         $data['printtype'] = 0;
-        $our_bank_label = $this->crud->get_column_value_by_id('account', 'account_name', array('account_id' => $data['sales_invoice_data']->created_by));
+        $our_bank_label = $this->crud->get_column_value_by_id('account', 'account_name', array('account_id' => $data['sales_invoice_data']->our_bank_id));
         $data['our_bank_label'] = $our_bank_label;
 
         // $bank_details = $this->crud->get_data_row_by_where('account', array('account_id' => $data['sales_invoice_data']->our_bank_id));
@@ -1891,11 +1891,11 @@ class Sales extends CI_Controller
         $data['terms_data'] = $termsdata;
         $data['letterpad_print'] = $letterpad_print;
         $data['printtype'] = 0;
-        $our_bank_label = $this->crud->get_column_value_by_id('account', 'account_name', array('account_id' => $data['sales_invoice_data']->created_by));
+        $our_bank_label = $this->crud->get_column_value_by_id('account', 'account_name', array('account_id' => $data['sales_invoice_data']->our_bank_id));
         $data['our_bank_label'] = $our_bank_label;
 
         // $bank_details = $this->crud->get_data_row_by_where('account', array('account_id' => $data['sales_invoice_data']->our_bank_id));
-        $bank_details = $this->crud->get_data_row_by_where('user', array('user_id' => $this->session->userdata['ramis_logged_in']['user_id']));
+        $bank_details = $this->crud->get_data_row_by_where('user', array('user_id' => $data['sales_invoice_data']->created_by));
         
         $data['bank_name'] = isset($bank_details->bank_name) ? $bank_details->bank_name : '';
         $data['bank_branch'] = isset($bank_details->bank_branch) ? $bank_details->bank_branch : '';
@@ -2777,17 +2777,17 @@ class Sales extends CI_Controller
                 $data['amount_total'] = number_format((float) $amount_total_r, 2, '.', '');
             }
         }
-		// echo '<pre>'; print_r($data['sales_invoice_data']->created_by); exit;
+//		echo '<pre>'; print_r($data); exit;
         $letterpad_print = $this->crud->get_id_by_val('user', 'is_letter_pad', 'user_id', $this->logged_in_id);
         $termsdata = $this->crud->get_column_value_by_id('settings', 'setting_value', array('setting_key' => 'sales_terms'));
         $data['terms_data'] = $termsdata;
         $data['letterpad_print'] = $letterpad_print;
         $data['printtype'] = 0;
-        $our_bank_label = $this->crud->get_column_value_by_id('account', 'account_name', array('account_id' => $data['sales_invoice_data']->created_by));
+        $our_bank_label = $this->crud->get_column_value_by_id('account', 'account_name', array('account_id' => $data['sales_invoice_data']->our_bank_id));
         $data['our_bank_label'] = $our_bank_label;
 
         // $bank_details = $this->crud->get_data_row_by_where('account', array('account_id' => $data['sales_invoice_data']->our_bank_id));
-        $bank_details = $this->crud->get_data_row_by_where('user', array('user_id' => $this->session->userdata['ramis_logged_in']['user_id']));
+        $bank_details = $this->crud->get_data_row_by_where('user', array('user_id' => $data['sales_invoice_data']->created_by));
 
         $data['bank_name'] = isset($bank_details->bank_name) ? $bank_details->bank_name : '';
         $data['bank_branch'] = isset($bank_details->bank_branch) ? $bank_details->bank_branch : '';
@@ -3057,11 +3057,11 @@ class Sales extends CI_Controller
         $data['terms_data'] = $termsdata;
         $data['letterpad_print'] = $letterpad_print;
         $data['printtype'] = 0;
-        $our_bank_label = $this->crud->get_column_value_by_id('account', 'account_name', array('account_id' => $data['sales_invoice_data']->created_by));
+        $our_bank_label = $this->crud->get_column_value_by_id('account', 'account_name', array('account_id' => $data['sales_invoice_data']->our_bank_id));
         $data['our_bank_label'] = $our_bank_label;
 
         // $bank_details = $this->crud->get_data_row_by_where('account', array('account_id' => $data['sales_invoice_data']->our_bank_id));
-        $bank_details = $this->crud->get_data_row_by_where('user', array('user_id' => $this->session->userdata['ramis_logged_in']['user_id']));
+        $bank_details = $this->crud->get_data_row_by_where('user', array('user_id' => $data['sales_invoice_data']->created_by));
         $data['bank_name'] = isset($bank_details->bank_name) ? $bank_details->bank_name : '';
         $data['bank_branch'] = isset($bank_details->bank_branch) ? $bank_details->bank_branch : '';
         $data['bank_ac_no'] = isset($bank_details->bank_ac_no) ? $bank_details->bank_ac_no : '';
@@ -3333,11 +3333,11 @@ class Sales extends CI_Controller
         $data['terms_data'] = $termsdata;
         $data['letterpad_print'] = $letterpad_print;
         $data['printtype'] = 0;
-        $our_bank_label = $this->crud->get_column_value_by_id('account', 'account_name', array('account_id' => $data['sales_invoice_data']->created_by));
+        $our_bank_label = $this->crud->get_column_value_by_id('account', 'account_name', array('account_id' => $data['sales_invoice_data']->our_bank_id));
         $data['our_bank_label'] = $our_bank_label;
 
         // $bank_details = $this->crud->get_data_row_by_where('account', array('account_id' => $data['sales_invoice_data']->our_bank_id));
-        $bank_details = $this->crud->get_data_row_by_where('user', array('user_id' => $this->session->userdata['ramis_logged_in']['user_id']));
+        $bank_details = $this->crud->get_data_row_by_where('user', array('user_id' => $data['sales_invoice_data']->created_by));
         $data['bank_name'] = isset($bank_details->bank_name) ? $bank_details->bank_name : '';
         $data['bank_branch'] = isset($bank_details->bank_branch) ? $bank_details->bank_branch : '';
         $data['bank_ac_no'] = isset($bank_details->bank_ac_no) ? $bank_details->bank_ac_no : '';
@@ -3609,10 +3609,10 @@ class Sales extends CI_Controller
         $data['terms_data'] = $termsdata;
         $data['letterpad_print'] = $letterpad_print;
         $data['printtype'] = 0;
-        $our_bank_label = $this->crud->get_column_value_by_id('account', 'account_name', array('account_id' => $data['sales_invoice_data']->created_by));
+        $our_bank_label = $this->crud->get_column_value_by_id('account', 'account_name', array('account_id' => $data['sales_invoice_data']->our_bank_id));
         $data['our_bank_label'] = $our_bank_label;
 
-        $bank_details = $this->crud->get_data_row_by_where('user', array('user_id' => $this->session->userdata['ramis_logged_in']['user_id']));
+        $bank_details = $this->crud->get_data_row_by_where('user', array('user_id' => $data['sales_invoice_data']->created_by));
         // $bank_details = $this->crud->get_data_row_by_where('account', array('account_id' => $data['sales_invoice_data']->our_bank_id));
 
         // echo "<pre>";
@@ -3857,11 +3857,11 @@ class Sales extends CI_Controller
         $data['terms_data'] = $termsdata;
         $data['letterpad_print'] = $letterpad_print;
         $data['printtype'] = 0;
-        $our_bank_label = $this->crud->get_column_value_by_id('account', 'account_name', array('account_id' => $data['sales_invoice_data']->created_by));
+        $our_bank_label = $this->crud->get_column_value_by_id('account', 'account_name', array('account_id' => $data['sales_invoice_data']->our_bank_id));
         $data['our_bank_label'] = $our_bank_label;
         // $bank_details = $this->crud->get_data_row_by_where('account', array('account_id' => $data['sales_invoice_data']->our_bank_id));
         
-        $bank_details = $this->crud->get_data_row_by_where('user', array('user_id' => $this->session->userdata['ramis_logged_in']['user_id']));
+        $bank_details = $this->crud->get_data_row_by_where('user', array('user_id' => $data['sales_invoice_data']->created_by));
 
         $data['bank_name'] = isset($bank_details->bank_name) ? $bank_details->bank_name : '';
         $data['bank_branch'] = isset($bank_details->bank_branch) ? $bank_details->bank_branch : '';
@@ -4048,11 +4048,11 @@ class Sales extends CI_Controller
         $data['terms_data'] = $termsdata;
         $data['letterpad_print'] = $letterpad_print;
         $data['printtype'] = 0;
-        $our_bank_label = $this->crud->get_column_value_by_id('account', 'account_name', array('account_id' => $data['sales_invoice_data']->created_by));
+        $our_bank_label = $this->crud->get_column_value_by_id('account', 'account_name', array('account_id' => $data['sales_invoice_data']->our_bank_id));
         $data['our_bank_label'] = $our_bank_label;
         
         // $bank_details = $this->crud->get_data_row_by_where('account', array('account_id' => $data['sales_invoice_data']->our_bank_id));
-        $bank_details = $this->crud->get_data_row_by_where('user', array('user_id' => $this->session->userdata['ramis_logged_in']['user_id']));
+        $bank_details = $this->crud->get_data_row_by_where('user', array('user_id' => $data['sales_invoice_data']->created_by));
 
         $data['bank_name'] = isset($bank_details->bank_name) ? $bank_details->bank_name : '';
         $data['bank_branch'] = isset($bank_details->bank_branch) ? $bank_details->bank_branch : '';
@@ -4239,11 +4239,11 @@ class Sales extends CI_Controller
         $data['terms_data'] = $termsdata;
         $data['letterpad_print'] = $letterpad_print;
         $data['printtype'] = 0;
-        $our_bank_label = $this->crud->get_column_value_by_id('account', 'account_name', array('account_id' => $data['sales_invoice_data']->created_by));
+        $our_bank_label = $this->crud->get_column_value_by_id('account', 'account_name', array('account_id' => $data['sales_invoice_data']->our_bank_id));
         $data['our_bank_label'] = $our_bank_label;
         
         // $bank_details = $this->crud->get_data_row_by_where('account', array('account_id' => $data['sales_invoice_data']->our_bank_id));
-        $bank_details = $this->crud->get_data_row_by_where('user', array('user_id' => $this->session->userdata['ramis_logged_in']['user_id']));
+        $bank_details = $this->crud->get_data_row_by_where('user', array('user_id' => $data['sales_invoice_data']->created_by));
         
         $data['bank_name'] = isset($bank_details->bank_name) ? $bank_details->bank_name : '';
         $data['bank_branch'] = isset($bank_details->bank_branch) ? $bank_details->bank_branch : '';
