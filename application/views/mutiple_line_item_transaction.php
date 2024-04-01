@@ -66,7 +66,7 @@
 
                                 <?php 
                                     if(isset($invoice_data->invoice_no)) {
-                                        echo '<span> &nbsp;&nbsp;&nbsp;&nbsp; Invoice No. : '. $invoice_data->invoice_no;
+                                        echo '<span> &nbsp;&nbsp;&nbsp;&nbsp; Invoice No. : '. str_pad($invoice_data->invoice_no,3,"0",STR_PAD_LEFT);
                                     } 
                                     if(isset($invoice_data->credit_note_no)) {
                                         echo '<span> &nbsp;&nbsp;&nbsp;&nbsp; Credit Note No. : '. $invoice_data->credit_note_no;
@@ -174,7 +174,7 @@
                                         <div class="col-md-3">
                                             <div class="form-group">
                                                 <label for="invoice_no" class="control-label">Invoice No</label>
-                                                <input type="text" name="invoice_no" id="invoice_no" class="form-control num_only" data-index="4" value="<?=isset($invoice_data->invoice_no) ? $invoice_data->invoice_no : $invoice_no; ?>">
+                                                <input type="text" name="invoice_no" id="invoice_no" class="form-control num_only" data-index="4" value="<?=isset($invoice_data->invoice_no) ? str_pad($invoice_data->invoice_no,3,"0",STR_PAD_LEFT) : str_pad($invoice_no,3,"0",STR_PAD_LEFT); ?>">
                                             </div>
                                         </div>
                                     <?php } elseif($voucher_type == "purchase") { ?> 
@@ -224,7 +224,7 @@
                                         <div class="col-md-3">
                                             <div class="form-group">
                                                 <label for="invoice_no" class="control-label">Invoice No</label>
-                                                <input type="text" name="invoice_no" id="invoice_no" class="form-control num_only" data-index="4" value="<?=isset($invoice_data->invoice_no) ? $invoice_data->invoice_no : $invoice_no; ?>">
+                                                <input type="text" name="invoice_no" id="invoice_no" class="form-control num_only" data-index="4" value="<?=isset($invoice_data->invoice_no) ? str_pad($invoice_data->invoice_no,3,"0",STR_PAD_LEFT) : str_pad($invoice_no,3,"0",STR_PAD_LEFT); ?>">
                                             </div>
                                         </div>
                                     <?php } elseif($voucher_type == "material_in") { ?> 
