@@ -2219,7 +2219,7 @@ class Sales extends CI_Controller
     }
 
     function get_max_prefix($prefix = ''){
-        $sales_invoice_no = $this->crud->get_max_number_where('sales_invoice', 'sales_invoice_no', array('prefix' => $prefix));  // 'created_by' => $this->logged_in_id, 
+        $sales_invoice_no = $this->crud->get_max_number_where('sales_invoice', 'sales_invoice_no', array('created_by' => $this->logged_in_id,'prefix' => $prefix));  //  
         if(empty($sales_invoice_no->sales_invoice_no)){
             $sales_invoice_no = $this->crud->get_id_by_val('user', 'invoice_no_start_from', 'prefix', $this->prefix);
         } else {
