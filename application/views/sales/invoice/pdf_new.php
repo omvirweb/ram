@@ -124,7 +124,7 @@ ob_start();
                     </tr>
                     <tr>
                         <td class="no-border-top no-border-bottom" colspan="1" width="50px">&nbsp;</td>
-                        <td class="no-border-top no-border-bottom text-right text-bold" colspan="5"><i>CGST OUTPUT</i></td>
+                        <td class="no-border-top no-border-bottom text-right text-bold" colspan="5"><i>CGST OUTPUT(9%)</i></td>
                         <td class="no-border-top no-border-bottom" colspan="2">&nbsp;</td>
                         <td class="no-border-top no-border-bottom" colspan="2">&nbsp;</td>
                         <td class="no-border-top no-border-bottom text-right" colspan="2">&nbsp;</td>
@@ -133,7 +133,7 @@ ob_start();
                     </tr>
                     <tr>
                         <td class="no-border-top no-border-bottom" colspan="1" width="50px">&nbsp;</td>
-                        <td class="no-border-top no-border-bottom text-right text-bold" colspan="5"><i>SGST OUTPUT</i></td>
+                        <td class="no-border-top no-border-bottom text-right text-bold" colspan="5"><i>SGST OUTPUT(9%)</i></td>
                         <td class="no-border-top no-border-bottom" colspan="2">&nbsp;</td>
                         <td class="no-border-top no-border-bottom" colspan="2">&nbsp;</td>
                         <td class="no-border-top no-border-bottom text-right" colspan="2">&nbsp;</td>
@@ -378,7 +378,7 @@ ob_start();
                     <td class="no-border text-center" colspan="2">&nbsp;</td>
                 </tr>
                 <tr>
-                    <td class="no-border text-center" colspan="2">SUBJECT TO UPLETA JURISDICTION</td>
+                     <td class="no-border text-center" colspan="2"><!--SUBJECT TO UPLETA JURISDICTION--> </td> 
                 </tr>
                 <tr>
                     <td class="no-border text-center" colspan="2">This is a Computer Generated Invoice</td>
