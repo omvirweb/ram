@@ -389,10 +389,10 @@ class Sales extends CI_Controller
         }
         
 		$config['table'] = 'sales_invoice si';
-		$config['select'] = 'te.transaction_type,te.transaction_id,te.created_by as transaction_user,si.invoice_type, si.sales_invoice_id, si.sales_invoice_no, si.sales_invoice_date, si.amount_total,si.aspergem_service_charge, si.data_lock_unlock, a.account_name, a.account_group_id, a.account_gst_no, si.created_by, si.created_at, si.updated_by, si.updated_at, si.user_created_by, si.user_updated_by,';   //  and hsn !=""
+		$config['select'] = 'te.transaction_type,te.transaction_id,te.created_by as transaction_user,si.invoice_type, si.sales_invoice_id, CAST(si.sales_invoice_no AS int), si.sales_invoice_date, si.amount_total,si.aspergem_service_charge, si.data_lock_unlock, a.account_name, a.account_group_id, a.account_gst_no, si.created_by, si.created_at, si.updated_by, si.updated_at, si.user_created_by, si.user_updated_by,';   //  and hsn !=""
 
-		$config['column_order'] = array(null, 'si.sales_invoice_no', 'a.account_name', 'si.sales_invoice_date', 'si.amount_total');
-		$config['column_search'] = array('si.sales_invoice_no', 'a.account_name', 'DATE_FORMAT(si.sales_invoice_date,"%d-%m-%Y")', 'si.amount_total');
+		$config['column_order'] = array(null, 'CAST(si.sales_invoice_no AS int)', 'a.account_name', 'si.sales_invoice_date', 'si.amount_total');
+		$config['column_search'] = array('CAST(si.sales_invoice_no AS int)', 'a.account_name', 'DATE_FORMAT(si.sales_invoice_date,"%d-%m-%Y")', 'si.amount_total');
 		$config['wheres'][] = array('column_name' => 'si.created_by', 'column_value' => $this->logged_in_id);
         if (!empty($account_id)) {
             $config['wheres'][] = array('column_name' => 'si.account_id', 'column_value' => $account_id);
@@ -422,7 +422,8 @@ class Sales extends CI_Controller
             $config['group_by'] = 'si.sales_invoice_no';
         }
         
-		$config['order'] = array('si.created_at' => 'desc');
+		// $config['order'] = array('si.created_at' => 'desc');
+		$config['order'] = array('CAST(sales_invoice_no AS int)' => 'desc');
 
 		$this->load->library('datatables', $config, 'datatable');
 		

@@ -1587,7 +1587,7 @@ class Transaction extends CI_Controller {
                 $data['transaction_date'] = $lastSalesData ? $lastSalesData[0]->sales_invoice_date : '';
             }
             // echo "<pre>";
-            // print_r($data);
+             //print_r($data);
             // exit;
             set_page('mutiple_line_item_transaction',$data);
         }

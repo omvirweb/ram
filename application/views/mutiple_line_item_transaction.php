@@ -120,11 +120,16 @@
                                     <div class="col-md-6">
                                     <?php } ?>
                                     <?php //echo $invoice_data->sales_invoice_date;
-                                    $salesInvoiceDt = $invoice_id ? $invoice_data->sales_invoice_date : $transaction_date; ?>
-                                    
+                                    $salesInvoiceDt = $invoice_id ? $invoice_data->sales_invoice_date : $transaction_date;
+                                    //echo $salesInvoiceDt;
+                                    //echo $transaction_date;
+                                    //echo date('d-m-Y', strtotime($salesInvoiceDt . " - 1 day"));
+                                     $currentDate = date('d-m-Y');
+                                    ?>
+                                   
                                         <div class="form-group">
                                             <label for="invoice_date" class="control-label"><?=$voucher_label?> Date<span class="required-sign">*</span></label>
-                                            <input type="text" name="invoice_date" id="datepicker2" class="form-control date-size" data-index="2" required value="<?php echo date('d-m-Y', strtotime($salesInvoiceDt)); ?>">
+                                            <input type="text" name="invoice_date" id="datepicker2" class="form-control date-size" data-index="2" required value="<?php if(!empty($invoice_data->invoice_no)){ echo date('d-m-Y', strtotime($salesInvoiceDt));} else { echo $currentDate; } ?>">
                                         </div>
                                     
                                     </div>
@@ -867,3 +872,6 @@
         });
     }
 </script>
+
+     
+   

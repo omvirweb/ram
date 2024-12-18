@@ -56,7 +56,16 @@ immediately after the control sidebar -->
 <!-- date-range-picker -->
 <script src="<?=base_url('assets/plugins/moment/min/moment.min.js');?>"></script>
 <script src="<?=base_url('assets/plugins/bootstrap-daterangepicker/daterangepicker.js');?>"></script>
+<script>
+  $('#datepicker2').datepicker({  // ,#datepicker2
+            format: 'dd-mm-yyyy',
+            todayBtn: "linked",
+            todayHighlight: true, 
+            autoclose: true,
+            constrainInput: false
+        });
 
+       </script>
 <script type="text/javascript">
     var go_to_back_page = true;
     window.onkeyup = function(e) {
@@ -640,5 +649,6 @@ immediately after the control sidebar -->
     });
     
 </script>
+
 </body>
 </html>
