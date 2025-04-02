@@ -1573,7 +1573,9 @@ class Transaction extends CI_Controller {
                 WHERE sales_invoice_id > (
                     SELECT sales_invoice_id
                     FROM `sales_invoice`
-                    WHERE sales_invoice_no = '.$data["invoice_data"]->sales_invoice_no.' and created_by = "'.$this->logged_in_id.'"
+                    WHERE sales_invoice_no = ' . $data["invoice_data"]->sales_invoice_no.' AND created_by = "' . $this->logged_in_id . '"
+                    ORDER BY sales_invoice_id DESC
+                    LIMIT 1
                 )
                 ORDER BY sales_invoice_id
                 LIMIT 1');
