@@ -355,14 +355,14 @@ class Crud extends CI_Model
 		return $result;
 	}
     
-    function get_max_number_where($tbl_name,$column_name,$where_array)
+	function get_max_number_where($tbl_name, $column_name, $where_array)
 	{
-		$this->db->select_max($column_name);
-        $this->db->where($where_array);
+		$this->db->select('MAX(CAST(' . $column_name . ' AS UNSIGNED)) as sales_invoice_no');
+		$this->db->where($where_array);
 		$result = $this->db->get($tbl_name)->row();  
 		return $result;
 	}
-
+	
 	function get_sales_invoice($created_by){
 		$this->db->select('sales_invoice.*, DATE_FORMAT(sales_invoice.sales_invoice_date,"%d-%m-%Y") as sales_invoice_date,
 							account.account_id, account.account_gst_no, state.state_id, state.state_name');

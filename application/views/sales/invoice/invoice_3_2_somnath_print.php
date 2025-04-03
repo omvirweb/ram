@@ -95,28 +95,28 @@ ob_start();
             </tr>            
             <!-- k203s 07-02-2024 start -->
             <tr class="">
-                <td colspan="2" class="text_bold text_left no-border-bottom no-border-right">M/s &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </td>
-                <td colspan="8" class="text_bold text_left no-border-left no-border-bottom"><?=isset($account_name) ? $account_name : '&nbsp;' ?></td>
+                <td colspan="3" class="text_bold text_left no-border-bottom no-border-right">M/s &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </td>
+                <td colspan="7" class="text_bold text_left no-border-left no-border-bottom"><?=isset($account_name) ? $account_name : '&nbsp;' ?></td>
                 <td colspan="3" class="text_bold text_left no-border-right no-border-bottom">Invoice No.</td>
                 <td colspan="4" class="text_bold text_left no-border-left no-border-bottom"> : <?=isset($sales_invoice_no) ?$sales_invoice_no : '' ?></td>
             </tr>
             <tr class="">
-                <td colspan="2" rowspan="3" valign="top" class="text_bold text_left no-border-bottom no-border-right no-border-top">Address &nbsp;&nbsp;<b class="text_bold"> : </b></td>
-                <td colspan="8" rowspan="3" valign="top" class=" text_left no-border-bottom no-border-left no-border-top"><span><?=isset($account_address) ? nl2br($account_address) : '';?></span></td>
+                <td colspan="3" rowspan="3" valign="top" class="text_bold text_left no-border-bottom no-border-right no-border-top">Address &nbsp;&nbsp;<b class="text_bold"> : </b></td>
+                <td colspan="7" rowspan="3" valign="top" class=" text_left no-border-bottom no-border-left no-border-top"><span><?=isset($account_address) ? nl2br($account_address) : '';?></span></td>
                 <td colspan="3" valign="top" class="text_bold text_left no-border-bottom no-border-right no-border-top">Date</td>
                 <td colspan="4" valign="top" class="text_bold text_left no-border-bottom no-border-left no-border-top"><b> : </b><?=isset($sales_invoice_date) ? $sales_invoice_date : '';?></td>
             </tr>
             <tr class=""></tr>
             <tr class=""></tr>
             <tr class="">
-                <td colspan="2" class="text_bold text_left no-border-bottom no-border-right no-border-top" style="white-space: nowrap;">GSTIN No. : </td>
-                <td colspan="8" class=" text_left no-border-bottom no-border-left no-border-top"><?=isset($account_gst_no) ? $account_gst_no : '';?></td>
+                <td colspan="3" class="text_bold text_left no-border-bottom no-border-right no-border-top" style="white-space: nowrap;">GSTIN No. : </td>
+                <td colspan="7" class=" text_left no-border-bottom no-border-left no-border-top"><?=isset($account_gst_no) ? $account_gst_no : '';?></td>
                 <td colspan="3" class="text_bold text_left no-border-bottom no-border-right no-border-top">Place Of Supply</td>
                 <td colspan="4" class=" text_left no-border-bottom no-border-left no-border-top"><b class="text_bold"> : </b><?=isset($account_state) ? $account_state : '';?></td>
             </tr>
             <tr class="">
-                <td colspan="2" class="text_bold text_left no-border-bottom no-border-right no-border-top" style="white-space: nowrap;">Site Name:</td>
-                <td colspan="8" class=" text_left no-border-bottom no-border-left no-border-top">
+                <td colspan="3" class="text_bold text_left no-border-bottom no-border-right no-border-top" style="white-space: nowrap;">Site Name:</td>
+                <td colspan="7" class=" text_left no-border-bottom no-border-left no-border-top">
                     <?= (isset($site_name)) ? $site_name.'<br/>' : ''; ?>
                 </td>
                 <td colspan="7" class="text_bold text_left no-border-bottom no-border-top">&nbsp;</td>
@@ -248,10 +248,12 @@ ob_start();
             </tr>
             <?php 
                 $amount_totalToDisplay = $aspergem_service_charge + $pure_total_amt + $total_gst + $prof_tax + $round_off_amount;
+                $final  =  number_format((float)$amount_totalToDisplay, 2, '.', '');
+                
             ?>
             <tr class="border1" style="background-color: #EAEAEA;">
                 <td colspan="4" class="no-border-right text_bold">Bill Amount</td>
-                <td colspan="8" class="no-border-left no-border-right no-border-bottom"> : <?php echo (isset($amount_totalToDisplay) && $amount_totalToDisplay != '' ) ? $this->numbertowords->convert_number($amount_totalToDisplay) : $amount_total_word; ?></td>
+                <td colspan="8" class="no-border-left no-border-right no-border-bottom"> : <?php echo (isset($final) && $final != '' ) ? $this->numbertowords->convert_number($final) : $amount_total_word; ?></td>
                 <td colspan="3" class="text_bold no-border-right ">Total Due</td>                
                 <td colspan="2" align="right" class="text_bold no-border-left">
                     <?php 

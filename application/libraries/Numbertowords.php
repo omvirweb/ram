@@ -53,6 +53,10 @@ class Numbertowords
 
 	function convert_number($number)
 	{
+		// echo '<pre>';
+		// print_r($number);
+		// echo '</pre>';
+		// die;
 		$no = floor($number);
 		$point = round($number - $no, 2) * 100;
 		$hundred = null;

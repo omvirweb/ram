@@ -175,7 +175,8 @@
                                         </div>
                                         <?php } else { ?>
                                         <input type="hidden" id="prefix" name="prefix">
-                                        <?php } ?>
+                                        <?php } 
+                                        ?>
                                         <div class="col-md-3">
                                             <div class="form-group">
                                                 <label for="invoice_no" class="control-label">Invoice No</label>

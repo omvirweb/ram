@@ -160,6 +160,10 @@ class Transaction extends CI_Controller {
                     'total_pf_amount' => $result->total_pf_amount,
                     'aspergem_service_charge' => isset($result->aspergem_service_charge) ? $result->aspergem_service_charge:0 ,
                 );
+                echo '<pre>';
+                print_r($data);
+                echo '</pre>';
+                die;
                 $data['sales_invoice_data'] = $result;
                 $data['user_name'] = $user_detail->user_name;
                 $data['user_address'] = $user_detail->address;
@@ -1051,6 +1055,8 @@ class Transaction extends CI_Controller {
 
 
     function sales_purchase_transaction($voucher_type, $order_id = '') {
+
+
         $data = array();
         $page_title = '';
         $invoice_id = 0;
@@ -1380,6 +1386,7 @@ class Transaction extends CI_Controller {
 
             if($voucher_type == "sales" || $voucher_type == "sales2" || $voucher_type == "sales3" || $voucher_type == "sales4") {
                 if(isset($_POST['sales_invoice_id'])) {
+                    
                     $where = array('sales_invoice_id' => $_POST['sales_invoice_id']);
                     $sales_invoice_data = $this->crud->get_row_by_id('sales_invoice', $where);
                     $sales_invoice_data[0]->invoice_no = $sales_invoice_data[0]->sales_invoice_no;
@@ -1413,6 +1420,7 @@ class Transaction extends CI_Controller {
                     } else {
                         $data['invoice_no'] = $sales_invoice_no->sales_invoice_no + 1;    
                     }
+                    
                     $data['invoice_type'] = $this->crud->get_column_value_by_id('user','invoice_type',array('user_id'=>$this->logged_in_id));
                     if(!empty($order_id)){
                         $where = array('purchase_invoice_id' => $order_id);
@@ -1431,6 +1439,7 @@ class Transaction extends CI_Controller {
                         }
                         $data['order_lineitems'] = $lineitems;
                     }
+                   
                 }
             } elseif($voucher_type == "purchase") {
                 if (isset($_POST['purchase_invoice_id'])) {
@@ -1567,6 +1576,8 @@ class Transaction extends CI_Controller {
                 }
 
             }
+         
+
             if(isset($data['invoice_data']->sales_invoice_no) && $data['invoice_data']->sales_invoice_no !=''){
                 $lastSalesData  = $this->crud->getFromSQL('SELECT sales_invoice_date
                 FROM `sales_invoice`
@@ -1588,14 +1599,16 @@ class Transaction extends CI_Controller {
                 LIMIT 1 ');
                 $data['transaction_date'] = $lastSalesData ? $lastSalesData[0]->sales_invoice_date : '';
             }
-            // echo "<pre>";
-             //print_r($data);
-            // exit;
+//             echo "<pre>";
+//             print_r($data);
+//             exit;
+
             set_page('mutiple_line_item_transaction',$data);
         }
     }
 
     function save_invoice(){
+        
         $return = array();
         $post_data = $this->input->post();
         // echo "<pre>";
@@ -2241,6 +2254,7 @@ class Transaction extends CI_Controller {
     }
 
     function save_sales_purchase_transaction() {
+        
         $post_data = $this->input->post();
         $response = array();
         $voucher_type = $post_data['voucher_type'];
@@ -2644,6 +2658,7 @@ class Transaction extends CI_Controller {
     }
     
     function get_sub_item_data(){
+        
         $post_data = $this->input->post();
         $config['table'] = 'sub_item_add_less_settings setting';
         $config['select'] = 'setting.*,si.item_name as sub_item_name,spu.pack_unit_name as sub_item_unit';
@@ -2682,6 +2697,7 @@ class Transaction extends CI_Controller {
 
     function order_type2()
     {
+    
         $data = array();
         $line_item_fields = $this->crud->getFromSQL('SELECT setting_key FROM company_settings WHERE company_id = "'.$this->logged_in_id.'" AND module_name = 2 AND setting_value = 1');
         $invoice_line_item_fields = array();
@@ -2909,6 +2925,7 @@ class Transaction extends CI_Controller {
         exit;        
     }
     function get_discount_data(){
+        
         $return = array();
         $post_data = $this->input->post();
 //        echo "<pre>"; print_r($post_data); exit;
