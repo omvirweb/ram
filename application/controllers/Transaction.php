@@ -160,10 +160,7 @@ class Transaction extends CI_Controller {
                     'total_pf_amount' => $result->total_pf_amount,
                     'aspergem_service_charge' => isset($result->aspergem_service_charge) ? $result->aspergem_service_charge:0 ,
                 );
-                echo '<pre>';
-                print_r($data);
-                echo '</pre>';
-                die;
+               
                 $data['sales_invoice_data'] = $result;
                 $data['user_name'] = $user_detail->user_name;
                 $data['user_address'] = $user_detail->address;
