@@ -3586,6 +3586,12 @@ class Sales extends CI_Controller
             $data['lineitems'] = $lineitem_arr;
             $total_gst = $total_gst + ($result->total_pf_amount * 18 / 100);
             //$total_gst = $total_gst + ($result->aspergem_service_charge * 18 / 100);//in this function, we do Not consider service charge in gst
+
+            if ($total_gst - floor($total_gst) >= 0.50) {
+                $total_gst = ceil($total_gst);  
+            } else {
+                $total_gst = floor($total_gst); 
+            }
             $data['total_gst'] = $total_gst;
             if ($total_gst < 0) {
                 $gst_total_word = 'Minus ' . $this->numbertowords->convert_number(abs($total_gst));
